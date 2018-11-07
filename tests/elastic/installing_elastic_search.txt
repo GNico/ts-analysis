@@ -1,0 +1,52 @@
+-Installar elasticsearch, la forma mas facil es bajarse el .deb y ejecutarlo.
+
+	https://www.elastic.co/downloads/elasticsearch
+
+-Tirar esto para correrlo como servicio cuando bootea (opcional)
+
+	sudo /bin/systemctl daemon-reload
+	sudo /bin/systemctl enable elasticsearch.service
+
+-Run elasticsearch
+
+	sudo systemctl start elasticsearch.service
+
+-Chequear que esta andando (hay que darle unos segundos para que inicie). Deberia devolver un json con name, cluster_name, cluster_uuid, etc.
+
+	curl -X GET "localhost:9200/"
+
+-Instalar logstash, idem los otros dos (requiere java 8)
+
+	https://www.elastic.co/downloads/logstash
+
+-Probar si esta ok. Ir a donde se instalaron los bin y arrancar logstash. 
+
+	cd /usr/share/logstash
+	sudo bin/logstash -e 'input { stdin { } } output { stdout {} }'
+
+Hay que darle un tiempo para arranque el pipeline y cuando termina salen un monton de mensajes y ahi tipeas cualquier cosa y te deberia volver un json con lo que pusiste y otros datos. CTRL+C para salir.
+
+________________________________________________________________________________
+
+Ahora usamos logstash para subir la data a elasticsearch, parseando todos los archivos de una carpeta.
+
+Los archivos .json de la data tienen que estar en una linea (no pretty) y terminar con newline. Correr este scriptillo bash para agregar los newline que le faltan. Fijate de remplazar por tu propio path a la data duh.
+
+#!/bin/bash
+for filename in /home/nico/Git/tsa/tests/data/*.json; do
+	sed -i -e '$a\' $filename;
+done
+
+- Para que el logstash sepa que hacer hay que darle una configuracion, para eso usamos el archivo .conf, ponelo en cualquier directorio.
+
+
+-Correr el logstash, cambiar por tu path al .conf
+
+	sudo /usr/share/logstash/bin/logstash -f /home/nico/Desktop/first-pipeline.conf 
+
+
+Deberia empezar a subir los archivos, pero el logstash no muestra progreso, para fijarse si esta haciendo algo, en otra terminal tirar
+
+	curl -X GET "localhost:9200/_cat/indices/movi*?v&s=index"
+
+y fijarse si se van agregando indices a la lista y documentos. Si no hay algun problema.

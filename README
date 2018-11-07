@@ -1,0 +1,56 @@
+Requisitos
+
+BACKEND
+
+-ELK stack 
+	
+-Django
+	pip3 install Django
+
+-Django rest framework
+	pip3 install djangorestframework
+
+-Django cors headers 
+	pip3 install django-cors-headers
+
+
+-Para correr el server 
+
+	python3 manage.py runserver 
+
+-Acceso
+
+	localhost:8000
+
+_____________________________________
+
+FRONTEND
+
+	sudo apt-get install nodejs
+
+	sudo apt install npm
+
+-En el directorio del frontend
+
+	npm install -g vue-cli
+
+	npm install bulma
+
+	npm install axios
+
+	npm install vue-router
+
+	npm install highcharts
+
+	npm install highcharts-vue
+
+
+-Para correr el frontend
+
+	npm run dev
+
+-Acceso
+
+	localhost:8080
+
+	
