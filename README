@@ -32,17 +32,7 @@ FRONTEND
 
 -En el directorio del frontend
 
-	npm install -g vue-cli
-
-	npm install bulma
-
-	npm install axios
-
-	npm install vue-router
-
-	npm install highcharts
-
-	npm install highcharts-vue
+	npm install 
 
 
 -Para correr el frontend
