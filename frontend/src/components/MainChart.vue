@@ -53,6 +53,7 @@
 
 import TagSelector from './TagSelector.vue'
 import GradientSlider from './GradientSlider.vue'
+import { mapState, mapActions } from 'vuex'
 
 
 function selectColor(ratio) {
@@ -136,28 +137,29 @@ export default {
     i.setAttribute('type', 'color');
     (i.type === 'color') ? this.colorInputIsSupported = true : this.colorInputIsSupported = false
   },
+  computed: {
+    series_data() {
+      return this.$store.state.series.data
+    },
+    series_tags() {
+      return this.$store.state.series.tags
+    } 
+  },
   methods: {
+    ...mapActions([
+        'fetchData',
+        'fetchTags'
+    ]),
     loadData () {
         this.currentTag = ''
         var vm = this;
-        let requestUrl = hosturl + 'series/'
-        axios.get(requestUrl)
-            .then(function (response) {
-                vm.chartOptions.series[0].data = response.data
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+ 
+        vm.fetchData()
+            .then( () => vm.chartOptions.series[0].data = vm.series_data);
 
         //get tags list
-        requestUrl = hosturl + 'tags/'
-        axios.get(requestUrl)
-            .then(function (response) {
-                vm.seriesTags = response.data
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        vm.fetchTags()
+          .then( () => vm.seriesTags = vm.series_tags)
 
     },
     loadAnomalies () {

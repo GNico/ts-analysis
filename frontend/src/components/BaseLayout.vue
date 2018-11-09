@@ -1,83 +1,42 @@
 <template>
-    <section class="hero is-dark is-medium">
-      <!-- Hero head: will stick at the top -->
-      <div class="hero-head">
-        <nav class="navbar">
-          <div class="container">
-            <div class="navbar-brand">
-              <a class="navbar-item">
-                <img src="https://bulma.io/images/bulma-type-white.png" alt="Logo">
-              </a>
-              <span class="navbar-burger burger" data-target="navbarMenuHeroA">
-                <span></span>
-                <span></span>
-                <span></span>
-              </span>
-            </div>
-            <div id="navbarMenuHeroA" class="navbar-menu">
-              <div class="navbar-end">
-                <a class="navbar-item is-active">
-                  Home
-                </a>
-                <a class="navbar-item">
-                  Examples
-                </a>
-                <a class="navbar-item">
-                  Documentation
-                </a>
-                <span class="navbar-item">
-                  <a class="button is-primary is-inverted">
-                    <span class="icon">
-                      <i class="fab fa-github"></i>
-                    </span>
-                    <span>Download</span>
-                  </a>
-                </span>
-              </div>
+
+  <!-- <section class="hero is-primary">
+    <div class="hero-head"> -->
+      <nav class="navbar" role="navigation" aria-label="main navigation">
+          <div class="navbar-brand">
+            <a class="navbar-item" href="https://keepcon.com/" >
+              <img src="https://keepcon.com/assets/logowhite.svg" width="156" height="30">
+            </a>
+          </div>
+
+          <div class="navbar-menu">
+            <div class="navbar-start">
+                <router-link to='/' exact class="navbar-item">Manage</router-link>
+
+                <router-link to='/Visualize' exact class="navbar-item">Visualize</router-link>
+
+                <router-link to='/Anomalies' exact class="navbar-item">Anomalies</router-link>
+
+                <router-link to='/Alerts' exact class="navbar-item">Alerts</router-link>
             </div>
           </div>
-        </nav>
+      </nav>  
+  <!--  </div>
+
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title"> Time Series Analysis</h1>
       </div>
+    </div>
 
-      <!-- Hero content: will be in the middle -->
-      <div class="hero-body">
-        <div class="container has-text-centered">
-          <h1 class="title">
-            Time Series Analysis
-          </h1>
-          <h2 class="subtitle">
-            Subtitle
-          </h2>
-        </div>
-      </div>
 
-      <!-- Hero footer: will stick at the bottom -->
-      <div class="hero-foot">
-        <nav class="tabs is-boxed">
-          <div class="container">
-            <ul>
-              <router-link tag='li' to='/' exact>
-                  <a>Home</a>
-              </router-link>
-
-              <router-link tag='li' to='/Alerts'>
-                  <a>Alerts</a>
-              </router-link>
-
-              <router-link tag='li' to='/Help'>
-                  <a>Help</a>
-              </router-link>
-
-            </ul>
-          </div>
-        </nav>
-      </div>
-    </section>
+  </section> -->
 </template>
 
 
 <script>
   
+export default {}
 
 
 </script>

@@ -1,51 +1,43 @@
 <template>
-<!--Grid -->
+	
 <div class="tile is-ancestor">
-	<div class="tile is-vertical is-8">
+
+	<div class="tile is-vertical is-6">
 	  <div class="tile">
 	    <div class="tile is-parent">
-	      <div class="tile is-child is-info">
-	        <main-chart></main-chart>
+	      <div class="tile is-child">
+	      <ClientsTable></ClientsTable>
 	      </div>
 	    </div>
 	  </div>
 	  <div class="tile is-parent">
-	    <article class="tile is-child notification is-danger">
-	      <p class="title">Wide tile</p>
-	      <p class="subtitle">Aligned with the right tile</p>
-	      <div class="content">
-	        <!-- Content -->
-	      </div>
+	    <article class="tile is-child notification is-info">
+	      <ClientsLoad></ClientsLoad>
 	    </article>
 	  </div>
 	</div>
+
 	<div class="tile is-parent">
-	  <article class="tile is-child notification is-success">
+	  <article class="tile is-child notification is-info">
 	    <div class="content">
 	      <p class="title">Tall tile</p>
 	      <p class="subtitle">With even more content</p>
 	    </div>
 	  </article>
 	</div>
-	</div>
 </div>	
+
 
 </template>
 
 
-
 <script>
-	
-import MainChart from '../components/MainChart.vue';
 
+import ClientsTable from '../components/ClientsTable.vue';
+import ClientsLoad from '../components/ClientsLoad'
 
 export default {
-
-	components: { MainChart }
-
+	components: { ClientsTable, ClientsLoad }
 }
-
-
-
 
 </script>
