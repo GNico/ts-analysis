@@ -154,6 +154,7 @@ export default {
         this.currentTag = ''
         var vm = this;
  
+        //get main series data
         vm.fetchData()
             .then( () => vm.chartOptions.series[0].data = vm.series_data);
 

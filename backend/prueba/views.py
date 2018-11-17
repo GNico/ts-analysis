@@ -13,6 +13,69 @@ def index(request):
     return render(request, 'prueba/index.html', context)
 
 
+def clients(request):
+    if request.method == 'GET':
+        jsondata = [
+        {
+            'name': 'Movistar',
+            'context': ['Facebook', 'Twitter', 'Instagram'],
+            'count': 2170000,
+            'start_date': '2/10/2017',
+            'end_date': '28/2/2018'
+        },
+        {
+            'name': 'Fravega',
+            'context': ['Twitter', 'Facebook', 'Webpage'],
+            'count': 500000,
+            'start_date': '3/11/2017',
+            'end_date': '1/3/2018'
+        },
+        {
+            'name': 'Banco Galicia',
+            'context': ['Twitter', 'Facebook', 'Webpage'],
+            'count': 500000,
+            'start_date': '3/11/2017',
+            'end_date': '1/3/2018'
+        },
+        {
+            'name': 'GCBA',
+            'context': ['Twitter', 'Facebook', 'Webpage'],
+            'count': 500000,
+            'start_date': '3/11/2017',
+            'end_date': '1/3/2018'
+        },
+        {
+            'name': 'Presidencia',
+            'context': ['Twitter', 'Facebook', 'Webpage'],
+            'count': 500000,
+            'start_date': '3/11/2017',
+            'end_date': '1/3/2018'
+        },
+        {
+            'name': 'Provincia',
+            'context': ['Twitter', 'Facebook', 'Webpage'],
+            'count': 500000,
+            'start_date': '3/11/2017',
+            'end_date': '1/3/2018'
+        },
+        {
+            'name': 'Despegar - BR',
+            'context': ['Twitter', 'Facebook', 'Webpage'],
+            'count': 500000,
+            'start_date': '3/11/2017',
+            'end_date': '1/3/2018'
+        },
+        {
+            'name': 'Despegar - ES',
+            'context': ['Twitter', 'Facebook', 'Webpage'],
+            'count': 500000,
+            'start_date': '3/11/2017',
+            'end_date': '1/3/2018'
+        }]
+        return JsonResponse(jsondata, safe=False)
+
+
+
 #returns list of tags
 def tags(request):
     client = Elasticsearch()

@@ -20,6 +20,10 @@ export default {
     return {
       msg: 'Una app random App'
     }
+  },
+  created() {
+    //initialize store data structure by submitting action.
+    this.$store.dispatch('fetchClients');
   }
 }
 </script>
@@ -30,19 +34,4 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-h1, h2 {
-  font-weight: normal;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
 </style>

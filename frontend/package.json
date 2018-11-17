@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "buefy": "^0.7.0",
     "bulma": "^0.7.1",
     "bulmaswatch": "^0.7.1",
     "highcharts": "^6.1.0",

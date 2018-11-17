@@ -8,22 +8,26 @@
 			<div class="level-left">
 				<div class="level-item">
 					<label class="label">Cliente</label>
+
 				</div>
-			    <div class="level-item">
-					<bulma-select
-					  label="name"
-					  v-model="selection"
-					  placeholder="Seleccionar cliente"
-					  @type="search"
-					  :search="true"
-					  :options="dropoptions">
-					</bulma-select>
-				</div>
+				<div class="level-item">
+			            <b-autocomplete
+			                v-model="name"
+			                placeholder="Seleccionar cliente"
+			                open-on-focus
+			                :data="filteredDataArray"
+			                field="name"
+			                @select="option => selected = option">
+			                <template slot="empty">No results for {{name}}</template>
+			            </b-autocomplete>
+			     </div>
+
+			</div>
+			<div class="level-right">
 				<div class="level-item">
 					<label class="label">Rango</label>
 				</div>
 				<div class="level-item">
-					<div class="actually-not-field">
 						<vue-ctk-date-time-picker
 				            v-model="selectedRange"
 				            range-mode
@@ -34,10 +38,7 @@
 				            format="YYYY-MM-DD"
 				            formatted="DD MMM YYYY"
 				            label="" />	
-				    </div>
 				</div>
-			</div>
-			<div class="level-right">
 				<div class="level-item">
 					<button class="button is-success is-medium " @click="updateRange">
 						Actualizar
@@ -47,11 +48,6 @@
 
 
 	      </div>
-
-
-
-	     <!--  <p class="title">Wide tile</p>
-	      <p class="subtitle">Aligned with the right tile</p> -->
 
 	    </div>
 	</div>
@@ -95,13 +91,12 @@
 <script>
 	
 import MainChart from '../components/MainChart.vue';
-import BulmaSelect from '../components/BulmaSelect.vue';
 import { mapState } from 'vuex';
 
 
 export default {
 
-	components: { MainChart, BulmaSelect },
+	components: { MainChart },
 
 	data () {
 		return {
@@ -110,23 +105,24 @@ export default {
 				start: null,
 				end: null 
 			},
-			selection: null
+			selected: null,
+			name: '',
 
 		}
 	},
 	computed: {
-		clientes() {
+		clients() {
       		return this.$store.state.series.clients
     	},
     	range() {
     		return this.$store.state.series.range
-    	}
+    	},
+    	filteredDataArray() {
+            return  this.clients.filter(
+				(item) => {return item.name.toLowerCase().match(this.name.toLowerCase())} )
+        }
 	},
 	methods: {
-		search(text) {
-			this.dropoptions = this.clientes.filter(
-				(item) => {return item.name.toLowerCase().match(text.toLowerCase())} )
-		},
 		updateRange() {
 			if (selectedRange.start && selectedRange.end) {
 
@@ -135,7 +131,7 @@ export default {
 	},
 	watch: {
 		selectedRange(newValue) {
-			this.$store.commit('modify_range', newValue)
+			this.$store.commit('update_range', newValue)
 		}
 	}
 }
