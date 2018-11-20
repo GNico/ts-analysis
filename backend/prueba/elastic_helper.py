@@ -16,13 +16,6 @@ class EsHelper():
         self.conn = Elasticsearch(['localhost:9200'])
 
     #---------------------------SEARCHING--------------------------------------------
-    def getSeries(self, clientName, range, context, tags):
-
-
-
-
-
-
 
     #---------------------------INDEXING---------------------------------------------
 

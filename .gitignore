@@ -2,3 +2,4 @@
 *.pyc
 *.pyo
 *.sqlite3
+/backend/prueba/data_path.py
