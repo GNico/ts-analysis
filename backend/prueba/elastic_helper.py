@@ -15,9 +15,14 @@ class EsHelper():
     def __init__(self):
         self.conn = Elasticsearch(['localhost:9200'])
 
-    #---------------------------SEARCHING--------------------------------------------
+    #---------------------------SEARCH------------------------------------------
 
-    #---------------------------INDEXING---------------------------------------------
+
+
+
+
+
+    #---------------------------INDEXING------------------------------------------
 
     #data from new client must be in the folder "docsdir"
     def addNewClient(self, indexname, docsdir):

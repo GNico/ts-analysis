@@ -80,7 +80,7 @@ def newclient(request):
     if request.method == 'GET':
         clientName = request.GET.get('name', '')
         destDir = request.GET.get('dir', '')
-        result = es.indexDocuments(clientName, destDir)
+        result = es.addNewClient(clientName, destDir)
         jsondata = json.dumps(result)
         return JsonResponse(jsondata, safe=False)
 
