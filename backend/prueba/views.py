@@ -3,9 +3,9 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.template import loader
 import json
-from elasticsearch import Elasticsearch
 
 from . import anomaly_detector
+from . import elastic_helper
 
 def index(request):
     parametro = 'nico'
@@ -74,6 +74,15 @@ def clients(request):
         }]
         return JsonResponse(jsondata, safe=False)
 
+
+def newclient(request):
+    es = elastic_helper.EsHelper()
+    if request.method == 'GET':
+        clientName = request.GET.get('name', '')
+        destDir = request.GET.get('dir', '')
+        result = es.indexDocuments(clientName, destDir)
+        jsondata = json.dumps(result)
+        return JsonResponse(jsondata, safe=False)
 
 
 #returns list of tags

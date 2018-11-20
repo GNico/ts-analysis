@@ -4,8 +4,6 @@ from scipy import stats
 from stldecompose import decompose, forecast
 from statsmodels.tsa.seasonal import seasonal_decompose
 
-# import importlib
-# detector = importlib.import_module('thermometr')
 
 from . import thermometr
 
