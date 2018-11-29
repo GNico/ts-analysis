@@ -17,64 +17,9 @@ def index(request):
 
 
 def clients(request):
+    es = elastic_helper.EsHelper()
     if request.method == 'GET':
-        jsondata = [
-        {
-            'name': 'Movistar',
-            'context': ['Facebook', 'Twitter', 'Instagram'],
-            'count': 2170000,
-            'start_date': '2/10/2017',
-            'end_date': '28/2/2018'
-        },
-        {
-            'name': 'Fravega',
-            'context': ['Twitter', 'Facebook', 'Webpage'],
-            'count': 500000,
-            'start_date': '3/11/2017',
-            'end_date': '1/3/2018'
-        },
-        {
-            'name': 'Banco Galicia',
-            'context': ['Twitter', 'Facebook', 'Webpage'],
-            'count': 500000,
-            'start_date': '3/11/2017',
-            'end_date': '1/3/2018'
-        },
-        {
-            'name': 'GCBA',
-            'context': ['Twitter', 'Facebook', 'Webpage'],
-            'count': 500000,
-            'start_date': '3/11/2017',
-            'end_date': '1/3/2018'
-        },
-        {
-            'name': 'Presidencia',
-            'context': ['Twitter', 'Facebook', 'Webpage'],
-            'count': 500000,
-            'start_date': '3/11/2017',
-            'end_date': '1/3/2018'
-        },
-        {
-            'name': 'Provincia',
-            'context': ['Twitter', 'Facebook', 'Webpage'],
-            'count': 500000,
-            'start_date': '3/11/2017',
-            'end_date': '1/3/2018'
-        },
-        {
-            'name': 'Despegar - BR',
-            'context': ['Twitter', 'Facebook', 'Webpage'],
-            'count': 500000,
-            'start_date': '3/11/2017',
-            'end_date': '1/3/2018'
-        },
-        {
-            'name': 'Despegar - ES',
-            'context': ['Twitter', 'Facebook', 'Webpage'],
-            'count': 500000,
-            'start_date': '3/11/2017',
-            'end_date': '1/3/2018'
-        }]
+        jsondata = es.getClients()
         return JsonResponse(jsondata, safe=False)
 
 
@@ -91,64 +36,17 @@ def newclient(request):
 
 #returns list of tags
 def tags(request):
-    client = Elasticsearch()
+    es = elastic_helper.EsHelper()
     if request.method == 'GET':
-        query_tags = {
-            "aggs": {
-                "my_aggregation": {
-                    "terms":  { 
-                        "field" : "tag.keyword",
-                        "size": 10000
-                    }
-                }
-            }
-        }
-        response = client.search(index="movi*", size=0, body=query_tags)
-        jsondata = [] 
-        for element in response['aggregations']['my_aggregation']['buckets']:
-            jsondata.append(element['key'])
-
+        jsondata = es.getTags(clientname="movistar")
         return JsonResponse(jsondata, safe=False)
 
 
 def series(request):
-    client = Elasticsearch()
+    es = elastic_helper.EsHelper()
     if request.method == 'GET':
         requestedTag = request.GET.get('tag', '')
-
-        if requestedTag:
-            query = {
-                "query": {
-                    "match": {
-                        "tag": requestedTag
-                    }
-                },
-                "aggs": {
-                    "my_aggregation": {
-                        "date_histogram": {
-                            "field":     "@timestamp",
-                            "interval":  "30m"
-                        }
-                    }
-                }
-            }
-        else:
-            query = {
-                "aggs": {
-                    "my_aggregation": {
-                        "date_histogram": {
-                            "field":     "@timestamp",
-                            "interval":  "30m"
-                        }
-                    }
-                }
-            }
-
-        response = client.search(index="movi*", size=0, body=query)
-        jsondata = [] 
-        for element in response['aggregations']['my_aggregation']['buckets']:
-            jsondata.append([element['key'], element['doc_count']])
-
+        jsondata = es.getSeries(clientname="movistar", tags=[requestedTag])
         return JsonResponse(jsondata, safe=False)
 
 

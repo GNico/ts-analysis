@@ -78,7 +78,12 @@ class EsHelper():
                 }
                 query['query']['bool']['filter'].append(dict)
 
-            return self.conn.search(index=index_pattern, size=0, body=query)
+            jsondata = []
+            response = self.conn.search(index=index_pattern, size=0, body=query)
+            for element in response['aggregations']['my_aggregation']['buckets']:
+                jsondata.append([element['key'], element['doc_count']])
+
+            return jsondata
 
 
 
@@ -113,10 +118,10 @@ class EsHelper():
                                                 }
                                             }
                                         })
-        jsondata = [] 
-        for element in response['aggregations']['my_aggregation']['buckets']:
-            jsondata.append(element['key'])
-        return jsondata
+            jsondata = [] 
+            for element in response['aggregations']['my_aggregation']['buckets']:
+                jsondata.append(element['key'])
+            return jsondata
 
 
     def getTags(self, clientname):
@@ -134,10 +139,10 @@ class EsHelper():
                                                 }
                                             }
                                         })
-        jsondata = []
-        for element in response['aggregations']['my_aggregation']['buckets']:
-            jsondata.append(element['key'])
-        return jsondata
+            jsondata = []
+            for element in response['aggregations']['my_aggregation']['buckets']:
+                jsondata.append(element['key'])
+            return jsondata
 
 
     def _findClientIndex(self, clientname):
