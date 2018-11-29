@@ -6,6 +6,7 @@ import os
 
 class EsHelper():
     conn = ""
+    index_prefix = "ts-"                        #prefix added to the name of data indices 
     index_name = ""                             #index containing series data
     pipeline_id = ""            
     client_index_name = "clients"               #index containing clients and their index info
@@ -31,13 +32,43 @@ class EsHelper():
                                         }
                                     })
 
+        #create template for series data indices
+        if not self.conn.indices.exists_template(self.series_template_name):
+            idx_pattern = [ self.index_prefix + '*' ]
+            body =  {
+                "index_patterns" :  idx_pattern,
+                "settings" : {
+                    "index" : {
+                        "sort.field" : "@timestamp", 
+                        "sort.order" : "desc" 
+                    }
+                },
+                "mappings": {
+                    "_doc": {
+                        "properties": {
+                            "@timestamp": {
+                                "type": "date"
+                            },
+                            "tag": {
+                                "type": "keyword"
+                            },
+                            "context": {
+                                "type": "keyword"
+                            }
+                        }
+                    }
+                }
+            }
+            self.conn.indices.put_template(name=self.series_template_name, body=body )
+
+
 
     #---------------------------SEARCH------------------------------------------
 
 
     def getSeries(self, clientname, start='', end='', context='', tags='', interval='1H'):
         if self._findClientIndex(clientname):
-            index_pattern = self.index_name + '*'
+            index_pattern = self.index_prefix + self.index_name + '-*'
             query = {
               "query": {
                 "bool": {
@@ -68,13 +99,13 @@ class EsHelper():
                 
             if tags:
                 dict = {
-                    "terms": {"tag.keyword": tags }
+                    "terms": {"tag": tags }
                 }
                 query['query']['bool']['filter'].append(dict)
 
             if context:
                 dict = {
-                    "terms": {"context.keyword": context }
+                    "terms": {"context": context }
                 }
                 query['query']['bool']['filter'].append(dict)
 
@@ -84,7 +115,6 @@ class EsHelper():
                 jsondata.append([element['key'], element['doc_count']])
 
             return jsondata
-
 
 
     def getClients(self):
@@ -105,44 +135,44 @@ class EsHelper():
 
     def getContexts(self, clientname):
         if self._findClientIndex(clientname):
-            index_pattern = self.index_name + '*'
+            index_pattern = self.index_prefix + self.index_name + '-*'
             response = self.conn.search(index=index_pattern, 
                                         size=0, 
                                         body={
                                             "aggs": {
                                                 "my_aggregation": {
                                                     "terms":  { 
-                                                        "field" : "context.keyword",
+                                                        "field" : "context",
                                                         "size": 10000
                                                     }
                                                 }
                                             }
                                         })
-            jsondata = [] 
-            for element in response['aggregations']['my_aggregation']['buckets']:
-                jsondata.append(element['key'])
-            return jsondata
+        jsondata = [] 
+        for element in response['aggregations']['my_aggregation']['buckets']:
+            jsondata.append(element['key'])
+        return jsondata
 
 
     def getTags(self, clientname):
         if self._findClientIndex(clientname):
-            index_pattern = self.index_name + '*'
+            index_pattern = self.index_prefix + self.index_name + '-*'
             response = self.conn.search(index=index_pattern, 
                                         size=0, 
                                         body={
                                             "aggs": {
                                                 "my_aggregation": {
                                                     "terms":  { 
-                                                        "field" : "tag.keyword",
+                                                        "field" : "tag",
                                                         "size": 10000
                                                     }
                                                 }
                                             }
                                         })
-            jsondata = []
-            for element in response['aggregations']['my_aggregation']['buckets']:
-                jsondata.append(element['key'])
-            return jsondata
+        jsondata = []
+        for element in response['aggregations']['my_aggregation']['buckets']:
+            jsondata.append(element['key'])
+        return jsondata
 
 
     def _findClientIndex(self, clientname):
@@ -186,7 +216,7 @@ class EsHelper():
 
     def _indexSeriesData(self, docspath):
         result = ''
-        self._createSeriesDataTemplate()
+        #self._createSeriesDataTemplate()
         self._createPipeline()
         files = [ f for f in os.listdir(docspath) if os.path.isfile(os.path.join(docspath,f)) ]
         for filename in files:
@@ -197,37 +227,7 @@ class EsHelper():
 
 
 
-    #index template currently used to sort docs inside the segments (in thoery less indexing speed but faster queries)
-    def _createSeriesDataTemplate(self):
-        idx_pattern = [ self.index_name + '*' ]
-        if self.conn.indices.exists_template(self.series_template_name):
-            templ = self.conn.indices.get_template(self.series_template_name)
-            all_patterns = templ[self.series_template_name]['index_patterns']
-            if not idx_pattern[0] in all_patterns:
-                all_patterns.append(idx_pattern[0])
-            idx_pattern = all_patterns
-        body =  {
-            "index_patterns" :  idx_pattern,
-            "settings" : {
-                "index" : {
-                    "sort.field" : "@timestamp", 
-                    "sort.order" : "desc" 
-                }
-            },
-            "mappings": {
-                "_doc": {
-                    "properties": {
-                        "@timestamp": {
-                            "type": "date"
-                        }
-                    }
-                }
-            }
-        }
-        self.conn.indices.put_template(name=self.series_template_name, body=body )
-
-
-    #must be called before indexing to automatically create monthly indices
+    #pipeline to automatically create monthly indices
     def _createPipeline(self):
         ic = IngestClient(self.conn)
         self.pipeline_id = 'monthlyprocessor'
@@ -237,7 +237,7 @@ class EsHelper():
                         {
                           "date_index_name" : {
                             "field" : "@timestamp",
-                            "index_name_prefix" : self.index_name + "-",
+                            "index_name_prefix" : "{{ _index}}-",
                             "date_rounding" : "M",
                           }
                         }
@@ -248,14 +248,14 @@ class EsHelper():
 
     #generator to iterate over all documents and define doc structure
     def _makeDocuments(self, data):
+        full_index_name = self.index_prefix + self.index_name
         for event in data:
             doc = {
-                    '_index': self.index_name,
+                    '_index': full_index_name,
                     '_type': '_doc',
                     '_id': event['_id'],
                     'pipeline': self.pipeline_id,
                     '_source': {
-                        'id': event['_id'], 
                         '@timestamp': event['source']['date'], 
                         'tag': event['source']['tags'],
                         'context': event['source']['context']
@@ -274,7 +274,10 @@ class EsHelper():
     def deleteClient(self, clientname):
         if self.conn.exists(index=self.client_index_name, doc_type='_doc', id=clientname):
             index = self._findClientIndex(clientname)
+            full_index_name = self.index_prefix + index
             if index:
-                name = index + '*'
-                self.conn.indices.delete(name)
+                if self.conn.indices.exists(full_index_name):
+                    self.conn.indices.delete(full_index_name)
+                pattern = self.index_prefix + self.index_name + '-*'
+                self.conn.indices.delete(pattern)                
             self.conn.delete(index=self.client_index_name, doc_type='_doc', id=clientname)
