@@ -3,9 +3,12 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.template import loader
 import json
+from elasticsearch import Elasticsearch
 
 from . import anomaly_detector
 from . import elastic_helper
+from . import data_path
+
 
 def index(request):
     parametro = 'nico'
@@ -80,7 +83,8 @@ def newclient(request):
     if request.method == 'GET':
         clientName = request.GET.get('name', '')
         destDir = request.GET.get('dir', '')
-        result = es.addNewClient(clientName, destDir)
+        docspath = data_path.DATA_PATH + docsdir
+        result = es.addNewClient(clientname=clientName, docspath=docspath)
         jsondata = json.dumps(result)
         return JsonResponse(jsondata, safe=False)
 

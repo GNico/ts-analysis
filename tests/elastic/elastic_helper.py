@@ -273,3 +273,7 @@ class EsHelper():
                 name = index + '*'
                 self.conn.indices.delete(name)
             self.conn.delete(index=self.client_index_name, doc_type='_doc', id=clientname)
+   
+
+       
+
