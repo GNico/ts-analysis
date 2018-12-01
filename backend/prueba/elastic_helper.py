@@ -67,6 +67,7 @@ class EsHelper():
 
 
     def getSeries(self, clientname, start='', end='', context='', tags='', interval='1H'):
+        jsondata = []
         if self._findClientIndex(clientname):
             index_pattern = self.index_prefix + self.index_name + '-*'
             query = {
@@ -109,31 +110,32 @@ class EsHelper():
                 }
                 query['query']['bool']['filter'].append(dict)
 
-            jsondata = []
             response = self.conn.search(index=index_pattern, size=0, body=query)
             for element in response['aggregations']['my_aggregation']['buckets']:
                 jsondata.append([element['key'], element['doc_count']])
 
-            return jsondata
+        return jsondata
 
 
     def getClients(self):
         response = self.conn.search(index=self.client_index_name,
                         doc_type="_doc")
         jsondata = []
-        for element in response['hits']['hits']:
-            client = {}
-            client['name'] = element['_source'].get('name', '')
-            client['count'] = element['_source'].get('event_count', '')
-            client['start'] = element['_source'].get('oldest', '')
-            client['end'] = element['_source'].get('latest', '')
-            client['context'] = element['_source'].get('context', '')
-            jsondata.append(client)
+        if response:
+            for element in response['hits']['hits']:
+                client = {}
+                client['name'] = element['_source'].get('name', '')
+                client['count'] = element['_source'].get('event_count', '')
+                client['start'] = element['_source'].get('oldest', '')
+                client['end'] = element['_source'].get('latest', '')
+                client['context'] = element['_source'].get('context', '')
+                jsondata.append(client)
         return jsondata
 
 
 
     def getContexts(self, clientname):
+        jsondata = [] 
         if self._findClientIndex(clientname):
             index_pattern = self.index_prefix + self.index_name + '-*'
             response = self.conn.search(index=index_pattern, 
@@ -148,13 +150,13 @@ class EsHelper():
                                                 }
                                             }
                                         })
-        jsondata = [] 
-        for element in response['aggregations']['my_aggregation']['buckets']:
-            jsondata.append(element['key'])
+            for element in response['aggregations']['my_aggregation']['buckets']:
+                jsondata.append(element['key'])
         return jsondata
 
 
     def getTags(self, clientname):
+        jsondata = []
         if self._findClientIndex(clientname):
             index_pattern = self.index_prefix + self.index_name + '-*'
             response = self.conn.search(index=index_pattern, 
@@ -169,9 +171,8 @@ class EsHelper():
                                                 }
                                             }
                                         })
-        jsondata = []
-        for element in response['aggregations']['my_aggregation']['buckets']:
-            jsondata.append(element['key'])
+            for element in response['aggregations']['my_aggregation']['buckets']:
+                jsondata.append(element['key'])
         return jsondata
 
 
