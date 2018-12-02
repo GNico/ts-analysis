@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
+from rest_framework import status
+from rest_framework.decorators import api_view
 from django.template import loader
 import json
 from elasticsearch import Elasticsearch
@@ -22,15 +24,19 @@ def clients(request):
         jsondata = es.getClients()
         return JsonResponse(jsondata, safe=False)
 
-
+@api_view(['POST'])
 def newclient(request):
     es = elastic_helper.EsHelper()
-    if request.method == 'GET':
-        clientName = request.GET.get('name', '')
-        destDir = request.GET.get('dir', '')
-        docspath = data_path.DATA_PATH + docsdir
-        result = es.addNewClient(clientname=clientName, docspath=docspath)
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        clientName = data.get('name', '')
+        index_name = data.get('index_name', '')
+        destDir = data.get('folder_name', '')
+        docspath = data_path.DATA_PATH + destDir
+
+        result = es.addNewClient(clientname=clientName, indexname=index_name, docspath=docspath)
         jsondata = json.dumps(result)
+        jsondata = { 'name': 'asd' }
         return JsonResponse(jsondata, safe=False)
 
 

@@ -1,42 +1,43 @@
 <template>
-	
+    
 <div class="tile is-ancestor">
 
-	<div class="tile is-vertical is-6">
-	  <div class="tile">
-	    <div class="tile is-parent">
-	      <article class="tile is-child notification is-info">
-		    <b-table :data="clients" :columns="columns" striped hoverable focusable :selected.sync="selected"></b-table>
-		  </article>
-	    </div>
-	  </div>
-	  <div class="tile is-parent">
-	    <article class="tile is-child notification is-info">
-	      <ClientsLoad></ClientsLoad>
-	    </article>
-	  </div>
-	</div>
+    <div class="tile is-vertical is-6">
+      <div class="tile">
+        <div class="tile is-parent">
+          <article class="tile is-child notification is-info">
+            <b-table :data="clients" :columns="columns" striped hoverable focusable :selected.sync="selected"></b-table>
+          </article>
+        </div>
+      </div>
 
-	<div class="tile is-parent">
-	  <article class="tile is-child notification is-info">
-	  	<div v-if="selected">
-		  	<p class="title"> {{ selected.name }} </p>
-		  	<table class="table">
-		  		<thead>
-		  			<tr>
-		  				<th>Contexto</th>
-		  			</tr>
-		  		</thead>
-		  		<tbody>
-		  			<tr v-for='item in selected.context'>
-		  				<td>{{item}}</td>
-		  			</tr>
-		  		</tbody>
-		  	</table>
-		</div>
-	  </article>
-	</div>
-</div>	
+      <div class="tile is-parent">
+        <article class="tile is-child notification is-info">
+            <div v-if="selected">
+                <p class="title"> {{ selected.name }} </p>
+                <table class="table">
+                <thead>
+                    <tr>
+                        <th>Contexto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for='item in selected.context'>
+                        <td>{{item}}</td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="tile is-parent">
+      <article class="tile is-child notification is-info">
+        <NewClientForm></NewClientForm>
+      </article>
+    </div>
+</div>  
 
 
 </template>
@@ -44,11 +45,11 @@
 
 <script>
 
-import ClientsLoad from '../components/ClientsLoad'
+import NewClientForm from '../components/NewClientForm'
 
 export default {
-	components: {  ClientsLoad },
-	data() {
+    components: {  NewClientForm },
+    data() {
         return {
             columns: [
                 {
@@ -69,18 +70,18 @@ export default {
                 }               
             ],
             contextColumns: [
-            	{
-            		field: 'context',
-            		label: 'Contexto',
-            	}
+                {
+                    field: 'context',
+                    label: 'Contexto',
+                }
             ],
             selected: null,
         }
     },
     computed: {
-		clients() {
-      		return this.$store.state.series.clients
-    	},
+        clients() {
+            return this.$store.state.series.clients
+        },
     }
 }
 

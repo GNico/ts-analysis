@@ -1,7 +1,6 @@
 <template>
   <div id="app">
-    <!--Header with menu-->
-    <base-layout></base-layout>
+    <BaseLayout></BaseLayout>
 
     <section class='section'>
         <router-view> </router-view>
@@ -16,13 +15,8 @@ import BaseLayout from './components/BaseLayout.vue';
 export default {
   name: 'app',
   components: { BaseLayout  },
-  data () {
-    return {
-      msg: 'Una app random App'
-    }
-  },
   created() {
-    //initialize store data structure by submitting action.
+    //initialize store data structure by submitting actions
     this.$store.dispatch('fetchClients');
   }
 }

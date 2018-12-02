@@ -1,21 +1,8 @@
 const state = {
-  clients: [
-	  {
-	    'name': 'Movistar',
-	    'context': ['Facebook', 'Twitter', 'Instagram'],
-	    'count': 2170000,
-	    'start_date': '2/10/2017',
-	    'end_date': '28/2/2018'
-	  },
-	  {
-	    'name': 'Fravega',
-	    'context': ['Twitter', 'Facebook', 'Webpage'],
-	    'count': 500000,
-	    'start_date': '3/11/2017',
-	    'end_date': '1/3/2018'
-	}],
+  clients: [],
   data: [],
   tags: [],
+  contexts: [],
   range: {
   	start: null,
   	end: null

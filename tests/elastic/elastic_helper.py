@@ -200,7 +200,7 @@ class EsHelper():
     def addNewClient(self, clientname, indexname, docspath):
         self.index_name = self._cleanIndexName(indexname) if indexname else self._cleanIndexName(clientname)
         self._indexClientInfo(clientname)
-        self._indexSeriesData(docspath)   
+        return self._indexSeriesData(docspath)   
 
 
     def _indexClientInfo(self, clientname):
@@ -282,7 +282,3 @@ class EsHelper():
                 pattern = self.index_prefix + self.index_name + '-*'
                 self.conn.indices.delete(pattern)                
             self.conn.delete(index=self.client_index_name, doc_type='_doc', id=clientname)
-   
-
-       
-

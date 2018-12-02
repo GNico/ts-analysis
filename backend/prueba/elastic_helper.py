@@ -200,7 +200,7 @@ class EsHelper():
     def addNewClient(self, clientname, indexname, docspath):
         self.index_name = self._cleanIndexName(indexname) if indexname else self._cleanIndexName(clientname)
         self._indexClientInfo(clientname)
-        self._indexSeriesData(docspath)   
+        return self._indexSeriesData(docspath)   
 
 
     def _indexClientInfo(self, clientname):
