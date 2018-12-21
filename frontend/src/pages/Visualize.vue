@@ -2,152 +2,164 @@
 <!--Grid -->
 <div class="tile is-ancestor">
   <div class="tile is-vertical is-9">
-  	<div class="tile is-parent">
-	    <div class="tile is-child notification">
-	      <div class="level">
-			<div class="level-left">
-				<div class="level-item">
-					<label class="label">Cliente</label>
+    <div class="tile is-parent">
+        <div class="tile is-child notification">
+          <div class="level">
+            <div class="level-left">
+                <div class="level-item">
+                    <label class="label">Cliente</label>
+                </div>
+                <div class="level-item">
+                        <b-autocomplete
+                            v-model="name"
+                            placeholder="Seleccionar cliente"
+                            open-on-focus
+                            :data="filteredDataArray"
+                            field="name"
+                            @select="option => selected = option">
+                            <template slot="empty">No hay resultados para {{name}}</template>
+                        </b-autocomplete>
+                 </div>
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <label class="label">Desde</label>
+                </div>
+                <div class="level-item">
+                    <b-datepicker v-model="selectedRange.start"
+                        :first-day-of-week="1"
+                        placeholder="Click para seleccionar...">
 
-				</div>
-				<div class="level-item">
-			            <b-autocomplete
-			                v-model="name"
-			                placeholder="Seleccionar cliente"
-			                open-on-focus
-			                :data="filteredDataArray"
-			                field="name"
-			                @select="option => selected = option">
-			                <template slot="empty">No results for {{name}}</template>
-			            </b-autocomplete>
-			     </div>
+                        <button class="button is-primary"
+                            @click="selectedRange.start = new Date()">
+                            <b-icon icon="calendar-today"></b-icon>
+                            <span>Today</span>
+                        </button>
 
-			</div>
-			<div class="level-right">
-				<div class="level-item">
-					<label class="label">Rango</label>
-				</div>
-				<div class="level-item">
-						<vue-ctk-date-time-picker
-				            v-model="selectedRange"
-				            range-mode
-				            overlay-background
-				            locale="es"
-				            color="purple"
-				            enable-button-validate
-				            format="YYYY-MM-DD"
-				            formatted="DD MMM YYYY"
-				            label="" />	
-				</div>
-				<div class="level-item">
-					<button class="button is-success is-medium " @click="updateRange">
-						Actualizar
-					</button>					
-				</div>
-			</div>
+                        <button class="button is-danger"
+                            @click="selectedRange.start = null">
+                            <b-icon icon="close"></b-icon>
+                            <span>Clear</span>
+                        </button>
+                    </b-datepicker>
+                </div>
+                <div class="level-item">
+                    <label class="label">Hasta</label>
+                </div>
+                <div class="level-item">
+                    <b-datepicker v-model="selectedRange.end"
+                        :first-day-of-week="1"
+                        placeholder="Click para seleccionar...">
+
+                        <button class="button is-primary"
+                            @click="selectedRange.end = new Date()">
+                            <b-icon icon="calendar-today"></b-icon>
+                            <span>Today</span>
+                        </button>
+
+                        <button class="button is-danger"
+                            @click="selectedRange.end = null">
+                            <b-icon icon="close"></b-icon>
+                            <span>Clear</span>
+                        </button>
+                    </b-datepicker>
+                </div>
+                <div class="level-item">
+                    <button class="button is-success" @click="updateSeriesData">
+                        Actualizar
+                    </button>                   
+                </div>
+            </div>
 
 
-	      </div>
+          </div>
 
-	    </div>
-	</div>
+        </div>
+    </div>
 
-	  <div class="tile">
-	    <div class="tile is-parent">
-	      <div class="tile is-child">
-	        <MainChart></MainChart>
-	      </div>
-	    </div>
-	  </div>
+      <div class="tile">
+        <div class="tile is-parent">
+          <div class="tile is-child">
+            <MainChart></MainChart>
+          </div>
+        </div>
+      </div>
   </div>
 
 
 
-	<div class="tile is-parent">
-	  <div class="tile is-child is-danger notification">
-		<p class="title">Panel de control (temporario)</p>
+    <div class="tile is-parent">
+      <div class="tile is-child is-danger notification">
+        <VisualizePanel/>
+      </div>
+    </div>
 
-	  	<div class="panel-control">
-		  <label class="label">Cliente</label>
-				
-		</div>
-
-
-		<div class="panel-control">
-		  <label class="label">Rango</label>
-		</div>
-	  </div>
-	</div>
-
-	
+    
 
 
-</div>	
+</div>  
 
 </template>
 
 
 
 <script>
-	
+    
 import MainChart from '../components/MainChart.vue';
+import VisualizePanel from '../components/VisualizePanel.vue';
 import { mapState } from 'vuex';
 
 
 export default {
 
-	components: { MainChart },
+    components: { MainChart, VisualizePanel },
 
-	data () {
-		return {
-			dropoptions: [],
-			selectedRange: { 
-				start: null,
-				end: null 
-			},
-			selected: null,
-			name: '',
+    data () {
+        return {
+            selectedRange: { 
+                start: null,
+                end: null 
+            },
+            selected: null,
+            name: ''
 
-		}
-	},
-	computed: {
-		clients() {
-      		return this.$store.state.series.clients
-    	},
-    	range() {
-    		return this.$store.state.series.range
-    	},
-    	filteredDataArray() {
-            return  this.clients.filter(
-				(item) => {return item.name.toLowerCase().match(this.name.toLowerCase())} )
         }
-	},
-	methods: {
-		updateRange() {
-			if (selectedRange.start && selectedRange.end) {
+    },
+    computed: {
+        clients() {
+            return this.$store.state.series.clients
+        },
+        range() {
+            return this.$store.state.series.range
+        },
+        filteredDataArray() {
+            return  this.clients.filter(
+                (item) => {return item.name.toLowerCase().match(this.name.toLowerCase())} )
+        }
+    },
+    methods: {
+        updateSeriesData() {
+            this.$store.dispatch('fetchData');
+        }
+    },
+    watch: {
+        'selectedRange.start': function (newValue) {
+            this.$store.commit('set_start_date', newValue)
+        },
+        'selectedRange.end': function (newValue) {
+            this.$store.commit('set_end_date', newValue)
+        },
+        name(newValue) {
+            this.$store.commit('set_client_name', newValue)
+            this.$store.dispatch('fetchContexts')
+            this.$store.dispatch('fetchTags')
 
-			}
-		}
-	},
-	watch: {
-		selectedRange(newValue) {
-			this.$store.commit('update_range', newValue)
-		}
-	}
+
+        }
+    }
 }
 
 
 
 
 </script>
-
-
-<style scoped>
-
-.actually-not-field {
-	margin-bottom: -0.75rem;
-
-}
-
-
-</style>

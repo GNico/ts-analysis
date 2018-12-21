@@ -100,15 +100,18 @@ class EsHelper():
                 
             if tags:
                 dict = {
-                    "terms": {"tag": tags }
+                    "terms": {"tag": [ tags ] }
                 }
                 query['query']['bool']['filter'].append(dict)
 
             if context:
                 dict = {
-                    "terms": {"context": context }
+                    "terms": {"context": [ context ] }
                 }
                 query['query']['bool']['filter'].append(dict)
+
+            print("la query fue")
+            print(query)
 
             response = self.conn.search(index=index_pattern, size=0, body=query)
             for element in response['aggregations']['my_aggregation']['buckets']:

@@ -4,70 +4,109 @@ const state = {
   tags: [],
   contexts: [],
   range: {
-  	start: null,
-  	end: null
+    start: null,
+    end: null
   },
+  client_name: '',
+  client_context: '',
+  client_tags: '',
   loading: null
 }
 
 const namespaced = true
 
 const mutations = {
-	update_clients(state, payload) {
-		state.clients = payload
-	},
-	add_data(state, payload) {
-		state.data = payload
-	},
-	add_tags(state, payload) {
-		state.tags = payload
-	},
-	update_range(state, payload) {
-		state.range = payload
-	}
+    update_clients(state, payload) {
+        state.clients = payload
+    },
+    add_data(state, payload) {
+        state.data = payload
+    },
+    set_tags(state, payload) {
+        state.tags = payload
+    },
+    set_contexts(state, payload) {
+        state.contexts = payload
+    },
+    set_start_date(state, payload) {
+        state.range.start = payload
+    },
+    set_end_date(state, payload) {
+        state.range.end = payload
+    },
+    set_client_name(state, payload) {
+        state.client_name = payload
+    },
+    set_client_context(state, payload) {
+        state.client_context = payload
+    },
+    set_client_tags(state, payload) {
+        state.client_tags = payload
+    },
 }
 
 //hosturl = 'http://localhost:8000/prueba/'
 
 const actions = {
-	fetchClients(store) {
-		return axios.get('http://localhost:8000/prueba/clients/')
-		.then(response => {       
-	      store.commit('update_clients', response.data) 
+    fetchClients(store) {
+        return axios.get('http://localhost:8000/prueba/clients/')
+        .then(response => {       
+          store.commit('update_clients', response.data) 
 
-	    })
-	    .catch(error => { 
-	      console.log('error loading client data')
-	    })
-	},
-	fetchData(store) {
-		// sets `state.loading` to true. Show a spinner or something.
-	     console.log('data pending')
-
-		return axios.get('http://localhost:8000/prueba/series/')
-	    .then(response => {       
-	      // sets `state.loading` to false 
-	      // also sets `state.apiData to response`
-	      store.commit('add_data', response.data) 
-
-	    })
-	    .catch(error => { 
-	      // set `state.loading` to false and do something with error   
-	      console.log('error loading series data')
-	    })
-	},
-	fetchTags(store) {
-		return axios.get('http://localhost:8000/prueba/tags/')
-        .then(response => {
-	      store.commit('add_tags', response.data) 
         })
         .catch(error => { 
-            console.log('error loading tag data');
+          console.log('error loading client data')
+        })
+    },
+    fetchData(store) {
+        // sets `state.loading` to true. Show a spinner or something.
+         console.log('data pending')
+
+        return axios.get('http://localhost:8000/prueba/series/', {
+                params: {
+                  name: state.client_name,
+                  tags: state.client_tags,
+                  contexts: state.client_context,
+                  start: state.range.start,
+                  end: state.range.end
+                }
+        })
+        .then(response => {       
+          // sets `state.loading` to false 
+          // also sets `state.apiData to response`
+          store.commit('add_data', response.data) 
+        })
+        .catch(error => { 
+          // set `state.loading` to false and do something with error   
+          console.log('error loading series data')
+        })
+    },
+    fetchContexts(store) {
+        return axios.get('http://localhost:8000/prueba/contexts/', {
+                params: {
+                    name: state.client_name
+                }
+        })
+        .then(response => {
+          store.commit('set_contexts', response.data) 
+        })
+        .catch(error => { 
+            console.log('error loading contexts data');
         });
-	},
-	updateData(store) {
-		//fetch new data based on currentclient and range
-	}
+    },
+    fetchTags(store) {
+        return axios.get('http://localhost:8000/prueba/tags/', {
+                params: {
+                    name: state.client_name
+                }
+        })
+        .then(response => {
+          store.commit('set_tags', response.data) 
+        })
+        .catch(error => { 
+            console.log('error loading tags data');
+        });
+    }
 }
 
 export default {

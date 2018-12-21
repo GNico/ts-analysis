@@ -1,15 +1,14 @@
 <template>
-  <div id="app">
-    <BaseLayout></BaseLayout>
-
-    <section class='section'>
-        <router-view> </router-view>
-    </section>
-  </div>
+<div id="app">
+  <BaseLayout/>
+  <section class='section'>
+      <router-view> </router-view>
+  </section>
+</div>
 </template>
 
-<script>
 
+<script>
 import BaseLayout from './components/BaseLayout.vue';
 
 export default {

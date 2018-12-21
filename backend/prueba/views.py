@@ -44,15 +44,32 @@ def newclient(request):
 def tags(request):
     es = elastic_helper.EsHelper()
     if request.method == 'GET':
-        jsondata = es.getTags(clientname="movistar")
+        clientname = request.GET.get('name', '')
+        jsondata = es.getTags(clientname=clientname)
         return JsonResponse(jsondata, safe=False)
+
+#returns list of contexts
+def contexts(request):
+    es = elastic_helper.EsHelper()
+    if request.method == 'GET':
+        clientname = request.GET.get('name', '')
+        jsondata = es.getContexts(clientname=clientname)
+        return JsonResponse(jsondata, safe=False)        
 
 
 def series(request):
     es = elastic_helper.EsHelper()
     if request.method == 'GET':
-        requestedTag = request.GET.get('tag', '')
-        jsondata = es.getSeries(clientname="movistar", tags=[requestedTag])
+        requestedName = request.GET.get('name', '')
+        requestedTags = request.GET.get('tags', '')
+        requestedContext= request.GET.get('contexts', '')
+        requestedStart = request.GET.get('start', '')
+        requestedEnd = request.GET.get('end', '')
+        jsondata = es.getSeries(clientname=requestedName, 
+                                context=requestedContext, 
+                                tags=requestedTags,
+                                start=requestedStart,
+                                end=requestedEnd)
         return JsonResponse(jsondata, safe=False)
 
 
