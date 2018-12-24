@@ -122,8 +122,8 @@ export default {
             },
             selected: null,
             name: '',
-            chartColor: "ffffff",
-            chartType: "Line"
+            chartColor: "#6fcd98",
+            chartType: "line"
 
         }
     },

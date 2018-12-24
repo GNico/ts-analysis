@@ -15,11 +15,11 @@ export default {
     },
     chartType: {
         type: String,
-        default: 'Line'
+        default: 'line'
     },
     color: {
         type: String,
-        default: '6fcd98'
+        default: '#6fcd98'
     },  
   },  
   data () {
@@ -34,7 +34,7 @@ export default {
     chartOptions() {
         return {
             chart: {
-              type: 'line',
+              type: this.chartType,
               zoomType: 'xy',
               panning: true,
             },
@@ -55,7 +55,7 @@ export default {
             },
             series: [{
               data: this.series_data,
-              color: this.seriesColor
+              color: this.color
             }]
         }
     } 
