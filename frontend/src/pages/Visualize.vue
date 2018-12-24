@@ -90,7 +90,7 @@
 
     <div class="tile is-parent">
       <div class="tile is-child notification">
-        <VisualizePanel @color-changed="changeSeriesColor"/>
+        <VisualizePanel @color-changed="changeSeriesColor" @type-changed="changeChartType"/>
       </div>
     </div>
 
@@ -145,6 +145,9 @@ export default {
         },
         changeSeriesColor(event) {
             this.chartColor = event.selected
+        },
+        changeChartType(event) {
+            this.chartType = event.selected
         }
     },
     watch: {

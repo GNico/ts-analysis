@@ -28,13 +28,13 @@
     </b-field>
 
     <b-field label="Tipo de grafico">
-        <select v-model="chartType">
-            <option>Line</option>
-            <option>AreaSpline</option>
-            <option>Spline</option>
-            <option>Scatter</option>
-            <option>Column</option>
-            <option>Area</option>
+        <select v-model="chartType" v-on:change="changeChartType">
+            <option>line</option>
+            <option>areaspline</option>
+            <option>spline</option>
+            <option>scatter</option>
+            <option>column</option>
+            <option>area</option>
         </select>    
     </b-field>
 
@@ -87,8 +87,10 @@ export default {
             this.$store.commit('set_client_tags', option)
         },
         changeColor(event) {
-            console.log('cambio color llego evento a panel')
             this.$emit('color-changed', event)
+        },
+        changeChartType() {
+            this.$emit('type-changed', {selected: this.chartType})
         }
     }
 
