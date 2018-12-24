@@ -80,7 +80,7 @@
       <div class="tile">
         <div class="tile is-parent">
           <div class="tile is-child">
-            <MainChart></MainChart>
+            <MainChart :color="chartColor" :chartType="chartType"></MainChart>
           </div>
         </div>
       </div>
@@ -89,8 +89,8 @@
 
 
     <div class="tile is-parent">
-      <div class="tile is-child is-danger notification">
-        <VisualizePanel/>
+      <div class="tile is-child notification">
+        <VisualizePanel @color-changed="changeSeriesColor"/>
       </div>
     </div>
 
@@ -121,7 +121,9 @@ export default {
                 end: null 
             },
             selected: null,
-            name: ''
+            name: '',
+            chartColor: "ffffff",
+            chartType: "Line"
 
         }
     },
@@ -140,6 +142,9 @@ export default {
     methods: {
         updateSeriesData() {
             this.$store.dispatch('fetchData');
+        },
+        changeSeriesColor(event) {
+            this.chartColor = event.selected
         }
     },
     watch: {
@@ -153,8 +158,6 @@ export default {
             this.$store.commit('set_client_name', newValue)
             this.$store.dispatch('fetchContexts')
             this.$store.dispatch('fetchTags')
-
-
         }
     }
 }

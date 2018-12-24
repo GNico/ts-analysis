@@ -73,42 +73,20 @@ def series(request):
         return JsonResponse(jsondata, safe=False)
 
 
-def anomaly(request):
-    client = Elasticsearch()
+def anomalies(request):
+    es = elastic_helper.EsHelper()
     if request.method == 'GET':
-        requestedTag = request.GET.get('tag', '')
+        requestedName = request.GET.get('name', '')
+        requestedTags = request.GET.get('tags', '')
+        requestedContext= request.GET.get('contexts', '')
+        requestedStart = request.GET.get('start', '')
+        requestedEnd = request.GET.get('end', '')
+        series = es.getSeries(clientname=requestedName, 
+                                context=requestedContext, 
+                                tags=requestedTags,
+                                start=requestedStart,
+                                end=requestedEnd)
 
-        if requestedTag:
-            query = {
-                "query": {
-                    "match": {
-                        "tag": requestedTag
-                    }
-                },
-                "aggs": {
-                    "my_aggregation": {
-                        "date_histogram": {
-                            "field":     "@timestamp",
-                            "interval":  "30m"
-                        }
-                    }
-                }
-            }
-        else:
-            query = {
-                "aggs": {
-                    "my_aggregation": {
-                        "date_histogram": {
-                            "field":     "@timestamp",
-                            "interval":  "30m"
-                        }
-                    }
-                }
-            }
-
-        response = client.search(index="movi*", size=0, body=query)
-
-        jsondata = anomaly_detector.detectAnomalies(response)
-
+        jsondata = anomaly_detector.detectAnomalies(series)
         return JsonResponse(jsondata, safe=False)
 

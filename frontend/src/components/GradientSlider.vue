@@ -1,8 +1,5 @@
 <template>
-  <div class="slidecontainer">  
-  <p>Score filter:</p> 
   <input type="range" class="slider" min="1" max="100" v-model:value="value" v-on:change="valueChangedEvent">
-  </div>
 </template>
 
 <script>

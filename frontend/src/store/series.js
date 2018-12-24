@@ -1,6 +1,7 @@
 const state = {
   clients: [],
   data: [],
+  anomalies: [],
   tags: [],
   contexts: [],
   range: {
@@ -42,6 +43,9 @@ const mutations = {
     },
     set_client_tags(state, payload) {
         state.client_tags = payload
+    },
+    set_anomalies(state, payload) {
+        state.anomalies = payload
     },
 }
 
@@ -106,6 +110,23 @@ const actions = {
         .catch(error => { 
             console.log('error loading tags data');
         });
+    },
+    fetchAnomalies(store) {
+        return axios.get('http://localhost:8000/prueba/anomalies/', {
+                params: {
+                  name: state.client_name,
+                  tags: state.client_tags,
+                  contexts: state.client_context,
+                  start: state.range.start,
+                  end: state.range.end
+                }
+        })
+        .then(response => {       
+          store.commit('set_anomalies', response.data) 
+        })
+        .catch(error => { 
+          console.log('error retrieving anomalies')
+        })
     }
 }
 
