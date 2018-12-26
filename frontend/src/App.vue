@@ -1,6 +1,6 @@
 <template>
 <div id="app">
-  <BaseLayout/>
+  <TheNavBar/>
   <section class='section'>
       <router-view> </router-view>
   </section>
@@ -9,11 +9,11 @@
 
 
 <script>
-import BaseLayout from './components/BaseLayout.vue';
+import TheNavBar from './layout/TheNavBar.vue';
 
 export default {
   name: 'app',
-  components: { BaseLayout  },
+  components: { TheNavBar  },
   created() {
     //initialize store data structure by submitting actions
     this.$store.dispatch('fetchClients');

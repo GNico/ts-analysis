@@ -80,7 +80,7 @@
       <div class="tile">
         <div class="tile is-parent">
           <div class="tile is-child">
-            <MainChart :color="chartColor" :chartType="chartType"></MainChart>
+            <MainChart :chartData="seriesData" :color="chartColor" :chartType="chartType"></MainChart>
           </div>
         </div>
       </div>
@@ -90,11 +90,16 @@
 
     <div class="tile is-parent">
       <div class="tile is-child notification">
-        <VisualizePanel @color-changed="changeSeriesColor" @type-changed="changeChartType"/>
+        <VisualizePanel 
+            :contexts="contexts"
+            :tags="tags"
+            @context-selected="changeContext" 
+            @tag-selected="changeTag" 
+            @color-selected="changeSeriesColor" 
+            @type-selected="changeChartType"
+        />
       </div>
     </div>
-
-    
 
 
 </div>  
@@ -131,8 +136,17 @@ export default {
         clients() {
             return this.$store.state.series.clients
         },
+        contexts() {
+            return this.$store.state.series.contexts
+        },
+        tags() {
+            return this.$store.state.series.tags
+        },
         range() {
             return this.$store.state.series.range
+        },
+        seriesData() {
+            return this.$store.state.series.data
         },
         filteredDataArray() {
             return  this.clients.filter(
@@ -148,6 +162,12 @@ export default {
         },
         changeChartType(event) {
             this.chartType = event.selected
+        },
+        changeContext(event) {
+            this.$store.commit('set_current_context', event.selected)
+        },
+        changeTag(event) {
+            this.$store.commit('set_current_tag', event.selected)
         }
     },
     watch: {
@@ -158,7 +178,7 @@ export default {
             this.$store.commit('set_end_date', newValue)
         },
         name(newValue) {
-            this.$store.commit('set_client_name', newValue)
+            this.$store.commit('set_current_client', newValue)
             this.$store.dispatch('fetchContexts')
             this.$store.dispatch('fetchTags')
         }

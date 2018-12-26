@@ -51,7 +51,7 @@
  <script>
 
 export default {
-  name: 'NewClientForm',
+  name: 'FormNewClient',
 	data() {
     return {
         form: {

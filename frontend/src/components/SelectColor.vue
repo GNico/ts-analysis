@@ -25,7 +25,7 @@
 <script>
 
 export default {
-    name: "ColorSelect",
+    name: "SelectColor",
     data () {
         return {
             currentColor: '#6fcd98',

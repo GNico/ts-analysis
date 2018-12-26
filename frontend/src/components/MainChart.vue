@@ -1,7 +1,5 @@
 <template>
-  <div class="chartElem">
     <highcharts class="chart" :options="chartOptions" :updateArgs="updateArgs"></highcharts>
-  </div>
 </template>
 
 <script>
@@ -9,6 +7,9 @@
 
 export default {
   props: {
+    chartData: {
+        default: [],
+    },
     title: {
         type: String,
         default: ''
@@ -28,9 +29,6 @@ export default {
     }
   },
   computed: {
-    series_data() {
-      return this.$store.state.series.data
-    },
     chartOptions() {
         return {
             chart: {
@@ -54,7 +52,7 @@ export default {
                 enabled: true
             },
             series: [{
-              data: this.series_data,
+              data: this.chartData,
               color: this.color
             }]
         }

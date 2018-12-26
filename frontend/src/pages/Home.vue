@@ -34,7 +34,7 @@
 
     <div class="tile is-parent">
       <article class="tile is-child notification is-info">
-        <NewClientForm></NewClientForm>
+        <FormNewClient/>
       </article>
     </div>
 </div>  
@@ -45,10 +45,10 @@
 
 <script>
 
-import NewClientForm from '../components/NewClientForm'
+import FormNewClient from '../components/FormNewClient'
 
 export default {
-    components: {  NewClientForm },
+    components: {  FormNewClient },
     data() {
         return {
             columns: [

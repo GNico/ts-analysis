@@ -8,9 +8,9 @@ const state = {
     start: null,
     end: null
   },
-  client_name: '',
-  client_context: '',
-  client_tags: '',
+  clientName: '',
+  clientContext: '',
+  clientTags: '',
   loading: null
 }
 
@@ -35,14 +35,14 @@ const mutations = {
     set_end_date(state, payload) {
         state.range.end = payload
     },
-    set_client_name(state, payload) {
-        state.client_name = payload
+    set_current_client(state, payload) {
+        state.clientName = payload
     },
-    set_client_context(state, payload) {
-        state.client_context = payload
+    set_current_context(state, payload) {
+        state.currentContext = payload
     },
-    set_client_tags(state, payload) {
-        state.client_tags = payload
+    set_current_tag(state, payload) {
+        state.clientTags = payload
     },
     set_anomalies(state, payload) {
         state.anomalies = payload
@@ -68,9 +68,9 @@ const actions = {
 
         return axios.get('http://localhost:8000/prueba/series/', {
                 params: {
-                  name: state.client_name,
-                  tags: state.client_tags,
-                  contexts: state.client_context,
+                  name: state.clientName,
+                  tags: state.clientTags,
+                  contexts: state.clientContext,
                   start: state.range.start,
                   end: state.range.end
                 }
@@ -88,7 +88,7 @@ const actions = {
     fetchContexts(store) {
         return axios.get('http://localhost:8000/prueba/contexts/', {
                 params: {
-                    name: state.client_name
+                    name: state.clientName
                 }
         })
         .then(response => {
@@ -101,7 +101,7 @@ const actions = {
     fetchTags(store) {
         return axios.get('http://localhost:8000/prueba/tags/', {
                 params: {
-                    name: state.client_name
+                    name: state.clientName
                 }
         })
         .then(response => {
@@ -114,9 +114,9 @@ const actions = {
     fetchAnomalies(store) {
         return axios.get('http://localhost:8000/prueba/anomalies/', {
                 params: {
-                  name: state.client_name,
-                  tags: state.client_tags,
-                  contexts: state.client_context,
+                  name: state.clientName,
+                  tags: state.clientTags,
+                  contexts: state.clientContext,
                   start: state.range.start,
                   end: state.range.end
                 }

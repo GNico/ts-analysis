@@ -10,7 +10,6 @@
             keep-first
             :data="filteredContextArray"
             @select="option => changeContext(option)">
-
             <template slot="empty">No hay resultados</template>
         </b-autocomplete>    
     </b-field>
@@ -28,19 +27,12 @@
     </b-field>
 
     <b-field label="Tipo de grafico">
-        <select v-model="chartType" v-on:change="changeChartType">
-            <option>line</option>
-            <option>areaspline</option>
-            <option>spline</option>
-            <option>scatter</option>
-            <option>column</option>
-            <option>area</option>
-        </select>    
+        <SelectChartType @selected="changeChartType"/> 
     </b-field>
 
 
     <b-field label="Color">
-        <ColorSelect @selected="changeColor"> </ColorSelect>
+        <SelectColor @selected="changeColor"/> 
     </b-field>
 
 </div>
@@ -50,26 +42,30 @@
 
 <script>
 
-import ColorSelect from './ColorSelect.vue';
+import SelectColor from './SelectColor.vue';
+import SelectChartType from './SelectChartType.vue';
 import GradientSlider from './GradientSlider.vue';
 
 export default {
     name: "VisualizePanel",
-    components: { ColorSelect, GradientSlider },
+    components: { SelectColor, SelectChartType, GradientSlider },
+    props: {
+        contexts: {
+            type: Array,
+            default: []
+        },
+        tags: {
+            type: Array,
+            default: []
+        }
+    },
     data () {
         return {
             context_input: '',
             tag_input: '',
-            chartType: 'Line',
         }
     },
     computed: {
-        contexts() {
-            return this.$store.state.series.contexts
-        },
-        tags() {
-            return this.$store.state.series.tags
-        },
         filteredContextArray() {
             return  this.contexts.filter(
                 (item) => {return item.toLowerCase().match(this.context_input.toLowerCase())} )
@@ -81,16 +77,16 @@ export default {
     },
     methods: {
         changeContext(option) {
-           this.$store.commit('set_client_context', option)
+            this.$emit('context-selected', {selected: option})
         },
         changeTag(option) {
-            this.$store.commit('set_client_tags', option)
+            this.$emit('tag-selected', {selected: option})
         },
         changeColor(event) {
-            this.$emit('color-changed', event)
+            this.$emit('color-selected', event)
         },
-        changeChartType() {
-            this.$emit('type-changed', {selected: this.chartType})
+        changeChartType(event) {
+            this.$emit('type-selected', event)
         }
     }
 
