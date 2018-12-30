@@ -39,7 +39,7 @@ const mutations = {
         state.clientName = payload
     },
     set_current_context(state, payload) {
-        state.currentContext = payload
+        state.clientContext = payload
     },
     set_current_tag(state, payload) {
         state.clientTags = payload

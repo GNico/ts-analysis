@@ -158,7 +158,7 @@ export default {
             this.$store.dispatch('fetchData');
         },
         changeSeriesColor(event) {
-            this.chartColor = event.selected
+            this.chartColor = event
         },
         changeChartType(event) {
             this.chartType = event.selected

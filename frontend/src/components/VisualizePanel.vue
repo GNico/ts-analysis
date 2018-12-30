@@ -3,28 +3,21 @@
     <p class="title">Panel de control (temporario)</p>
 
     <b-field label="Contexto">
-        <b-autocomplete
-            v-model="context_input"
+        <SearchSelect 
+            v-model="context_input" 
+            :data="contexts"
             placeholder="Seleccionar contexto"
-            open-on-focus
-            keep-first
-            :data="filteredContextArray"
-            @select="option => changeContext(option)">
-            <template slot="empty">No hay resultados</template>
-        </b-autocomplete>    
+            @selected="changeContext"/>
     </b-field>
 
     <b-field label="Tag">
-        <b-autocomplete
-            v-model="tag_input"
+        <SearchSelect 
+            v-model="tag_input" 
+            :data="tags"
             placeholder="Seleccionar tag"
-            open-on-focus
-            keep-first
-            :data="filteredTagArray"
-            @select="option => changeTag(option)">
-            <template slot="empty">No hay resultados</template>
-        </b-autocomplete>    
+            @selected="changeTag"/>
     </b-field>
+
 
     <b-field label="Tipo de grafico">
         <SelectChartType @selected="changeChartType"/> 
@@ -32,7 +25,7 @@
 
 
     <b-field label="Color">
-        <SelectColor @selected="changeColor"/> 
+        <SelectColor v-model="color"/> 
     </b-field>
 
 </div>
@@ -44,11 +37,11 @@
 
 import SelectColor from './SelectColor.vue';
 import SelectChartType from './SelectChartType.vue';
-import GradientSlider from './GradientSlider.vue';
+import SearchSelect from './SearchSelect.vue';
 
 export default {
     name: "VisualizePanel",
-    components: { SelectColor, SelectChartType, GradientSlider },
+    components: { SelectColor, SelectChartType, SearchSelect },
     props: {
         contexts: {
             type: Array,
@@ -63,17 +56,8 @@ export default {
         return {
             context_input: '',
             tag_input: '',
+            color: '#6fcd98'
         }
-    },
-    computed: {
-        filteredContextArray() {
-            return  this.contexts.filter(
-                (item) => {return item.toLowerCase().match(this.context_input.toLowerCase())} )
-        },
-        filteredTagArray() {
-            return  this.tags.filter(
-                (item) => {return item.toLowerCase().match(this.tag_input.toLowerCase())} )
-        },        
     },
     methods: {
         changeContext(option) {
@@ -82,12 +66,14 @@ export default {
         changeTag(option) {
             this.$emit('tag-selected', {selected: option})
         },
-        changeColor(event) {
-            this.$emit('color-selected', event)
-        },
         changeChartType(event) {
             this.$emit('type-selected', event)
-        }
+        },
+    },
+    watch: {
+        color(newValue) {
+            this.$emit('color-selected', this.color)
+        },
     }
 
 
