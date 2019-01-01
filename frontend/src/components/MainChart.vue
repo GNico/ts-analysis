@@ -33,6 +33,7 @@ export default {
         return {
             chart: {
               type: this.chartType,
+              height: '40%',
               zoomType: 'xy',
               panning: true,
             },

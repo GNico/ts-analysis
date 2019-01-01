@@ -10,15 +10,10 @@
                     <label class="label">Cliente</label>
                 </div>
                 <div class="level-item">
-                        <b-autocomplete
-                            v-model="name"
-                            placeholder="Seleccionar cliente"
-                            open-on-focus
-                            :data="filteredDataArray"
-                            field="name"
-                            @select="option => selected = option">
-                            <template slot="empty">No hay resultados para {{name}}</template>
-                        </b-autocomplete>
+                    <SearchSelect 
+                        v-model="clientName" 
+                        :data="clientsSelectOptions"
+                        placeholder="Seleccionar cliente" />
                  </div>
             </div>
             <div class="level-right">
@@ -90,7 +85,7 @@
 
     <div class="tile is-parent">
       <div class="tile is-child notification">
-        <VisualizePanel 
+        <SettingsSeries 
             :contexts="contexts"
             :tags="tags"
             @context-selected="changeContext" 
@@ -111,13 +106,15 @@
 <script>
     
 import MainChart from '../components/MainChart.vue';
-import VisualizePanel from '../components/VisualizePanel.vue';
+import SettingsSeries from '../components/SettingsSeries.vue';
+import SearchSelect from '../components/SearchSelect.vue';
+
 import { mapState } from 'vuex';
 
 
 export default {
 
-    components: { MainChart, VisualizePanel },
+    components: { MainChart, SettingsSeries, SearchSelect },
 
     data () {
         return {
@@ -125,8 +122,7 @@ export default {
                 start: null,
                 end: null 
             },
-            selected: null,
-            name: '',
+            clientName: '',
             chartColor: "#6fcd98",
             chartType: "line"
 
@@ -135,6 +131,9 @@ export default {
     computed: {
         clients() {
             return this.$store.state.series.clients
+        },
+        clientsSelectOptions() {
+            return this.clients.map(item => item.name);
         },
         contexts() {
             return this.$store.state.series.contexts
@@ -148,10 +147,6 @@ export default {
         seriesData() {
             return this.$store.state.series.data
         },
-        filteredDataArray() {
-            return  this.clients.filter(
-                (item) => {return item.name.toLowerCase().match(this.name.toLowerCase())} )
-        }
     },
     methods: {
         updateSeriesData() {
@@ -177,10 +172,8 @@ export default {
         'selectedRange.end': function (newValue) {
             this.$store.commit('set_end_date', newValue)
         },
-        name(newValue) {
-            this.$store.commit('set_current_client', newValue)
-            this.$store.dispatch('fetchContexts')
-            this.$store.dispatch('fetchTags')
+        clientName(newValue) {
+            this.$store.dispatch('changeCurrentClient', newValue)
         }
     }
 }

@@ -127,6 +127,16 @@ const actions = {
         .catch(error => { 
           console.log('error retrieving anomalies')
         })
+    },
+    changeCurrentClient(store, data) {
+        store.commit("set_current_client", data)
+        if (data) {
+            store.dispatch('fetchContexts')
+            store.dispatch('fetchTags')
+        } else {
+            store.commit('set_current_tag', '')
+            store.commit('set_current_context', '')           
+        }
     }
 }
 

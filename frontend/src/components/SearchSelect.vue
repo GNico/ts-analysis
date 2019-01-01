@@ -37,7 +37,7 @@ export default {
     },
     data () {
         return {
-            inputValue: this.value
+            inputValue: this.value || ''
         }
     },
     computed: {
