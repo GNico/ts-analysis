@@ -1,20 +1,30 @@
 <template>
 <!--Grid -->
 <div class="tile is-ancestor">
-  <div class="tile is-vertical is-9">
+
+          <div class="tile is-parent is-2">
+              <div class="tile is-child notification">
+                <SettingsSeries 
+                    :clients="clientsSelectOptions"
+                    :contexts="contexts"
+                    :tags="tags"
+                    @context-selected="changeContext" 
+                    @client-selected="changeClient"
+                    @tag-selected="changeTag" 
+                    @color-selected="changeSeriesColor" 
+                    @type-selected="changeChartType"
+                />
+              </div>
+          </div>
+
+
+  <div class="tile is-vertical ">
     <div class="tile is-parent">
         <div class="tile is-child notification">
+         
+
           <div class="level">
-            <div class="level-left">
-                <div class="level-item">
-                    <label class="label">Cliente</label>
-                </div>
-                <div class="level-item">
-                    <SearchSelect 
-                        v-model="clientName" 
-                        :data="clientsSelectOptions"
-                        placeholder="Seleccionar cliente" />
-                 </div>
+            <div class="level-left">  
             </div>
             <div class="level-right">
                 <div class="level-item">
@@ -65,9 +75,8 @@
                     </button>                   
                 </div>
             </div>
+        </div>
 
-
-          </div>
 
         </div>
     </div>
@@ -83,18 +92,20 @@
 
 
 
-    <div class="tile is-parent">
+    <!-- <div class="tile is-parent">
       <div class="tile is-child notification">
         <SettingsSeries 
+            :clients="clientsSelectOptions"
             :contexts="contexts"
             :tags="tags"
             @context-selected="changeContext" 
+            @client-selected="changeClient"
             @tag-selected="changeTag" 
             @color-selected="changeSeriesColor" 
             @type-selected="changeChartType"
         />
       </div>
-    </div>
+    </div> -->
 
 
 </div>  
@@ -158,6 +169,9 @@ export default {
         changeChartType(event) {
             this.chartType = event.selected
         },
+        changeClient(event) {
+            this.$store.dispatch('changeCurrentClient', event.selected)
+        },
         changeContext(event) {
             this.$store.commit('set_current_context', event.selected)
         },
@@ -172,9 +186,6 @@ export default {
         'selectedRange.end': function (newValue) {
             this.$store.commit('set_end_date', newValue)
         },
-        clientName(newValue) {
-            this.$store.dispatch('changeCurrentClient', newValue)
-        }
     }
 }
 
