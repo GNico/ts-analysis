@@ -1,25 +1,42 @@
 <template>
 <!--Grid -->
 <div class="tile is-ancestor">
+
   <div class="tile is-parent is-2">
-      <div class="tile is-child notification">
+      <div class="tile is-child box">
 
-        <SettingsSeries 
-            :clients="clientsSelectOptions"
-            :contexts="contexts"
-            :tags="tags"
-            @context-selected="changeContext" 
-            @client-selected="changeClient"
-            @tag-selected="changeTag" 
-            @color-selected="changeSeriesColor" 
-            @type-selected="changeChartType"
-            @update="updateSeriesData"/>
 
+            <b-tabs position="is-centered" type="is-toggle" size="is-medium" expanded>
+                <b-tab-item label="Series">
+                    <div class="tab-item-content">
+                        <SettingsSeries 
+                            :clients="clientsSelectOptions"
+                            :contexts="contexts"
+                            :tags="tags"
+                            @context-selected="changeContext" 
+                            @client-selected="changeClient"
+                            @tag-selected="changeTag" 
+                            @color-selected="changeSeriesColor" 
+                            @type-selected="changeChartType"
+                            @update="updateSeriesData"/>
+                    </div>
+
+                </b-tab-item>
+                <b-tab-item label="Analisis">
+                    <div class="tab-item-content">
+                        <SettingsAnalysis @analize="startAnalysis"/>
+                    </div>
+                </b-tab-item>
+
+            </b-tabs>
+        
       </div>
   </div>
+
+
   <div class="tile is-vertical ">
-    <div class="tile is-parent">
-        <div class="tile is-child notification">
+    <div class="tile is-parent ">
+        <div class="tile is-child box ">
 
           <DateRangeSelect :value="range" @input="changeRange"/>
 
@@ -51,6 +68,7 @@
     
 import MainChart from '../components/MainChart.vue';
 import SettingsSeries from '../components/SettingsSeries.vue';
+import SettingsAnalysis from '../components/SettingsAnalysis.vue';
 import DateRangeSelect from '../components/DateRangeSelect.vue';
 
 import { mapState } from 'vuex';
@@ -58,7 +76,7 @@ import { mapState } from 'vuex';
 
 export default {
 
-    components: { MainChart, SettingsSeries, DateRangeSelect },
+    components: { MainChart, SettingsSeries, SettingsAnalysis, DateRangeSelect },
 
     data () {
         return {
@@ -96,6 +114,9 @@ export default {
         updateSeriesData() {
             this.$store.dispatch('fetchData');
         },
+        startAnalysis() {
+            this.$store.dispatch('fetchAnomalies');
+        },
         changeSeriesColor(event) {
             this.chartColor = event
         },
@@ -122,3 +143,11 @@ export default {
 
 
 </script>
+
+
+<style>
+.tab-item-content {
+    margin-top: 1rem;
+}
+
+</style>

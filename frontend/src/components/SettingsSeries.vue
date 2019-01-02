@@ -1,8 +1,6 @@
 <template>
 <div>
 
-    <p class="title">Panel de control (temporario)</p>
-
     <b-field label="Cliente">
         <SearchSelect 
             v-model="client_input" 

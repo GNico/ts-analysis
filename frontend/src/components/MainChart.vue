@@ -36,6 +36,7 @@ export default {
               height: '40%',
               zoomType: 'xy',
               panning: true,
+              panKey: 'shift'
             },
             title: {
               text: this.title

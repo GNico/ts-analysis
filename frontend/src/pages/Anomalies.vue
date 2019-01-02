@@ -3,9 +3,27 @@
 
 
     
-<!-- <div class="columns">
+ <div class="columns">
     <div class="column is-one-fifth">
-            <nav class="panel">
+
+          <!--  <section class="message">
+            <div class="message-header">
+              <p>alalah</p>
+            </div>
+            <div class="message-body">
+              <p>button ?</p>
+              <b-dropdown hoverable>
+                  <button class="button is-primary" slot="trigger">
+                      <span>Click me!</span>
+                  </button>
+
+                  <b-dropdown-item>Action</b-dropdown-item>
+                  <b-dropdown-item>Another action</b-dropdown-item>
+                  <b-dropdown-item>Something else</b-dropdown-item>
+              </b-dropdown>
+            </div>
+          </section>  -->
+             <nav class="panel">
             
               <p class="panel-tabs">
                 <a class="is-active">Visualize</a>
@@ -51,7 +69,7 @@
                   reset all filters
                 </button>
               </div>
-            </nav>
+            </nav> 
     </div>
 
     <div class="column is-one-fifth is-offset-4">
@@ -79,7 +97,7 @@
         </div>
     </div>
 
-</div> -->
+</div> 
 
 </template>
 

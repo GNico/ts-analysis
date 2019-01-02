@@ -65,6 +65,7 @@ def series(request):
         requestedContext= request.GET.get('contexts', '')
         requestedStart = request.GET.get('start', '')
         requestedEnd = request.GET.get('end', '')
+        requestedEnd = request.GET.get('interval', '1H')
         jsondata = es.getSeries(clientname=requestedName, 
                                 context=requestedContext, 
                                 tags=requestedTags,
@@ -81,6 +82,8 @@ def anomalies(request):
         requestedContext= request.GET.get('contexts', '')
         requestedStart = request.GET.get('start', '')
         requestedEnd = request.GET.get('end', '')
+        requestedEnd = request.GET.get('interval', '1H')
+
         series = es.getSeries(clientname=requestedName, 
                                 context=requestedContext, 
                                 tags=requestedTags,
