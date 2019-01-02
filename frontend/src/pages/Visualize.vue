@@ -1,99 +1,9 @@
 <template>
 <!--Grid -->
 <div class="tile is-ancestor">
-
-          <div class="tile is-parent is-2">
-              <div class="tile is-child notification">
-                <SettingsSeries 
-                    :clients="clientsSelectOptions"
-                    :contexts="contexts"
-                    :tags="tags"
-                    @context-selected="changeContext" 
-                    @client-selected="changeClient"
-                    @tag-selected="changeTag" 
-                    @color-selected="changeSeriesColor" 
-                    @type-selected="changeChartType"
-                />
-              </div>
-          </div>
-
-
-  <div class="tile is-vertical ">
-    <div class="tile is-parent">
-        <div class="tile is-child notification">
-         
-
-          <div class="level">
-            <div class="level-left">  
-            </div>
-            <div class="level-right">
-                <div class="level-item">
-                    <label class="label">Desde</label>
-                </div>
-                <div class="level-item">
-                    <b-datepicker v-model="selectedRange.start"
-                        :first-day-of-week="1"
-                        placeholder="Click para seleccionar...">
-
-                        <button class="button is-primary"
-                            @click="selectedRange.start = new Date()">
-                            <b-icon icon="calendar-today"></b-icon>
-                            <span>Today</span>
-                        </button>
-
-                        <button class="button is-danger"
-                            @click="selectedRange.start = null">
-                            <b-icon icon="close"></b-icon>
-                            <span>Clear</span>
-                        </button>
-                    </b-datepicker>
-                </div>
-                <div class="level-item">
-                    <label class="label">Hasta</label>
-                </div>
-                <div class="level-item">
-                    <b-datepicker v-model="selectedRange.end"
-                        :first-day-of-week="1"
-                        placeholder="Click para seleccionar...">
-
-                        <button class="button is-primary"
-                            @click="selectedRange.end = new Date()">
-                            <b-icon icon="calendar-today"></b-icon>
-                            <span>Today</span>
-                        </button>
-
-                        <button class="button is-danger"
-                            @click="selectedRange.end = null">
-                            <b-icon icon="close"></b-icon>
-                            <span>Clear</span>
-                        </button>
-                    </b-datepicker>
-                </div>
-                <div class="level-item">
-                    <button class="button is-success" @click="updateSeriesData">
-                        Actualizar
-                    </button>                   
-                </div>
-            </div>
-        </div>
-
-
-        </div>
-    </div>
-
-      <div class="tile">
-        <div class="tile is-parent">
-          <div class="tile is-child">
-            <MainChart :chartData="seriesData" :color="chartColor" :chartType="chartType"></MainChart>
-          </div>
-        </div>
-      </div>
-  </div>
-
-
-
-    <!-- <div class="tile is-parent">
+  <div class="tile is-parent is-2">
       <div class="tile is-child notification">
+
         <SettingsSeries 
             :clients="clientsSelectOptions"
             :contexts="contexts"
@@ -103,9 +13,32 @@
             @tag-selected="changeTag" 
             @color-selected="changeSeriesColor" 
             @type-selected="changeChartType"
-        />
+            @update="updateSeriesData"/>
+
       </div>
-    </div> -->
+  </div>
+  <div class="tile is-vertical ">
+    <div class="tile is-parent">
+        <div class="tile is-child notification">
+
+          <DateRangeSelect :value="range" @input="changeRange"/>
+
+        </div>
+    </div>
+
+    <div class="tile">
+      <div class="tile is-parent">
+        <div class="tile is-child">
+
+          <MainChart 
+              :chartData="seriesData" 
+              :color="chartColor" 
+              :chartType="chartType" />
+
+        </div>
+      </div>
+    </div>
+  </div>
 
 
 </div>  
@@ -118,20 +51,20 @@
     
 import MainChart from '../components/MainChart.vue';
 import SettingsSeries from '../components/SettingsSeries.vue';
-import SearchSelect from '../components/SearchSelect.vue';
+import DateRangeSelect from '../components/DateRangeSelect.vue';
 
 import { mapState } from 'vuex';
 
 
 export default {
 
-    components: { MainChart, SettingsSeries, SearchSelect },
+    components: { MainChart, SettingsSeries, DateRangeSelect },
 
     data () {
         return {
             selectedRange: { 
                 start: null,
-                end: null 
+                end: null, 
             },
             clientName: '',
             chartColor: "#6fcd98",
@@ -177,16 +110,11 @@ export default {
         },
         changeTag(event) {
             this.$store.commit('set_current_tag', event.selected)
-        }
+        },
+        changeRange(event) {
+            this.$store.commit('set_range', event)
+        },
     },
-    watch: {
-        'selectedRange.start': function (newValue) {
-            this.$store.commit('set_start_date', newValue)
-        },
-        'selectedRange.end': function (newValue) {
-            this.$store.commit('set_end_date', newValue)
-        },
-    }
 }
 
 

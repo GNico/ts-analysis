@@ -38,6 +38,17 @@
         <SelectColor v-model="color"/> 
     </b-field>
 
+
+    <div class="field is-grouped is-grouped-right">
+      <p class="control">
+        <a class="button is-primary" @click="$emit('update')">
+          Actualizar
+        </a>
+      </p>
+    </div>
+
+
+
 </div>
 </template>
 

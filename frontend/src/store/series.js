@@ -29,6 +29,9 @@ const mutations = {
     set_contexts(state, payload) {
         state.contexts = payload
     },
+    set_range(state, payload) {
+        state.range = payload
+    },
     set_start_date(state, payload) {
         state.range.start = payload
     },
