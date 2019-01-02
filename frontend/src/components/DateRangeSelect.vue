@@ -5,19 +5,19 @@
   <div class="level-left">
 
     <div class="buttons">
-      <button class="button is-primary" :class="{ 'is-info': activeBtn === 'btn1' }" @click="setAll(); setActive('btn1')" >
+      <button class="button is-primary" :class="{ 'is-info': activeBtn === 'btn1' }" @click="setActive('btn1'); setAll()" >
         Todo
       </button>       
-      <button class="button is-primary" :class="{ 'is-info': activeBtn === 'btn2' }" @click="setLast(365); setActive('btn2')" >
+      <button class="button is-primary" :class="{ 'is-info': activeBtn === 'btn2' }" @click="setActive('btn2'); setLast(365)" >
         Ultimo año
       </button>
-      <button class="button is-primary" :class="{ 'is-info': activeBtn === 'btn3' }" @click="setLast(30); setActive('btn3')" >
+      <button class="button is-primary" :class="{ 'is-info': activeBtn === 'btn3' }" @click="setActive('btn3'); setLast(30)" >
         Ultimos 30 dias
       </button>
-      <button class="button is-primary" :class="{ 'is-info': activeBtn === 'btn4' }" @click="setLast(7); setActive('btn4')" >
+      <button class="button is-primary" :class="{ 'is-info': activeBtn === 'btn4' }" @click="setActive('btn4'); setLast(7)" >
         Ultimos 7 dias
       </button> 
-      <button class="button is-primary" :class="{ 'is-info': activeBtn === 'btn5' }" @click="setLast(1); setActive('btn5')" >
+      <button class="button is-primary" :class="{ 'is-info': activeBtn === 'btn5' }" @click="setActive('btn5'); setLast(1)" >
         Ultimo dia
       </button>
     </div>       

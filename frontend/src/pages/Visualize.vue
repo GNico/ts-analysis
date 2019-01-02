@@ -113,6 +113,7 @@ export default {
         },
         changeRange(event) {
             this.$store.commit('set_range', event)
+            this.updateSeriesData()
         },
     },
 }

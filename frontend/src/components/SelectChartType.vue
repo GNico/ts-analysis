@@ -11,16 +11,6 @@
 </select>
 </div>
 
-
-
-<!-- <select v-model="chartType" @change="changeChartType">
-    <option>line</option>
-    <option>areaspline</option>
-    <option>spline</option>
-    <option>scatter</option>
-    <option>column</option>
-    <option>area</option>
-</select>        -->
 </template>
 
 
