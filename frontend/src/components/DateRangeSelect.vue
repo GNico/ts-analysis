@@ -29,19 +29,21 @@
       <label class="label">Desde</label>
     </div>
     <div class="level-item">
-      <b-datepicker v-model="selectedRange.start"
+      <b-datepicker 
+          v-model="selectedRange.start"
+          icon-pack="fas"
           :first-day-of-week="1"
           placeholder="Click para seleccionar...">
 
           <button class="button is-primary"
               @click="selectedRange.start = new Date()">
-              <b-icon icon="calendar-today"></b-icon>
+              <b-icon pack="fas" icon="calendar-day"></b-icon>
               <span>Hoy</span>
           </button>
 
           <button class="button is-danger"
               @click="selectedRange.start = null">
-              <b-icon icon="close"></b-icon>
+              <b-icon pack="fas" icon="times"></b-icon>
               <span>Borrar</span>
           </button>
       </b-datepicker>
@@ -51,19 +53,21 @@
       <label class="label">Hasta</label>
     </div>
     <div class="level-item">
-      <b-datepicker v-model="selectedRange.end"
+      <b-datepicker 
+          v-model="selectedRange.end"
+          icon-pack="fas"
           :first-day-of-week="1"
           placeholder="Click para seleccionar...">
 
           <button class="button is-primary"
               @click="selectedRange.end = new Date()">
-              <b-icon icon="calendar-today"></b-icon>
+              <b-icon pack="fas" icon="calendar-day"></b-icon>
               <span>Hoy</span>
           </button>
 
           <button class="button is-danger"
               @click="selectedRange.end = null">
-              <b-icon icon="close"></b-icon>
+              <b-icon pack="fas" icon="times"></b-icon>
               <span>Borrar</span>
           </button>
       </b-datepicker>

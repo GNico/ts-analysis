@@ -8,7 +8,6 @@ import App from './App.vue'
 import router from './router/index'
 import store from './store/index'
 import Buefy from 'buefy'
-
 Vue.use(HighchartsVue)
 
 Boost(Highcharts)
