@@ -6,6 +6,7 @@
 
 
 export default {
+  name: 'ChartSeries',
   props: {
     chartData: {
         default: [],

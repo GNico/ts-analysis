@@ -11,6 +11,7 @@ const state = {
   clientName: '',
   clientContext: '',
   clientTags: '',
+  displayInterval: '1H',
   loading: null
 }
 
@@ -50,6 +51,9 @@ const mutations = {
     set_anomalies(state, payload) {
         state.anomalies = payload
     },
+    set_display_interval(state, payload) {
+        state.displayInterval = payload
+    }
 }
 
 //hosturl = 'http://localhost:8000/prueba/'
@@ -75,7 +79,8 @@ const actions = {
                   tags: state.clientTags,
                   contexts: state.clientContext,
                   start: state.range.start,
-                  end: state.range.end
+                  end: state.range.end,
+                  interval: state.displayInterval
                 }
         })
         .then(response => {       

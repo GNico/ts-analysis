@@ -27,23 +27,20 @@
     </b-field>
 
 
-    <b-field label="Tipo de grafico">
-        <SelectChartType @selected="changeChartType"/> 
-    </b-field>
-
-
     <b-field label="Color">
         <SelectColor v-model="color"/> 
     </b-field>
 
+    <b-field label="Tipo de grafico">
+        <SelectChartType @selected="changeChartType"/> 
+    </b-field>
 
-    <div class="field is-grouped is-grouped-right">
-      <p class="control">
-        <a class="button is-primary" @click="$emit('update')">
+    <div class="box has-text-centered">
+      <a class="button is-primary is-medium" @click="$emit('update')">
           Actualizar
-        </a>
-      </p>
+      </a>
     </div>
+    
 
 
 

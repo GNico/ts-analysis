@@ -8,12 +8,10 @@
 		<textarea class="textarea" placeholder="ej: {parametro1: p1, otroparametro: op}"></textarea>
     </b-field>
 
-	<div class="field is-grouped is-grouped-right">
-      <p class="control">
-        <a class="button is-primary" @click="$emit('analize')">
+	<div class="box has-text-centered">
+        <a class="button is-primary is-medium" @click="$emit('analize')">
           Analizar
         </a>
-      </p>
     </div>
 </div>
 

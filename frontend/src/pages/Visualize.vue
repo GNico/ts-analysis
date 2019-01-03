@@ -47,7 +47,7 @@
       <div class="tile is-parent">
         <div class="tile is-child">
 
-          <MainChart 
+          <ChartSeries 
               :chartData="seriesData" 
               :color="chartColor" 
               :chartType="chartType" />
@@ -66,7 +66,7 @@
 
 <script>
     
-import MainChart from '../components/MainChart.vue';
+import ChartSeries from '../components/ChartSeries.vue';
 import SettingsSeries from '../components/SettingsSeries.vue';
 import SettingsAnalysis from '../components/SettingsAnalysis.vue';
 import DateRangeSelect from '../components/DateRangeSelect.vue';
@@ -76,7 +76,7 @@ import { mapState } from 'vuex';
 
 export default {
 
-    components: { MainChart, SettingsSeries, SettingsAnalysis, DateRangeSelect },
+    components: { ChartSeries, SettingsSeries, SettingsAnalysis, DateRangeSelect },
 
     data () {
         return {
