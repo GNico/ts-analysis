@@ -80,8 +80,8 @@ const actions = {
                   contexts: state.clientContext,
                   start: state.range.start,
                   end: state.range.end,
-                  interval: state.displayInterval
-                }
+/*                  interval: state.displayInterval
+*/                }
         })
         .then(response => {       
           // sets `state.loading` to false 

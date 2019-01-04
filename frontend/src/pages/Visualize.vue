@@ -50,7 +50,8 @@
           <ChartSeries 
               :chartData="seriesData" 
               :color="chartColor" 
-              :chartType="chartType" />
+              :chartType="chartType"
+              :anomalies="anomalies" />
 
         </div>
       </div>
@@ -86,8 +87,7 @@ export default {
             },
             clientName: '',
             chartColor: "#6fcd98",
-            chartType: "line"
-
+            chartType: "line",
         }
     },
     computed: {
@@ -109,6 +109,9 @@ export default {
         seriesData() {
             return this.$store.state.series.data
         },
+        anomalies() {
+            return this.$store.state.series.anomalies
+        }
     },
     methods: {
         updateSeriesData() {
