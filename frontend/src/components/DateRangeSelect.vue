@@ -87,7 +87,6 @@
 <script>
 
 export default {
-  name: "DateRangeSelect",
   props: {
       value: {
         type: Object,

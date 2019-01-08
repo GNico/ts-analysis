@@ -6,7 +6,7 @@
       <div class="tile is-child box">
 
 
-            <b-tabs position="is-centered" type="is-toggle" size="is-medium" expanded>
+            <b-tabs position="is-centered" type="is-toggle" expanded>
                 <b-tab-item label="Series">
                     <div class="tab-item-content">
                         <SettingsSeries 
@@ -28,17 +28,32 @@
                     </div>
                 </b-tab-item>
 
+                <b-tab-item label="Comparar">
+
+                </b-tab-item>
+
             </b-tabs>
         
       </div>
   </div>
 
 
-  <div class="tile is-vertical ">
+  <div class="tile is-vertical">
+
+
     <div class="tile is-parent ">
         <div class="tile is-child box ">
 
           <DateRangeSelect :value="range" @input="changeRange"/>
+
+        </div>
+    </div>
+
+
+    <div class="tile is-parent ">
+        <div class="tile is-child box ">
+
+          <BarSeries/>
 
         </div>
     </div>
@@ -71,13 +86,14 @@ import ChartSeries from '../components/ChartSeries.vue';
 import SettingsSeries from '../components/SettingsSeries.vue';
 import SettingsAnalysis from '../components/SettingsAnalysis.vue';
 import DateRangeSelect from '../components/DateRangeSelect.vue';
+import BarSeries from '../components/BarSeries.vue';
 
 import { mapState } from 'vuex';
 
 
 export default {
 
-    components: { ChartSeries, SettingsSeries, SettingsAnalysis, DateRangeSelect },
+    components: { ChartSeries, SettingsSeries, SettingsAnalysis, DateRangeSelect, BarSeries },
 
     data () {
         return {

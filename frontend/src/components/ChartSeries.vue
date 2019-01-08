@@ -43,8 +43,8 @@ export default {
         return {
             chart: {
               type: this.chartType,
-              height: '40%',
-              zoomType: 'xy',
+/*              height: '40%',
+*/              zoomType: 'xy',
               panning: true,
               panKey: 'shift'
             },
@@ -64,6 +64,9 @@ export default {
             },
             scrollbar: {
                 enabled: true
+            },
+            legend: {
+              enabled: false,
             },
             series: [{
               data: this.chartData,
