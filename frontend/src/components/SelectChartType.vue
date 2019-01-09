@@ -1,7 +1,7 @@
 <template>
 
 <div class="select">
-  <select v-model="chartType" @change="changeChartType">
+  <select :value="value" @change="$emit('input', $event.target.value)">
     <option>line</option>
     <option>areaspline</option>
     <option>spline</option>
@@ -18,20 +18,12 @@
 <script>
     
 export default {
-    name: "SelectChartType",
-    data () {
-        return {
-            chartType: {
-                type: String,
-                default: "line"
-            }
+    props: {
+        value: {
+            type: String,
+            default: "line"
         }
     },
-    methods: {
-        changeChartType() {
-            this.$emit('selected', {selected: this.chartType})
-        }
-    }
 }
 
 

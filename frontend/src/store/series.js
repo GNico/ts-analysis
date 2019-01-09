@@ -1,9 +1,8 @@
 const state = {
   clients: [],
-  data: [],
-  anomalies: [],
   tags: [],
   contexts: [],
+
   range: {
     start: null,
     end: null
@@ -12,17 +11,26 @@ const state = {
   clientContext: '',
   clientTags: '',
   displayInterval: '1H',
+
+  series: [],
+
+  anomalies: [],
+
   loading: null
 }
 
 const namespaced = true
 
+const getters = {
+    getSeriesNames: (state) => {
+        return state.series.map(item => item.name)
+    }
+}
+
+
 const mutations = {
     update_clients(state, payload) {
         state.clients = payload
-    },
-    add_data(state, payload) {
-        state.data = payload
     },
     set_tags(state, payload) {
         state.tags = payload
@@ -53,7 +61,24 @@ const mutations = {
     },
     set_display_interval(state, payload) {
         state.displayInterval = payload
+    },
+    add_series(state, payload) {
+        state.series.push(payload)
+    },
+    delete_series(state, payload) {
+        let index = state.series.findIndex(item => item.name == payload.name)
+        state.series.splice(index, 1)
+    },
+    update_series(state, payload) {
+        let index = state.series.findIndex(item => item.name == payload.name)
+        state.series[index] = { ...state.series[index], ...payload}
+        //state.series.splice(index, 1, payload)
+    },
+    add_data(state, payload) {
+        let index = state.series.findIndex(item => item.name == payload.name)
+        state.series[index] = { ...state.series[index], data: payload.data}
     }
+
 }
 
 //hosturl = 'http://localhost:8000/prueba/'
@@ -69,15 +94,19 @@ const actions = {
           console.log('error loading client data')
         })
     },
-    fetchData(store) {
+    fetchData(store, settings) {
         // sets `state.loading` to true. Show a spinner or something.
-         console.log('data pending')
+        console.log('data pending')
+
+        let index = state.series.findIndex(item => item.name == settings.name)
+        let requested = state.series[index]
+
 
         return axios.get('http://localhost:8000/prueba/series/', {
                 params: {
-                  name: state.clientName,
-                  tags: state.clientTags,
-                  contexts: state.clientContext,
+                  name: requested.client,
+                  tags: requested.tags,
+                  contexts: requested.context,
                   start: state.range.start,
                   end: state.range.end,
 /*                  interval: state.displayInterval
@@ -86,17 +115,17 @@ const actions = {
         .then(response => {       
           // sets `state.loading` to false 
           // also sets `state.apiData to response`
-          store.commit('add_data', response.data) 
+          store.commit('add_data', {name: requested.name, data: response.data}) 
         })
         .catch(error => { 
           // set `state.loading` to false and do something with error   
           console.log('error loading series data')
         })
     },
-    fetchContexts(store) {
+    fetchContexts(store, client) {
         return axios.get('http://localhost:8000/prueba/contexts/', {
                 params: {
-                    name: state.clientName
+                    name: client
                 }
         })
         .then(response => {
@@ -106,10 +135,10 @@ const actions = {
             console.log('error loading contexts data');
         });
     },
-    fetchTags(store) {
+    fetchTags(store, client) {
         return axios.get('http://localhost:8000/prueba/tags/', {
                 params: {
-                    name: state.clientName
+                    name: client
                 }
         })
         .then(response => {
@@ -136,20 +165,32 @@ const actions = {
           console.log('error retrieving anomalies')
         })
     },
-    changeCurrentClient(store, data) {
-        store.commit("set_current_client", data)
-        if (data) {
-            store.dispatch('fetchContexts')
-            store.dispatch('fetchTags')
+    updateTagsContexts(store, client) {
+        if (client) {
+            store.dispatch('fetchContexts', client)
+            store.dispatch('fetchTags', client)
         } else {
             store.commit('set_current_tag', '')
             store.commit('set_current_context', '')           
         }
-    }
+    },
+    addSeries(store, settings) {
+        store.commit("add_series", settings)
+        store.dispatch("fetchData", settings)
+    },
+    updateSeries(store, settings) {
+        store.commit("update_series", settings)
+        store.dispatch("fetchData", settings)
+    },
+    updateSeriesDisplaySettings(store, settings) {
+        store.commit("update_series", settings)
+    },
+
 }
 
 export default {
   state,
+  getters,
   actions,
   mutations
 }

@@ -9,7 +9,9 @@ export default {
   name: 'ChartSeries',
   props: {
     chartData: {
-        default: [],
+        default: function () {
+          return []
+        }
     },
     title: {
         type: String,

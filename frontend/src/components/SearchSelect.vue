@@ -33,6 +33,10 @@ export default {
         },
         placeholder: {
             default: "Seleccionar"
+        },
+        clearOnBlur: {
+            type: Boolean,
+            default: true
         }
     },
     data () {
@@ -51,7 +55,7 @@ export default {
     },
     methods: {
         onBlur() {
-            if (this.filteredDataList.length === 0) {
+            if (this.clearOnBlur && this.filteredDataList.length === 0) {
                 this.inputValue = ''
             } 
         }

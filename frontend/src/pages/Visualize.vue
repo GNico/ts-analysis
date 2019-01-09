@@ -10,12 +10,7 @@
                 <b-tab-item label="Series">
                     <div class="tab-item-content">
                         <SettingsSeries 
-                            :clients="clientsSelectOptions"
-                            :contexts="contexts"
-                            :tags="tags"
-                            @context-selected="changeContext" 
-                            @client-selected="changeClient"
-                            @tag-selected="changeTag" 
+
                             @color-selected="changeSeriesColor" 
                             @type-selected="changeChartType"
                             @update="updateSeriesData"/>
@@ -107,18 +102,6 @@ export default {
         }
     },
     computed: {
-        clients() {
-            return this.$store.state.series.clients
-        },
-        clientsSelectOptions() {
-            return this.clients.map(item => item.name);
-        },
-        contexts() {
-            return this.$store.state.series.contexts
-        },
-        tags() {
-            return this.$store.state.series.tags
-        },
         range() {
             return this.$store.state.series.range
         },
@@ -142,9 +125,9 @@ export default {
         changeChartType(event) {
             this.chartType = event.selected
         },
-        changeClient(event) {
+        /*changeClient(event) {
             this.$store.dispatch('changeCurrentClient', event.selected)
-        },
+        },*/
         changeContext(event) {
             this.$store.commit('set_current_context', event.selected)
         },

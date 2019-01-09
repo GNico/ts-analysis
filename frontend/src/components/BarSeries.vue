@@ -1,9 +1,9 @@
 <template>    
 <div class="is-flex">  
     <div class="field is-grouped is-grouped-multiline">
-        <div class="control" v-for="(item, index) in items" :key="item.name" >
+        <div class="control" v-for="(item, index) in seriesNames" :key="item.name" >
             <ButtonSeriesName  
-                :item="item.name" 
+                :item="item" 
                 @deleted="removeItem"
             />
         </div>
@@ -47,9 +47,15 @@ export default {
             ],
         }
     },
+    computed: {
+        seriesNames() {
+            return this.$store.getters.getSeriesNames
+        }
+    },
     methods: {
         removeItem(name) {
-            this.items = this.items.filter(item => item.name != name)
+            let index = this.items.findIndex(item => item.name == name)
+            this.items.splice(index, 1)
         }
     }
 
