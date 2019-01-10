@@ -6,9 +6,8 @@
 
 
 export default {
-  name: 'ChartSeries',
   props: {
-    chartData: {
+    seriesData: {
         default: function () {
           return []
         }
@@ -17,14 +16,6 @@ export default {
         type: String,
         default: ''
     },
-    chartType: {
-        type: String,
-        default: 'line'
-    },
-    color: {
-        type: String,
-        default: '#6fcd98'
-    },  
     anomalies: {
         type: Array,
         default: function () {
@@ -44,11 +35,11 @@ export default {
     chartOptions() {
         return {
             chart: {
-              type: this.chartType,
-/*              height: '40%',
+/*              type: this.chartType,
+                height: '40%',
 */              zoomType: 'xy',
-              panning: true,
-              panKey: 'shift'
+                panning: true,
+                panKey: 'shift'
             },
             title: {
               text: this.title
@@ -70,11 +61,7 @@ export default {
             legend: {
               enabled: false,
             },
-            series: [{
-              data: this.chartData,
-              color: this.color,
-
-            }]
+            series: this.seriesData
         }
     }
   },

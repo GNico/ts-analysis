@@ -16,7 +16,9 @@ const state = {
 
   anomalies: [],
 
-  loading: null
+  displaySeries: [],
+
+  loading: null,
 }
 
 const namespaced = true
@@ -24,7 +26,7 @@ const namespaced = true
 const getters = {
     getSeriesNames: (state) => {
         return state.series.map(item => item.name)
-    }
+    },
 }
 
 
@@ -63,7 +65,7 @@ const mutations = {
         state.displayInterval = payload
     },
     add_series(state, payload) {
-        state.series.push(payload)
+        state.series.push( { ...payload } )
     },
     delete_series(state, payload) {
         let index = state.series.findIndex(item => item.name == payload.name)
@@ -77,6 +79,7 @@ const mutations = {
     add_data(state, payload) {
         let index = state.series.findIndex(item => item.name == payload.name)
         state.series[index] = { ...state.series[index], data: payload.data}
+        state.displaySeries = state.series.map(item => ({ data: item.data, color: item.color, type: item.chartType}) ) 
     }
 
 }

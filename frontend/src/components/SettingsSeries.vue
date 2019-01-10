@@ -4,11 +4,8 @@
     <div class="field">
         <label class="label"> Nombre </label>
         <b-field v-if="edit">
-            <b-select
-                placeholder="Default"
-                expanded>
-                <option value="flint">Flint</option>
-                <option value="silver">Silver</option>
+            <b-select placeholder="" expanded>
+                <option v-for="item in seriesNames"> {{ item }}</option>
             </b-select>     
             <p class="control">
                 <button class="button is-primary" @click="edit=false">
@@ -19,26 +16,21 @@
             </p>
         </b-field>
 
-        <b-field v-else>
-            <b-input v-model="seriesOptions.name"></b-input>
-            <p class="control">
-                <button class="button is-danger" @click="edit=true">
-                    <span class="icon">
-                        <i class="fas fa-times"></i>
-                    </span>
-                </button>
-            </p>
-        </b-field>
+        <div v-else>
+            <b-field> 
+                <b-input v-model="seriesOptions.name"></b-input>
+                <p class="control">
+                    <button class="button is-danger" @click="edit=true">
+                        <span class="icon">
+                            <i class="fas fa-times"></i>
+                        </span>
+                    </button>
+                </p>
+            </b-field>
+            <p v-show="hasError" class="help is-danger">El nombre ya existe</p>
+        </div>
     </div>
     
-
-    <!-- <b-field grouped>
-            <b-input placeholder="Search..." expanded></b-input>
-            <p class="control">
-                <button class="button is-primary">New</button>
-            </p>
-        </b-field> -->
-
     <!-- <div class="field">
         <label class="label"> Series name </label>
         <div class="field is-grouped">
@@ -129,7 +121,7 @@
         <a class="button is-primary" @click="addSeries">
           Agregar
         </a>
-        <a class="button is-danger" @click="cancel">
+        <a class="button is-danger" @click="edit=true">
           Cancelar
         </a>
     </div>
@@ -164,6 +156,9 @@ export default {
         }
     },
     computed: {
+        seriesNames() {
+            return this.$store.getters.getSeriesNames
+        },
         clients() {
             return this.$store.state.series.clients
         },
@@ -176,6 +171,9 @@ export default {
         tags() {
             return this.$store.state.series.tags
         },
+        hasError() {
+            return this.seriesNames.includes(this.seriesOptions.name)
+        }
     },
     methods: {
         updateSelectOptions() {
@@ -187,9 +185,6 @@ export default {
         },
         updateSeries() {
             this.$store.dispatch('updateSeries', this.seriesOptions)
-        },
-        cancel() {
-
         }
     }
 }

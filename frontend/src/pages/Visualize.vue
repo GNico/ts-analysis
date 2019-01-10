@@ -9,11 +9,7 @@
             <b-tabs position="is-centered" type="is-toggle" expanded>
                 <b-tab-item label="Series">
                     <div class="tab-item-content">
-                        <SettingsSeries 
-
-                            @color-selected="changeSeriesColor" 
-                            @type-selected="changeChartType"
-                            @update="updateSeriesData"/>
+                        <SettingsSeries/>
                     </div>
 
                 </b-tab-item>
@@ -57,11 +53,7 @@
       <div class="tile is-parent">
         <div class="tile is-child">
 
-          <ChartSeries 
-              :chartData="seriesData" 
-              :color="chartColor" 
-              :chartType="chartType"
-              :anomalies="anomalies" />
+          <ChartWrapper/>
 
         </div>
       </div>
@@ -77,7 +69,7 @@
 
 <script>
     
-import ChartSeries from '../components/ChartSeries.vue';
+import ChartWrapper from '../components/ChartWrapper.vue';
 import SettingsSeries from '../components/SettingsSeries.vue';
 import SettingsAnalysis from '../components/SettingsAnalysis.vue';
 import DateRangeSelect from '../components/DateRangeSelect.vue';
@@ -88,7 +80,7 @@ import { mapState } from 'vuex';
 
 export default {
 
-    components: { ChartSeries, SettingsSeries, SettingsAnalysis, DateRangeSelect, BarSeries },
+    components: { ChartWrapper, SettingsSeries, SettingsAnalysis, DateRangeSelect, BarSeries },
 
     data () {
         return {
@@ -96,43 +88,19 @@ export default {
                 start: null,
                 end: null, 
             },
-            clientName: '',
-            chartColor: "#6fcd98",
-            chartType: "line",
         }
     },
     computed: {
         range() {
             return this.$store.state.series.range
         },
-        seriesData() {
-            return this.$store.state.series.data
-        },
         anomalies() {
             return this.$store.state.series.anomalies
         }
     },
     methods: {
-        updateSeriesData() {
-            this.$store.dispatch('fetchData');
-        },
         startAnalysis() {
             this.$store.dispatch('fetchAnomalies');
-        },
-        changeSeriesColor(event) {
-            this.chartColor = event
-        },
-        changeChartType(event) {
-            this.chartType = event.selected
-        },
-        /*changeClient(event) {
-            this.$store.dispatch('changeCurrentClient', event.selected)
-        },*/
-        changeContext(event) {
-            this.$store.commit('set_current_context', event.selected)
-        },
-        changeTag(event) {
-            this.$store.commit('set_current_tag', event.selected)
         },
         changeRange(event) {
             this.$store.commit('set_range', event)
