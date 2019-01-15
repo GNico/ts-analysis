@@ -216,6 +216,13 @@ export default {
             this.edit = false
             this.clearFields()
         }
+    },
+    watch: {
+        seriesNames() {
+            if (!this.seriesNames.includes(this.seriesOptions.name)) {
+                this.clearFields()
+            } 
+        }
     }
 }
 
