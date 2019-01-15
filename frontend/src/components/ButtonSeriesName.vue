@@ -24,7 +24,7 @@ export default {
     methods: {
         toggle() {
             this.isActive = !this.isActive
-            this.$emit('click', {toggled: this.isActive, item: this.item})
+            this.$emit('click', {active: this.isActive, name: this.item})
         },
         deleted() {
             this.$emit("deleted", this.item)

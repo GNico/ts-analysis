@@ -15,7 +15,7 @@
             </select>
         </div>
         <div class="level-item">
-            <p>{{value}}</p>
+            {{ value }}
         </div>
     </div>
 </div>

@@ -59,7 +59,7 @@ export default {
                 enabled: true
             },
             legend: {
-              enabled: false,
+              enabled: true,
             },
             series: this.seriesData
         }

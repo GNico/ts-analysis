@@ -1,5 +1,5 @@
 <template>
-    <ChartSeries :seriesData="series" />
+    <ChartSeries :seriesData="seriesData" />
 
 </template>
 
@@ -10,18 +10,11 @@ import ChartSeries from './ChartSeries.vue';
     
 export default {
     components: { ChartSeries },
-    data() {
-        return {
-            chartData: []
-        }
-    },
     computed: {
-        series() {
-            return this.$store.state.series.displaySeries
+        seriesData() {
+            return this.$store.getters.getDisplaySeries
         },
-        /*chartData() {
-            return this.series.map(item => ({ data: item.data, color: item.color, type: item.chartType}) ) 
-        }*/
+
     },
 }
 

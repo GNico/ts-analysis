@@ -2,22 +2,16 @@ const state = {
   clients: [],
   tags: [],
   contexts: [],
-
   range: {
     start: null,
     end: null
   },
-  clientName: '',
-  clientContext: '',
-  clientTags: '',
-  displayInterval: '1H',
 
-  series: [],
+  series: {},
+  activeSeries: {},
+
 
   anomalies: [],
-
-  displaySeries: [],
-
   loading: null,
 }
 
@@ -25,8 +19,30 @@ const namespaced = true
 
 const getters = {
     getSeriesNames: (state) => {
-        return state.series.map(item => item.name)
+        return Object.keys(state.series)
     },
+    getDisplaySeries: (state) => {
+        let activeNames = Object.keys(state.series).filter(item => state.activeSeries[item])
+        return activeNames.map(function(itemName) {
+                            let { color, chartType, data, ...rest} = state.series[itemName]                
+                            return { name: itemName, color, type: chartType, data }
+                        })
+    },
+    getSeriesOptions: (state) => (name) => {
+        if (!(name in state.series) ) {
+            return {name: '',
+                    color: '#6fcd98',
+                    chartType: 'line',
+                    client: '',
+                    contexts: '',
+                    tags: '',
+                    interval: '1H'}
+        }
+        else {
+            let { data, ...rest} = state.series[name]
+            return rest
+        }
+    }
 }
 
 
@@ -49,38 +65,29 @@ const mutations = {
     set_end_date(state, payload) {
         state.range.end = payload
     },
-    set_current_client(state, payload) {
-        state.clientName = payload
-    },
-    set_current_context(state, payload) {
-        state.clientContext = payload
-    },
-    set_current_tag(state, payload) {
-        state.clientTags = payload
-    },
     set_anomalies(state, payload) {
         state.anomalies = payload
     },
-    set_display_interval(state, payload) {
-        state.displayInterval = payload
-    },
+
     add_series(state, payload) {
-        state.series.push( { ...payload } )
-    },
-    delete_series(state, payload) {
-        let index = state.series.findIndex(item => item.name == payload.name)
-        state.series.splice(index, 1)
-    },
-    update_series(state, payload) {
-        let index = state.series.findIndex(item => item.name == payload.name)
-        state.series[index] = { ...state.series[index], ...payload}
-        //state.series.splice(index, 1, payload)
+        state.series = { ...state.series, ...payload }
     },
     add_data(state, payload) {
-        let index = state.series.findIndex(item => item.name == payload.name)
-        state.series[index] = { ...state.series[index], data: payload.data}
-        state.displaySeries = state.series.map(item => ({ data: item.data, color: item.color, type: item.chartType}) ) 
-    }
+        state.series[payload.name] = { ...state.series[payload.name] , data: payload.data }
+    },
+    set_active_series(state, payload) {
+        state.activeSeries = { ...state.activeSeries, ...payload }
+    },
+    delete_series(state, payload) {
+        let { [payload]:name, ...rest} = state.series
+        state.series = rest 
+        let { [payload]:name2, ...rest2} = state.activeSeries
+        state.activeSeries = rest2
+    },
+    update_series(state, payload) {
+        let { name, ...rest} = payload
+        state.series[name] = { ...state.series[name], ...rest }
+    },
 
 }
 
@@ -97,19 +104,56 @@ const actions = {
           console.log('error loading client data')
         })
     },
+    async fetchContexts(store, client) {
+        if (!client) {
+            store.commit('set_contexts', [])
+            return
+        } else {
+
+            return axios.get('http://localhost:8000/prueba/contexts/', {
+                    params: {
+                        name: client
+                    }
+            })
+            .then(response => {
+              store.commit('set_contexts', response.data) 
+            })
+            .catch(error => { 
+                console.log('error loading contexts data');
+            });
+
+        }
+    },
+    async fetchTags(store, client) {
+        if (!client) {
+            store.commit('set_tags', [])
+            return
+        } else {
+            return axios.get('http://localhost:8000/prueba/tags/', {
+                    params: {
+                        name: client
+                    }
+            })
+            .then(response => {
+              store.commit('set_tags', response.data) 
+            })
+            .catch(error => { 
+                console.log('error loading tags data');
+            });
+        }
+    },
     fetchData(store, settings) {
         // sets `state.loading` to true. Show a spinner or something.
         console.log('data pending')
 
-        let index = state.series.findIndex(item => item.name == settings.name)
-        let requested = state.series[index]
+        let requested = state.series[settings.name]
 
 
         return axios.get('http://localhost:8000/prueba/series/', {
                 params: {
                   name: requested.client,
                   tags: requested.tags,
-                  contexts: requested.context,
+                  contexts: requested.contexts,
                   start: state.range.start,
                   end: state.range.end,
 /*                  interval: state.displayInterval
@@ -118,38 +162,12 @@ const actions = {
         .then(response => {       
           // sets `state.loading` to false 
           // also sets `state.apiData to response`
-          store.commit('add_data', {name: requested.name, data: response.data}) 
+          store.commit('add_data', {name: settings.name, data: response.data}) 
         })
         .catch(error => { 
           // set `state.loading` to false and do something with error   
           console.log('error loading series data')
         })
-    },
-    fetchContexts(store, client) {
-        return axios.get('http://localhost:8000/prueba/contexts/', {
-                params: {
-                    name: client
-                }
-        })
-        .then(response => {
-          store.commit('set_contexts', response.data) 
-        })
-        .catch(error => { 
-            console.log('error loading contexts data');
-        });
-    },
-    fetchTags(store, client) {
-        return axios.get('http://localhost:8000/prueba/tags/', {
-                params: {
-                    name: client
-                }
-        })
-        .then(response => {
-          store.commit('set_tags', response.data) 
-        })
-        .catch(error => { 
-            console.log('error loading tags data');
-        });
     },
     fetchAnomalies(store) {
         return axios.get('http://localhost:8000/prueba/anomalies/', {
@@ -168,26 +186,45 @@ const actions = {
           console.log('error retrieving anomalies')
         })
     },
-    updateTagsContexts(store, client) {
+    async updateTagsContexts(store, client) {
         if (client) {
-            store.dispatch('fetchContexts', client)
-            store.dispatch('fetchTags', client)
+            let tgs = store.dispatch('fetchTags', client) 
+            let ctx = store.dispatch('fetchContexts', client)
+            let res = [ await tgs, await ctx ]
         } else {
-            store.commit('set_current_tag', '')
-            store.commit('set_current_context', '')           
+            store.commit('set_tags', [] )
+            store.commit('set_contexts', [])           
         }
     },
-    addSeries(store, settings) {
-        store.commit("add_series", settings)
-        store.dispatch("fetchData", settings)
+
+    addSeries(store, seriesOptions) {
+        let { name, ...rest} = seriesOptions
+        let newseries = { [name]: rest }
+        store.commit("add_series", newseries)
+        store.commit("set_active_series", { [name]: true })
+        store.dispatch("fetchData", seriesOptions)
     },
-    updateSeries(store, settings) {
-        store.commit("update_series", settings)
-        store.dispatch("fetchData", settings)
+    deleteSeries(store, seriesName) {
+        store.commit("delete_series", seriesName)
     },
-    updateSeriesDisplaySettings(store, settings) {
-        store.commit("update_series", settings)
+    updateSeries(store, seriesOptions) {
+        let { name, ...rest} = seriesOptions
+        let current = state.series[name]
+        let updateData = false
+        if ((rest.client != current.client) || (rest.tags != current.tags) 
+            || (rest.contexts != current.contexts) || (rest.interval != current.interval) ) {
+            console.log("must fetch data")
+            updateData = true
+        }
+/*        state.series[name] = { ...state.series[name], ...rest }
+*/      store.commit("update_series", seriesOptions)
+        if (updateData) {
+            store.dispatch("fetchData", seriesOptions)
+        }
     },
+    changeSeriesActiveStatus(store, seriestatus) {
+        store.commit('set_active_series', seriestatus)
+    }
 
 }
 

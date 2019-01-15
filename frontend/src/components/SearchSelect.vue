@@ -3,10 +3,12 @@
         v-model="inputValue"
         :placeholder="placeholder"
         open-on-focus
-        keep-first
         :data="reducedDataList"
-        @select="option => $emit('selected', option)"
-        @blur="onBlur">
+        @select="emitSelected"
+        ref=autocomplete 
+        @keydown.native.enter="$event.target.blur(); closeOptions()"
+        @blur="onBlur"
+        >  <!-- @blur="onBlur" -->
         <template slot="empty">No hay resultados</template>
     </b-autocomplete>  
 </template>
@@ -16,13 +18,9 @@
 
 export default {
     name: "SearchSelect",
-    model: {
-        prop: 'value',
-        event: 'selected'
-    },
     props: {
-        value: {
-            required: true,
+        saved: {
+            required: false,
         },
         data: {
             required: false
@@ -39,9 +37,9 @@ export default {
             default: true
         }
     },
-    data () {
+    data() {
         return {
-            inputValue: this.value || ''
+            inputValue:  ''
         }
     },
     computed: {
@@ -52,13 +50,38 @@ export default {
         reducedDataList() {
             return this.filteredDataList.slice(0, this.maxOptionsDisplayed)
         },
+
     },
     methods: {
         onBlur() {
             if (this.clearOnBlur && this.filteredDataList.length === 0) {
                 this.inputValue = ''
             } 
+        },
+        setSelected(selected) {
+            let idx = this.data.findIndex(item => item == selected)
+            if (idx != -1) {
+                this.$refs.autocomplete.setSelected(this.data[idx])
+            } else {
+                console.log("no encontro item")
+            }
+        },
+        closeOptions() {            
+            this.$refs.autocomplete.isActive = false
+        },
+        emitSelected(option) {
+            if (!this.saved) {
+                this.$emit('selected', option)
+            }
+        },
+        clear() {
+            this.inputValue = ''
         }
+    },
+    watch: {
+        saved(newval) {
+            this.setSelected(newval)
+        },
     }
 }
 

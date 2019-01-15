@@ -75,8 +75,6 @@ import SettingsAnalysis from '../components/SettingsAnalysis.vue';
 import DateRangeSelect from '../components/DateRangeSelect.vue';
 import BarSeries from '../components/BarSeries.vue';
 
-import { mapState } from 'vuex';
-
 
 export default {
 
@@ -104,7 +102,6 @@ export default {
         },
         changeRange(event) {
             this.$store.commit('set_range', event)
-            this.updateSeriesData()
         },
     },
 }

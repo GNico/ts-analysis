@@ -4,11 +4,11 @@
     <div class="field">
         <label class="label"> Nombre </label>
         <b-field v-if="edit">
-            <b-select placeholder="" expanded>
+            <b-select placeholder="" expanded :value="seriesOptions.name" @input="setSavedOptions"> 
                 <option v-for="item in seriesNames"> {{ item }}</option>
             </b-select>     
             <p class="control">
-                <button class="button is-primary" @click="edit=false">
+                <button class="button is-primary" @click="newMode">
                     <span class="icon">
                         <i class="fas fa-plus"></i>
                     </span>
@@ -20,7 +20,7 @@
             <b-field> 
                 <b-input v-model="seriesOptions.name"></b-input>
                 <p class="control">
-                    <button class="button is-danger" @click="edit=true">
+                    <button class="button is-danger" @click="editMode">
                         <span class="icon">
                             <i class="fas fa-times"></i>
                         </span>
@@ -31,49 +31,40 @@
         </div>
     </div>
     
-    <!-- <div class="field">
-        <label class="label"> Series name </label>
-        <div class="field is-grouped">
-          <div class="control is-expanded">
-            <SearchSelect 
-            v-model="client" 
-            :data="clients"
-            placeholder="Seleccionar cliente"
-            @selected="changeClient"/>          
-          </div>
-          <div class="control">
-            <a class="button is-info">
-              New
-            </a>
-          </div>
-        </div>
-    </div>
- -->
+
     <div class="field">
         <label class="label"> Cliente </label>
         <SearchSelect 
-            v-model="seriesOptions.client" 
+            :saved="saved.client"
             :data="clientsSelectOptions"
-            placeholder="Seleccionar cliente"
-            @selected="updateSelectOptions"
+            placeholder="Seleccionar cliente" 
+            @selected="updateSelectOptions"  
+            ref=clientselect
         />
+            <!-- "seriesOptions.client = $event; updateSelectOptions()" -->
     </div>
 
     <div class="field">
         <label class="label"> Contexto </label>
         <SearchSelect 
-            v-model="seriesOptions.context" 
+            :saved="saved.contexts" 
             :data="contexts"
             placeholder="Seleccionar contexto"
+            @selected="seriesOptions.contexts = $event"
+            ref=contextselect
+
         />
     </div>
 
     <div class="field">
         <label class="label"> Tag </label>
         <SearchSelect 
-            v-model="seriesOptions.tags" 
+            :saved="saved.tags" 
             :data="tags"
             placeholder="Seleccionar tag"
+            @selected="seriesOptions.tags = $event"
+            ref=tagselect
+
         />
     </div>
 
@@ -121,7 +112,7 @@
         <a class="button is-primary" @click="addSeries">
           Agregar
         </a>
-        <a class="button is-danger" @click="edit=true">
+        <a class="button is-danger" @click="editMode">
           Cancelar
         </a>
     </div>
@@ -152,6 +143,11 @@ export default {
                 chartType: 'line',
                 interval: '1H'
             },
+            saved: {
+                client: '',
+                contexts: '',
+                tags: '',
+            },
             edit: false, 
         }
     },
@@ -176,8 +172,24 @@ export default {
         }
     },
     methods: {
-        updateSelectOptions() {
-            this.$store.dispatch('updateTagsContexts', this.seriesOptions.client)
+        async setSavedOptions (value) {
+            let obj = this.$store.getters.getSeriesOptions(value) 
+            this.seriesOptions.name = value
+            this.saved.client = obj.client 
+            this.seriesOptions.color = obj.color
+            this.seriesOptions.chartType = obj.chartType
+            this.seriesOptions.interval = obj.interval
+            await this.$store.dispatch('updateTagsContexts', obj.client)
+            this.saved.tags = obj.tags
+            this.saved.contexts = obj.contexts
+
+            
+        },
+        updateSelectOptions(value) {
+            if (this.seriesOptions.client != value) {
+                this.seriesOptions.client = value
+                this.$store.dispatch('updateTagsContexts', this.seriesOptions.client)
+            }
         },
         addSeries() {
             this.edit = true
@@ -185,6 +197,24 @@ export default {
         },
         updateSeries() {
             this.$store.dispatch('updateSeries', this.seriesOptions)
+        },
+        clearFields() {
+            this.seriesOptions.name = ''
+            this.saved.client = ''
+            this.seriesOptions.color = '#6fcd98'      
+            this.seriesOptions.chartType = 'line'
+            this.seriesOptions.interval = '1H'
+            this.$refs.clientselect.clear()
+            this.$refs.contextselect.clear()
+            this.$refs.tagselect.clear()
+
+        },
+        editMode() {
+            this.edit = true
+        },
+        newMode() {
+            this.edit = false
+            this.clearFields()
         }
     }
 }

@@ -5,6 +5,7 @@
             <ButtonSeriesName  
                 :item="item" 
                 @deleted="removeItem"
+                @click="toggleActive"
             />
         </div>
     </div>
@@ -23,11 +24,14 @@ export default {
     computed: {
         seriesNames() {
             return this.$store.getters.getSeriesNames
-        }
+        },
     },
     methods: {
-        removeItem(item) {
-            this.$store.commit('delete_series', {name: item})
+        removeItem(name) {
+            this.$store.dispatch('deleteSeries', name )
+        },
+        toggleActive(event) {
+            this.$store.commit("set_active_series", { [event.name]: event.active })
         }
     }
 
