@@ -1,6 +1,5 @@
 <template>
-    <ChartSeries :seriesData="seriesData" />
-
+    <ChartSeries :seriesData="seriesData" :isLoading="loading"/>
 </template>
 
 
@@ -14,7 +13,9 @@ export default {
         seriesData() {
             return this.$store.getters.getDisplaySeries
         },
-
+        loading() {
+        	return this.$store.state.series.loading
+        }
     },
 }
 

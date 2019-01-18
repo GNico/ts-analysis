@@ -1,5 +1,5 @@
 <template>
-    <highcharts class="chart" :options="chartOptions" :updateArgs="updateArgs"></highcharts>
+    <highcharts class="chart" :options="chartOptions" :updateArgs="updateArgs" ref="chart"></highcharts>
 </template>
 
 <script>
@@ -21,7 +21,8 @@ export default {
         default: function () {
           return []
         }
-    }
+    },
+    isLoading: false,
   },  
   data () {
     return {
@@ -33,39 +34,53 @@ export default {
   },
   computed: {
     chartOptions() {
-        return {
-            chart: {
-/*              type: this.chartType,
-                height: '40%',
-*/              zoomType: 'xy',
-                panning: true,
-                panKey: 'shift'
-            },
-            title: {
-              text: this.title
-            },
-            xAxis: {
-                type: 'datetime',
-                plotBands: this.bands,
-                plotLines: this.lines
-            },
-            yAxis: {
-                title: '',
-            },
-            rangeSelector: {
-                enabled: true
-            },
-            scrollbar: {
-                enabled: true
-            },
-            legend: {
-              enabled: true,
-            },
-            series: this.seriesData
-        }
-    }
+      return {
+        chart: {
+/*              height: '40%',
+*/        zoomType: 'xy',
+          panning: true,
+          panKey: 'shift'
+        },
+        loading: {
+          labelStyle: {
+              color: 'white',
+              fontSize: '1.5rem'
+          },
+          style: {
+              backgroundColor: 'black'
+          }
+        },
+        title: {
+          text: this.title
+        },
+        xAxis: {
+          type: 'datetime',
+          plotBands: this.bands,
+          plotLines: this.lines
+        },
+        yAxis: {
+          title: '',
+        },
+        rangeSelector: {
+          enabled: true
+        },
+        scrollbar: {
+          enabled: true
+        },
+        legend: {
+          enabled: true,
+        },
+        series: this.seriesData
+      }
+    },
   },
   methods: {
+    toggleLoading() {
+      this.isLoading ? 
+        this.$refs.chart.chart.showLoading() :
+        this.$refs.chart.chart.hideLoading()
+      this.isLoading = !this.isLoading
+    },
     selectColor(ratio) {
       let color1 = ''
       let color2 = ''
@@ -142,8 +157,16 @@ export default {
   },
   watch: {
     anomalies() {
-     this.parseAnomalies()
+      this.parseAnomalies()
+    },
+    isLoading() {
+        if (this.isLoading) {
+          this.$refs.chart.chart.showLoading()
+        } else {
+          this.$refs.chart.chart.hideLoading()
+        }
     }
+    
   }
 }
 </script>

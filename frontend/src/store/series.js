@@ -10,9 +10,8 @@ const state = {
   series: {},
   activeSeries: {},
 
-
+  loading: 0,  //using counter instead of boolean for multiple series loading
   anomalies: [],
-  loading: null,
 }
 
 const namespaced = true
@@ -142,13 +141,10 @@ const actions = {
             });
         }
     },
-    fetchData(store, settings) {
-        // sets `state.loading` to true. Show a spinner or something.
-        console.log('data pending')
-
-        let requested = state.series[settings.name]
-
-
+    async fetchData(store, name) {
+        let requested = state.series[name]
+        state.loading += 1
+        console.log(state.loading)
         return axios.get('http://localhost:8000/prueba/series/', {
                 params: {
                   name: requested.client,
@@ -160,12 +156,12 @@ const actions = {
 */                }
         })
         .then(response => {       
-          // sets `state.loading` to false 
-          // also sets `state.apiData to response`
-          store.commit('add_data', {name: settings.name, data: response.data}) 
+          store.commit('add_data', {name: name, data: response.data}) 
+          state.loading -= 1
+          console.log(state.loading)
         })
         .catch(error => { 
-          // set `state.loading` to false and do something with error   
+          state.loading -= 1
           console.log('error loading series data')
         })
     },
@@ -202,7 +198,7 @@ const actions = {
         let newseries = { [name]: rest }
         store.commit("add_series", newseries)
         store.commit("set_active_series", { [name]: true })
-        store.dispatch("fetchData", seriesOptions)
+        store.dispatch("fetchData", name)
     },
     deleteSeries(store, seriesName) {
         store.commit("delete_series", seriesName)
@@ -218,7 +214,7 @@ const actions = {
         }
         store.commit("update_series", seriesOptions)
         if (updateData) {
-            store.dispatch("fetchData", seriesOptions)
+            store.dispatch("fetchData", name)
         }
     },
     changeSeriesActiveStatus(store, seriestatus) {
@@ -227,9 +223,9 @@ const actions = {
 
     updateRange(store, range) {
         store.commit("set_range", range)
-        /*for (name in Object.keys(state.series)) {
-            store.dispatch("fetchData", state.series[name])
-        }*/
+        Object.keys(state.series).forEach(key => {
+            store.dispatch('fetchData', key)
+        })
     }
 
 }

@@ -2,7 +2,7 @@
 
 <div class="columns is-fullheight ">
   <div class="column is-2 is-sidebar-menu is-hidden-mobile">
-      <b-tabs position="is-centered" type="is-toggle" expanded>
+      <b-tabs class="side-menu" position="is-centered" type="is-toggle" expanded>
         <b-tab-item label="Series">
             <div class="tab-item-content ">
                 <SettingsSeries/>
@@ -102,5 +102,9 @@ $section-pad: 5.625rem
     
 .chart-container
   margin-bottom: 1.5rem
+
+.side-menu
+  background-color: #343c3d
+  border-radius: 8px
 
 </style>
