@@ -18,7 +18,7 @@
 
         <div v-else>
             <b-field> 
-                <b-input v-model="seriesOptions.name"></b-input>
+                <b-input v-model="seriesOptions.name" expanded></b-input>
                 <p class="control">
                     <button class="button is-danger" @click="editMode">
                         <span class="icon">
@@ -186,8 +186,8 @@ export default {
             
         },
         updateSelectOptions(value) {
-            if (this.seriesOptions.client != value) {
-                this.seriesOptions.client = value
+            this.seriesOptions.client = value
+            if (this.saved.client != value) {
                 this.$store.dispatch('updateTagsContexts', this.seriesOptions.client)
             }
         },
@@ -200,13 +200,15 @@ export default {
         },
         clearFields() {
             this.seriesOptions.name = ''
-            this.saved.client = ''
             this.seriesOptions.color = '#6fcd98'      
             this.seriesOptions.chartType = 'line'
             this.seriesOptions.interval = '1H'
             this.$refs.clientselect.clear()
             this.$refs.contextselect.clear()
             this.$refs.tagselect.clear()
+            this.saved.client = ''
+            this.saved.contexts = ''
+            this.saved.tags = ''
 
         },
         editMode() {
@@ -219,7 +221,7 @@ export default {
     },
     watch: {
         seriesNames() {
-            if (!this.seriesNames.includes(this.seriesOptions.name)) {
+            if (!this.seriesNames.includes(this.seriesOptions.name) && edit) {
                 this.clearFields()
             } 
         }

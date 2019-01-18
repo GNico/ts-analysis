@@ -1,10 +1,7 @@
 <template>
+<div class="date-range-bar" >
 
-<div class="level">
-
-  <div class="level-left">
-
-    <div class="buttons">
+    <div class="date-range-bar__buttons">
       <button class="button is-primary" :class="{ 'is-info': activeBtn === 'btn1' }" @click="setActive('btn1'); setAll()" >
         Todo
       </button>       
@@ -21,66 +18,61 @@
         Ultimo dia
       </button>
     </div>       
-  </div>
 
-  <div class="level-right">
+    <div class="date-range-bar__inputs">
+      <div class="datepicker-field">
+        <label class="label">Desde</label>
+        <b-datepicker 
+            v-model="selectedRange.start"
+            icon-pack="fas"
+            :first-day-of-week="1"
+            placeholder="Click para seleccionar...">
 
-    <div class="level-item">
-      <label class="label">Desde</label>
-    </div>
-    <div class="level-item">
-      <b-datepicker 
-          v-model="selectedRange.start"
-          icon-pack="fas"
-          :first-day-of-week="1"
-          placeholder="Click para seleccionar...">
+            <button class="button is-primary"
+                @click="selectedRange.start = new Date()">
+                <b-icon pack="fas" icon="calendar-day"></b-icon>
+                <span>Hoy</span>
+            </button>
 
-          <button class="button is-primary"
-              @click="selectedRange.start = new Date()">
-              <b-icon pack="fas" icon="calendar-day"></b-icon>
-              <span>Hoy</span>
-          </button>
+            <button class="button is-danger"
+                @click="selectedRange.start = null">
+                <b-icon pack="fas" icon="times"></b-icon>
+                <span>Borrar</span>
+            </button>
+        </b-datepicker>
+      </div>
 
-          <button class="button is-danger"
-              @click="selectedRange.start = null">
-              <b-icon pack="fas" icon="times"></b-icon>
-              <span>Borrar</span>
-          </button>
-      </b-datepicker>
-    </div>
+      <div class="datepicker-field">
+        <label class="label">Hasta</label>
+        <b-datepicker 
+            v-model="selectedRange.end"
+            icon-pack="fas"
+            :first-day-of-week="1"
+            placeholder="Click para seleccionar...">
 
-    <div class="level-item">
-      <label class="label">Hasta</label>
-    </div>
-    <div class="level-item">
-      <b-datepicker 
-          v-model="selectedRange.end"
-          icon-pack="fas"
-          :first-day-of-week="1"
-          placeholder="Click para seleccionar...">
+            <button class="button is-primary"
+                @click="selectedRange.end = new Date()">
+                <b-icon pack="fas" icon="calendar-day"></b-icon>
+                <span>Hoy</span>
+            </button>
 
-          <button class="button is-primary"
-              @click="selectedRange.end = new Date()">
-              <b-icon pack="fas" icon="calendar-day"></b-icon>
-              <span>Hoy</span>
-          </button>
+            <button class="button is-danger"
+                @click="selectedRange.end = null">
+                <b-icon pack="fas" icon="times"></b-icon>
+                <span>Borrar</span>
+            </button>
+        </b-datepicker>
 
-          <button class="button is-danger"
-              @click="selectedRange.end = null">
-              <b-icon pack="fas" icon="times"></b-icon>
-              <span>Borrar</span>
-          </button>
-      </b-datepicker>
-    </div>
+      </div>
 
-    <div class="level-item">
-      <button class="button is-primary" @click="update">
-        Actualizar
-      </button>                   
-    </div>
-
-  </div>
+      <div date-range-bar__refresh>
+        <button class="button is-primary" @click="update">
+          Actualizar
+        </button> 
+      </div>  
+    </div>                
 </div>
+
 </template>
 
 
@@ -132,3 +124,38 @@ export default {
 }
 
 </script>
+
+
+<style>
+  
+.date-range-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.date-range-bar__buttons {
+  padding-right: 1rem;
+}
+
+.date-range-bar__inputs {
+  display: flex;
+}
+
+.date-range-bar__inputs > * {
+  margin-right: 0.75rem;
+}
+
+.datepicker-field {
+  display: flex;
+  align-items: center;
+}
+
+.datepicker-field > .label {
+  margin-bottom: 0;
+  margin-right: 0.5rem;
+
+}
+
+
+</style>

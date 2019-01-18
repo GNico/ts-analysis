@@ -2,7 +2,7 @@
 
 <div id="app">
   <TheNavBar/>
-  <section class='section'>
+  <section class='section top-section'>
       <router-view> </router-view>
   </section>
 </div>
@@ -23,6 +23,17 @@ export default {
 </script>
 
 <style lang="scss">
+
+$navbar-height: 4rem;
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+.section {
+  min-height: calc(100vh - ( #{$navbar-height} );
+}
 
 
 /* #app {

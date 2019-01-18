@@ -216,14 +216,20 @@ const actions = {
             console.log("must fetch data")
             updateData = true
         }
-/*        state.series[name] = { ...state.series[name], ...rest }
-*/      store.commit("update_series", seriesOptions)
+        store.commit("update_series", seriesOptions)
         if (updateData) {
             store.dispatch("fetchData", seriesOptions)
         }
     },
     changeSeriesActiveStatus(store, seriestatus) {
         store.commit('set_active_series', seriestatus)
+    },
+
+    updateRange(store, range) {
+        store.commit("set_range", range)
+        /*for (name in Object.keys(state.series)) {
+            store.dispatch("fetchData", state.series[name])
+        }*/
     }
 
 }

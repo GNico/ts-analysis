@@ -70,9 +70,7 @@ export default {
             this.$refs.autocomplete.isActive = false
         },
         emitSelected(option) {
-            if (!this.saved) {
-                this.$emit('selected', option)
-            }
+            this.$emit('selected', option)
         },
         clear() {
             this.inputValue = ''
