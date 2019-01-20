@@ -6,6 +6,7 @@
                 :item="item" 
                 @deleted="removeItem"
                 @click="toggleActive"
+                :ref="item.name"
             />
         </div>
     </div>

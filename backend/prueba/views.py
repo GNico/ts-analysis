@@ -21,8 +21,8 @@ def index(request):
 def clients(request):
     es = elastic_helper.EsHelper()
     if request.method == 'GET':
-        jsondata = es.getClients()
-        return JsonResponse(jsondata, safe=False)
+        data = es.getClients()
+        return JsonResponse(data, safe=False)
 
 @api_view(['POST'])
 def newclient(request):
@@ -35,9 +35,9 @@ def newclient(request):
         docspath = data_path.DATA_PATH + destDir
 
         result = es.addNewClient(clientname=clientName, indexname=index_name, docspath=docspath)
-        jsondata = json.dumps(result)
-        jsondata = { 'name': 'asd' }
-        return JsonResponse(jsondata, safe=False)
+        data = json.dumps(result)
+        data = { 'name': 'asd' }
+        return JsonResponse(data, safe=False)
 
 
 #returns list of tags
@@ -45,16 +45,16 @@ def tags(request):
     es = elastic_helper.EsHelper()
     if request.method == 'GET':
         clientname = request.GET.get('name', '')
-        jsondata = es.getTags(clientname=clientname)
-        return JsonResponse(jsondata, safe=False)
+        data = es.getTags(clientname=clientname)
+        return JsonResponse(data, safe=False)
 
 #returns list of contexts
 def contexts(request):
     es = elastic_helper.EsHelper()
     if request.method == 'GET':
         clientname = request.GET.get('name', '')
-        jsondata = es.getContexts(clientname=clientname)
-        return JsonResponse(jsondata, safe=False)        
+        data = es.getContexts(clientname=clientname)
+        return JsonResponse(data, safe=False)        
 
 
 def series(request):
@@ -65,13 +65,14 @@ def series(request):
         requestedContext= request.GET.get('contexts', '')
         requestedStart = request.GET.get('start', '')
         requestedEnd = request.GET.get('end', '')
-        # requestedEnd = request.GET.get('interval', '1H')
-        jsondata = es.getSeries(clientname=requestedName, 
+        requestedInterval = request.GET.get('interval', '1H')
+        data = es.getSeries(clientname=requestedName, 
                                 context=requestedContext, 
                                 tags=requestedTags,
                                 start=requestedStart,
-                                end=requestedEnd)
-        return JsonResponse(jsondata, safe=False)
+                                end=requestedEnd,
+                                interval=requestedInterval)
+        return JsonResponse(data, safe=False)
 
 
 def anomalies(request):
@@ -82,7 +83,7 @@ def anomalies(request):
         requestedContext= request.GET.get('contexts', '')
         requestedStart = request.GET.get('start', '')
         requestedEnd = request.GET.get('end', '')
-        # requestedEnd = request.GET.get('interval', '1H')
+        requestedInterval = request.GET.get('interval', '1H')
 
         series = es.getSeries(clientname=requestedName, 
                                 context=requestedContext, 
@@ -90,6 +91,6 @@ def anomalies(request):
                                 start=requestedStart,
                                 end=requestedEnd)
 
-        jsondata = anomaly_detector.detectAnomalies(series)
-        return JsonResponse(jsondata, safe=False)
+        data = anomaly_detector.detectAnomalies(series)
+        return JsonResponse(data, safe=False)
 

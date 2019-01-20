@@ -10,7 +10,7 @@
         </b-tab-item>
         <b-tab-item label="Analisis">
             <div class="tab-item-content">
-                <SettingsAnalysis @analize="startAnalysis"/>
+                <SettingsAnalysis/>
             </div>
         </b-tab-item>
         <b-tab-item label="Comparar">
@@ -69,9 +69,6 @@ export default {
         }
     },
     methods: {
-        startAnalysis() {
-            this.$store.dispatch('fetchAnomalies');
-        },
         changeRange(event) {
             this.$store.dispatch('updateRange', event)
         },

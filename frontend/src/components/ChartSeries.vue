@@ -75,12 +75,12 @@ export default {
     },
   },
   methods: {
-    toggleLoading() {
+    /*toggleLoading() {
       this.isLoading ? 
         this.$refs.chart.chart.showLoading() :
         this.$refs.chart.chart.hideLoading()
       this.isLoading = !this.isLoading
-    },
+    },*/
     selectColor(ratio) {
       let color1 = ''
       let color2 = ''

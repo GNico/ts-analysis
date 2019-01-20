@@ -1,5 +1,5 @@
 <template>
-    <ChartSeries :seriesData="seriesData" :isLoading="loading"/>
+    <ChartSeries :seriesData="seriesData" :isLoading="loading" :anomalies="anomalies"/> <!-- :anomalies="anomalies" -->
 </template>
 
 
@@ -15,6 +15,9 @@ export default {
         },
         loading() {
         	return this.$store.state.series.loading
+        },
+        anomalies() {
+            return this.$store.state.series.anomalies
         }
     },
 }

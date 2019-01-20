@@ -8,9 +8,9 @@ const state = {
   },
 
   series: {},
+  loading: 0,  //using counter instead of boolean for multiple series loading
   activeSeries: {},
 
-  loading: 0,  //using counter instead of boolean for multiple series loading
   anomalies: [],
 }
 
@@ -46,7 +46,7 @@ const getters = {
 
 
 const mutations = {
-    update_clients(state, payload) {
+    set_clients(state, payload) {
         state.clients = payload
     },
     set_tags(state, payload) {
@@ -58,21 +58,17 @@ const mutations = {
     set_range(state, payload) {
         state.range = payload
     },
-    set_start_date(state, payload) {
-        state.range.start = payload
-    },
-    set_end_date(state, payload) {
-        state.range.end = payload
-    },
-    set_anomalies(state, payload) {
-        state.anomalies = payload
-    },
-
     add_series(state, payload) {
         state.series = { ...state.series, ...payload }
     },
     add_data(state, payload) {
         state.series[payload.name] = { ...state.series[payload.name] , data: payload.data }
+    },
+    add_anomalies(state, payload) {
+        state.anomalies = payload
+        // let newentry = { [payload.name]: payload.data}
+        // state.anomalies = { ...state.anomalies, ...newentry}
+            
     },
     set_active_series(state, payload) {
         state.activeSeries = { ...state.activeSeries, ...payload }
@@ -96,7 +92,7 @@ const actions = {
     fetchClients(store) {
         return axios.get('http://localhost:8000/prueba/clients/')
         .then(response => {       
-          store.commit('update_clients', response.data) 
+          store.commit('set_clients', response.data) 
 
         })
         .catch(error => { 
@@ -108,7 +104,6 @@ const actions = {
             store.commit('set_contexts', [])
             return
         } else {
-
             return axios.get('http://localhost:8000/prueba/contexts/', {
                     params: {
                         name: client
@@ -144,7 +139,6 @@ const actions = {
     async fetchData(store, name) {
         let requested = state.series[name]
         state.loading += 1
-        console.log(state.loading)
         return axios.get('http://localhost:8000/prueba/series/', {
                 params: {
                   name: requested.client,
@@ -152,34 +146,16 @@ const actions = {
                   contexts: requested.contexts,
                   start: state.range.start,
                   end: state.range.end,
-/*                  interval: state.displayInterval
-*/                }
+                  interval: requested.interval
+                }
         })
         .then(response => {       
           store.commit('add_data', {name: name, data: response.data}) 
           state.loading -= 1
-          console.log(state.loading)
         })
         .catch(error => { 
           state.loading -= 1
           console.log('error loading series data')
-        })
-    },
-    fetchAnomalies(store) {
-        return axios.get('http://localhost:8000/prueba/anomalies/', {
-                params: {
-                  name: state.clientName,
-                  tags: state.clientTags,
-                  contexts: state.clientContext,
-                  start: state.range.start,
-                  end: state.range.end
-                }
-        })
-        .then(response => {       
-          store.commit('set_anomalies', response.data) 
-        })
-        .catch(error => { 
-          console.log('error retrieving anomalies')
         })
     },
     async updateTagsContexts(store, client) {
@@ -192,7 +168,6 @@ const actions = {
             store.commit('set_contexts', [])           
         }
     },
-
     addSeries(store, seriesOptions) {
         let { name, ...rest} = seriesOptions
         let newseries = { [name]: rest }
@@ -226,8 +201,28 @@ const actions = {
         Object.keys(state.series).forEach(key => {
             store.dispatch('fetchData', key)
         })
+    },
+    analizeSeries(store, options) {
+        let requested = state.series[options.name]
+        return axios.get('http://localhost:8000/prueba/anomalies/', {
+                params: {
+                  name: requested.client,
+                  tags: requested.tags,
+                  contexts: requested.contexts,
+                  start: state.range.start,
+                  end: state.range.end,
+                  interval: options.interval,
+                  config: options.config
+                }
+        })
+        .then(response => {       
+          // store.commit('add_anomalies', {name: options.name, data: response.data}) 
+          store.commit('add_anomalies', response.data) 
+        })
+        .catch(error => { 
+          console.log('error retrieving anomalies')
+        })
     }
-
 }
 
 export default {
