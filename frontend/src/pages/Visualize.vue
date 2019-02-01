@@ -13,24 +13,17 @@
                 <SettingsAnalysis/>
             </div>
         </b-tab-item>
-        <b-tab-item label="Comparar">
-            <div class="tab-item-content">
-                <SettingsCompare/>
-            </div>
-        </b-tab-item>
       </b-tabs>
   </div>
 
   <section class="column main-content">
-    <div class="box">
-      <DateRangeSelect :value="range" @input="changeRange"/>
-    </div>
-    <div class="chart-container">
-      <ChartWrapper/>
-    </div>
-    <div class="box">
-      <BarSeries/>
+    <div class="chart-section">
+        <DateRangeSelect :value="range" @input="changeRange"/>
+        <ChartWrapper/>
+        <BarSeries/>
+        <AnomaliesList/>
     </div>  
+
   </section>
 </div>   
 
@@ -43,14 +36,14 @@
 import ChartWrapper from '../components/ChartWrapper.vue';
 import SettingsSeries from '../components/SettingsSeries.vue';
 import SettingsAnalysis from '../components/SettingsAnalysis.vue';
-import SettingsCompare from '../components/SettingsCompare.vue';
 import DateRangeSelect from '../components/DateRangeSelect.vue';
 import BarSeries from '../components/BarSeries.vue';
+import AnomaliesList from '../components/AnomaliesList.vue';
 
 
 export default {
 
-    components: { ChartWrapper, SettingsSeries, SettingsAnalysis, SettingsCompare, DateRangeSelect, BarSeries },
+    components: { ChartWrapper, SettingsSeries, SettingsAnalysis, DateRangeSelect, BarSeries, AnomaliesList },
 
     data () {
         return {
@@ -88,20 +81,21 @@ $section-pad: 5.625rem
 .is-sidebar-menu
   overflow: auto
 
+.side-menu
+  background-color: #343c3d
+  border-radius: 8px 
+
 .is-fullheight
   height: calc(100vh - 9.625rem) 
   min-height: calc(100vh - 9.625rem) 
-  
+
 .main-content 
   display: flex
   flex-direction: column
-  overflow: auto
+  overflow-y: auto
     
-.chart-container
-  margin-bottom: 1.5rem
+.chart-section > *
+  margin: 0 0.5rem 0.5rem 0
 
-.side-menu
-  background-color: #343c3d
-  border-radius: 8px
 
 </style>

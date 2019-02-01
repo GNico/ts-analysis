@@ -36,11 +36,11 @@ export default {
     chartOptions() {
       return {
         chart: {
-/*              height: '40%',
-*/        zoomType: 'xy',
+          zoomType: 'xy',
           panning: true,
           panKey: 'shift'
         },
+        credits: false,
         loading: {
           labelStyle: {
               color: 'white',
@@ -75,12 +75,6 @@ export default {
     },
   },
   methods: {
-    /*toggleLoading() {
-      this.isLoading ? 
-        this.$refs.chart.chart.showLoading() :
-        this.$refs.chart.chart.hideLoading()
-      this.isLoading = !this.isLoading
-    },*/
     selectColor(ratio) {
       let color1 = ''
       let color2 = ''

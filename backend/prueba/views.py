@@ -13,9 +13,7 @@ from . import data_path
 
 
 def index(request):
-    parametro = 'nico'
-    context = {'parametro': parametro,}
-    return render(request, 'prueba/index.html', context)
+    return render(request, 'prueba/index.html')
 
 
 def clients(request):

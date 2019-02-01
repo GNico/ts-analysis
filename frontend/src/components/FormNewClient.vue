@@ -50,6 +50,9 @@
 
  <script>
 
+import api from "../api/repository"
+
+
 export default {
   name: 'FormNewClient',
 	data() {
@@ -68,16 +71,16 @@ export default {
       let vm = this
       vm.loading = true
       vm.status = "INDEXANDO"
-      axios.post('http://localhost:8000/prueba/newclient/', vm.form)
-        .then(response => {       
-          console.log("termino indexar (no async atm)")
-          vm.loading = false
-          vm.status = "TERMINADO"
-          vm.$store.dispatch('fetchClients');
-        })
-        .catch(error => { 
-          console.log('error creating new client')
-        })
+      api.addNewClient(vm.form)
+      .then(response => {       
+        console.log("termino indexar")
+        vm.loading = false
+        vm.status = "TERMINADO"
+        vm.$store.dispatch('fetchClients');
+      })
+      .catch(error => { 
+        console.log('error creating new client')
+      })
     }
   }
 }

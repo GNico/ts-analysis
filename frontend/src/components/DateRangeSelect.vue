@@ -113,14 +113,6 @@ export default {
       this.activeBtn = button
     }
   },
-  /*watch: {
-    selectedRange: {
-      handler(newVal) {
-        this.$emit('input', { start: this.selectedRange.start, end: this.selectedRange.end })
-      },
-      deep: true
-    }
-  }*/
 }
 
 </script>

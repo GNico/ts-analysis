@@ -1,3 +1,6 @@
+import api from "../api/repository";
+
+
 const state = {
   clients: [],
   tags: [],
@@ -8,13 +11,11 @@ const state = {
   },
 
   series: {},
-  loading: 0,  //using counter instead of boolean for multiple series loading
+  loading: 0,  //using counter instead of boolean to track multiple series
   activeSeries: {},
 
   anomalies: [],
 }
-
-const namespaced = true
 
 const getters = {
     getSeriesNames: (state) => {
@@ -90,32 +91,27 @@ const mutations = {
 
 const actions = {
     fetchClients(store) {
-        return axios.get('http://localhost:8000/prueba/clients/')
-        .then(response => {       
-          store.commit('set_clients', response.data) 
-
-        })
-        .catch(error => { 
-          console.log('error loading client data')
-        })
+        return  api.getClients()
+                .then(response => {       
+                  store.commit('set_clients', response.data) 
+                })
+                .catch(error => { 
+                  console.log('error loading client data')
+                  console.log(error)
+                })
     },
     async fetchContexts(store, client) {
         if (!client) {
             store.commit('set_contexts', [])
             return
         } else {
-            return axios.get('http://localhost:8000/prueba/contexts/', {
-                    params: {
-                        name: client
-                    }
-            })
-            .then(response => {
-              store.commit('set_contexts', response.data) 
-            })
-            .catch(error => { 
-                console.log('error loading contexts data');
-            });
-
+            return  api.getContexts(client)
+                    .then(response => {
+                      store.commit('set_contexts', response.data) 
+                    })
+                    .catch(error => { 
+                        console.log('error loading contexts data');
+                    });
         }
     },
     async fetchTags(store, client) {
@@ -123,40 +119,33 @@ const actions = {
             store.commit('set_tags', [])
             return
         } else {
-            return axios.get('http://localhost:8000/prueba/tags/', {
-                    params: {
-                        name: client
-                    }
-            })
-            .then(response => {
-              store.commit('set_tags', response.data) 
-            })
-            .catch(error => { 
-                console.log('error loading tags data');
-            });
+            return  api.getTags(client)
+                    .then(response => {
+                      store.commit('set_tags', response.data) 
+                    })
+                    .catch(error => { 
+                        console.log('error loading tags data');
+                    });
         }
     },
     async fetchData(store, name) {
         let requested = state.series[name]
         state.loading += 1
-        return axios.get('http://localhost:8000/prueba/series/', {
-                params: {
-                  name: requested.client,
-                  tags: requested.tags,
-                  contexts: requested.contexts,
-                  start: state.range.start,
-                  end: state.range.end,
-                  interval: requested.interval
-                }
-        })
-        .then(response => {       
-          store.commit('add_data', {name: name, data: response.data}) 
-          state.loading -= 1
-        })
-        .catch(error => { 
-          state.loading -= 1
-          console.log('error loading series data')
-        })
+        return  api.getSeriesData({ 
+                    name: requested.client,
+                    tags: requested.tags,
+                    contexts: requested.contexts,
+                    start: state.range.start,
+                    end: state.range.end,
+                    interval: requested.interval})
+                .then(response => {       
+                    store.commit('add_data', {name: name, data: response.data}) 
+                    state.loading -= 1
+                })
+                .catch(error => { 
+                    state.loading -= 1
+                    console.log('error loading series data')
+                })        
     },
     async updateTagsContexts(store, client) {
         if (client) {
@@ -204,24 +193,21 @@ const actions = {
     },
     analizeSeries(store, options) {
         let requested = state.series[options.name]
-        return axios.get('http://localhost:8000/prueba/anomalies/', {
-                params: {
-                  name: requested.client,
-                  tags: requested.tags,
-                  contexts: requested.contexts,
-                  start: state.range.start,
-                  end: state.range.end,
-                  interval: options.interval,
-                  config: options.config
-                }
-        })
-        .then(response => {       
-          // store.commit('add_anomalies', {name: options.name, data: response.data}) 
-          store.commit('add_anomalies', response.data) 
-        })
-        .catch(error => { 
-          console.log('error retrieving anomalies')
-        })
+        return  api.getAnomalies({
+                    name: requested.client,
+                    tags: requested.tags,
+                    contexts: requested.contexts,
+                    start: state.range.start,
+                    end: state.range.end,
+                    interval: options.interval,
+                    config: options.config
+                })
+                .then(response => {       
+                    store.commit('add_anomalies', response.data) 
+                })
+                .catch(error => { 
+                    console.log('error retrieving anomalies')
+                })
     }
 }
 
