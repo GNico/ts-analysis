@@ -78,10 +78,22 @@
 export default {
   data () {
     return {
-      analysisOptions: {
+      seriesOptions: {
         name: '',
+        client: '',
+        contexts: '',
+        tags: '',
+        start: '',
+        end: '',
+      },
+      analysisOptions: {
         interval: '30m',
         config: ''
+      },
+      displayOptions: {
+        threshold: 0,
+        color: '#fff',
+        chartType: 'line'
       }
     }
   },

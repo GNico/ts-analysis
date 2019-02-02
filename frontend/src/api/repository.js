@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseDomain = "http://0.0.0.0:8000";
+const baseDomain = "http://localhost:8000";
 const baseURL = baseDomain + "/prueba";
 
 const repository = axios.create({

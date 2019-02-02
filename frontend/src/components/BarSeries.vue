@@ -24,15 +24,15 @@ export default {
     components: { ButtonSeriesName },
     computed: {
         seriesNames() {
-            return this.$store.getters.getSeriesNames
+            return this.$store.getters['series/getSeriesNames']
         },
     },
     methods: {
         removeItem(name) {
-            this.$store.dispatch('deleteSeries', name )
+            this.$store.dispatch('series/deleteSeries', name )
         },
         toggleActive(event) {
-            this.$store.commit("set_active_series", { [event.name]: event.active })
+            this.$store.commit("series/set_active_series", { [event.name]: event.active })
         }
     }
 
