@@ -80,7 +80,7 @@ export default {
     },
     computed: {
         clients() {
-            return this.$store.state.series.clients
+            return this.$store.state.clients.clients
         },
     }
 }

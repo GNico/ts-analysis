@@ -11,7 +11,7 @@ export default {
     components: { ChartSeries },
     computed: {
         seriesData() {
-            return this.$store.getters.getDisplaySeries
+            return this.$store.getters['series/getDisplaySeries']
         },
         loading() {
         	return this.$store.state.series.loading

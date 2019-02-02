@@ -65,7 +65,7 @@
 
       </div>
 
-      <div date-range-bar__refresh>
+      <div>
         <button class="button is-primary" @click="update">
           Actualizar
         </button> 
@@ -134,7 +134,7 @@ export default {
   display: flex;
 }
 
-.date-range-bar__inputs > * {
+.date-range-bar__inputs > div:not(:last-child)  {
   margin-right: 0.75rem;
 }
 

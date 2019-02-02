@@ -16,11 +16,12 @@ export default {
   name: 'app',
   components: { TheNavBar  },
   created() {
-    //initialize store data structure by submitting actions
-    this.$store.dispatch('fetchClients');
+    this.$store.dispatch('clients/fetchClients');
   }
 }
 </script>
+
+
 
 <style lang="scss">
 
@@ -31,10 +32,9 @@ html, body {
   overflow: hidden;
 }
 
-.section {
+.top-section {
   min-height: calc(100vh - ( #{$navbar-height} );
 }
-
 
 /* #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;

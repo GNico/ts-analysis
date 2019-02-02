@@ -153,19 +153,19 @@ export default {
     },
     computed: {
         seriesNames() {
-            return this.$store.getters.getSeriesNames
+            return this.$store.getters['series/getSeriesNames']
         },
         clients() {
-            return this.$store.state.series.clients
+            return this.$store.state.clients.clients
         },
         clientsSelectOptions() {
             return this.clients.map(item => item.name);
         },
         contexts() {
-            return this.$store.state.series.contexts
+            return this.$store.state.clients.contexts
         },
         tags() {
-            return this.$store.state.series.tags
+            return this.$store.state.clients.tags
         },
         hasError() {
             return this.seriesNames.includes(this.seriesOptions.name)
@@ -179,7 +179,7 @@ export default {
             this.seriesOptions.color = obj.color
             this.seriesOptions.chartType = obj.chartType
             this.seriesOptions.interval = obj.interval
-            await this.$store.dispatch('updateTagsContexts', obj.client)
+            await this.$store.dispatch('clients/updateTagsContexts', obj.client)
             this.saved.tags = obj.tags
             this.saved.contexts = obj.contexts
 
@@ -188,15 +188,15 @@ export default {
         updateSelectOptions(value) {
             this.seriesOptions.client = value
             if (this.saved.client != value) {
-                this.$store.dispatch('updateTagsContexts', this.seriesOptions.client)
+                this.$store.dispatch('clients/updateTagsContexts', this.seriesOptions.client)
             }
         },
         addSeries() {
             this.edit = true
-            this.$store.dispatch('addSeries', this.seriesOptions)
+            this.$store.dispatch('series/addSeries', this.seriesOptions)
         },
         updateSeries() {
-            this.$store.dispatch('updateSeries', this.seriesOptions)
+            this.$store.dispatch('series/updateSeries', this.seriesOptions)
         },
         clearFields() {
             this.seriesOptions.name = ''

@@ -2,9 +2,6 @@ import api from "../api/repository";
 
 
 const state = {
-  clients: [],
-  tags: [],
-  contexts: [],
   range: {
     start: null,
     end: null
@@ -47,15 +44,6 @@ const getters = {
 
 
 const mutations = {
-    set_clients(state, payload) {
-        state.clients = payload
-    },
-    set_tags(state, payload) {
-        state.tags = payload
-    },
-    set_contexts(state, payload) {
-        state.contexts = payload
-    },
     set_range(state, payload) {
         state.range = payload
     },
@@ -87,47 +75,8 @@ const mutations = {
 
 }
 
-//hosturl = 'http://localhost:8000/prueba/'
 
 const actions = {
-    fetchClients(store) {
-        return  api.getClients()
-                .then(response => {       
-                  store.commit('set_clients', response.data) 
-                })
-                .catch(error => { 
-                  console.log('error loading client data')
-                  console.log(error)
-                })
-    },
-    async fetchContexts(store, client) {
-        if (!client) {
-            store.commit('set_contexts', [])
-            return
-        } else {
-            return  api.getContexts(client)
-                    .then(response => {
-                      store.commit('set_contexts', response.data) 
-                    })
-                    .catch(error => { 
-                        console.log('error loading contexts data');
-                    });
-        }
-    },
-    async fetchTags(store, client) {
-        if (!client) {
-            store.commit('set_tags', [])
-            return
-        } else {
-            return  api.getTags(client)
-                    .then(response => {
-                      store.commit('set_tags', response.data) 
-                    })
-                    .catch(error => { 
-                        console.log('error loading tags data');
-                    });
-        }
-    },
     async fetchData(store, name) {
         let requested = state.series[name]
         state.loading += 1
@@ -146,16 +95,6 @@ const actions = {
                     state.loading -= 1
                     console.log('error loading series data')
                 })        
-    },
-    async updateTagsContexts(store, client) {
-        if (client) {
-            let tgs = store.dispatch('fetchTags', client) 
-            let ctx = store.dispatch('fetchContexts', client)
-            let res = [ await tgs, await ctx ]
-        } else {
-            store.commit('set_tags', [] )
-            store.commit('set_contexts', [])           
-        }
     },
     addSeries(store, seriesOptions) {
         let { name, ...rest} = seriesOptions
@@ -212,8 +151,9 @@ const actions = {
 }
 
 export default {
-  state,
-  getters,
-  actions,
-  mutations
+    namespaced: true,
+    state,
+    getters,
+    actions,
+    mutations
 }

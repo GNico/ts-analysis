@@ -21,7 +21,6 @@
         <DateRangeSelect :value="range" @input="changeRange"/>
         <ChartWrapper/>
         <BarSeries/>
-        <AnomaliesList/>
     </div>  
 
   </section>
@@ -63,7 +62,7 @@ export default {
     },
     methods: {
         changeRange(event) {
-            this.$store.dispatch('updateRange', event)
+            this.$store.dispatch('series/updateRange', event)
         },
     },
 }

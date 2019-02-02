@@ -76,7 +76,7 @@ export default {
         console.log("termino indexar")
         vm.loading = false
         vm.status = "TERMINADO"
-        vm.$store.dispatch('fetchClients');
+        vm.$store.dispatch('clients/fetchClients');
       })
       .catch(error => { 
         console.log('error creating new client')
