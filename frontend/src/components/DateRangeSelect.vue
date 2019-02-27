@@ -2,22 +2,22 @@
 <div class="date-range-bar" >
 
     <div class="date-range-bar__buttons">
-      <button class="button is-primary" :class="{ 'is-info': activeBtn === 'btn1' }" @click="setActive('btn1'); setAll()" >
+      <button class="button is-info" :class="{ 'is-outlined': activeBtn !== 'btn1' }" @click="setActive('btn1'); setAll()" >
         Todo
       </button>       
-      <button class="button is-primary" :class="{ 'is-info': activeBtn === 'btn2' }" @click="setActive('btn2'); setLast(365)" >
+      <button class="button is-info" :class="{ 'is-outlined': activeBtn !==  'btn2' }" @click="setActive('btn2'); setLast(365)" >
         Ultimo año
       </button>
-      <button class="button is-primary" :class="{ 'is-info': activeBtn === 'btn3' }" @click="setActive('btn3'); setLast(30)" >
+      <button class="button is-info" :class="{ 'is-outlined': activeBtn !==  'btn3' }" @click="setActive('btn3'); setLast(30)" >
         Ultimos 30 dias
       </button>
-      <button class="button is-primary" :class="{ 'is-info': activeBtn === 'btn4' }" @click="setActive('btn4'); setLast(7)" >
+      <button class="button is-info" :class="{ 'is-outlined': activeBtn !==  'btn4' }" @click="setActive('btn4'); setLast(7)" >
         Ultimos 7 dias
       </button> 
-      <button class="button is-primary" :class="{ 'is-info': activeBtn === 'btn5' }" @click="setActive('btn5'); setLast(1)" >
+      <button class="button is-info" :class="{ 'is-outlined': activeBtn !==  'btn5' }" @click="setActive('btn5'); setLast(1)" >
         Ultimo dia
       </button>
-    </div>       
+    </div>        
 
     <div class="date-range-bar__inputs">
       <div class="datepicker-field">
@@ -80,22 +80,25 @@
 
 export default {
   props: {
-      value: {
-        type: Object,
-      }
+    range: {
+      type: Object,
+    },
+    activeButton: {
+      type: String
+    }
   },
   data () {
     return {
       selectedRange: {
-        start: this.value.start,
-        end: this.value.end,
+        start: this.range.start,
+        end: this.range.end,
       },
-      activeBtn: ''
+      activeBtn: this.activeButton
     }
   },
   methods: {
     update() {
-      this.$emit('input', { start: this.selectedRange.start, end: this.selectedRange.end })
+      this.$emit('input', { start: this.selectedRange.start, end: this.selectedRange.end, activeRangeButton: this.activeBtn})
     },
     setAll() {
       this.selectedRange.start = null
@@ -113,6 +116,15 @@ export default {
       this.activeBtn = button
     }
   },
+  watch: {
+    range(newval) {
+      this.selectedRange = newval
+    },
+    activeButton(newval) {
+      this.activeBtn = newval
+    }
+
+  }
 }
 
 </script>
@@ -127,7 +139,7 @@ export default {
 }
 
 .date-range-bar__buttons {
-  padding-right: 1rem;
+  padding-right: 0rem;
 }
 
 .date-range-bar__inputs {

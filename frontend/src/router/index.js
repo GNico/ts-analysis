@@ -12,7 +12,7 @@ let routes = [
 	},
 	{
 		path: '/Anomalies',
-		component: require('@/pages/Anomalies.vue').default
+		component: require('@/pages/Analysis.vue').default
 	},
 	{
 		path: '/Alerts',

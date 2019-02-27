@@ -1,36 +1,23 @@
 <template>
-    
-<div class="tags has-addons">
-      <span class="tag button is-primary is-medium" @click="toggle" :class="{ 'is-outlined': !isActive }">
-        {{item}}
-      </span>
-      <a class="tag is-delete is-primary is-medium" @click="deleted"></a>
-</div>
-
-
+<span class="tag button is-info is-large" @click="toggle" :class="{ 'is-outlined': !isActive }">
+  {{name}}
+  <button class="delete is-small" @click="deleted"></button>
+</span>
 </template>
 
 
 
 <script>
-    
 export default {
-    props: ['item'],
-    data () {
-        return {
-            isActive: true
-        }
-    },
+    props: ['name', 'isActive'],
     methods: {
         toggle() {
-            this.isActive = !this.isActive
-            this.$emit('click', {active: this.isActive, name: this.item})
+            this.$emit('click', {name: this.name, active: !this.isActive})
         },
         deleted() {
-            this.$emit("deleted", this.item)
+            this.$emit("deleted", this.name)
         }
     }
 
 }
-
 </script>

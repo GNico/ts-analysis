@@ -1,70 +1,67 @@
 <template>
 
-<div class="columns is-fullheight ">
-  <div class="column is-2 is-sidebar-menu is-hidden-mobile">
-      <b-tabs class="side-menu" position="is-centered" type="is-toggle" expanded>
-        <b-tab-item label="Series">
+<div>
+  <div class="columns is-fullheight ">
+     <div class="column is-2 side-menu is-hidden-mobile">
+        <SettingsVisualize/>   
+        <!-- <b-tabs class="side-menu" position="is-centered" type="is-toggle" expanded>
+          <b-tab-item label="Series">
             <div class="tab-item-content ">
-                <SettingsSeries/>
+              <SettingsVisualize/>                  
             </div>
-        </b-tab-item>
-        <b-tab-item label="Analisis">
+          </b-tab-item>
+          <b-tab-item label="Analisis">
             <div class="tab-item-content">
-                <SettingsAnalysis/>
+                
             </div>
-        </b-tab-item>
-      </b-tabs>
-  </div>
+          </b-tab-item>
+        </b-tabs> -->
+    </div> 
 
-  <section class="column main-content">
-    <div class="chart-section">
-        <DateRangeSelect :value="range" @input="changeRange"/>
-        <ChartWrapper/>
-        <BarSeries/>
-    </div>  
+    <section class="column main-content">
+      <div class="chart-section">
 
-  </section>
-</div>   
+          <BarSeries section="visualize"/>
+          <DateRangeSelect :value="range" @input="changeRange"/>
+          <!-- <ChartWrapper/> -->
 
+      </div>  
+
+    </section>
+  </div>   
+</div>
 </template>
 
 
 
 <script>
     
-import ChartWrapper from '../components/ChartWrapper.vue';
 import SettingsSeries from '../components/SettingsSeries.vue';
-import SettingsAnalysis from '../components/SettingsAnalysis.vue';
+import SettingsVisualize from '../components/SettingsVisualize.vue';
 import DateRangeSelect from '../components/DateRangeSelect.vue';
 import BarSeries from '../components/BarSeries.vue';
-import AnomaliesList from '../components/AnomaliesList.vue';
 
 
 export default {
-
-    components: { ChartWrapper, SettingsSeries, SettingsAnalysis, DateRangeSelect, BarSeries, AnomaliesList },
-
-    data () {
-        return {
-            selectedRange: { 
-                start: null,
-                end: null, 
-            },
-        }
+  components: { SettingsSeries, SettingsVisualize, DateRangeSelect, BarSeries },
+  data () {
+    return {
+      selectedRange: { 
+        start: null,
+        end: null, 
+      },
+    }
+  },
+  computed: {
+    range() {
+      return this.$store.state.visualize.range
     },
-    computed: {
-        range() {
-            return this.$store.state.series.range
-        },
-        anomalies() {
-            return this.$store.state.series.anomalies
-        }
+  },
+  methods: {
+    changeRange(event) {
+      this.$store.dispatch('visualize/updateRange', event)
     },
-    methods: {
-        changeRange(event) {
-            this.$store.dispatch('series/updateRange', event)
-        },
-    },
+  },
 }
 
 
@@ -77,12 +74,9 @@ export default {
 
 $section-pad: 5.625rem
 
-.is-sidebar-menu
+.side-menu
   overflow: auto
 
-.side-menu
-  background-color: #343c3d
-  border-radius: 8px 
 
 .is-fullheight
   height: calc(100vh - 9.625rem) 

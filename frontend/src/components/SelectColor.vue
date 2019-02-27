@@ -25,7 +25,6 @@
 <script>
 
 export default {
-    name: "SelectColor",
     props: {
         value: { 
             required: true,

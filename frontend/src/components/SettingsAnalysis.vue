@@ -1,72 +1,27 @@
 <template>
 
+<div>
 
-<div class="columns">
-  <div class="column is-6 left-col">
+  <b-field label="Intervalo agregacion">
+    <b-input type="text" v-model="analysisOptions.interval" placeholder="ej: 30m" />
+  </b-field>
 
-  <h3 class="title is-4">Serie</h3>
-  <div class="series-data">
-    <div class="series-data__item">
-      <label class="label"> Nombre </label>
-      <b-input value=""></b-input>
-    </div>
-
-    <div class="series-data__item">
-      <label class="label"> Cliente </label>
-      <b-input value=""></b-input>
-    </div>
-
-    <div class="series-data__item">
-      <label class="label"> Contexto </label>
-      <b-input value=""></b-input>
-    </div>
-
-    <div class="series-data__item">
-      <label class="label"> Tags </label>
-      <b-input value=""></b-input>
-    </div>
-
-    <div class="series-data__item">
-      <label class="label"> Desde </label>
-      <b-input value=""></b-input>
-    </div>
-
-    <div class="series-data__item">
-      <label class="label"> Hasta </label>
-      <b-input value=""></b-input>
-    </div>
+  <b-field label="Configuracion">
+    <b-input type="textarea" v-model="analysisOptions.config" placeholder="ej: {parametro1: p1, otroparametro: op}"></b-input>
+  </b-field>
 
 
-  </div>
+  <b-field class="has-text-right">
+    <a class="button is-primary" @click="analize">
+      Analizar
+    </a>
+  </b-field>
 
-  </div>
-  
-  <div class="column is-6">
 
-  <h3 class="title is-4">Analisis</h3>
-
-  <div class="series-data">
-
-    <div class="series-data__item">
-      <label class="label"> Intervalo agregacion </label>
-      <b-input type="text" v-model="analysisOptions.interval" placeholder="ej: 30m" />
-    </div>
-
-    <div class="series-data__item">
-      <label class="label"> Desde </label>
-      <b-input type="textarea" v-model="analysisOptions.config" placeholder="ej: {parametro1: p1, otroparametro: op}"></b-input>
-    </div>
-
-    <div>
-      <a class="button is-primary" @click="analize">
-        Analizar
-      </a>
-    </div>
-  </div>
-
-  </div>
 
 </div>
+
+
 
 
 </template>
@@ -116,7 +71,7 @@ export default {
 
 <style>
 
-.left-col {
+/*.left-col {
   border-right: 2px solid #282f2f;
 }
 
@@ -133,5 +88,5 @@ export default {
 
 .series-data__item > .label {
   margin-right: 0.5rem;
-}  
+}  */
 </style>
