@@ -6,19 +6,18 @@
 
     <div class="chart-footer-section">
       <div class="chart-footer__field">
-        <b-checkbox type="is-info" v-model="baselineCheck">
-          <span class="label">Show baseline</span>
-        </b-checkbox>
-      </div> 
-      <div class="chart-footer__field ">
-        <b-checkbox type="is-info" v-model="anomaliesCheck">
-          <span class="label">Show anomalies
-            <template v-if="anomaliesCheck"> above limit</template>
-          </span>
-        </b-checkbox>
-        <label v-if="anomaliesCheck" class="tag is-info label"> {{ threshold }}</label>  
-        <input v-if="anomaliesCheck" class="slider is-marginless" type="range" step="1" min="0" max="100" v-model="threshold">
-      </div>   
+        <label class="checkbox label">
+          <input type="checkbox" :checked="seriesOptions.showBaseline" :value="seriesOptions.showBaseline" @change="changeSeriesOptions({showBaseline: !seriesOptions.showBaseline})">
+          Show baseline
+        </label>
+      </div>
+      <div class="chart-footer__field">
+        <label class="label"> Score threshold</label>
+        <label class="tag is-info label"> {{ scoreValue }}</label>  
+        <input class="slider is-marginless" type="range" step="1" min="0" max="100" 
+              v-model="scoreValue" 
+              @change="changeSeriesOptions({scoreThreshold: $event.target.value})">
+      </div>
     </div>
 
     <div class="chart-footer-section">
@@ -75,10 +74,7 @@ export default {
     components: { DateRangeSelect, ChartSeries },
     data() {
       return {
-        baselineCheck: true,
-        anomaliesCheck: true,
-        threshold: 0,
-
+        scoreValue: 0,
       }
     },
     computed: {
@@ -105,6 +101,14 @@ export default {
       updateData() {
         this.$store.dispatch('analysis/fetchSeriesData', this.seriesName)
       },
+    },
+    watch: {
+      'seriesOptions.scoreThreshold': {
+        handler: function (newval) {
+          this.scoreValue = newval
+        },
+        immediate: true
+      }
     }
 }
 </script>
@@ -142,6 +146,4 @@ export default {
 .color-box {
   visibility: hidden;
 }
-
-
 </style>

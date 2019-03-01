@@ -3,11 +3,11 @@
 <div>
 
   <b-field label="Intervalo agregacion">
-    <b-input type="text" v-model="analysisOptions.interval" placeholder="ej: 30m" />
+    <b-input type="text" :value="seriesOptions.analysisInterval" placeholder="ej: 30m" @input="changeSeriesOptions({analysisInterval: $event})" />
   </b-field>
 
   <b-field label="Configuracion">
-    <b-input type="textarea" v-model="analysisOptions.config" placeholder="ej: {parametro1: p1, otroparametro: op}"></b-input>
+    <b-input type="textarea" :value="seriesOptions.config" placeholder="ej: {parametro1: p1, otroparametro: op}" @input="changeSeriesOptions({config: $event})"></b-input>
   </b-field>
 
 
@@ -31,62 +31,21 @@
 
 
 export default {
-  data () {
-    return {
-      seriesOptions: {
-        name: '',
-        client: '',
-        contexts: '',
-        tags: '',
-        start: '',
-        end: '',
-      },
-      analysisOptions: {
-        interval: '30m',
-        config: ''
-      },
-      displayOptions: {
-        threshold: 0,
-        color: '#fff',
-        chartType: 'line'
-      }
-    }
-  },
   computed: {
-    seriesNames() {
-      return this.$store.getters['series/getSeriesNames']
+    seriesName() {
+      return this.$store.state.analysis.activeSeries
+    },
+    seriesOptions() {
+      return this.$store.getters['analysis/getSeriesOptions'](this.seriesName)
     },
   },
   methods: {
     analize() {
-      this.$store.dispatch('series/analizeSeries', this.analysisOptions)
-    }
+      this.$store.dispatch('analysis/analizeSeries', this.seriesName)
+    },
+    changeSeriesOptions(options) {
+      this.$store.dispatch('analysis/changeSeriesOptions', { name: this.seriesName, options: options})
+    },
   }
-
 }
-
-
-
 </script>
-
-<style>
-
-/*.left-col {
-  border-right: 2px solid #282f2f;
-}
-
-.series-data {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-
-.series-data__item {
-  display: flex;
-  align-items: flex-start;
-}  
-
-.series-data__item > .label {
-  margin-right: 0.5rem;
-}  */
-</style>

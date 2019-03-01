@@ -1,21 +1,21 @@
 <template>    
-<div class="is-flex box"> 
+<div class="bar-container  is-flex"> 
 
   <div class="bar-buttons">
     <a class="button is-primary " @click="isModalActive = true"> 
       Add series
     </a>
-    <label class="checkbox details" v-show="activeSeries">
+    <!-- <label class="checkbox details" v-show="activeSeries">
       <input type="checkbox">
         Show Details
-    </label>
+    </label> -->
   </div>
 
   <b-modal :active.sync="isModalActive" has-modal-card>
     <SettingsSeries/>
   </b-modal>
 
-  <div class="field is-grouped is-grouped-multiline">
+  <div class="scroll-container">
     <div class="control" v-for="(item, index) in seriesNames" :key="item" >
       <ButtonSeriesName  
         :name="item" 
@@ -65,7 +65,27 @@ export default {
 
 
 <style>
+
+.bar-container {
+  padding: 1.25rem 1.25rem 0rem 1.25rem;
+  background-color: #343c3d;
+  border-radius: 8px;
+}
   
+.bar-buttons {
+  margin-bottom: 1.25rem;
+}
+
+.scroll-container {
+  display: flex;
+  overflow: overlay;
+}
+
+.scroll-container > div {
+  margin-right: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
 .bar-buttons {
   display: flex;
   flex-direction: column;

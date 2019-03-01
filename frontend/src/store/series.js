@@ -1,5 +1,3 @@
-
-
 const state = {
   series: {},
   default: {
@@ -50,9 +48,11 @@ const actions = {
         store.dispatch('analysis/addSeries', name, { root: true })
     },
     deleteSeries(store, name) {
-        store.commit("delete_series", name)
-        //propagate deletes in other modules
-        store.dispatch('analysis/deleteSeries', name, { root: true })
+        if (name) {
+            store.commit("delete_series", name)
+            //propagate deletes in other modules
+            store.dispatch('analysis/deleteSeries', name, { root: true })
+        }
 
     },
     updateSeries(store, seriesOptions) {

@@ -1,24 +1,27 @@
 <template>
 <div>
   <BarSeries :activeSeries="activeSeries" @change="setActiveSeries"/>
-  <div class="columns is-fullheight ">
 
-    <div class="column is-2 side-menu is-hidden-mobile ">
-      <b-tabs type="is-boxed" expanded size="is-small">
-        <b-tab-item label="Analysis" icon-pack="fas" icon="chart-line">
-          <SettingsAnalysis/>
-        </b-tab-item>
-        <b-tab-item label="Details" icon-pack="fas" icon="file-alt">
+  <section class='section top-section'>
+    <div class="columns is-fullheight ">
 
-        </b-tab-item>
-      </b-tabs>
-    </div>
+      <div class="column is-2 side-menu is-hidden-mobile ">
+        <b-tabs type="is-boxed" expanded size="is-small">
+          <b-tab-item label="Analysis" icon-pack="fas" icon="chart-line">
+            <SettingsAnalysis/>
+          </b-tab-item>
+          <b-tab-item label="Details" icon-pack="fas" icon="file-alt">
 
-    <div class="column main-content">
-      <AnalysisChart/>
-<!--       <AnomaliesList/>
- -->    </div>
-  </div>   
+          </b-tab-item>
+        </b-tabs>
+      </div>
+
+      <div class="column main-content">
+        <AnalysisChart/>
+  <!--       <AnomaliesList/>
+   -->    </div>
+    </div>  
+  </section> 
 </div>
 </template>
 
