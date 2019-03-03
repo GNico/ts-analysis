@@ -1,13 +1,8 @@
 <template>
-
 <div id="app">
   <TheNavBar/>
-
-
-<!--   <section class='section top-section'>
- -->      <router-view> </router-view>
-<!--   </section>
- --></div>
+  <router-view> </router-view>
+ </div>
 </template>
 
 
@@ -34,13 +29,9 @@ html, body {
   overflow: hidden;
 }
 
-.top-section {
-  min-height: calc(100vh - ( #{$navbar-height} );
-}
-
 ::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
 }
  
 ::-webkit-scrollbar-track {
@@ -52,11 +43,12 @@ html, body {
 ::-webkit-scrollbar-thumb {
     -webkit-border-radius: 10px;
     border-radius: 10px;
-    background: rgba(50,60,61,0.8); 
+    background: rgba(255,255,255,0.1); 
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
 }
+
 ::-webkit-scrollbar-thumb:window-inactive {
-  background: rgba(50,60,61,0.4); 
+  background: rgba(0,0,0,0.1); 
 }
 
 

@@ -10,6 +10,7 @@ from elasticsearch import Elasticsearch
 from . import anomaly_detector
 from . import elastic_helper
 from . import data_path
+from . import mock_data
 
 
 def index(request):
@@ -56,39 +57,54 @@ def contexts(request):
 
 
 def series(request):
-    es = elastic_helper.EsHelper()
-    if request.method == 'GET':
-        requestedName = request.GET.get('name', '')
-        requestedTags = request.GET.get('tags', '')
-        requestedContext= request.GET.get('contexts', '')
-        requestedStart = request.GET.get('start', '')
-        requestedEnd = request.GET.get('end', '')
-        requestedInterval = request.GET.get('interval', '1H')
-        data = es.getSeries(clientname=requestedName, 
-                                context=requestedContext, 
-                                tags=requestedTags,
-                                start=requestedStart,
-                                end=requestedEnd,
-                                interval=requestedInterval)
-        return JsonResponse(data, safe=False)
+
+    return JsonResponse(mock_data.SERIES, safe=False) 
+    # es = elastic_helper.EsHelper()
+    # if request.method == 'GET':
+    #     requestedName = request.GET.get('name', '')
+    #     requestedTags = request.GET.get('tags', '')
+    #     requestedContext= request.GET.get('contexts', '')
+    #     requestedStart = request.GET.get('start', '')
+    #     requestedEnd = request.GET.get('end', '')
+    #     requestedInterval = request.GET.get('interval', '1H')
+    #     data = es.getSeries(clientname=requestedName, 
+    #                             context=requestedContext, 
+    #                             tags=requestedTags,
+    #                             start=requestedStart,
+    #                             end=requestedEnd,
+    #                             interval=requestedInterval)
+    #     return JsonResponse(data, safe=False)
 
 
 def anomalies(request):
-    es = elastic_helper.EsHelper()
-    if request.method == 'GET':
-        requestedName = request.GET.get('name', '')
-        requestedTags = request.GET.get('tags', '')
-        requestedContext= request.GET.get('contexts', '')
-        requestedStart = request.GET.get('start', '')
-        requestedEnd = request.GET.get('end', '')
-        requestedInterval = request.GET.get('interval', '1H')
+    #mocking
+    data = {
+      "anomalies": mock_data.ANOMALIES,
+      "trend": mock_data.TREND,
+      "baseline": {
+        "top": mock_data.TOP,
+        "bottom": mock_data.BOTTOM
+      }
+    }
 
-        series = es.getSeries(clientname=requestedName, 
-                                context=requestedContext, 
-                                tags=requestedTags,
-                                start=requestedStart,
-                                end=requestedEnd)
+    return JsonResponse(data, safe=False) 
 
-        data = anomaly_detector.detectAnomalies(series)
-        return JsonResponse(data, safe=False)
+
+    # es = elastic_helper.EsHelper()
+    # if request.method == 'GET':
+    #     requestedName = request.GET.get('name', '')
+    #     requestedTags = request.GET.get('tags', '')
+    #     requestedContext= request.GET.get('contexts', '')
+    #     requestedStart = request.GET.get('start', '')
+    #     requestedEnd = request.GET.get('end', '')
+    #     requestedInterval = request.GET.get('interval', '1H')
+
+    #     series = es.getSeries(clientname=requestedName, 
+    #                             context=requestedContext, 
+    #                             tags=requestedTags,
+    #                             start=requestedStart,
+    #                             end=requestedEnd)
+
+    #     data = anomaly_detector.detectAnomalies(series)
+    #     return JsonResponse(data, safe=False)
 

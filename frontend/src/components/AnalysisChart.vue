@@ -1,7 +1,7 @@
 <template>
 <div>
   <DateRangeSelect class="chart-section" :range="range" :activeButton="seriesOptions.activeRangeButton" @input="changeSeriesOptions($event); updateData()"/>
-  <ChartSeries class="chart-section" :seriesData="seriesData" :isLoading="loading" /> <!-- :anomalies="anomalies" -->
+  <ChartSeries class="chart-section" :seriesData="seriesData" :isLoading="loading" :anomalies="anomalies"/> 
   <div class="chart-footer chart-section">
 
     <div class="chart-footer-section">
@@ -13,10 +13,11 @@
       </div>
       <div class="chart-footer__field">
         <label class="label"> Score threshold</label>
-        <label class="tag is-info label"> {{ scoreValue }}</label>  
         <input class="slider is-marginless" type="range" step="1" min="0" max="100" 
               v-model="scoreValue" 
               @change="changeSeriesOptions({scoreThreshold: $event.target.value})">
+        <label class="tag is-info label"> {{ scoreValue }}</label>  
+
       </div>
     </div>
 
@@ -87,6 +88,9 @@ export default {
       seriesData() {
         return this.$store.getters['analysis/getDisplaySeriesData']
       },
+      anomalies() {
+        return this.$store.getters['analysis/getDisplayAnomalies']
+      },
       range() {
         return { start: this.seriesOptions.start, end: this.seriesOptions.end }
       },
@@ -129,7 +133,6 @@ export default {
 .chart-footer-section {
   display: flex;
   align-items: baseline; 
-
 }
 
 .chart-footer__field {

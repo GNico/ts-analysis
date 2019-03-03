@@ -38,7 +38,8 @@ export default {
         chart: {
           zoomType: 'xy',
           panning: true,
-          panKey: 'shift'
+          panKey: 'shift',
+          backgroundColor: "#073642"
         },
         credits: false,
         loading: {
@@ -55,8 +56,8 @@ export default {
         },
         xAxis: {
           type: 'datetime',
-          plotBands: this.bands,
-          plotLines: this.lines
+          plotBands: this.anomalies,
+          // plotLines: this.lines
         },
         yAxis: {
           title: '',
@@ -75,7 +76,7 @@ export default {
     },
   },
   methods: {
-    selectColor(ratio) {
+   /* selectColor(ratio) {
       let color1 = ''
       let color2 = ''
       if (ratio<0.5) {
@@ -147,12 +148,9 @@ export default {
 
         this.bands = bands
         this.lines = lines
-    },
+    },*/
   },
   watch: {
-    anomalies() {
-      this.parseAnomalies()
-    },
     isLoading() {
         if (this.isLoading) {
           this.$refs.chart.chart.showLoading()

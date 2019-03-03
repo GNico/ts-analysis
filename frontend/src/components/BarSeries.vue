@@ -68,8 +68,9 @@ export default {
 
 .bar-container {
   padding: 1.25rem 1.25rem 0rem 1.25rem;
-  background-color: #343c3d;
+  background-color: #073642;  
   border-radius: 8px;
+  min-height: 5rem;
 }
   
 .bar-buttons {

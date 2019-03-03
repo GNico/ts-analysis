@@ -2,24 +2,34 @@
 <div>
   <BarSeries :activeSeries="activeSeries" @change="setActiveSeries"/>
 
-  <section class='section top-section'>
+  <section class='page-container'>
     <div class="columns is-fullheight ">
 
       <div class="column is-2 side-menu is-hidden-mobile ">
-        <b-tabs type="is-boxed" expanded size="is-small">
+        <b-tabs type="is-toggle" expanded size="is-small">
           <b-tab-item label="Analysis" icon-pack="fas" icon="chart-line">
             <SettingsAnalysis/>
           </b-tab-item>
           <b-tab-item label="Details" icon-pack="fas" icon="file-alt">
-
+            <span> nothing here </span>
           </b-tab-item>
         </b-tabs>
       </div>
 
       <div class="column main-content">
         <AnalysisChart/>
-  <!--       <AnomaliesList/>
-   -->    </div>
+
+        <hr>
+
+        <div class="columns">
+          <div class="column is-7">
+            <AnomaliesList/>
+          </div>
+          <div class="column">
+            <AnomaliesDetails/>
+          </div>
+        </div>
+      </div>
     </div>  
   </section> 
 </div>
@@ -32,10 +42,11 @@ import BarSeries from '../components/BarSeries.vue';
 import AnalysisChart from '../components/AnalysisChart.vue';
 import SettingsAnalysis from '../components/SettingsAnalysis.vue';
 import AnomaliesList from '../components/AnomaliesList.vue';
+import AnomaliesDetails from '../components/AnomaliesDetails.vue';
 
 
 export default {
-    components: { BarSeries, AnalysisChart, SettingsAnalysis, AnomaliesList },
+    components: { BarSeries, AnalysisChart, SettingsAnalysis, AnomaliesList, AnomaliesDetails },
     computed: {
       activeSeries() {
         return this.$store.state.analysis.activeSeries
@@ -51,18 +62,24 @@ export default {
 
 
 <style>
+
+.page-container {
+  padding: 1.25rem;
+}
+
 .is-fullheight {
-  height: calc(100vh - 9.625rem);
-  min-height: calc(100vh - 9.625rem);
+  height: calc(100vh - 9rem);
+  min-height: calc(100vh - 9rem);
 }
   
 .side-menu {
-  overflow: auto;
+  overflow-y: overlay;
 }
 
 .main-content {
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow-y: overlay;
+  overflow-x: hidden;
 }
 </style>
