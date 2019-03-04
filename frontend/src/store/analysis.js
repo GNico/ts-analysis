@@ -85,7 +85,9 @@ const getters = {
         }
     },
     getAnomalyById: (state) => (id) => {
-        return state.analysis[state.activeSeries].anomalies.find(item => item.id === id)
+        if (state.activeSeries && state.analysis[state.activeSeries]) {
+            return state.analysis[state.activeSeries].anomalies.find(item => item.id === id)
+        }
     }
 }
 

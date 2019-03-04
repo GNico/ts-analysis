@@ -36,11 +36,10 @@ import BarSeries from '../components/BarSeries.vue';
 import AnalysisChart from '../components/AnalysisChart.vue';
 import SettingsAnalysis from '../components/SettingsAnalysis.vue';
 import AnomaliesList from '../components/AnomaliesList.vue';
-import AnomaliesDetails from '../components/AnomaliesDetails.vue';
 
 
 export default {
-    components: { BarSeries, AnalysisChart, SettingsAnalysis, AnomaliesList, AnomaliesDetails },
+    components: { BarSeries, AnalysisChart, SettingsAnalysis, AnomaliesList },
     computed: {
       activeSeries() {
         return this.$store.state.analysis.activeSeries

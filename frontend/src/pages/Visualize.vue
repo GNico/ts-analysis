@@ -1,21 +1,11 @@
 <template>
 
-<div>
+
+<h1> temporary unavailaible </h1>
+<!-- <div>
   <div class="columns is-fullheight ">
      <div class="column is-2 side-menu is-hidden-mobile">
         <SettingsVisualize/>   
-        <!-- <b-tabs class="side-menu" position="is-centered" type="is-toggle" expanded>
-          <b-tab-item label="Series">
-            <div class="tab-item-content ">
-              <SettingsVisualize/>                  
-            </div>
-          </b-tab-item>
-          <b-tab-item label="Analisis">
-            <div class="tab-item-content">
-                
-            </div>
-          </b-tab-item>
-        </b-tabs> -->
     </div> 
 
     <section class="column main-content">
@@ -23,13 +13,12 @@
 
           <BarSeries section="visualize"/>
           <DateRangeSelect :value="range" @input="changeRange"/>
-          <!-- <ChartWrapper/> -->
 
       </div>  
 
     </section>
   </div>   
-</div>
+</div> -->
 </template>
 
 
