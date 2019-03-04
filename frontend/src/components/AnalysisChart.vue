@@ -1,7 +1,7 @@
 <template>
 <div>
   <DateRangeSelect class="chart-section" :range="range" :activeButton="seriesOptions.activeRangeButton" @input="changeSeriesOptions($event); updateData()"/>
-  <ChartSeries class="chart-section" :seriesData="seriesData" :isLoading="loading" :anomalies="anomalies"/> 
+  <ChartSeries class="chart-section" :seriesData="chartData" :isLoading="loading" :anomalies="chartAnomalies"/> 
   <div class="chart-footer chart-section">
 
     <div class="chart-footer-section">
@@ -88,6 +88,9 @@ export default {
       seriesData() {
         return this.$store.getters['analysis/getDisplaySeriesData']
       },
+      baseline() {
+        return this.$store.getters['analysis/getDisplayBaseline']
+      },
       anomalies() {
         return this.$store.getters['analysis/getDisplayAnomalies']
       },
@@ -96,6 +99,32 @@ export default {
       },
       loading() {
         return this.$store.state.analysis.loading
+      },
+      chartData() {
+        if (!this.seriesData) {
+          return []
+        } else if (this.seriesOptions.showBaseline && this.baseline) {
+          return [ this.seriesData, this.baseline ]
+        } else {
+          return [ this.seriesData ]
+        }
+      },
+      chartAnomalies() {
+        var vm = this
+        var anoms = []
+        for (var item of this.anomalies) {
+          anoms.push({id: item.id,
+                     from: item.from,
+                     to: item.to,
+                     color: item.color,
+                     events: {
+                      click: function(e) {
+                        vm.setActiveAnomaly(this.options.id)
+                      } 
+                     }
+                    })
+        }
+        return anoms
       }
     },
     methods: {
@@ -105,6 +134,9 @@ export default {
       updateData() {
         this.$store.dispatch('analysis/fetchSeriesData', this.seriesName)
       },
+      setActiveAnomaly(id) {
+        this.$store.dispatch('analysis/setActiveAnomaly', id)
+      }
     },
     watch: {
       'seriesOptions.scoreThreshold': {

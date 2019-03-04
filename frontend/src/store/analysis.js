@@ -1,38 +1,36 @@
 import api from "../api/repository";
 
-function getColorByScore(score) {
-    let ratio = score/100;
-    console.log(ratio)
+//returns color from a tricolor gradient according to a 0 to 1 value
+function getColorByvalue(value) {
     let color1 = ''
     let color2 = ''
-    if (ratio<0.5) {
-    ratio = ratio*2
-    color1 = 'ffff00' //centro
-    color2 = '00ff00' //left
+    if (value<0.5) {
+    value = value*2
+    color1 = 'e4e814' //center - yellow
+    color2 = '00ff00' //left - green
     } else {
-    ratio = (ratio-0.5)*2
-    color1 = 'ff0000'  //right
-    color2 = 'ffff00' //center
+    value = (value-0.5)*2
+    color1 = 'db1313'  //right - red
+    color2 = 'e4e814' //center - yellow
     }
     var hex = function(x) {
       x = x.toString(16);
       return (x.length == 1) ? '0' + x : x;
     };
-    var r = Math.ceil(parseInt(color1.substring(0,2), 16) * ratio + parseInt(color2.substring(0,2), 16) * (1-ratio));
-    var g = Math.ceil(parseInt(color1.substring(2,4), 16) * ratio + parseInt(color2.substring(2,4), 16) * (1-ratio));
-    var b = Math.ceil(parseInt(color1.substring(4,6), 16) * ratio + parseInt(color2.substring(4,6), 16) * (1-ratio));
-
-    return  hex(r) + hex(g) + hex(b);
+    var r = Math.ceil(parseInt(color1.substring(0,2), 16) * value + parseInt(color2.substring(0,2), 16) * (1-value));
+    var g = Math.ceil(parseInt(color1.substring(2,4), 16) * value + parseInt(color2.substring(2,4), 16) * (1-value));
+    var b = Math.ceil(parseInt(color1.substring(4,6), 16) * value + parseInt(color2.substring(4,6), 16) * (1-value));
+    return  '#' + (hex(r) + hex(g) + hex(b));
 }
-
 
 const state = {
   series: {},
   activeSeries: '',
+  activeAnomaly: '',
   data: {},
   analysis: {},
   defaultOptions: {
-    color: '#6fcd98',
+    color: '#3fb0ff',
     chartType: 'line',
     interval: '1H',
     start: null,
@@ -54,25 +52,40 @@ const getters = {
         if (state.activeSeries && state.data[state.activeSeries]) {
             let { color, interval, chartType, ...rest} = state.series[state.activeSeries]
             let data = state.data[state.activeSeries]
-            return { name: state.activeSeries, color, type: chartType, data  }
+            return {name: state.activeSeries, color, type: chartType, data} 
         } else {
-            return []
+            return null
+        }
+    },
+    getDisplayBaseline: (state) => {
+        if (state.activeSeries && state.analysis[state.activeSeries]) {
+            return  {   data: state.analysis[state.activeSeries].baseline, 
+                        type: 'arearange', 
+                        color: state.series[state.activeSeries].color,
+                        lineWidth: 0,
+                        fillOpacity: 0.3,
+                        marker: { enabled: false },
+                        showInLegend: false,
+                        states: {
+                            hover: {
+                                enabled: false
+                            }
+                        },
+                        enableMouseTracking: false
+                    }
+        } else {
+            return null
         }
     },
     getDisplayAnomalies: (state) => {
         if (state.activeSeries && state.analysis[state.activeSeries]) {
-            var anoms = []
-            for (var item of state.analysis[state.activeSeries].anomalies) {
-                anoms.push({
-                    from: item.from,
-                    to: item.to,
-                    color: '#' + getColorByScore(item.score)
-                })
-            }
-            return anoms
+            return state.analysis[state.activeSeries].anomalies.filter(item => item.score >= state.series[state.activeSeries].scoreThreshold)
         } else {
             return []
         }
+    },
+    getAnomalyById: (state) => (id) => {
+        return state.analysis[state.activeSeries].anomalies.find(item => item.id === id)
     }
 }
 
@@ -104,8 +117,25 @@ const mutations = {
         state.data = { ...state.data, ...payload }
     },
     add_analysis(state, payload) {
-        state.analysis = { ...state.analysis, ...payload }
+        state.analysis = { ...state.analysis, ...{[payload.name]: payload.analysis} }
+        //add an id and color to each anomaly for UI purposes
+        var anoms = []
+        var idx = 0
+        for (var item of state.analysis[payload.name].anomalies) {
+            anoms.push({
+                    id: idx,
+                    from: item.from,
+                    to: item.to,
+                    color: getColorByvalue(item.score/100),
+                    score: item.score,
+                })
+            idx++
+        }
+        state.analysis[payload.name].anomalies = anoms
     },
+    set_active_anomaly(state, payload) {
+        state.activeAnomaly = payload
+    }
 
 }
 
@@ -124,7 +154,7 @@ const actions = {
                         config: seriesOpts.config
                     })
                     .then(response => {       
-                        store.commit('add_analysis', {[name]: response.data}) 
+                        store.commit('add_analysis', {name: name, analysis: response.data}) 
                     })
                     .catch(error => { 
                         console.log('error retrieving analysis')
@@ -136,6 +166,9 @@ const actions = {
         if (state.series.hasOwnProperty(payload.name) && !state.data.hasOwnProperty(payload.name)) {
             store.dispatch('fetchSeriesData', payload.name)
         }
+    },
+    setActiveAnomaly(store, id) {
+        store.commit('set_active_anomaly', id)
     },
     addSeries(store, name) {
         store.commit('add_series', {[name]: state.defaultOptions}) 

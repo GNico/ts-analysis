@@ -81,10 +81,7 @@ def anomalies(request):
     data = {
       "anomalies": mock_data.ANOMALIES,
       "trend": mock_data.TREND,
-      "baseline": {
-        "top": mock_data.TOP,
-        "bottom": mock_data.BOTTOM
-      }
+      "baseline": mock_data.BASELINE
     }
 
     return JsonResponse(data, safe=False) 

@@ -21,14 +21,8 @@
 
         <hr>
 
-        <div class="columns">
-          <div class="column is-7">
-            <AnomaliesList/>
-          </div>
-          <div class="column">
-            <AnomaliesDetails/>
-          </div>
-        </div>
+        <AnomaliesList/>
+         
       </div>
     </div>  
   </section> 

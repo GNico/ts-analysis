@@ -1,14 +1,36 @@
 <template>
 
+<div class="columns">
+  <div class="column is-5">
+    <b-table 
+      v-if="!isEmpty"
+      :data="anomalies" 
+      :selected="selected"
+      hoverable
+      narrowed
+      checkable
+      @select="changeActiveAnomaly($event)">
 
-  <b-table 
-    :data="anomalies" 
-    :columns="columns" 
-    hoverable
-    narrowed
-    checkable
+      <template slot-scope="props">
+        <b-table-column field="score" label="Score" numeric>
+            {{ props.row.score }}
+        </b-table-column>
 
-  />
+        <b-table-column field="from" label="Start date" centered>
+          {{ new Date(props.row.from).toLocaleString('es-AR', {month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}) }}      
+        </b-table-column>
+        
+        <b-table-column field="to" label="End date" centered>
+          {{ new Date(props.row.to).toLocaleString('es-AR', {month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}) }}
+        </b-table-column>
+      </template>
+      
+    </b-table>
+  </div>
+  <div class="column">
+    {{ selected }}
+  </div>
+</div>
 
 </template>
 
@@ -17,38 +39,23 @@
 
 
 export default {
-  data() {
-    return {
-      anomalies: [
-        { 'score': 50, 'start_date': '2016-10-15 13:43:27', 'end_date': '2016-10-15 13:43:27', 'duration': 'Male' },
-        { 'score': 70,  'start_date': '2016-12-15 06:00:53', 'end_date': '2016-12-15 06:00:53', 'duration': 'Male' },
-        { 'score': 20, 'start_date': '2016-04-26 06:26:28', 'end_date': '2016-04-26 06:26:28', 'duration': 'Female' },
-        { 'score': 25, 'start_date': '2016-04-10 10:28:46','end_date': '2016-04-10 10:28:46', 'duration': 'Male' },
-        { 'score': 25, 'start_date': '2016-04-10 10:28:46','end_date': '2016-04-10 10:28:46', 'duration': 'Male' },
-        { 'score': 25, 'start_date': '2016-04-10 10:28:46','end_date': '2016-04-10 10:28:46', 'duration': 'Male' },
-        { 'score': 25, 'start_date': '2016-04-10 10:28:46','end_date': '2016-04-10 10:28:46', 'duration': 'Male' },
-        { 'score': 36, 'start_date': '2016-12-06 14:38:38', 'end_date': '2016-12-06 14:38:38', 'duration': 'Female' }
-      ],
-      columns: [
-        {
-            field: 'score',
-            label: 'Score',
-        },
-        {
-            field: 'start_date',
-            label: 'Start date',
-            centered: true
-        },
-        {
-            field: 'end_date',
-            label: 'End date',
-            centered: true
-        },
-        {
-            field: 'duration',
-            label: 'Duration',
-        }
-      ]
+  computed: {
+    anomalies() {
+      return this.$store.getters['analysis/getDisplayAnomalies']
+    },
+    activeAnomaly() {
+      return this.$store.state.analysis.activeAnomaly
+    },
+    selected() {
+      return this.$store.getters['analysis/getAnomalyById'](this.activeAnomaly)
+    },
+    isEmpty() {
+      return (!this.anomalies || !this.anomalies.length)
+    }
+  },
+  methods: {
+    changeActiveAnomaly(event) {
+      this.$store.dispatch('analysis/setActiveAnomaly', event.id)
     }
   }
 }
