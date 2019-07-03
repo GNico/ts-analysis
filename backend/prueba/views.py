@@ -58,22 +58,22 @@ def contexts(request):
 
 def series(request):
 
-    return JsonResponse(mock_data.SERIES, safe=False) 
-    # es = elastic_helper.EsHelper()
-    # if request.method == 'GET':
-    #     requestedName = request.GET.get('name', '')
-    #     requestedTags = request.GET.get('tags', '')
-    #     requestedContext= request.GET.get('contexts', '')
-    #     requestedStart = request.GET.get('start', '')
-    #     requestedEnd = request.GET.get('end', '')
-    #     requestedInterval = request.GET.get('interval', '1H')
-    #     data = es.getSeries(clientname=requestedName, 
-    #                             context=requestedContext, 
-    #                             tags=requestedTags,
-    #                             start=requestedStart,
-    #                             end=requestedEnd,
-    #                             interval=requestedInterval)
-    #     return JsonResponse(data, safe=False)
+    #return JsonResponse(mock_data.SERIES, safe=False) 
+    es = elastic_helper.EsHelper()
+    if request.method == 'GET':
+        requestedName = request.GET.get('name', '')
+        requestedTags = request.GET.get('tags', '')
+        requestedContext= request.GET.get('contexts', '')
+        requestedStart = request.GET.get('start', '')
+        requestedEnd = request.GET.get('end', '')
+        requestedInterval = request.GET.get('interval', '1H')
+        data = es.getSeries(clientname=requestedName, 
+                                context=requestedContext, 
+                                tags=requestedTags,
+                                start=requestedStart,
+                                end=requestedEnd,
+                                interval=requestedInterval)
+        return JsonResponse(data, safe=False)
 
 
 def anomalies(request):

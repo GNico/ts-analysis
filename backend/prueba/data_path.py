@@ -1,1 +1,1 @@
-DATA_PATH = "/home/nico/Git/ts-analysis/tests/data/"
+DATA_PATH = "/home/gnico/Git/ts-analysis/tests/data/"

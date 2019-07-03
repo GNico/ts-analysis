@@ -30,7 +30,7 @@ export default {
     },
 
     addNewClient(payload) {
-        return repository.post("/newclient", payload)
+        return repository.post("/newclient/", payload)
     }
 
 }

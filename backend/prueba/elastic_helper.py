@@ -19,16 +19,14 @@ class EsHelper():
         if not self.conn.indices.exists(self.client_index_name):
             self.conn.indices.create(index=self.client_index_name, 
                                     body= {
-                                        "mappings" : {
-                                            "_doc" : {
-                                                "properties" : {
-                                                    "name": { "type" : "keyword" },
-                                                    "data_index_name": { "type" : "keyword" },
-                                                    "event_count": { "type" : "long" },
-                                                    "oldest" : { "type" : "date" },
-                                                    "lastest": { "type" : "date" }
-                                                }
-                                            }
+                                        "mappings" : {                                            
+                                            "properties" : {
+                                                "name": { "type" : "keyword" },
+                                                "data_index_name": { "type" : "keyword" },
+                                                "event_count": { "type" : "long" },
+                                                "oldest" : { "type" : "date" },
+                                                "lastest": { "type" : "date" }
+                                            }                                            
                                         }
                                     })
 
@@ -44,19 +42,19 @@ class EsHelper():
                     }
                 },
                 "mappings": {
-                    "_doc": {
-                        "properties": {
-                            "@timestamp": {
-                                "type": "date"
-                            },
-                            "tag": {
-                                "type": "keyword"
-                            },
-                            "context": {
-                                "type": "keyword"
-                            }
+                    
+                   "properties": {
+                        "@timestamp": {
+                            "type": "date"
+                        },
+                        "tag": {
+                            "type": "keyword"
+                        },
+                        "context": {
+                            "type": "keyword"
                         }
                     }
+                    
                 }
             }
             self.conn.indices.put_template(name=self.series_template_name, body=body )
@@ -121,8 +119,7 @@ class EsHelper():
 
 
     def getClients(self):
-        response = self.conn.search(index=self.client_index_name,
-                        doc_type="_doc")
+        response = self.conn.search(index=self.client_index_name)
         jsondata = []
         if response:
             for element in response['hits']['hits']:
@@ -208,7 +205,6 @@ class EsHelper():
 
     def _indexClientInfo(self, clientname):
         self.conn.index(index=self.client_index_name,
-                    doc_type='_doc', 
                     body= {
                         "name": clientname,
                         "data_index_name": self.index_name,
@@ -256,7 +252,6 @@ class EsHelper():
         for event in data:
             doc = {
                     '_index': full_index_name,
-                    '_type': '_doc',
                     '_id': event['_id'],
                     'pipeline': self.pipeline_id,
                     '_source': {
@@ -276,7 +271,7 @@ class EsHelper():
     #---------------------------INDEX DELETING------------------------------------------
 
     def deleteClient(self, clientname):
-        if self.conn.exists(index=self.client_index_name, doc_type='_doc', id=clientname):
+        if self.conn.exists(index=self.client_index_name, id=clientname):
             index = self._findClientIndex(clientname)
             full_index_name = self.index_prefix + index
             if index:
@@ -284,4 +279,4 @@ class EsHelper():
                     self.conn.indices.delete(full_index_name)
                 pattern = self.index_prefix + self.index_name + '-*'
                 self.conn.indices.delete(pattern)                
-            self.conn.delete(index=self.client_index_name, doc_type='_doc', id=clientname)
+            self.conn.delete(index=self.client_index_name, id=clientname)
