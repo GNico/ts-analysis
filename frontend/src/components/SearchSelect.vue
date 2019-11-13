@@ -8,7 +8,7 @@
         ref=autocomplete 
         @keydown.native.enter="$event.target.blur(); closeOptions()"
         @blur="onBlur"
-        >  <!-- @blur="onBlur" -->
+        > 
         <template slot="empty">No hay resultados</template>
     </b-autocomplete>  
 </template>
@@ -21,6 +21,7 @@ export default {
     props: {
         saved: {
             required: false,
+            default: '',
         },
         data: {
             required: false

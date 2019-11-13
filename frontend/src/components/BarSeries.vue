@@ -1,5 +1,5 @@
 <template>    
-<div class="bar-container  is-flex"> 
+<div class="bar-container is-flex"> 
 
   <div class="bar-buttons">
     <a class="button is-primary " @click="isModalActive = true"> 

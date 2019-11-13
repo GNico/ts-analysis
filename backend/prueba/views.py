@@ -78,30 +78,51 @@ def series(request):
 
 def anomalies(request):
     #mocking
-    data = {
-      "anomalies": mock_data.ANOMALIES,
-      "trend": mock_data.TREND,
-      "baseline": mock_data.BASELINE
-    }
+    #data = {
+    #  "anomalies": mock_data.ANOMALIES,
+    #  "trend": mock_data.TREND,
+    #  "baseline": mock_data.BASELINE
+    #}
 
-    return JsonResponse(data, safe=False) 
+    #return JsonResponse(data, safe=False) 
 
 
-    # es = elastic_helper.EsHelper()
-    # if request.method == 'GET':
-    #     requestedName = request.GET.get('name', '')
-    #     requestedTags = request.GET.get('tags', '')
-    #     requestedContext= request.GET.get('contexts', '')
-    #     requestedStart = request.GET.get('start', '')
-    #     requestedEnd = request.GET.get('end', '')
-    #     requestedInterval = request.GET.get('interval', '1H')
+    es = elastic_helper.EsHelper()
+    if request.method == 'GET':
+         requestedName = request.GET.get('name', '')
+         requestedTags = request.GET.get('tags', '')
+         requestedContext= request.GET.get('contexts', '')
+         requestedStart = request.GET.get('start', '')
+         requestedEnd = request.GET.get('end', '')
+         requestedInterval = request.GET.get('interval', '1H')
 
-    #     series = es.getSeries(clientname=requestedName, 
-    #                             context=requestedContext, 
-    #                             tags=requestedTags,
-    #                             start=requestedStart,
-    #                             end=requestedEnd)
+         series = es.getSeries(clientname=requestedName, 
+                                 context=requestedContext, 
+                                 tags=requestedTags,
+                                 start=requestedStart,
+                                 end=requestedEnd,
+                                 interval=requestedInterval)
+         anomalies = anomaly_detector.detectAnomalies(series)
+         return JsonResponse(anomalies, safe=False)
 
-    #     data = anomaly_detector.detectAnomalies(series)
-    #     return JsonResponse(data, safe=False)
 
+
+#temporal
+def testalgo(request):
+    es = elastic_helper.EsHelper()
+    if request.method == 'GET':
+        requestedName = request.GET.get('name', '')
+        requestedTags = request.GET.get('tags', '')
+        requestedContext= request.GET.get('contexts', '')
+        requestedStart = request.GET.get('start', '')
+        requestedEnd = request.GET.get('end', '')
+        requestedInterval = request.GET.get('interval', '1H')
+        series = es.getSeries(clientname=requestedName, 
+                                context=requestedContext, 
+                                tags=requestedTags,
+                                start=requestedStart,
+                                end=requestedEnd,
+                                interval=requestedInterval)
+
+        anomalies = anomaly_detector.testAlgorythms(series)
+        return JsonResponse(anomalies, safe=False)

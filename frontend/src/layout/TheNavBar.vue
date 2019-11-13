@@ -16,6 +16,8 @@
           <router-link to='/Anomalies' exact class="navbar-item">Anomalies</router-link>
 
           <router-link to='/Alerts' exact class="navbar-item">Alerts</router-link>
+
+          <router-link to='/Test' exact class="navbar-item">Test</router-link>
       </div>
     </div>
 </nav>  

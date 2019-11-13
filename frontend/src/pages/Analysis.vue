@@ -3,9 +3,9 @@
   <BarSeries :activeSeries="activeSeries" @change="setActiveSeries"/>
 
   <section class='page-container'>
-    <div class="columns is-fullheight ">
+    <div class="columns is-fullheight">
 
-      <div class="column is-2 side-menu is-hidden-mobile ">
+      <div class="column is-2 side-menu is-hidden-mobile">        
         <b-tabs type="is-toggle" expanded size="is-small">
           <b-tab-item label="Analysis" icon-pack="fas" icon="chart-line">
             <SettingsAnalysis/>
@@ -18,12 +18,10 @@
 
       <div class="column main-content">
         <AnalysisChart/>
-
         <hr>
-
-        <AnomaliesList/>
-         
+        <AnomaliesList/>         
       </div>
+
     </div>  
   </section> 
 </div>

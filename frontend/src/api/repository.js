@@ -30,7 +30,12 @@ export default {
     },
 
     addNewClient(payload) {
-        return repository.post("/newclient/", payload)
+        return repository.post("/newclient", payload)
+    },
+
+    //remove later
+    testAlgo(payload) {
+        return repository.get("/testalgo", {params: payload} )
     }
 
 }

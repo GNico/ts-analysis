@@ -1,7 +1,7 @@
 <template>
 
 
-<h1> temporary unavailaible </h1>
+<h1> temporary unavailable </h1>
 <!-- <div>
   <div class="columns is-fullheight ">
      <div class="column is-2 side-menu is-hidden-mobile">

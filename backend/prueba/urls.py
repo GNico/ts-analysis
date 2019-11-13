@@ -9,5 +9,6 @@ urlpatterns = [
     path('anomalies/', views.anomalies, name='anomalies'),
     path('series/', views.series, name='series'),
     path('clients/', views.clients, name='clients'),
-    path('newclient/', views.newclient, name='newclient')
+    path('newclient/', views.newclient, name='newclient'),
+    path('testalgo/', views.testalgo, name='testalgo')
 ]

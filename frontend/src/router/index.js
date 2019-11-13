@@ -17,7 +17,10 @@ let routes = [
 	{
 		path: '/Alerts',
 		component: require('@/pages/Alerts.vue').default
-
+	},
+	{
+		path: '/Test',
+		component: require('@/pages/Test.vue').default
 	}
 
 ];
