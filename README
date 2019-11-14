@@ -1,46 +1,40 @@
-Requisitos
-
 BACKEND
 
--ELK stack 
-	
--Django
-	pip3 install Django
+-install elasticsearch 7+
+-install redis server
 
--Django rest framework
-	pip3 install djangorestframework
+-create a virtual environment 'venv' in the backend directory
+	virtualenv venv
 
--Django cors headers 
-	pip3 install django-cors-headers
+-activate the venv
+	source venv/bin/activate	
+
+-install dependencies
+	python3 -m pip install -r requirements.txt
 
 
--Para correr el server 
-
+-run the server (runs on localhost:8000)
 	python3 manage.py runserver 
 
--Acceso
-
+-access
 	localhost:8000
 
-_____________________________________
+____________________________________
 
 FRONTEND
 
+-install node and npm
 	sudo apt-get install nodejs
-
 	sudo apt install npm
 
--En el directorio del frontend
-
+-install dependencies in the frontend directory
 	npm install 
 
 
--Para correr el frontend
-
+-run the app
 	npm run dev
 
--Acceso
-
+-access
 	localhost:8080
 
 	
