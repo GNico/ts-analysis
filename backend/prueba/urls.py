@@ -10,5 +10,8 @@ urlpatterns = [
     path('series/', views.series, name='series'),
     path('clients/', views.clients, name='clients'),
     path('newclient/', views.newclient, name='newclient'),
-    path('testalgo/', views.testalgo, name='testalgo')
+    path('testalgo/', views.testalgo, name='testalgo'),
+    path('longtask/', views.longtask, name='longtask'),
+    path('status/<slug:task_id>/', views.taskstatus, name='taskstatus')
+
 ]

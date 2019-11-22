@@ -4,7 +4,7 @@ from elasticsearch.client import IngestClient
 import json
 import os
 
-class EsHelper():
+class ElasticClient():
     conn = ""
     index_prefix = "ts-"                        #prefix added to the name of data indices 
     index_name = ""                             #index containing series data
@@ -13,8 +13,8 @@ class EsHelper():
     series_template_name = "series_template"    #template used to index series data
 
 
-    def __init__(self):
-        self.conn = Elasticsearch(['localhost:9200'])
+    def __init__(self, connSettings):
+        self.conn = Elasticsearch(connSettings)
         #create index to store clients if it doesn't exist already
         if not self.conn.indices.exists(self.client_index_name):
             self.conn.indices.create(index=self.client_index_name, 
@@ -41,8 +41,7 @@ class EsHelper():
                         "sort.order" : "desc" 
                     }
                 },
-                "mappings": {
-                    
+                "mappings": {                    
                    "properties": {
                         "@timestamp": {
                             "type": "date"
@@ -53,8 +52,7 @@ class EsHelper():
                         "context": {
                             "type": "keyword"
                         }
-                    }
-                    
+                    }                    
                 }
             }
             self.conn.indices.put_template(name=self.series_template_name, body=body )
@@ -65,7 +63,7 @@ class EsHelper():
 
 
     def getSeries(self, clientname, start='', end='', context='', tags='', interval='1H'):
-        jsondata = []
+        requestedData = []
         if self._findClientIndex(clientname):
             index_pattern = self.index_prefix + self.index_name + '-*'
             query = {
@@ -108,19 +106,16 @@ class EsHelper():
                 }
                 query['query']['bool']['filter'].append(dict)
 
-            print("la query fue")
-            print(query)
-
             response = self.conn.search(index=index_pattern, size=0, body=query)
             for element in response['aggregations']['my_aggregation']['buckets']:
-                jsondata.append([element['key'], element['doc_count']])
+                requestedData.append([element['key'], element['doc_count']])
 
-        return jsondata
+        return requestedData
 
 
     def getClients(self):
         response = self.conn.search(index=self.client_index_name)
-        jsondata = []
+        requestedData = []
         if response:
             for element in response['hits']['hits']:
                 client = {}
@@ -129,13 +124,13 @@ class EsHelper():
                 client['start'] = element['_source'].get('oldest', '')
                 client['end'] = element['_source'].get('latest', '')
                 client['context'] = element['_source'].get('context', '')
-                jsondata.append(client)
-        return jsondata
+                requestedData.append(client)
+        return requestedData
 
 
 
     def getContexts(self, clientname):
-        jsondata = [] 
+        requestedData = [] 
         if self._findClientIndex(clientname):
             index_pattern = self.index_prefix + self.index_name + '-*'
             response = self.conn.search(index=index_pattern, 
@@ -151,12 +146,12 @@ class EsHelper():
                                             }
                                         })
             for element in response['aggregations']['my_aggregation']['buckets']:
-                jsondata.append(element['key'])
-        return jsondata
+                requestedData.append(element['key'])
+        return requestedData
 
 
     def getTags(self, clientname):
-        jsondata = []
+        requestedData = []
         if self._findClientIndex(clientname):
             index_pattern = self.index_prefix + self.index_name + '-*'
             response = self.conn.search(index=index_pattern, 
@@ -172,8 +167,8 @@ class EsHelper():
                                             }
                                         })
             for element in response['aggregations']['my_aggregation']['buckets']:
-                jsondata.append(element['key'])
-        return jsondata
+                requestedData.append(element['key'])
+        return requestedData
 
 
     def _findClientIndex(self, clientname):
