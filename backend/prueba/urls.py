@@ -9,9 +9,10 @@ urlpatterns = [
     path('anomalies/', views.anomalies, name='anomalies'),
     path('series/', views.series, name='series'),
     path('clients/', views.clients, name='clients'),
+    path('clientnames/', views.clientnames, name='clientnames'),
     path('newclient/', views.newclient, name='newclient'),
     path('testalgo/', views.testalgo, name='testalgo'),
-    path('longtask/', views.longtask, name='longtask'),
-    path('status/<slug:task_id>/', views.taskstatus, name='taskstatus')
+   # path('longtask/', views.longtask, name='longtask'),
+   # path('status/<slug:task_id>/', views.taskstatus, name='taskstatus')
 
 ]

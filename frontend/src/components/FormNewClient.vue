@@ -8,7 +8,7 @@
   <form @submit.prevent="handleSubmit">
     <div class="modal-card" style="width: auto">
         <header class="modal-card-head">
-            <p class="modal-card-title">Nuevo cliente (form temporario)</p>
+            <p class="modal-card-title">Nuevo cliente</p>
         </header>
         <section class="modal-card-body">
             <b-field label="Name">

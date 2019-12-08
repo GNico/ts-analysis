@@ -13,7 +13,7 @@ Vue.use(HighchartsVue)
 highchartsMore(Highcharts)
 Boost(Highcharts)
 Vue.use(VueRouter)
-Vue.use(Buefy)
+Vue.use(Buefy, {defaultIconPack: 'fa'})
 
 //dark theme for highcharts
 require('./assets/themes/dark-unica.js');

@@ -5,54 +5,52 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from django.template import loader
 import json
-from elasticsearch import Elasticsearch
-
+#from elasticsearch import Elasticsearch
 from . import anomaly_detector
-from . import elastic_client
 from . import data_path
-from . import mock_data
-
-from .tasks import long_task
-
-
-es = elastic_client.ElasticClient(['localhost:9200'])
+#from . import mock_data
+from . import services
+#from .tasks import long_task
 
 def index(request):
     return render(request, 'prueba/index.html')
 
-
 def clients(request):
     if request.method == 'GET':
-        data = es.getClients()
+        data = services.get_clients_info()
         return JsonResponse(data, safe=False)
+
+def clientnames(request):
+    if request.method == 'GET':
+        data = services.get_clients_names()
+        return JsonResponse(data, safe=False)
+
 
 @api_view(['POST'])
 def newclient(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
-        clientName = data.get('name', '')
-        index_name = data.get('index_name', '')
-        destDir = data.get('folder_name', '')
-        docspath = data_path.DATA_PATH + destDir
+        client_name = data.get('name', '')
+        #index_name = data.get('index_name', '')
+        dest_dir = data.get('folder_name', '')
+        docs_path = data_path.DATA_PATH + dest_dir
 
-        result = es.addNewClient(clientname=clientName, indexname=index_name, docspath=docspath)
-        data = json.dumps(result)
-        data = { 'name': 'asd' }
-        return JsonResponse(data, safe=False)
+        status_id = services.add_new_client(client_name=client_name, docs_path=docs_path)
+        return JsonResponse({ 'status_id': status_id }, safe=False)
 
 
 #returns list of tags
 def tags(request):
     if request.method == 'GET':
         clientname = request.GET.get('name', '')
-        data = es.getTags(clientname=clientname)
+        data = services.get_tags(client_name=clientname)
         return JsonResponse(data, safe=False)
 
 #returns list of contexts
 def contexts(request):
     if request.method == 'GET':
         clientname = request.GET.get('name', '')
-        data = es.getContexts(clientname=clientname)
+        data = services.get_contexts(client_name=clientname)
         return JsonResponse(data, safe=False)        
 
 
@@ -65,12 +63,12 @@ def series(request):
         requestedStart = request.GET.get('start', '')
         requestedEnd = request.GET.get('end', '')
         requestedInterval = request.GET.get('interval', '1H')
-        data = es.getSeries(clientname=requestedName, 
-                                context=requestedContext, 
-                                tags=requestedTags,
-                                start=requestedStart,
-                                end=requestedEnd,
-                                interval=requestedInterval)
+        data = services.get_series(client_name=requestedName, 
+                            context=requestedContext, 
+                            tags=requestedTags,
+                            start=requestedStart,
+                            end=requestedEnd,
+                            interval=requestedInterval)
         return JsonResponse(data, safe=False)
 
 
@@ -83,9 +81,6 @@ def anomalies(request):
     #}
 
     #return JsonResponse(data, safe=False) 
-
-
- #   es = elastic_helper.EsHelper()
     if request.method == 'GET':
          requestedName = request.GET.get('name', '')
          requestedTags = request.GET.get('tags', '')
@@ -94,7 +89,7 @@ def anomalies(request):
          requestedEnd = request.GET.get('end', '')
          requestedInterval = request.GET.get('interval', '1H')
 
-         series = es.getSeries(clientname=requestedName, 
+         series = services.get_series(clientname=requestedName, 
                                  context=requestedContext, 
                                  tags=requestedTags,
                                  start=requestedStart,
@@ -114,7 +109,7 @@ def testalgo(request):
         requestedStart = request.GET.get('start', '')
         requestedEnd = request.GET.get('end', '')
         requestedInterval = request.GET.get('interval', '1H')
-        series = es.getSeries(clientname=requestedName, 
+        series = services.get_series(clientname=requestedName, 
                                 context=requestedContext, 
                                 tags=requestedTags,
                                 start=requestedStart,
@@ -124,6 +119,8 @@ def testalgo(request):
         anomalies = anomaly_detector.testAlgorythms(series)
         return JsonResponse(anomalies, safe=False)
 
+
+'''
 
 def longtask(request):
     task = long_task.apply_async()
@@ -157,4 +154,6 @@ def taskstatus(request, task_id):
             'total': 1,
             'status': str(task.info),  # this is the exception raised
         }
-    return JsonResponse(response, safe=False)
+    return JsonResponse(response, safe=False) 
+
+'''
