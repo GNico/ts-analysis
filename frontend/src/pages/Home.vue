@@ -66,8 +66,9 @@
     </b-table>
         
     <b-modal :active.sync="isModalActive" has-modal-card>
-      <FormNewClient/>
+      <FormNewClient @submit="addClient"/>
     </b-modal>  
+
   </div>  
 </div>  
 </template>
@@ -80,38 +81,27 @@ import FormNewClient from '../components/FormNewClient'
 export default {
     components: {  FormNewClient },
     data() {
-        return {
-            isModalActive: false,
-            selected: null,
-            polling: null
-        }
+      return {
+        isModalActive: false,
+        selected: null,
+        polling: null,
+      }
     },
     computed: {
-        clients() {
-            /*return [ 
-                { name: 'Despegar', 
-                  modified: '24/09/2018',
-                  indexing: false, 
-                  created: "24/07/2019" }, 
-                { name: 'Fravega', 
-                  modified: '24/09/2018',
-                  indexing: false, 
-                  created: "24/07/2019" }, 
-                { name: 'Movistar', 
-                  modified: '24/09/2018',
-                  indexing: true, 
-                  progress: 70,
-                  created: "24/07/2019"},
-            ] */
-            return this.$store.state.clients.clients
-        },
+      clients() {        
+        return this.$store.state.clients.clients
+      },
     },
     methods: {
-        pollClients () {
-          this.polling = setInterval(() => {
-            this.$store.dispatch('clients/fetchClients');
-          }, 3000)
-        }
+      pollClients () {
+        this.polling = setInterval(() => {
+          this.$store.dispatch('clients/fetchClients')          
+        }, 3000)
+      },
+      addClient(form) {
+        this.isModalActive = false
+        this.$store.dispatch('clients/addClient', form)
+      }
     },
     created () {
       this.pollClients()

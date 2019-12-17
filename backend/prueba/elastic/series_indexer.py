@@ -10,23 +10,20 @@ class SeriesIndexer():
     index_prefix = "ts-"                        #prefix added to the name of data indices 
     series_template_name = "series_template"
 
-    def __init__(self, indexname):
-        self.index_name = self.index_prefix + indexname
+    def __init__(self):
+        #self.index_name = self.index_prefix + indexname
         self._create_template()
         self.pipeline_id = self._create_pipeline()
 
-    #docspath is  the full path to the new client data files
-    def index_from_files(self, docs_path):
-        result = ''
-        files = [ f for f in os.listdir(docs_path) if os.path.isfile(os.path.join(docs_path,f)) ]
-        for filename in files:
-            with open(os.path.join(docs_path,filename)) as f:
-                data = json.load(f)
-                result = bulk(es, self._make_documents(data))
-        return result
+    def index(self, name, data):
+        return bulk(es, self._make_documents(name, data))
 
-    def get_index_name(self):
-        return self.index_name
+    def delete(self, name):
+        index_pattern = self.get_index_name + '*'
+        es.indices.delete(index=index_pattern, ignore=[400, 404])
+
+    def get_index_name(self, name):
+        return self.index_prefix + name
 
     #index template for series data
     def _create_template(self):
@@ -76,10 +73,10 @@ class SeriesIndexer():
         return pipeline
 
     #generator to iterate over all events and define doc structure
-    def _make_documents(self, data):
+    def _make_documents(self, name, data):
         for event in data:
             doc = {
-                    '_index': self.index_name,
+                    '_index': self.get_index_name(name),
                     '_id': event['_id'],
                     'pipeline': self.pipeline_id,
                     '_source': {

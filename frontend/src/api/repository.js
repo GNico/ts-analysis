@@ -7,32 +7,35 @@ const repository = axios.create({
     baseURL
 })
 
+const removeEmpty = obj => {
+  Object.keys(obj).forEach((key) => (obj[key] == null || obj[key] == '') && delete obj[key]);
+  return obj;
+}
 
 export default {
     getClients() {
         return repository.get("/clients/")
     },
-
+    addNewClient(form) {
+        return repository.post("/clients/", form)
+    },
+    getSeriesData(params) {
+        let url = "/clients/" + params.name + "/series/"
+        delete params.name
+        return repository.get(url, {params: removeEmpty(params)})
+    },
     getContexts(clientName) {
-        return repository.get("/contexts/", {params: {name: clientName}})
+        let url = "/clients/" + clientName + "/series/contexts/"
+        return repository.get(url)
     },
-
     getTags(clientName) {
-        return repository.get("/tags/", {params: {name: clientName}})
-    },
-
-    getSeriesData(payload) {
-        return repository.get("/series/", {params: payload})
+        let url = "/clients/" + clientName + "/series/tags/"
+        return repository.get(url)
     },
 
     getAnomalies(payload) {
         return repository.get("/anomalies/", {params: payload})
     },
-
-    addNewClient(payload) {
-        return repository.post("/newclient/", payload)
-    },
-
     //remove later
     testAlgo(payload) {
         return repository.get("/testalgo/", {params: payload} )

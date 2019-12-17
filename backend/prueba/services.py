@@ -1,38 +1,30 @@
-#service layer
 from math import ceil
-
 from .models import Client
-from .elastic import series_search
+from .elastic import series_search, series_indexer
 from . import tasks
-
+from . import utils
 
 search = series_search.SeriesSearch()
+indexer = series_indexer.SeriesIndexer()
 
-'''   
-return [{ 'name': 'Despegar', 
-              'count': '213323',
-              'oldest': '24/09/2018',
-              'status': 'Ready', 
-              'latest': '24/07/2019' }, 
-            { 'name': 'Fravega', 
-              'count': '213323',
-              'oldest': '24/09/2018',
-              'status': 'Ready', 
-              'latest': '24/07/2019' }, 
-            { 'name': 'Movistar', 
-              'count': '5136123',
-              'oldest': '24/09/2018',
-              'status': 'Indexing', 
-              'latest': '24/07/2019' }] '''
+class ClientNameAlreadyExists(Exception):
+    pass
 
 
 def add_new_client(client_name, docs_path):
     if not Client.objects.filter(name=client_name).exists():
-        task = tasks.index_series_data.apply_async((client_name, docs_path))
-        new_client = Client.objects.create(name=client_name, task_id=task.id, indexing=True)
-    else: 
-        error = "Client name already exists"
-    return task.id
+        filenames = utils.get_files_from_directory(docs_path)
+        task = tasks.index_series_data.apply_async((client_name, filenames))
+        client = Client.objects.create(name=client_name, index_name='', task_id=task.id, indexing=True)
+        return task.id
+    else:
+        raise ClientNameAlreadyExists("There's already a client with the same name")
+
+
+def delete_client(client_name):
+    client = Client.objects.filter(name=client_name).delete()
+    indexer.delete(client_name)
+
 
 
 def get_clients_info():
@@ -60,14 +52,8 @@ def get_clients_info():
 def _calculate_progress(task):
     total = task.info.get('total_events', 1)
     current = search.get_count(task.info.get('index_name'))
-
-    print('testing parameters')
-    print(total)
-    print(current)
     return ceil(current * 100 / total)
 
-def get_clients_names():
-    return Client.objects.filter(indexing=False)
 
 def get_series(client_name, context, tags, start, end, interval):
     client = Client.objects.get(name=client_name)

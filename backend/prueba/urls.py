@@ -3,16 +3,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('contexts/', views.contexts, name='contexts'),
-    path('tags/', views.tags, name='tags'),
+    path('clients/', views.ClientsView.as_view(), name='clients'),
+    path('clients/<slug:pk>/series/', views.SeriesView.as_view(), name='series'),
+    path('clients/<slug:pk>/series/contexts/', views.TagListView.as_view(), name='contexts'),
+    path('clients/<slug:pk>/series/tags/', views.ContextListView.as_view(), name='tags'),
     path('anomalies/', views.anomalies, name='anomalies'),
-    path('series/', views.series, name='series'),
-    path('clients/', views.clients, name='clients'),
-    path('clientnames/', views.clientnames, name='clientnames'),
-    path('newclient/', views.newclient, name='newclient'),
     path('testalgo/', views.testalgo, name='testalgo'),
-   # path('longtask/', views.longtask, name='longtask'),
-   # path('status/<slug:task_id>/', views.taskstatus, name='taskstatus')
-
 ]

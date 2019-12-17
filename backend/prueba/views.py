@@ -1,49 +1,54 @@
-from django.shortcuts import render
-from django.http import HttpResponse
 from django.http import JsonResponse
 from rest_framework import status
-from rest_framework.decorators import api_view
-from django.template import loader
-import json
-#from elasticsearch import Elasticsearch
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from . import anomaly_detector
 from . import data_path
-#from . import mock_data
 from . import services
-#from .tasks import long_task
 
-def index(request):
-    return render(request, 'prueba/index.html')
 
-def clients(request):
-    if request.method == 'GET':
+class ClientsView(APIView):
+    def get(self, request):
         data = services.get_clients_info()
-        return JsonResponse(data, safe=False)
+        return Response(data)
 
-def clientnames(request):
-    if request.method == 'GET':
-        data = services.get_clients_names()
-        return JsonResponse(data, safe=False)
-
-
-@api_view(['POST'])
-def newclient(request):
-    if request.method == 'POST':
-        data = json.loads(request.body.decode('utf-8'))
+    def post(self, request):
+        data = request.data
         client_name = data.get('name', '')
-        #index_name = data.get('index_name', '')
         dest_dir = data.get('folder_name', '')
         docs_path = data_path.DATA_PATH + dest_dir
-
         status_id = services.add_new_client(client_name=client_name, docs_path=docs_path)
-        return JsonResponse({ 'status_id': status_id }, safe=False)
+        return Response({ 'status_id': status_id })
 
+
+class SeriesView(APIView):
+    def get(self, request, pk):
+        data = services.get_series( 
+            client_name=pk, 
+            context=request.query_params.get('tags', ''), 
+            tags=request.query_params.get('contexts', ''),
+            start=request.query_params.get('start', ''),
+            end=request.query_params.get('end', ''),
+            interval=request.query_params.get('interval', '1H') )
+        return Response(data)
+
+
+class TagListView(APIView):
+    def get(self, request, pk):
+        data = services.get_tags(client_name=pk)
+        return Response(data)
+
+
+class ContextListView(APIView):
+    def get(self, request, pk):
+        data = services.get_contexts(client_name=pk)
+        return Response(data)
 
 #returns list of tags
 def tags(request):
     if request.method == 'GET':
         clientname = request.GET.get('name', '')
-        data = services.get_tags(client_name=clientname)
+        data = services.get_tags(client_name=pk)
         return JsonResponse(data, safe=False)
 
 #returns list of contexts
@@ -120,12 +125,6 @@ def testalgo(request):
         return JsonResponse(anomalies, safe=False)
 
 
-'''
-
-def longtask(request):
-    task = long_task.apply_async()
-    return JsonResponse({'task_id': task.id}, safe=False)
-
 
 def taskstatus(request, task_id):
     task = long_task.AsyncResult(task_id)
@@ -155,5 +154,3 @@ def taskstatus(request, task_id):
             'status': str(task.info),  # this is the exception raised
         }
     return JsonResponse(response, safe=False) 
-
-'''
