@@ -15,15 +15,15 @@ class SeriesIndexer():
         self._create_template()
         self.pipeline_id = self._create_pipeline()
 
+    def get_index_name(self, name):
+        return self.index_prefix + name
+
     def index(self, name, data):
         return bulk(es, self._make_documents(name, data))
 
     def delete(self, name):
-        index_pattern = self.get_index_name + '*'
+        index_pattern = self.get_index_name(name) + '*-'
         es.indices.delete(index=index_pattern, ignore=[400, 404])
-
-    def get_index_name(self, name):
-        return self.index_prefix + name
 
     #index template for series data
     def _create_template(self):

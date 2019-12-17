@@ -18,7 +18,7 @@ def add_new_client(client_name, docs_path):
         client = Client.objects.create(name=client_name, index_name='', task_id=task.id, indexing=True)
         return task.id
     else:
-        raise ClientNameAlreadyExists("There's already a client with the same name")
+        raise ClientNameAlreadyExists()
 
 
 def delete_client(client_name):

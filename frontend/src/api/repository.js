@@ -19,6 +19,9 @@ export default {
     addNewClient(form) {
         return repository.post("/clients/", form)
     },
+    deleteClient(clientName) {
+        return repository.delete("/clients/", {params: {name: clientName}})
+    },
     getSeriesData(params) {
         let url = "/clients/" + params.name + "/series/"
         delete params.name
