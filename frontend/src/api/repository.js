@@ -20,7 +20,12 @@ export default {
         return repository.post("/clients/", form)
     },
     deleteClient(clientName) {
-        return repository.delete("/clients/", {params: {name: clientName}})
+        let url = "/clients/" + clientName + "/"
+        return repository.delete(url)
+    },
+    getClientDetails(clientName) {
+        let url = "/clients/" + clientName + "/"
+        return repository.get(url)
     },
     getSeriesData(params) {
         let url = "/clients/" + params.name + "/series/"

@@ -22,8 +22,8 @@ class SeriesIndexer():
         return bulk(es, self._make_documents(name, data))
 
     def delete(self, name):
-        index_pattern = self.get_index_name(name) + '*-'
-        es.indices.delete(index=index_pattern, ignore=[400, 404])
+        index_pattern = self.get_index_name(name) + '-*'
+        es.indices.delete(index=index_pattern)
 
     #index template for series data
     def _create_template(self):

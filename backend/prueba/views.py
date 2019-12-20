@@ -7,7 +7,7 @@ from . import data_path
 from . import services
 
 
-class ClientsView(APIView):
+class ClientListView(APIView):
     def get(self, request):
         data = services.get_clients_info()
         return Response(data)
@@ -23,8 +23,14 @@ class ClientsView(APIView):
             return Response({'error': "There's already a client with the same name"}, status=status.HTTP_409_CONFLICT)
         return Response({'status_id': status_id}, status=status.HTTP_201_CREATED)
 
-    def delete(self, request):
-        services.delete_client(request.query_params.get('name', ''))
+
+
+class ClientDetailView(APIView):
+    def get(self, request, pk):
+        return Response({'details': 'some client details'})
+
+    def delete(self, request, pk):
+        services.delete_client(pk)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -36,7 +42,7 @@ class SeriesView(APIView):
             tags=request.query_params.get('contexts', ''),
             start=request.query_params.get('start', ''),
             end=request.query_params.get('end', ''),
-            interval=request.query_params.get('interval', '1H') )
+            interval=request.query_params.get('interval', '1H'))
         return Response(data)
 
 

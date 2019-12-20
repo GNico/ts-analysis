@@ -54,18 +54,6 @@ export default {
   methods: {
     handleSubmit() {
       this.$emit('submit', this.form)
-
-      /*let vm = this
-      vm.loading = true
-      api.addNewClient(vm.form)
-      .then(response => {       
-        vm.loading = false
-        vm.$store.dispatch('clients/fetchClients');
-        this.$emit('close')
-      })
-      .catch(error => { 
-        console.log('error creating new client')
-      })*/
     }
   }
 }
