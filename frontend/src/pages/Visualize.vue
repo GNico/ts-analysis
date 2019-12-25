@@ -1,7 +1,10 @@
 <template>
 
-
-<h1> temporary unavailable </h1>
+<div class="container">
+  <div class="section">
+    <TreeView :items="treeData" v-model="selectedItems"/>
+  </div>
+</div>
 <!-- <div>
   <div class="columns is-fullheight ">
      <div class="column is-2 side-menu is-hidden-mobile">
@@ -30,15 +33,45 @@ import SettingsVisualize from '../components/SettingsVisualize.vue';
 import DateRangeSelect from '../components/DateRangeSelect.vue';
 import BarSeries from '../components/BarSeries.vue';
 
+import TreeView from '../components/TreeView.vue';
 
 export default {
-  components: { SettingsSeries, SettingsVisualize, DateRangeSelect, BarSeries },
+  components: { SettingsSeries, SettingsVisualize, DateRangeSelect, BarSeries, TreeView },
   data () {
     return {
       selectedRange: { 
         start: null,
         end: null, 
       },
+      selectedItems: [],
+      treeData: {
+        name: 'All Tags',
+        children: [
+          { name: 'first' },
+          { name: 'second' },
+          {
+            name: 'third child',
+            children: [
+              {
+                name: 'grandchild',
+                children: [
+                  { name: 'someone' },
+                  { name: 'noone' }
+                ]
+              },
+              { name: 'hello' },
+              { name: 'wat' },
+              {
+                name: 'anotherone',
+                children: [
+                  { name: 'ups' },
+                  { name: 'kek' }
+                ]
+              }
+            ]
+          }
+        ]
+      }
     }
   },
   computed: {
