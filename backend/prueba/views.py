@@ -6,6 +6,9 @@ from . import anomaly_detector
 from . import data_path
 from . import services
 
+import re
+
+
 
 class ClientListView(APIView):
     def get(self, request):
@@ -49,7 +52,30 @@ class SeriesView(APIView):
 class TagListView(APIView):
     def get(self, request, pk):
         data = services.get_tags(client_name=pk)
-        return Response(data)
+
+        root = { "name": "All tags", 
+                 "id": "root",
+                 "children": [] }
+        for full_tag in data:
+            currentarray = root["children"]    
+            tokenized_full_tag = re.split(r'\s|_', full_tag)
+            partial_id = ""
+            for index, token in enumerate(tokenized_full_tag):
+                last = (index == len(tokenized_full_tag) -1) 
+                if not partial_id: 
+                    partial_id = token
+                else:
+                    partial_id = partial_id + "_" + token
+                node = next((item for item in currentarray if item["name"] == token), {})
+                if not node:
+                    node['name'] = token
+                    node['id'] = partial_id                
+                    if not last:
+                        node['children'] = []
+                    currentarray.append(node)
+                currentarray = node.get("children", [])
+
+        return Response(root)
 
 
 class ContextListView(APIView):

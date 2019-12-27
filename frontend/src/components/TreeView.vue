@@ -3,7 +3,7 @@
     <div class="is-flex">
       <b-checkbox 
         :value="isParent ? allChildLeavesSelected : value" 
-        :native-value="isParent ? allChildLeavesSelected : items"
+        :native-value="isParent ? allChildLeavesSelected : items.id"
         @input="checkboxEmit"
         :indeterminate="indeterminate"> 
           {{ items.name }} 
@@ -16,11 +16,13 @@
   <ul v-show="isOpen" v-if="isParent">
     <TreeView
       class="item"
-      v-for="(child, index) in items.children"
+      v-for="(child, index) in displayItems.children"
       :key="index"
-      :items="child"
+      :items="items.children[index]"
+      :displayItems="child"
       :value="value"
-      @input="nodeEmit"/>
+      @input="nodeEmit"
+      @togglechildren="toggleEmit"/>
   </ul>
 </li>
 
@@ -34,6 +36,11 @@ export default {
   name: 'TreeView',
   props: {
     items: {
+      type: Object,
+      required: true,
+      default: () => {}
+    },
+    displayItems: {
       type: Object,
       required: true,
       default: () => {}
@@ -52,6 +59,7 @@ export default {
   computed: {
     isParent() {
       return !! this.items.children && this.items.children.length > 0
+      //return this.items.hasOwnProperty('children')
     },
     allChildLeaves() {
       let leaves = []
@@ -66,10 +74,10 @@ export default {
       return leaves
     },
     allChildLeavesSelected() {
-      return this.isParent && this.allChildLeaves.every(leaf => this.value.some(sel => sel == leaf))
+      return this.isParent && this.allChildLeaves.every(leaf => this.value.some(sel => sel == leaf.id))
     },
     someChildLeavesSelected() {
-      return this.allChildLeaves.some(leaf => this.value.some(sel => sel == leaf))
+      return this.allChildLeaves.some(leaf => this.value.some(sel => sel == leaf.id))
     },
     indeterminate() {
       return this.isParent && this.someChildLeavesSelected && !this.allChildLeavesSelected
@@ -78,6 +86,13 @@ export default {
   methods: {
     toggle: function () {
       if (this.isParent) {
+        let event = { id: this.displayItems.id }
+        if (!this.isOpen) {
+          event.shouldDisplay = true                                   
+        } else {
+          event.shouldDisplay = false                                   
+        }
+        this.toggleEmit(event)
         this.isOpen = !this.isOpen
       }
     },  
@@ -85,14 +100,14 @@ export default {
       if (this.isParent) {
         if (this.allChildLeavesSelected) {
           this.allChildLeaves.forEach(leaf => {
-            let ix = this.value.indexOf(leaf)
+            let ix = this.value.indexOf(leaf.id)
             this.value.splice(ix,1)
           })
         } else {
           this.allChildLeaves.forEach(leaf => {
-            let ix = this.value.indexOf(leaf)
+            let ix = this.value.indexOf(leaf.id)
             if (ix == -1) {
-              this.value.push(leaf)
+              this.value.push(leaf.id)
             }
           })
         }
@@ -103,10 +118,11 @@ export default {
     },
     nodeEmit(event) {
       this.$emit('input', event)
+    },
+    toggleEmit(event) {
+      this.$emit('togglechildren', event)
     }  
   }
-
-
 }
 
 </script>
