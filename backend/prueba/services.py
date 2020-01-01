@@ -55,10 +55,10 @@ def _calculate_progress(task):
     return ceil(current * 100 / total)
 
 
-def get_series(client_name, context, tags, start, end, interval):
+def get_series(client_name, start, end, contexts, tags, interval):
     client = Client.objects.get(name=client_name)
     print(client.index_name)
-    return search.get_series(client.index_name, context, tags, start, end, interval)
+    return search.get_series(client.index_name, start, end, contexts, tags, interval)
 
 def get_tags(client_name):
     client = Client.objects.get(name=client_name)

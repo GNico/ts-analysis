@@ -1,9 +1,10 @@
 <template>
 
 <div class="container">
-  <div class="section">
-    <div class="card tagcontainer">
-      <TreeView :items="tags" :displayItems="displayElements" v-model="selectedItems" @togglechildren="toggleChildren"/>
+  <div class="section is-flex">
+    
+     <div class="card tagcontainer">
+      <TreeView :items="tags" :displayItems="displayElements" v-model="selectedItems" @rootSelected="selectAllNodes"/>
     </div>
   </div>
 </div>
@@ -39,6 +40,7 @@ import BarSeries from '../components/BarSeries.vue';
 
 import TreeView from '../components/TreeView.vue';
 
+
 export default {
   components: { SettingsSeries, SettingsVisualize, DateRangeSelect, BarSeries, TreeView },
   data () {
@@ -50,35 +52,39 @@ export default {
       tags: {},
       displayElements: {},
       selectedItems: [],
+      flatData: [ 'root', 'first', 'second', 'third', 'grandchild', 'grand5', 'grand6', 'grandchild2', 'grandchild3', 'grandchild4', 'somemore', 'somemore2'],
       treeData: {
         name: 'All Tags',
         id: 'root',
         children: [
-          { id: 1, 
+          { id: 'first', 
             name: 'first' },
-          { id: 2,
+          { id: 'second',
             name: 'second' },
           { 
+            id: 'third',
             name: 'third child',
             children: [
               { 
+                id: 'grandchild',
                 name: 'grandchild',
                 children: [
-                  { id: 5,
+                  { id: 'grand5',
                     name: 'someone' },
-                  { id: 6,
+                  { id: 'grand6',
                     name: 'noone' }
                 ]
               },
-              { id: 7,
+              { id: 'grandchild2',
                 name: 'hello' },
-              { id: 8,
+              { id: 'grandchild3',
                 name: 'wat' },
-              { name: 'anotherone',
+              { id: 'grandchild4',
+                name: 'grandchild4',
                 children: [
-                  { id: 10,
+                  { id: 'somemore',
                     name: 'ups' },
-                  { id: 11,
+                  { id: 'somemore2',
                     name: 'kek' }
                 ]
               }
@@ -88,82 +94,29 @@ export default {
       }
     }
   },
-  computed: {
-    subtag() {
-      let newarray = this.tags.children.slice(9,10)
-      let newobj = { name: "All tags", id: "root", children: newarray  } 
-      return newobj
-    },
-    chunks() {
-      let tagNumbers = []
-      this.tags.children.forEach(child => {
-        let number = 0
-        let searchTree = items => {
-          if (!! items.children && items.children.length > 0) {
-            number = number + items.children.length
-            items.children.forEach(child => searchTree(child))
-          } 
-        }
-        searchTree(child)
-        tagNumbers.push(number)
-      })
-      return tagNumbers
-      //.sort(function(a, b) {return a - b;})
-    },    
-  },
   methods: {
     changeRange(event) {
       this.$store.dispatch('visualize/updateRange', event)
     },
-    toggleChildren(event) {
-      if (event.shouldDisplay) {
-        this.showChildren(event.id)
+    selectAllNodes(event) {
+      if (event) {
+        this.selectedItems = this.flatData
       } else {
-        this.hideChildren(event.id)
-      }
-    },
-    showChildren(id) {
-      let name_list = id.split("_")
-      let displaydic = this.displayElements
-      let tagsdic = this.tags
-      if (name_list[0] != "root") {
-        name_list.forEach(name => {
-          tagsdic = tagsdic.children.find(x => x.name === name)
-          displaydic = displaydic.children.find(x => x.name === name)
-        })
-      }
-      //add  the next layer of children if not already there
-      if (displaydic['children'].length == 0) {
-        tagsdic['children'].forEach(child => {
-          let newchild = {id: child.id, name: child.name}
-          if (child.hasOwnProperty('children')) {
-            newchild['children'] = []
-          }
-          displaydic['children'].push(newchild)
-        })
-      }
-    },
-    hideChildren(id) {
-      let name_list = id.split("_")
-      let displaydic = this.displayElements
-      if (name_list[0] != "root") {
-        name_list.forEach(name => {
-          displaydic = displaydic.children.find(x => x.name === name)
-        })
-      }
-      if (displaydic['children'].length > 0) {
-        displaydic['children'] = []
+        this.selectedItems = []
       }
     }
   },
   created () {
     api.getTags('movistar')
     .then(response => {       
-      this.tags = response.data
+      this.tags = response.data.tree
       this.displayElements = { name: this.tags.name,
                                id: this.tags.id,
                                children: [] }
+      //this.flatData = response.data.flat
     })
+
+
   },
 }
 

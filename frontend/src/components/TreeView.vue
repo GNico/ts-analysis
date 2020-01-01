@@ -21,8 +21,7 @@
       :items="items.children[index]"
       :displayItems="child"
       :value="value"
-      @input="nodeEmit"
-      @togglechildren="toggleEmit"/>
+      @input="nodeEmit"/>
   </ul>
 </li>
 
@@ -59,7 +58,6 @@ export default {
   computed: {
     isParent() {
       return !! this.items.children && this.items.children.length > 0
-      //return this.items.hasOwnProperty('children')
     },
     allChildLeaves() {
       let leaves = []
@@ -87,17 +85,29 @@ export default {
     toggle: function () {
       if (this.isParent) {
         let event = { id: this.displayItems.id }
-        if (!this.isOpen) {
-          event.shouldDisplay = true                                   
-        } else {
-          event.shouldDisplay = false                                   
-        }
-        this.toggleEmit(event)
         this.isOpen = !this.isOpen
+        if (this.isOpen) {
+          this.items['children'].forEach(child => {
+            let newchild = {id: child.id, name: child.name}
+            if (child.hasOwnProperty('children')) {
+              newchild['children'] = []
+            }
+            this.displayItems['children'].push(newchild)
+          })
+        } else {
+          this.displayItems.children = []
+        }
       }
     },  
     checkboxEmit(event) {
+      let t0 = performance.now()
       if (this.isParent) {
+        //special case of root for optimization
+       /* if (this.items.id == 'root') {
+          console.log('is root')
+          this.$emit('rootSelected', event)          
+          return
+        } */
         if (this.allChildLeavesSelected) {
           this.allChildLeaves.forEach(leaf => {
             let ix = this.value.indexOf(leaf.id)
@@ -111,17 +121,17 @@ export default {
             }
           })
         }
-        this.$emit('input', this.value)
+        this.$emit('input', this.value)      
       } else {
         this.$emit('input', event)
       }
+    let t1 = performance.now()
+    console.log(t1-t0)
+
     },
     nodeEmit(event) {
       this.$emit('input', event)
-    },
-    toggleEmit(event) {
-      this.$emit('togglechildren', event)
-    }  
+    },  
   }
 }
 
@@ -138,7 +148,6 @@ export default {
 li {
   list-style-type: none;
   margin-bottom: 0.25rem;
-
 }
 ul {
   padding-left: 2em;
@@ -146,7 +155,6 @@ ul {
   margin-top: 0.25rem;
 
 }
-
 .transparent-button {
   background-color: Transparent;
   background-repeat:no-repeat;
@@ -155,7 +163,5 @@ ul {
   overflow: hidden;
   outline:none;
 }
-
-
 
 </style>

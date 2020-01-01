@@ -41,10 +41,10 @@ class SeriesView(APIView):
     def get(self, request, pk):
         data = services.get_series( 
             client_name=pk, 
-            context=request.query_params.get('tags', ''), 
-            tags=request.query_params.get('contexts', ''),
             start=request.query_params.get('start', ''),
             end=request.query_params.get('end', ''),
+            contexts=request.query_params.get('contexts', ''),
+            tags=request.query_params.get('tags', ''),             
             interval=request.query_params.get('interval', '1H'))
         return Response(data)
 
@@ -53,11 +53,12 @@ class TagListView(APIView):
     def get(self, request, pk):
         data = services.get_tags(client_name=pk)
 
+
         root = { "name": "All tags", 
                  "id": "root",
                  "children": [] }
         for full_tag in data:
-            currentarray = root["children"]    
+            currentchildren = root["children"]    
             tokenized_full_tag = re.split(r'\s|_', full_tag)
             partial_id = ""
             for index, token in enumerate(tokenized_full_tag):
@@ -66,16 +67,18 @@ class TagListView(APIView):
                     partial_id = token
                 else:
                     partial_id = partial_id + "_" + token
-                node = next((item for item in currentarray if item["name"] == token), {})
+                node = next((item for item in currentchildren if item["name"] == token), {})
                 if not node:
                     node['name'] = token
                     node['id'] = partial_id                
                     if not last:
                         node['children'] = []
-                    currentarray.append(node)
-                currentarray = node.get("children", [])
+                    currentchildren.append(node)
+                currentchildren = node.get("children", [])
 
-        return Response(root)
+        response = { "tree": root }
+
+        return Response(response)
 
 
 class ContextListView(APIView):

@@ -1,26 +1,29 @@
 import VueRouter from 'vue-router'
 
+function lazyLoad(view){
+  return() => import(`@/pages/${view}.vue`)
+}
 
 let routes = [
 	{
 		path: '/',
-		component: require('@/pages/Home.vue').default
+		component: lazyLoad('Home')
 	},
 	{
 		path: '/Visualize',
-		component: require('@/pages/Visualize.vue').default
+		component: lazyLoad('Visualize')
 	},
 	{
 		path: '/Anomalies',
-		component: require('@/pages/Analysis.vue').default
+		component: lazyLoad('Analysis')
 	},
 	{
 		path: '/Alerts',
-		component: require('@/pages/Alerts.vue').default
+		component: lazyLoad('Alerts')
 	},
 	{
 		path: '/Test',
-		component: require('@/pages/Test.vue').default
+		component: lazyLoad('Test')
 	}
 
 ];
