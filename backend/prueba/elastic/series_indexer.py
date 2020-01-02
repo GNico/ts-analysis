@@ -1,26 +1,30 @@
 from elasticsearch.helpers import bulk
+from elasticsearch.helpers.errors import BulkIndexError
 from elasticsearch.client import IngestClient
 import json
 import os
-
 from .es_connection import es
 
+class IndexingError(Exception):
+    pass
 
 class SeriesIndexer():
     index_prefix = "ts-"                        #prefix added to the name of data indices 
     series_template_name = "series_template"
 
     def __init__(self):
-        #self.index_name = self.index_prefix + indexname
         self._create_template()
         self.pipeline_id = self._create_pipeline()
 
     def get_index_name(self, name):
         return self.index_prefix + name
 
-    def index(self, name, data):
-        return bulk(es, self._make_documents(name, data))
-
+    def index(self, name, data):      
+        try:
+            bulk(es, self._make_documents(name, data))
+        except BulkIndexError:
+            raise(IndexingError)
+           
     def delete(self, name):
         index_pattern = self.get_index_name(name) + '-*'
         es.indices.delete(index=index_pattern)
@@ -32,23 +36,42 @@ class SeriesIndexer():
             body =  {
                 "index_patterns" :  index_pattern,
                 "settings" : {
-                    "index" : {
-                        "sort.field" : "@timestamp", 
-                        "sort.order" : "desc" 
+                  "index" : {
+                    "sort.field" : "@timestamp", 
+                    "sort.order" : "desc" 
+                  },
+                  "analysis": {
+                    "analyzer": {
+                      "tag_tree": {
+                        "tokenizer": "tag_hierarchy"
+                      }
+                    },
+                    "tokenizer": {
+                      "tag_hierarchy": {
+                        "type": "path_hierarchy",
+                        "delimiter": "_",
+                      }
                     }
+                  }
                 },
                 "mappings": {                    
-                   "properties": {
-                        "@timestamp": {
-                            "type": "date"
-                        },
-                        "tag": {
-                            "type": "keyword"
-                        },
-                        "context": {
-                            "type": "keyword"
+                  "properties": {
+                    "@timestamp": {
+                      "type": "date"
+                    },
+                    "tag": {
+                      "type": "keyword",
+                      "fields": {
+                        "tree": {
+                          "type": "text",
+                          "analyzer": "tag_tree"
                         }
-                    }                    
+                      }
+                    },
+                    "context": {
+                      "type": "keyword"
+                    }
+                  }                    
                 }
             }
             es.indices.put_template(name=self.series_template_name, body=body)
@@ -80,9 +103,9 @@ class SeriesIndexer():
                     '_id': event['_id'],
                     'pipeline': self.pipeline_id,
                     '_source': {
-                        '@timestamp': event['source']['date'], 
-                        'tag': event['source']['tags'],
-                        'context': event['source']['context']
+                      '@timestamp': event['source']['date'], 
+                      'tag': event['source']['tags'],
+                      'context': event['source']['context']
                     }
             }
             yield(doc) 

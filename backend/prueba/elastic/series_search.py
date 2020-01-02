@@ -54,7 +54,7 @@ class SeriesSearch():
             
         if tags:
             dict = {
-                "terms": {"tag": [ tags ] }
+                "terms": {"tag.tree": [ tags ] }
             }
             query['query']['bool']['filter'].append(dict)
 

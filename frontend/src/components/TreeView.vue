@@ -2,8 +2,8 @@
 <li>
     <div class="is-flex">
       <b-checkbox 
-        :value="isParent ? allChildLeavesSelected : value" 
-        :native-value="isParent ? allChildLeavesSelected : items.id"
+        :value="parentSelected || (isParent ? allChildLeavesSelected : value)" 
+        :native-value="parentSelected || (isParent ? allChildLeavesSelected : items.id)"
         @input="checkboxEmit"
         :indeterminate="indeterminate"> 
           {{ items.name }} 
@@ -21,7 +21,9 @@
       :items="items.children[index]"
       :displayItems="child"
       :value="value"
-      @input="nodeEmit"/>
+      :parentSelected="parentSelected || allChildLeavesSelected"
+      @input="nodeEmit"
+      @uncheck="uncheck"/>
   </ul>
 </li>
 
@@ -48,7 +50,12 @@ export default {
       type: Array,
       required: false,
       default: null
-    }
+    },
+    parentSelected: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
   },
   data () {
     return {
@@ -63,7 +70,9 @@ export default {
       let leaves = []
       let searchTree = items => {
         if (!! items.children && items.children.length > 0) {
-          items.children.forEach(child => searchTree(child))
+          for (let i = 0; i < items.children.length; i++) {
+            searchTree(items.children[i])
+          }
         } else {
           leaves.push(items)
         }
@@ -72,10 +81,14 @@ export default {
       return leaves
     },
     allChildLeavesSelected() {
-      return this.isParent && this.allChildLeaves.every(leaf => this.value.some(sel => sel == leaf.id))
+      return  this.value.includes(this.items.id) || this.parentSelected || 
+              (this.isParent && 
+              (this.items.children.every(child => this.value.some(sel => sel === child.id)) ||
+              this.allChildLeaves.every(leaf => this.value.some(sel => sel == leaf.id))))
     },
     someChildLeavesSelected() {
-      return this.allChildLeaves.some(leaf => this.value.some(sel => sel == leaf.id))
+      return (this.items.children.some(child => this.value.some(sel => sel === child.id)) || 
+              this.allChildLeaves.some(leaf => this.value.some(sel => sel == leaf.id)))      
     },
     indeterminate() {
       return this.isParent && this.someChildLeavesSelected && !this.allChildLeavesSelected
@@ -100,39 +113,80 @@ export default {
       }
     },  
     checkboxEmit(event) {
-      let t0 = performance.now()
       if (this.isParent) {
-        //special case of root for optimization
-       /* if (this.items.id == 'root') {
-          console.log('is root')
-          this.$emit('rootSelected', event)          
-          return
-        } */
         if (this.allChildLeavesSelected) {
-          this.allChildLeaves.forEach(leaf => {
-            let ix = this.value.indexOf(leaf.id)
-            this.value.splice(ix,1)
-          })
-        } else {
-          this.allChildLeaves.forEach(leaf => {
-            let ix = this.value.indexOf(leaf.id)
-            if (ix == -1) {
-              this.value.push(leaf.id)
+          let ix = this.value.indexOf(this.items.id)
+            if (ix > -1) {
+              this.value.splice(ix, 1)
             }
-          })
-        }
+          this.uncheckAllChildren()
+        } else {
+          this.uncheckAllChildren()
+          this.value.push(this.items.id)
+        }      
         this.$emit('input', this.value)      
+      }
+      if (this.parentSelected) {
+        this.$emit('uncheck', this.items.id)
+      }
+      if (this.parentSelected || this.isParent) {
+        this.$emit('input', this.value)
       } else {
         this.$emit('input', event)
       }
-    let t1 = performance.now()
-    console.log(t1-t0)
-
+    },
+    uncheck(childId) {
+      if (this.allChildLeavesSelected) {
+        // push back all children except the given one
+        for (let i = 0; i < this.items.children.length; i++) {
+          if (this.items.children[i].id !== childId) {
+            this.value.push(this.items.children[i].id)
+          }
+        }
+      }
+      // uncheck the child
+      let cix = this.value.indexOf(childId)
+      if (cix > -1) {
+        this.value.splice(cix, 1)
+      }
+      // uncheck self
+      let ix = this.value.indexOf(this.items.id)
+      if (ix > -1) {
+        this.value.splice(ix, 1)
+      }
+      // propagate up
+      this.$emit('uncheck', this.items.id)
+      
+    },
+    uncheckAllChildren () {
+      for (let i = 0; i < this.allChildLeaves.length; i++) {
+        let ix = this.value.indexOf(this.allChildLeaves[i].id)
+        if (ix > -1) {
+          this.value.splice(ix, 1)
+        }
+      }
+      for (let i = 0; i < this.items.children.length; i++) {
+        let ix = this.value.indexOf(this.items.children[i].id)
+        if (ix > -1) {
+          this.value.splice(ix, 1)
+        }
+      }
     },
     nodeEmit(event) {
       this.$emit('input', event)
     },  
-  }
+  },
+  watch: {
+    allChildLeavesSelected (newVal) {
+      // we monitor if children are being clicked one-by-one
+      // (prop is true but item.id is not in the list)
+      // -> deselect children and push parent
+      if (newVal && !this.value.includes(this.items.id) && this.isParent && !this.parentSelected) {
+        this.uncheckAllChildren()
+        this.value.push(this.items.id)
+      }
+    }
+  },
 }
 
 </script>

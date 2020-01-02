@@ -26,7 +26,6 @@ def delete_client(client_name):
     indexer.delete(client_name)
 
 
-
 def get_clients_info():
     #update indexing progress
     indexing_clients = []

@@ -4,7 +4,7 @@
   <div class="section is-flex">
     
      <div class="card tagcontainer">
-      <TreeView :items="tags" :displayItems="displayElements" v-model="selectedItems" @rootSelected="selectAllNodes"/>
+      <TreeView :items="tags" :displayItems="displayElements" v-model="selectedItems" />
     </div>
   </div>
 </div>
