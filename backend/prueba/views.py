@@ -53,7 +53,6 @@ class TagListView(APIView):
     def get(self, request, pk):
         data = services.get_tags(client_name=pk)
 
-
         root = { "name": "All tags", 
                  "id": "root",
                  "children": [] }
@@ -74,10 +73,13 @@ class TagListView(APIView):
                     if not last:
                         node['children'] = []
                     currentchildren.append(node)
-                currentchildren = node.get("children", [])
+                if not last: 
+                    key = 'children'
+                    if not key in node:
+                        node['children'] = []
+                    currentchildren = node['children']
 
-        response = { "tree": root }
-
+        response = { "tree": root, "flat": data }
         return Response(response)
 
 

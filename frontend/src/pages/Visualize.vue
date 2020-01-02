@@ -113,7 +113,7 @@ export default {
       this.displayElements = { name: this.tags.name,
                                id: this.tags.id,
                                children: [] }
-      //this.flatData = response.data.flat
+      this.flatData = response.data.flat
     })
 
 

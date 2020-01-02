@@ -178,9 +178,6 @@ export default {
   },
   watch: {
     allChildLeavesSelected (newVal) {
-      // we monitor if children are being clicked one-by-one
-      // (prop is true but item.id is not in the list)
-      // -> deselect children and push parent
       if (newVal && !this.value.includes(this.items.id) && this.isParent && !this.parentSelected) {
         this.uncheckAllChildren()
         this.value.push(this.items.id)
