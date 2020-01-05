@@ -53,11 +53,13 @@ class TagListView(APIView):
     def get(self, request, pk):
         data = services.get_tags(client_name=pk)
 
-        root = { "name": "All tags", 
-                 "id": "root",
-                 "children": [] }
+        #root = { "name": "All tags", 
+        #         "id": "root",
+        #         "children": [] }
+        root = []
         for full_tag in data:
-            currentchildren = root["children"]    
+            #currentchildren = root["children"]    
+            currentchildren = root  
             tokenized_full_tag = re.split(r'\s|_', full_tag)
             partial_id = ""
             for index, token in enumerate(tokenized_full_tag):

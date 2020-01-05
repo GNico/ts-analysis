@@ -3,7 +3,7 @@ import api from "../api/repository";
 
 const state = {
   clients: [],
-  tags: [],
+  tags: {},
   contexts: [],
   details: {},
 }

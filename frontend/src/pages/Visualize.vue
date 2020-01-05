@@ -49,11 +49,11 @@ export default {
         start: null,
         end: null, 
       },
-      tags: {},
+      tags: { name: 'All tags', id: "root", children: [] },
       displayElements: {},
       selectedItems: [],
-      flatData: [ 'root', 'first', 'second', 'third', 'grandchild', 'grand5', 'grand6', 'grandchild2', 'grandchild3', 'grandchild4', 'somemore', 'somemore2'],
-      treeData: {
+      flatData: [ 'root' ],
+      /* treeData: {
         name: 'All Tags',
         id: 'root',
         children: [
@@ -91,7 +91,7 @@ export default {
             ]
           }
         ]
-      }
+      }*/
     }
   },
   methods: {
@@ -109,11 +109,10 @@ export default {
   created () {
     api.getTags('movistar')
     .then(response => {       
-      this.tags = response.data.tree
+      this.tags.children = response.data.tree
       this.displayElements = { name: this.tags.name,
                                id: this.tags.id,
                                children: [] }
-      this.flatData = response.data.flat
     })
 
 

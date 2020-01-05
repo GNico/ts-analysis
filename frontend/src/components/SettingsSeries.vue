@@ -59,13 +59,7 @@
 
   <div class="field">
     <label class="label"> Tag </label>
-    <SearchSelect 
-      :saved="saved.tags" 
-      :data="tags"
-      placeholder="Seleccionar tag"
-      @selected="seriesOptions.tags = $event"
-      ref=tagselect
-    />
+    <TreeView :items="tagstree" :displayItems="displayElements" v-model="selectedTags" />
   </div>
   </section>
 
@@ -94,9 +88,20 @@
 
 <script>
 import SearchSelect from './SearchSelect.vue';
+import TreeView from './TreeView.vue';
+
+
+/*<SearchSelect 
+      :saved="saved.tags" 
+      :data="tags"
+      placeholder="Seleccionar tag"
+      @selected="seriesOptions.tags = $event"
+      ref=tagselect
+    />*/
+
 
 export default {
-  components: { SearchSelect },
+  components: { SearchSelect, TreeView },
   data () {
     return {
       seriesOptions: {
@@ -112,6 +117,7 @@ export default {
       },
       edit: false, 
       isOpen: false,
+      selectedTags: [],
     }
   },
   computed: {
@@ -129,6 +135,15 @@ export default {
     },
     tags() {
         return this.$store.state.clients.tags
+    },
+    tagstree() {
+      let tree =  { name: 'All tags', id: "root", children: this.tags.tree }
+      return tree
+    },
+    displayElements() {
+      return { name: this.tagstree.name,
+               id: this.tagstree.id,
+               children: [] }
     },
     hasError() {
         return this.seriesNames.includes(this.seriesOptions.name)
