@@ -4,4 +4,4 @@ if [ -z $IP ]; then
   exit
 fi
 echo "IP=$IP"
-jupyter notebook --ip $IP --port 8888 --NotebookApp.token=
+ipython3 notebook --ip $IP --port 8888 --NotebookApp.token=
