@@ -8,18 +8,12 @@ class SeriesSearch():
     def get_count(self, indexname):
         index_pattern = indexname + '-*'
         self.refresh(index_pattern)
-
-        print('first count')
-        print(index_pattern)
         response = es.count(index=index_pattern)
-
-        print(response)
         return response['count']
 
     def refresh(self, indexname):
         ic = IndicesClient(es)
         res = ic.refresh(indexname)
-        print(res)
 
     def get_series(self, indexname, start='', end='', context='', tags='', interval='1H'):
         requestedData = []        

@@ -3,6 +3,11 @@ BACKEND
 -install elasticsearch 7+
 -install redis server
 
+-install postgres
+	apt-get install postgresql libpq-dev
+
+-Crear postgres user, password y database. Setear environmental variables
+
 -create a virtual environment 'venv' in the backend directory
 	virtualenv venv
 
