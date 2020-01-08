@@ -80,22 +80,61 @@ export default {
       searchTree(this.items)
       return leaves
     },
+    allChildren() {
+      let children = []
+      let searchTree = items => {
+        children.push(items)
+        if (!! items.children && items.children.length > 0) {
+          for (let i = 0; i < items.children.length; i++) {
+            searchTree(items.children[i])
+          }
+        }
+      }
+      searchTree(this.items)
+      return children
+    },
     allChildLeavesSelected() {
       return  this.value.includes(this.items.id) || this.parentSelected || 
               (this.isParent && 
               (this.items.children.every(child => this.value.some(sel => sel === child.id)) ||
               this.allChildLeaves.every(leaf => this.value.some(sel => sel == leaf.id))))
     },
+    indeterminate() {
+      return this.isParent && this.someChildLeavesSelected && !this.allChildLeavesSelected
+    },
     someChildLeavesSelected() {
       return (this.items.children.some(child => this.value.some(sel => sel === child.id)) || 
               this.allChildLeaves.some(leaf => this.value.some(sel => sel == leaf.id)))      
-    },
-    indeterminate() {
-      return this.isParent && this.someChildLeavesSelected && !this.allChildLeavesSelected
     }
   },
-  methods: {
-    toggle: function () {
+  methods: { 
+    checkboxEmit(event) {
+      if (this.isParent) {
+        if (this.allChildLeavesSelected) {
+          let ix = this.value.indexOf(this.items.id)
+            if (ix > -1) {
+              this.value.splice(ix, 1)
+            }
+          this.uncheckAllChildren()
+        } else {
+          this.uncheckAllChildren()
+          this.value.push(this.items.id)
+        }      
+        //this.$emit('input', this.value)      
+      }
+      if (this.parentSelected) {
+        this.$emit('uncheck', this.items.id)
+      }
+      if (this.parentSelected || this.isParent) {
+        this.$emit('input', this.value)
+      } else {
+        this.$emit('input', event)
+      }
+    },
+    nodeEmit(event) {
+      this.$emit('input', event)
+    },  
+    toggle() {
       if (this.isParent) {
         let event = { id: this.displayItems.id }
         this.isOpen = !this.isOpen
@@ -111,30 +150,7 @@ export default {
           this.displayItems.children = []
         }
       }
-    },  
-    checkboxEmit(event) {
-      if (this.isParent) {
-        if (this.allChildLeavesSelected) {
-          let ix = this.value.indexOf(this.items.id)
-            if (ix > -1) {
-              this.value.splice(ix, 1)
-            }
-          this.uncheckAllChildren()
-        } else {
-          this.uncheckAllChildren()
-          this.value.push(this.items.id)
-        }      
-        this.$emit('input', this.value)      
-      }
-      if (this.parentSelected) {
-        this.$emit('uncheck', this.items.id)
-      }
-      if (this.parentSelected || this.isParent) {
-        this.$emit('input', this.value)
-      } else {
-        this.$emit('input', event)
-      }
-    },
+    }, 
     uncheck(childId) {
       if (this.allChildLeavesSelected) {
         // push back all children except the given one
@@ -155,29 +171,19 @@ export default {
         this.value.splice(ix, 1)
       }
       // propagate up
-      this.$emit('uncheck', this.items.id)
-      
+      this.$emit('uncheck', this.items.id)      
     },
-    uncheckAllChildren () {
-      for (let i = 0; i < this.allChildLeaves.length; i++) {
-        let ix = this.value.indexOf(this.allChildLeaves[i].id)
+    uncheckAllChildren() {
+      for (let i = 0; i < this.allChildren.length; i++) {
+        let ix = this.value.indexOf(this.allChildren[i].id)
         if (ix > -1) {
           this.value.splice(ix, 1)
         }
-      }
-      for (let i = 0; i < this.items.children.length; i++) {
-        let ix = this.value.indexOf(this.items.children[i].id)
-        if (ix > -1) {
-          this.value.splice(ix, 1)
-        }
-      }
+      }      
     },
-    nodeEmit(event) {
-      this.$emit('input', event)
-    },  
   },
   watch: {
-    allChildLeavesSelected (newVal) {
+    allChildLeavesSelected(newVal) {
       if (newVal && !this.value.includes(this.items.id) && this.isParent && !this.parentSelected) {
         this.uncheckAllChildren()
         this.value.push(this.items.id)
