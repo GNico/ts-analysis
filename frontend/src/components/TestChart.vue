@@ -45,7 +45,7 @@ function syncExtremes(vm, e) {
 }
 
 function genOptions(vm, dataset) {
-  return {
+  let options = {
     chart: {
       marginLeft: 40, // Keep all charts left aligned
       spacingTop: 20,
@@ -67,7 +67,7 @@ function genOptions(vm, dataset) {
     xAxis: {
       crosshair: true,
       type: 'datetime',
-      plotBands: dataset.anomalies,
+      //plotBands: dataset.results.anomalies,
       events: {
         setExtremes: function(event) {
           syncExtremes.call(this, vm, event);
@@ -122,6 +122,48 @@ function genOptions(vm, dataset) {
       }
     }]
   };
+
+  if (dataset.results.anomalies) {
+    options.xAxis.plotBands = dataset.results.anomalies
+  }
+
+  if (dataset.results.baseline) {
+    let baseline = {  
+      data: dataset.results.baseline, 
+      type: 'arearange', 
+      color: 'orange',
+      lineWidth: 0,
+      fillOpacity: 0.3,
+      marker: { enabled: false },
+      showInLegend: false,
+      states: {
+          hover: {
+              enabled: false
+          }
+      },
+      enableMouseTracking: false
+    }
+    options.series.push(baseline)
+  }
+
+  if (dataset.results.trend) {
+    let trend = {
+      data: dataset.results.trend,
+      type: 'line',
+      color: 'white',
+      marker: { enabled: false },
+      showInLegend: false,
+      states: {
+          hover: {
+              enabled: false
+          }
+      },
+      enableMouseTracking: false
+    }
+    options.series.push(trend)
+  } 
+
+  return options
 }
 
 
@@ -177,21 +219,21 @@ export default {
       updateArgs: [true, true, {duration: 1000}],
     }
   },
-  /*mounted() {
-    this.fetchData();
-  }, */
   methods: {
-    fetchData() {
+    genChartData() {
       var vm = this;
 
-      this.optionsList = this.chartsData.results.map((dataset, i) => {
+      this.optionsList = this.chartsData.analysis.map((dataset, i) => {
         if (!("data" in dataset) || dataset.data.length == 0 ) {
           dataset.data = this.chartsData.series 
         }
         dataset.color = 'red';
         dataset.unit = ''
-        for (var item of dataset.anomalies) {
-          item['color'] = getColorByvalue(item.score)
+        //add colors to anomalies based on score
+        if (dataset.results.anomalies) {
+          for (var item of dataset.results.anomalies) {
+            item['color'] = getColorByvalue(item.score)
+          }
         }
         return genOptions(vm, dataset);
       })
@@ -201,7 +243,7 @@ export default {
   },
   watch: {
     chartsData(newval) {
-      this.fetchData();
+      this.genChartData();
     }
   }
 }

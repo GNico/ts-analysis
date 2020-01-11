@@ -53,45 +53,6 @@ export default {
       displayElements: {},
       selectedItems: [],
       flatData: [ 'root' ],
-      /* treeData: {
-        name: 'All Tags',
-        id: 'root',
-        children: [
-          { id: 'first', 
-            name: 'first' },
-          { id: 'second',
-            name: 'second' },
-          { 
-            id: 'third',
-            name: 'third child',
-            children: [
-              { 
-                id: 'grandchild',
-                name: 'grandchild',
-                children: [
-                  { id: 'grand5',
-                    name: 'someone' },
-                  { id: 'grand6',
-                    name: 'noone' }
-                ]
-              },
-              { id: 'grandchild2',
-                name: 'hello' },
-              { id: 'grandchild3',
-                name: 'wat' },
-              { id: 'grandchild4',
-                name: 'grandchild4',
-                children: [
-                  { id: 'somemore',
-                    name: 'ups' },
-                  { id: 'somemore2',
-                    name: 'kek' }
-                ]
-              }
-            ]
-          }
-        ]
-      }*/
     }
   },
   methods: {

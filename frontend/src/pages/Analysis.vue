@@ -64,7 +64,7 @@ export default {
 }
   
 .side-menu {
-  overflow-y: overlay;
+  overflow-y: auto;
 }
 
 .main-content {

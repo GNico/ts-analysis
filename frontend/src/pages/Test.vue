@@ -1,47 +1,41 @@
 <template>	
 <section class='page-container'>
   <div class="columns is-fullheight">
-    <div>
-      <div class="field">
-	    <label class="label"> Cliente </label>
-	    <SearchSelect 
-	      :data="clientsSelectOptions"
-	      placeholder="Seleccionar cliente" 
-	      @selected="updateSelectOptions"  
-	      ref=clientselect
-	    />
-	   </div>
-
-  	  <div class="field">
-  	    <label class="label"> Contexto </label>
+    <div class="is-2 side-menu">
+        <div class="field">
+  	    <label class="label"> Cliente </label>
   	    <SearchSelect 
-  	      :data="contexts"
-  	      placeholder="Seleccionar contexto"
-  	      @selected="seriesOptions.contexts = $event"
-  	      ref=contextselect
+  	      :data="clientsSelectOptions"
+  	      placeholder="Seleccionar cliente" 
+  	      @selected="updateSelectOptions"  
+  	      ref=clientselect
   	    />
-  	  </div>
+  	   </div>
 
-  	  <div class="field">
-  	    <label class="label"> Tag </label>
-  	    <SearchSelect 
-  	      :data="tags"
-  	      placeholder="Seleccionar tag"
-  	      @selected="seriesOptions.tags = $event"
-  	      ref=tagselect
-  	    />
-  	  </div>
+    	  <div class="field">
+    	    <label class="label"> Contexto </label>
+    	    <SearchSelect 
+    	      :data="contexts"
+    	      placeholder="Seleccionar contexto"
+    	      @selected="seriesOptions.contexts = $event"
+    	      ref=contextselect
+    	    />
+    	  </div>
 
-      <b-field label="Intervalo agregacion">
-        <b-input type="text" :value="seriesOptions.analysisInterval" placeholder="ej: 30m" @input="seriesOptions.analysisInterval = $event" />
-      </b-field>
+    	  <div class="field">
+    	    <label class="label"> Tag </label>
+    	    <TreeView :items="tagstree" :displayItems="displayElements" v-model="seriesOptions.tags" />
+    	  </div>
 
+        <b-field label="Intervalo agregacion">
+          <b-input type="text" :value="seriesOptions.analysisInterval" placeholder="ej: 30m" @input="seriesOptions.analysisInterval = $event" />
+        </b-field>
 
-      <b-field class="has-text-right">
-        <a class="button is-primary" @click="analize">
-          Analizar
-        </a>
-      </b-field>
+        <b-field class="has-text-right">
+          <a class="button is-primary" @click="analize">
+            Analizar
+          </a>
+        </b-field>
 
     </div>
 
@@ -59,16 +53,18 @@ import api from "../api/repository";
 
 import TestChart from '../components/TestChart.vue';
 import SearchSelect from '../components/SearchSelect.vue';
+import TreeView from '../components/TreeView.vue';
+
 
 
 export default {
-    components: { TestChart, SearchSelect },
+    components: { TestChart, SearchSelect, TreeView },
     data () {
       return {
         seriesOptions: {
           client: '',
           contexts: '',
-          tags: '',
+          tags: [],
           analysisInterval: '1H',
         },
 
@@ -88,6 +84,15 @@ export default {
       tags() {
         return this.$store.state.clients.tags
       },
+      tagstree() {
+        let tree =  { name: 'All tags', id: "root", children: this.tags.tree }
+        return tree
+      },
+      displayElements() {
+        return { name: this.tagstree.name,
+                 id: this.tagstree.id,
+                 children: [] }
+      }
     },
     methods: {
       updateSelectOptions(value) {
@@ -95,7 +100,6 @@ export default {
           this.$store.dispatch('clients/updateTagsContexts', this.seriesOptions.client)
       },
       analize() {
-        console.log("entra aqui")
         let payload = { name: this.seriesOptions.client, 
                         tags: this.seriesOptions.tags, 
                         contexts: this.seriesOptions.contexts,
@@ -128,7 +132,7 @@ export default {
 }
   
 .side-menu {
-  overflow-y: overlay;
+  overflow-y: auto;
 }
 
 .main-content {

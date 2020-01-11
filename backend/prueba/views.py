@@ -128,12 +128,13 @@ def testalgo(request):
         requestedStart = request.GET.get('start', '')
         requestedEnd = request.GET.get('end', '')
         requestedInterval = request.GET.get('interval', '1H')
-        series = services.get_series(clientname=requestedName, 
-                                context=requestedContext, 
-                                tags=requestedTags,
+        series = services.get_series(client_name=requestedName,                                 
                                 start=requestedStart,
                                 end=requestedEnd,
+                                contexts=requestedContext, 
+                                tags=requestedTags,
                                 interval=requestedInterval)
+
 
         anomalies = anomaly_detector.testAlgorythms(series)
         return JsonResponse(anomalies, safe=False)
