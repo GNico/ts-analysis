@@ -190,23 +190,6 @@ function getColorByvalue(value) {
 }
 
 
-/*function anomsToPlotBands(anomalies) {
-  var anoms = []
-  for (var item of dataset.anomalies) {
-    anoms.push({
-         from: item.from,
-         to: item.to,
-         color: item.color,
-         events: {
-          click: function(e) {
-            vm.setActiveAnomaly(this.options.id)
-          } 
-         }
-    })
-  }
-  return anoms     
-} */
-
 export default {
   props: {
     chartsData: {

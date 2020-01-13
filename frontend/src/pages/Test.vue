@@ -104,6 +104,10 @@ export default {
                         tags: this.seriesOptions.tags, 
                         contexts: this.seriesOptions.contexts,
                         interval: this.seriesOptions.analysisInterval}
+
+        if (payload.tags.length == 1 && payload.tags[0] == 'root') {
+          payload.tags = []
+        }               
         api.testAlgo(payload)
                 .then(response => {       
                   this.chartsData = response.data
