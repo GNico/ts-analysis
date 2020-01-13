@@ -1,9 +1,10 @@
 from django.http import JsonResponse
+from django.conf import settings
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from . import anomaly_detector
-from . import data_path
+#from . import data_path
 from . import services
 
 import re
@@ -19,7 +20,7 @@ class ClientListView(APIView):
         data = request.data
         client_name = data.get('name', '')
         dest_dir = data.get('folder_name', '')
-        docs_path = data_path.DATA_PATH + dest_dir
+        docs_path = settings.ELASTIC_DATA_INDEX_PATH + dest_dir
         try:
             status_id = services.add_new_client(client_name=client_name, docs_path=docs_path)
         except services.ClientNameAlreadyExists:

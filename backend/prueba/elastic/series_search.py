@@ -62,6 +62,8 @@ class SeriesSearch():
         for element in response['aggregations']['my_aggregation']['buckets']:
             requestedData.append([element['key'], element['doc_count']])
 
+        print(response)
+
         return requestedData
 
 

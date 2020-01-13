@@ -82,7 +82,6 @@ def generateRandomTrend(pdseries):
     mean = pdseries.mean()
     trend = []
     for element in pdseries.iteritems():
-        print(int(element[0].timestamp() * 1000))
         trend.append([ int(element[0].timestamp() * 1000), mean] )
     return trend
 

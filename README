@@ -1,12 +1,24 @@
 BACKEND
 
--install elasticsearch 7+
--install redis server
+-Install elasticsearch 7+  
+	to check it's working: curl -X GET "localhost:9200"
 
--install postgres
+-Install redis server
+
+-Install postgres
 	apt-get install postgresql libpq-dev
 
--Crear postgres user, password y database. Setear environmental variables
+-Create postgres user, password y database.
+	sudo su - postgres
+	psql
+	CREATE USER 'user' WITH PASSWORD 'pass';
+	CREATE DATABASE ts_django OWNER user;
+
+-Set environmental variables 
+	DB_NAME='ts_django'
+	DB_USER='user'
+	DB_PASSWORD='pass'
+	ELASTIC_DATA_INDEX_PATH= path where you store the data that will be indexed
 
 -create a virtual environment 'venv' in the backend directory
 	virtualenv venv
@@ -17,9 +29,16 @@ BACKEND
 -install dependencies
 	python3 -m pip install -r requirements.txt
 
+-make migrations
+	python3 manage.py makemigrations
+	python3 manage.py migrate
 
--run the server (runs on localhost:8000)
+-run the server
 	python3 manage.py runserver 
+
+-run Celery worker in another terminal (activate venv first)
+	source venv/bin/activate
+	celery worker -A tsa --loglevel=info
 
 -access
 	localhost:8000
@@ -34,7 +53,6 @@ FRONTEND
 
 -install dependencies in the frontend directory
 	npm install 
-
 
 -run the app
 	npm run dev

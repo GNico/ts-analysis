@@ -92,6 +92,9 @@ DATABASES = {
     }
 }
 
+#Elasticsearch
+ELASTIC_DATA_INDEX_PATH=os.environ.get('ELASTIC_DATA_INDEX_PATH')
+
 # Celery
 CELERY_BROKER_URL = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
