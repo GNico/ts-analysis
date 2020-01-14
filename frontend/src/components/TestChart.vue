@@ -13,6 +13,7 @@
 function sync(vm, event, type) {
   vm.$refs.highcharts.forEach(({ chart }) => {
     if (chart === this.series.chart) return;
+
     chart.series.forEach((series) => {
       series.data.forEach((point) => {
         if (point.x === this.x) {
@@ -97,7 +98,7 @@ function genOptions(vm, dataset) {
       },
       valueDecimals: dataset.valueDecimals
     },
-    plotOptions: {
+   /* plotOptions: {
       series: {
         point: {
           events: {
@@ -110,20 +111,39 @@ function genOptions(vm, dataset) {
           }
         }
       }
-    },
+    }, */
     series: [{
       data: dataset.data,
       name: dataset.name,
-      type: dataset.type,
+      type: 'line',
+      lineWidth: 1,
+      marker: { enabled: false },
       color: dataset.color,
-      fillOpacity: 0.3,
       tooltip: {
         valueSuffix: ' ' + dataset.unit
-      }
+      },
+      states: {
+        hover: {
+          lineWidthPlus: 0
+        }
+      },
+      
     }]
   };
 
   if (dataset.results.anomalies) {
+    //add colors to anomalies based on score
+    for (var item of dataset.results.anomalies) {
+      item.color = getColorByvalue(item.score)
+      item.label = {
+          text: item.score.toFixed(2),
+          style: {
+              color: 'white',
+              fontWeight: 'bold',
+              textOutline: '1px black'
+          }            
+      }
+    }
     options.xAxis.plotBands = dataset.results.anomalies
   }
 
@@ -131,7 +151,7 @@ function genOptions(vm, dataset) {
     let baseline = {  
       data: dataset.results.baseline, 
       type: 'arearange', 
-      color: 'orange',
+      color: 'lightblue',
       lineWidth: 0,
       fillOpacity: 0.3,
       marker: { enabled: false },
@@ -144,7 +164,7 @@ function genOptions(vm, dataset) {
       enableMouseTracking: false
     }
     options.series.push(baseline)
-  }
+  } 
 
   if (dataset.results.trend) {
     let trend = {
@@ -157,11 +177,11 @@ function genOptions(vm, dataset) {
           hover: {
               enabled: false
           }
-      },
+      }, 
       enableMouseTracking: false
     }
     options.series.push(trend)
-  } 
+  }  
 
   return options
 }
@@ -212,12 +232,7 @@ export default {
         }
         dataset.color = 'red';
         dataset.unit = ''
-        //add colors to anomalies based on score
-        if (dataset.results.anomalies) {
-          for (var item of dataset.results.anomalies) {
-            item['color'] = getColorByvalue(item.score)
-          }
-        }
+       
         return genOptions(vm, dataset);
       })
 
@@ -242,5 +257,8 @@ export default {
   min-height: 300px;
   margin: 0 auto;
 }
+
+
+
 
 </style>
