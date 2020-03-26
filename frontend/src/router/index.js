@@ -14,7 +14,7 @@ let routes = [
 		component: lazyLoad('Visualize')
 	},
 	{
-		path: '/Anomalies',
+		path: '/Analize',
 		component: lazyLoad('Analysis')
 	},
 	{

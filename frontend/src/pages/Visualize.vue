@@ -1,30 +1,100 @@
 <template>
 
-<div class="container">
-  <div class="section is-flex">
-    
-     <div class="card tagcontainer">
-      <TreeView :items="tags" :displayItems="displayElements" v-model="selectedItems" />
-    </div>
-  </div>
-</div>
-<!-- <div>
-  <div class="columns is-fullheight ">
-     <div class="column is-2 side-menu is-hidden-mobile">
-        <SettingsVisualize/>   
-    </div> 
+<div>
 
-    <section class="column main-content">
-      <div class="chart-section">
+  <div class='page-container'>
+    <section class="page-section">
+      <div class="level">
 
-          <BarSeries section="visualize"/>
-          <DateRangeSelect :value="range" @input="changeRange"/>
+        <div class="level-left">
+          <template v-if="popo">
+            <div class="level-item">
+              <div class="button is-primary">New Visualization</div>
+            </div>
+            <div class="level-item">
+              or
+            </div>
+            <div class="level-item">
+              <b-dropdown aria-role="list">
+                  <button class="button" slot="trigger" slot-scope="{ active }">
+                      <span>Select Visualization</span>
+                      <b-icon :icon="active ? 'caret-up' : 'caret-down'"></b-icon>
+                  </button>
+                  <b-dropdown-item aria-role="listitem">  <b-tooltip label="description" type="is-dark" position="is-right">Action</b-tooltip></b-dropdown-item>
+                  <b-dropdown-item aria-role="listitem">Another action</b-dropdown-item>
+                  <b-dropdown-item aria-role="listitem">Something else</b-dropdown-item>
+              </b-dropdown>
+            </div>
+          </template>
+        </div>
 
-      </div>  
+        <div class="level-right">
+          <SearchSelect 
+            :saved="[]"
+            :data="[]"
+            placeholder="Select client" 
+            ref=clientselect
+          />
+        </div>
 
+        
+      </div>
     </section>
-  </div>   
-</div> -->
+
+    <hr>
+
+    <section class="page-section">
+      <div class="title is-3 has-text-link"> Unnamed Visualization
+      </div> 
+    </section>
+
+
+    <section>
+      <VisualizeBarSeries/>
+    </section>
+
+    <section class="columns is-variable is-2">
+      <div class="column is-2 ">
+
+        <div class="is-fullheight side-menu">        
+          <b-collapse
+              class="card"
+              animation="slide"
+              v-for="(collapse, index) of collapses"
+              :key="index"
+              :open="false">
+              <div
+                  slot="trigger"
+                  slot-scope="props"
+                  class="card-header"
+                  role="button">
+                  <p class="card-header-title">
+                      {{ collapse.title }}
+                  </p>
+                  <a class="card-header-icon">
+                      <b-icon
+                          :icon="props.open ? 'caret-up' : 'caret-down'">
+                      </b-icon>
+                  </a>
+              </div>
+              <div class="card-content">
+                  <div class="content">
+                    <component :is="collapse.component"> </component>
+                  </div>
+              </div>
+          </b-collapse>
+        </div>
+      </div>
+
+      <div class="column">
+        <div class="main-content is-fullheight">
+          <VisualizeChart/>
+        </div>
+      </div>
+
+    </section>  
+  </div> 
+</div>
 </template>
 
 
@@ -32,19 +102,41 @@
 <script>
 import api from '../api/repository'
 
+import VisualizeChart from '../components/VisualizeChart.vue';
+import VisualizeBarSeries from '../components/VisualizeBarSeries.vue';
+import VisualizeMenuVisualization from '../components/VisualizeMenuVisualization.vue';
+import VisualizeMenuData from '../components/VisualizeMenuData.vue';
+import VisualizeMenuChartSettings from '../components/VisualizeMenuChartSettings.vue';
+import VisualizeMenuIndicators from '../components/VisualizeMenuIndicators.vue';
+import SearchSelect from '../components/SearchSelect.vue';
 
-import SettingsSeries from '../components/SettingsSeries.vue';
-import SettingsVisualize from '../components/SettingsVisualize.vue';
-import DateRangeSelect from '../components/DateRangeSelect.vue';
-import BarSeries from '../components/BarSeries.vue';
-
-import TreeView from '../components/TreeView.vue';
 
 
 export default {
-  components: { SettingsSeries, SettingsVisualize, DateRangeSelect, BarSeries, TreeView },
+  components: { VisualizeChart, VisualizeBarSeries, VisualizeMenuVisualization, VisualizeMenuData,
+                VisualizeMenuChartSettings, VisualizeMenuIndicators, SearchSelect },
   data () {
     return {
+      isOpen: [],
+      popo: true,
+      collapses: [
+      {
+          title: 'Visualization',
+          component: 'VisualizeMenuVisualization'
+      },
+      {
+          title: 'Data',
+          component: 'VisualizeMenuData'
+      },
+      {
+          title: 'Chart settings',
+          component: 'VisualizeMenuChartSettings'
+      },
+      {
+          title: 'Indicators',
+          component: 'VisualizeMenuIndicators'
+      }
+      ],
       selectedRange: { 
         start: null,
         end: null, 
@@ -86,29 +178,35 @@ export default {
 </script>
 
 
-<style lang="sass">  
+<style>  
 
-$section-pad: 5.625rem
+.page-container {
+  padding: 1.25rem;
+}
 
-.side-menu
-  overflow: auto
+.page-section {
+  margin-bottom: 1.25rem;
+}
 
+.subsection {
+  margin-bottom: 0.75rem;
+}
 
-.is-fullheight
-  height: calc(100vh - 9.625rem) 
-  min-height: calc(100vh - 9.625rem) 
+.is-fullheight {
+  height: calc(100vh - 6rem);
+  min-height: calc(100vh - 6rem);
+}
+  
+.side-menu {
+  overflow-y: auto;
+}
 
-.main-content 
-  display: flex
-  flex-direction: column
-  overflow-y: auto
-    
-.chart-section > *
-  margin: 0 0.5rem 0.5rem 0
+.main-content {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 
-.tagcontainer
-  max-height: 30rem
-  max-width: 30rem
-  overflow: auto
 
 </style>

@@ -2,72 +2,77 @@
 <div class="date-range-bar" >
 
     <div class="date-range-bar__buttons">
-      <button class="button is-info" :class="{ 'is-outlined': activeBtn !== 'btn1' }" @click="setActive('btn1'); setAll()" >
-        Todo
-      </button>       
-      <button class="button is-info" :class="{ 'is-outlined': activeBtn !==  'btn2' }" @click="setActive('btn2'); setLast(365)" >
-        Ultimo año
-      </button>
-      <button class="button is-info" :class="{ 'is-outlined': activeBtn !==  'btn3' }" @click="setActive('btn3'); setLast(30)" >
-        Ultimos 30 dias
-      </button>
-      <button class="button is-info" :class="{ 'is-outlined': activeBtn !==  'btn4' }" @click="setActive('btn4'); setLast(7)" >
-        Ultimos 7 dias
-      </button> 
-      <button class="button is-info" :class="{ 'is-outlined': activeBtn !==  'btn5' }" @click="setActive('btn5'); setLast(1)" >
-        Ultimo dia
-      </button>
+      <div class="label is-marginless"> Range: </div>
+      <div class="button is-info is-small" :class="{ 'is-outlined': activeBtn !== 'btn1' }" @click="setActive('btn1'); setAll()" >
+        All
+      </div>       
+      <div class="button is-info is-small" :class="{ 'is-outlined': activeBtn !==  'btn2' }" @click="setActive('btn2'); setLast(365)" >
+        Last year
+      </div>
+      <div class="button is-info is-small" :class="{ 'is-outlined': activeBtn !==  'btn3' }" @click="setActive('btn3'); setLast(30)" >
+        Last month
+      </div>
+      <div class="button is-info is-small" :class="{ 'is-outlined': activeBtn !==  'btn4' }" @click="setActive('btn4'); setLast(7)" >
+        Last week
+      </div> 
+      <div class="button is-info is-small" :class="{ 'is-outlined': activeBtn !==  'btn5' }" @click="setActive('btn5'); setLast(1)" >
+        Last day
+      </div>
     </div>        
 
     <div class="date-range-bar__inputs">
       <div class="datepicker-field">
-        <label class="label">Desde</label>
+        <label class="label">From</label>
         <b-datepicker 
             v-model="selectedRange.start"
             icon-pack="fas"
             :first-day-of-week="1"
-            placeholder="Click para seleccionar...">
+            placeholder="Click para seleccionar..."
+            size="is-small"
+            @input="deactivateButton">
 
             <button class="button is-primary"
                 @click="selectedRange.start = new Date()">
                 <b-icon pack="fas" icon="calendar-day"></b-icon>
-                <span>Hoy</span>
+                <span>Today</span>
             </button>
 
             <button class="button is-danger"
                 @click="selectedRange.start = null">
                 <b-icon pack="fas" icon="times"></b-icon>
-                <span>Borrar</span>
+                <span>Clear</span>
             </button>
         </b-datepicker>
       </div>
 
       <div class="datepicker-field">
-        <label class="label">Hasta</label>
+        <label class="label">To</label>
         <b-datepicker 
             v-model="selectedRange.end"
             icon-pack="fas"
             :first-day-of-week="1"
-            placeholder="Click para seleccionar...">
+            placeholder="Click para seleccionar..."
+            size="is-small"
+            @input="deactivateButton">
 
             <button class="button is-primary"
                 @click="selectedRange.end = new Date()">
                 <b-icon pack="fas" icon="calendar-day"></b-icon>
-                <span>Hoy</span>
+                <span>Today</span>
             </button>
 
             <button class="button is-danger"
                 @click="selectedRange.end = null">
                 <b-icon pack="fas" icon="times"></b-icon>
-                <span>Borrar</span>
+                <span>Clear</span>
             </button>
         </b-datepicker>
 
       </div>
 
       <div>
-        <button class="button is-primary" @click="update">
-          Actualizar
+        <button class="button is-primary is-small" @click="update">
+          Update
         </button> 
       </div>  
     </div>                
@@ -83,9 +88,6 @@ export default {
     range: {
       type: Object,
     },
-    activeButton: {
-      type: String
-    }
   },
   data () {
     return {
@@ -93,12 +95,13 @@ export default {
         start: this.range.start,
         end: this.range.end,
       },
-      activeBtn: this.activeButton
+      activeBtn: null,
+      buttonIsActive: false,
     }
   },
   methods: {
     update() {
-      this.$emit('input', { start: this.selectedRange.start, end: this.selectedRange.end, activeRangeButton: this.activeBtn})
+      this.$emit('input', { start: this.selectedRange.start, end: this.selectedRange.end })
     },
     setAll() {
       this.selectedRange.start = null
@@ -113,17 +116,20 @@ export default {
       this.update()
     },
     setActive(button) {
+      this.buttonIsActive = true
       this.activeBtn = button
+    },
+    deactivateButton() {
+      if (this.buttonIsActive) {
+          this.activeBtn = null
+          this.buttonIsActive = false
+        }
     }
   },
   watch: {
     range(newval) {
       this.selectedRange = newval
-    },
-    activeButton(newval) {
-      this.activeBtn = newval
-    }
-
+    },  
   }
 }
 
@@ -139,11 +145,18 @@ export default {
 }
 
 .date-range-bar__buttons {
-  padding-right: 0rem;
+  display:flex;
+  align-items: center;
+}
+
+.date-range-bar__buttons > div {
+  margin-left: 0.4rem;
 }
 
 .date-range-bar__inputs {
   display: flex;
+  align-items: center;
+
 }
 
 .date-range-bar__inputs > div:not(:last-child)  {
@@ -160,6 +173,5 @@ export default {
   margin-right: 0.5rem;
 
 }
-
 
 </style>

@@ -155,6 +155,10 @@ export default {
   margin-bottom: 0.25rem;
 }
 
+.chart-section > * {
+  margin: 0 0.5rem 0.5rem 0
+}
+
 .chart-footer {
   display: flex;
   flex-wrap: wrap;

@@ -13,7 +13,7 @@
 
           <router-link to='/Visualize' exact class="navbar-item">Visualize</router-link>
 
-          <router-link to='/Anomalies' exact class="navbar-item">Anomalies</router-link>
+          <router-link to='/Analize' exact class="navbar-item">Analize</router-link>
 
           <router-link to='/Alerts' exact class="navbar-item">Alerts</router-link>
 

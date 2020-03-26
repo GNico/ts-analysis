@@ -3,6 +3,7 @@
         v-model="inputValue"
         :placeholder="placeholder"
         open-on-focus
+        :size="size"
         :data="reducedDataList"
         @select="emitSelected"
         ref=autocomplete 
@@ -26,12 +27,16 @@ export default {
         data: {
             required: false
         },
+        size: {
+            required: false,
+            default: "default"
+        },
         maxOptionsDisplayed: {
             type: Number,
             default: 50
         },
         placeholder: {
-            default: "Seleccionar"
+            default: ""
         },
         clearOnBlur: {
             type: Boolean,

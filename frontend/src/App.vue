@@ -26,7 +26,7 @@ $navbar-height: 4rem;
 
 html, body {
   height: 100%;
-  overflow: hidden;
+  overflow: auto;
 }
 
 ::-webkit-scrollbar {
