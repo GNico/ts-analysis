@@ -133,5 +133,5 @@ def testalgo(request):
                                 interval=requestedInterval)
 
 
-        anomalies = anomaly_detector.testAlgorythms(series)
+        anomalies = anomaly_detector.testAlgorithms(series)
         return JsonResponse(anomalies, safe=False)
