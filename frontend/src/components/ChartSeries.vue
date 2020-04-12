@@ -1,5 +1,5 @@
 <template>
-    <highcharts class="chart" :options="chartOptions" :updateArgs="updateArgs" ref="chart" @anomclicked="showmsg"></highcharts>
+  <highcharts class="chart" :options="chartOptions" :updateArgs="updateArgs" ref="chart" @anomclicked="showmsg"></highcharts>
 </template>
 
 <script>
@@ -39,7 +39,7 @@ export default {
           zoomType: 'xy',
           panning: true,
           panKey: 'shift',
-          backgroundColor: "#073642"
+          backgroundColor: "#073642",
         },
         credits: false,
         loading: {

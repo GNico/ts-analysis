@@ -36,7 +36,6 @@
             ref=clientselect
           />
         </div>
-
         
       </div>
     </section>
@@ -44,7 +43,7 @@
     <hr>
 
     <section class="page-section">
-      <div class="title is-3 has-text-link"> Unnamed Visualization
+      <div class="title is-3 has-text-link"> Unnamed Visualization {{ test }}
       </div> 
     </section>
 
@@ -58,30 +57,31 @@
 
         <div class="is-fullheight side-menu">        
           <b-collapse
-              class="card"
-              animation="slide"
-              v-for="(collapse, index) of collapses"
-              :key="index"
-              :open="false">
-              <div
-                  slot="trigger"
-                  slot-scope="props"
-                  class="card-header"
-                  role="button">
-                  <p class="card-header-title">
-                      {{ collapse.title }}
-                  </p>
-                  <a class="card-header-icon">
-                      <b-icon
-                          :icon="props.open ? 'caret-up' : 'caret-down'">
-                      </b-icon>
-                  </a>
-              </div>
-              <div class="card-content">
-                  <div class="content">
-                    <component :is="collapse.component"> </component>
-                  </div>
-              </div>
+            class="card"
+            animation="slide"
+            v-for="(collapse, index) of collapses"
+            :key="index"
+            :open="false">
+
+            <div
+              slot="trigger"
+              slot-scope="props"
+              class="card-header"
+              role="button">    
+              <p class="card-header-title">
+                  {{ collapse.title }}
+              </p>
+              <a class="card-header-icon">
+                  <b-icon
+                      :icon="props.open ? 'caret-up' : 'caret-down'">
+                  </b-icon>
+              </a>
+            </div>
+            <div class="card-content">
+                <div class="content">
+                  <component :is="collapse.component"> </component>
+                </div>
+            </div>
           </b-collapse>
         </div>
       </div>
@@ -147,6 +147,11 @@ export default {
       flatData: [ 'root' ],
     }
   },
+  computed: {
+    test() {
+      return this.$store.state.visualize.nest.name
+    }
+  },
   methods: {
     changeRange(event) {
       this.$store.dispatch('visualize/updateRange', event)
@@ -167,7 +172,6 @@ export default {
                                id: this.tags.id,
                                children: [] }
     })
-
 
   },
 }
@@ -193,8 +197,8 @@ export default {
 }
 
 .is-fullheight {
-  height: calc(100vh - 6rem);
-  min-height: calc(100vh - 6rem);
+  height: calc(100vh - 20rem);
+  min-height: calc(100vh - 20rem);
 }
   
 .side-menu {

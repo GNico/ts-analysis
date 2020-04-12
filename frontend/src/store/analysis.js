@@ -1,4 +1,7 @@
 import api from "../api/repository";
+import testmodule from './testmodule'
+
+
 
 //returns color from a tricolor gradient according to a 0 to 1 value
 function getColorByvalue(value) {
@@ -214,5 +217,8 @@ export default {
     getters,
     state,
     mutations,
-    actions
+    actions,
+    modules: {
+       a: testmodule
+    }
 }

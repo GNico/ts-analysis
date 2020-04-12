@@ -1,7 +1,7 @@
 <template>
-<div>
-  <ChartSeries class="chart-section" :seriesData="seriesData" :isLoading="loading" :anomalies="chartAnomalies"/> 
-  <DateRangeSelect class="chart-section" :range="range" :activeButton="seriesOptions.activeRangeButton" @input="changeSeriesOptions($event); updateData()"/>
+<div class="testcont">
+  <ChartSeries class="chart-section chart-container" :seriesData="seriesData" :isLoading="loading" :anomalies="chartAnomalies"/> 
+  <DateRangeSelect class="chart-section" :range="range" :activeButton="seriesOptions.activeRangeButton" @input="changeSeriesOptions($event); updateData()"/> 
 
 </div>
 
@@ -65,5 +65,14 @@ export default {
 .chart-section {
   margin-bottom: 0.5rem;
 }
+
+.chart-container {
+  height: inherit;
+}
+
+.testcont {
+  height: inherit;
+}
+
 
 </style>

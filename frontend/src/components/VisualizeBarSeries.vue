@@ -21,8 +21,15 @@
 </template>
 
 <script>
+import ButtonSeriesName from './ButtonSeriesName.vue';
 
 export default {
+  components: { ButtonSeriesName },
+  data () {
+    return {
+
+    }
+  },
   
 }
 

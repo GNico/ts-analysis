@@ -1,12 +1,16 @@
 import api from "../api/repository";
 import getFixedSizeArray from "../common/fixedSizeArray"
 
+import testmodule from './testmodule'
+
+
 const state = {
+  
+
   range: {
     start: null,
     end: null
   },
-
   series: {},
   loading: 0,  //using counter instead of boolean to track multiple series
   activeSeries: {},
@@ -126,6 +130,9 @@ export default {
     namespaced: true,
     state,
     getters,
+    mutations,
     actions,
-    mutations
+    modules: {
+        nest: testmodule
+    }
 }

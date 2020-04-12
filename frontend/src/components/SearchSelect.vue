@@ -1,92 +1,89 @@
 <template>
-    <b-autocomplete
-        v-model="inputValue"
-        :placeholder="placeholder"
-        open-on-focus
-        :size="size"
-        :data="reducedDataList"
-        @select="emitSelected"
-        ref=autocomplete 
-        @keydown.native.enter="$event.target.blur(); closeOptions()"
-        @blur="onBlur"
-        > 
-        <template slot="empty">No hay resultados</template>
-    </b-autocomplete>  
+  <b-autocomplete
+    v-model="inputValue"
+    :placeholder="placeholder"
+    open-on-focus
+    :size="size"
+    :data="reducedDataList"
+    @select="emitSelected"
+    ref=autocomplete 
+    @keydown.native.enter="$event.target.blur(); closeOptions()"
+    @blur="onBlur"
+  > 
+    <template slot="empty">No results</template>
+  </b-autocomplete>  
 </template>
 
 
 <script>
 
 export default {
-    name: "SearchSelect",
-    props: {
-        saved: {
-            required: false,
-            default: '',
-        },
-        data: {
-            required: false
-        },
-        size: {
-            required: false,
-            default: "default"
-        },
-        maxOptionsDisplayed: {
-            type: Number,
-            default: 50
-        },
-        placeholder: {
-            default: ""
-        },
-        clearOnBlur: {
-            type: Boolean,
-            default: true
-        }
+  name: "SearchSelect",
+  props: {
+    saved: {
+      required: false,
+      default: '',
     },
-    data() {
-        return {
-            inputValue:  ''
-        }
+    data: {
+      required: false
     },
-    computed: {
-        filteredDataList() {
-            return  this.data.filter(
-                (item) => {return item.toLowerCase().match(this.inputValue.toLowerCase())} )
-        },
-        reducedDataList() {
-            return this.filteredDataList.slice(0, this.maxOptionsDisplayed)
-        },
-
+    size: {
+      required: false,
+      default: "default"
     },
-    methods: {
-        onBlur() {
-            if (this.clearOnBlur && this.filteredDataList.length === 0) {
-                this.inputValue = ''
-            } 
-        },
-        setSelected(selected) {
-            let idx = this.data.findIndex(item => item == selected)
-            if (idx != -1) {
-                this.$refs.autocomplete.setSelected(this.data[idx])
-            } else {
-                console.log("no encontro item")
-            }
-        },
-        closeOptions() {            
-            this.$refs.autocomplete.isActive = false
-        },
-        emitSelected(option) {
-            this.$emit('selected', option)
-        },
-        clear() {
-            this.inputValue = ''
-        }
+    maxOptionsDisplayed: {
+      type: Number,
+      default: 50
     },
-    watch: {
-        saved(newval) {
-            this.setSelected(newval)
-        },
+    placeholder: {
+      default: ""
+    },
+    clearOnBlur: {
+      type: Boolean,
+      default: true
     }
+  },
+  data() {
+    return {
+      inputValue:  ''
+    }
+  },
+  computed: {
+    filteredDataList() {
+      return  this.data.filter(
+        (item) => {return item.toLowerCase().match(this.inputValue.toLowerCase())} )
+    },
+    reducedDataList() {
+      return this.filteredDataList.slice(0, this.maxOptionsDisplayed)
+    },
+  },
+  methods: {
+    onBlur() {
+      if (this.clearOnBlur && this.filteredDataList.length === 0) {
+        this.inputValue = ''
+      } 
+    },
+    setSelected(selected) {
+      let idx = this.data.findIndex(item => item == selected)
+      if (idx != -1) {
+        this.$refs.autocomplete.setSelected(this.data[idx])
+      }
+    },
+    closeOptions() {            
+      this.$refs.autocomplete.isActive = false
+    },
+    emitSelected(option) {
+      this.$emit('selected', option)
+    },
+    clear() {
+      this.inputValue = ''
+    }
+  },
+  watch: {
+    saved(newval) {
+      this.setSelected(newval)
+    },
+  }
 }
 
 </script>
