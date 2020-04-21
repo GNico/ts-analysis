@@ -1,3 +1,5 @@
+from . import series_analysis
+
 class SeriesAnalyzer:
 
   def __init__(self):
@@ -5,4 +7,4 @@ class SeriesAnalyzer:
     self.config = {}
 
   def analyze(self, pdseries):
-    return []
+    return series_analysis.SeriesAnalysis()

@@ -68,7 +68,6 @@ function genOptions(vm, dataset) {
     xAxis: {
       crosshair: true,
       type: 'datetime',
-      //plotBands: dataset.results.anomalies,
       events: {
         setExtremes: function(event) {
           syncExtremes.call(this, vm, event);
@@ -131,9 +130,9 @@ function genOptions(vm, dataset) {
     }]
   };
 
-  if (dataset.results.anomalies) {
+  if (dataset.anomalies) {
     //add colors to anomalies based on score
-    for (var item of dataset.results.anomalies) {
+    for (var item of dataset.anomalies) {
       item.color = getColorByvalue(item.score)
       item.label = {
           text: item.score.toFixed(2),
@@ -144,12 +143,13 @@ function genOptions(vm, dataset) {
           }            
       }
     }
-    options.xAxis.plotBands = dataset.results.anomalies
+    options.xAxis.plotBands = dataset.anomalies
+    console.log(dataset.anomalies)
   }
 
-  if (dataset.results.baseline) {
+  if (dataset.baseline) {
     let baseline = {  
-      data: dataset.results.baseline, 
+      data: dataset.baseline, 
       type: 'arearange', 
       color: 'lightblue',
       lineWidth: 0,
@@ -166,9 +166,9 @@ function genOptions(vm, dataset) {
     options.series.push(baseline)
   } 
 
-  if (dataset.results.trend) {
+  if (dataset.trend) {
     let trend = {
-      data: dataset.results.trend,
+      data: dataset.trend,
       type: 'line',
       color: 'white',
       marker: { enabled: false },

@@ -1,5 +1,5 @@
 import pandas as pd
-from .salib import series_analyzer
+from .salib.model import series_analyzer
 
 '''
 Cada analisis devuelve el siguiente formato, donde cada key es opcional
@@ -30,7 +30,10 @@ def testAlgorithms(series):
     analysis = []
     analyzer = series_analyzer.SeriesAnalyzer()
     salib_result = analyzer.analyze(pdseries)
-    analysis.append(salib_result)
-    analysis_results = { "series": series, "analysis": analysis }
+    analysis.append(salib_result.output_format())
+    analysis_results = {
+        "series": series,
+        "analysis": analysis
+    }
     return analysis_results
 
