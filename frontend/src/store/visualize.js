@@ -1,10 +1,94 @@
 import api from "../api/repository";
 import getFixedSizeArray from "../common/fixedSizeArray"
 
-import testmodule from './testmodule'
+
+const colors = ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066',
+        '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee']
 
 
 const state = {
+    series: [],
+    loading: 0,
+    range: {
+        start: null,
+        end: null
+    },
+
+}
+
+const getters = {
+    nextColor: state => {
+        let index = state.series.length % colors.length 
+        return colors[index]
+    }
+}
+
+
+const mutations = {
+    add_series(state, payload) {
+        state.series = { ...state.series, ...payload }
+    },
+    add_data(state, payload) {
+        state.series[payload.id] = { ...state.series[payload.id] , data: payload.data }
+    },
+    delete_series(state, payload) {
+        let { [payload]:id, ...rest} = state.series
+        state.series = rest 
+    },
+    set_range(state, payload) {
+        state.range = payload
+    }
+
+}
+
+
+const actions = {
+    addSeries({commit, dispatch, getters}, seriesOptions) {
+        let id = 'nanoid'
+        seriesOptions.color = getters.nextColor
+        let newseries = { [id]: seriesOptions } 
+        commit("add_series", newseries)
+        dispatch("fetchData", id)
+    },
+    fetchData({commit, state}, id) {
+        let seriesOptions = state.series[id]
+        state.loading += 1
+        return  api.getSeriesData({ 
+                    name: seriesOptions.client,
+                    tags: seriesOptions.tags,
+                    contexts: seriesOptions.contexts,
+                    start: state.range.start,
+                    end: state.range.end,
+                    interval: seriesOptions.interval})
+                .then(response => {       
+                    commit('add_data', {id: id, data: response.data}) 
+                    state.loading -= 1
+                })
+                .catch(error => { 
+                    state.loading -= 1
+                    console.log('error loading series data')
+                })        
+    },
+    deleteSeries({commit}, id) {
+        commit("delete_series", id)
+    },
+    updateRange({commit}, range) {
+        commit("set_range", range)
+    },
+
+
+}
+
+export default {
+    namespaced: true,
+    state,
+    getters,
+    mutations,
+    actions,
+}
+
+
+/*const state = {
   
 
   range: {
@@ -132,7 +216,6 @@ export default {
     getters,
     mutations,
     actions,
-    modules: {
-        nest: testmodule
-    }
 }
+
+*/

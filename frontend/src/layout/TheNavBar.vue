@@ -1,27 +1,20 @@
 <template>
-
-<nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-      <a class="navbar-item" href="https://keepcon.com/" >
+<b-navbar>
+  <template slot="brand">
+    <b-navbar-item tag="router-link" :to="{ path: '/' }">
         <img src="https://keepcon.com/assets/logowhite.svg" width="156" height="30">
-      </a>
-    </div>
+    </b-navbar-item>
+  </template>
 
-    <div class="navbar-menu">
-      <div class="navbar-start">
-          <router-link to='/' exact class="navbar-item">Manage</router-link>
+  <template slot="start">
+        <router-link to='/' exact class="navbar-item">Manage</router-link>
+      <router-link to='/Visualize' exact class="navbar-item">Visualize</router-link>
+      <router-link to='/Analize' exact class="navbar-item">Analize</router-link>
+      <router-link to='/Alerts' exact class="navbar-item">Alerts</router-link>
+      <router-link to='/Test' exact class="navbar-item">Test</router-link>
+  </template>
 
-          <router-link to='/Visualize' exact class="navbar-item">Visualize</router-link>
-
-          <router-link to='/Analize' exact class="navbar-item">Analize</router-link>
-
-          <router-link to='/Alerts' exact class="navbar-item">Alerts</router-link>
-
-          <router-link to='/Test' exact class="navbar-item">Test</router-link>
-      </div>
-    </div>
-</nav>  
- 
+</b-navbar>
 </template>
 
 

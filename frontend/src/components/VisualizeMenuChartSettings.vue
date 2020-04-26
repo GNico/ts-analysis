@@ -71,7 +71,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 
 .color-input {
   visibility: hidden;

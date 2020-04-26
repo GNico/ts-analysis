@@ -25,7 +25,6 @@
         <label class="label">From</label>
         <b-datepicker 
             v-model="selectedRange.start"
-            icon-pack="fas"
             :first-day-of-week="1"
             placeholder="Click para seleccionar..."
             size="is-small"
@@ -33,13 +32,13 @@
 
             <button class="button is-primary"
                 @click="selectedRange.start = new Date()">
-                <b-icon pack="fas" icon="calendar-day"></b-icon>
+                <b-icon  icon="calendar-today" ></b-icon>
                 <span>Today</span>
             </button>
 
             <button class="button is-danger"
                 @click="selectedRange.start = null">
-                <b-icon pack="fas" icon="times"></b-icon>
+                <b-icon icon="close" ></b-icon>
                 <span>Clear</span>
             </button>
         </b-datepicker>
@@ -49,7 +48,6 @@
         <label class="label">To</label>
         <b-datepicker 
             v-model="selectedRange.end"
-            icon-pack="fas"
             :first-day-of-week="1"
             placeholder="Click para seleccionar..."
             size="is-small"
@@ -57,13 +55,13 @@
 
             <button class="button is-primary"
                 @click="selectedRange.end = new Date()">
-                <b-icon pack="fas" icon="calendar-day"></b-icon>
+                <b-icon icon="calendar-today"></b-icon>
                 <span>Today</span>
             </button>
 
             <button class="button is-danger"
                 @click="selectedRange.end = null">
-                <b-icon pack="fas" icon="times"></b-icon>
+                <b-icon icon="close"></b-icon>
                 <span>Clear</span>
             </button>
         </b-datepicker>
@@ -136,7 +134,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
   
 .date-range-bar {
   display: flex;

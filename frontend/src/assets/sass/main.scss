@@ -3,4 +3,13 @@
 @import '~bulma/bulma';
 @import '~bulmaswatch/solar/_overrides.scss';
 @import '~buefy/src/scss/buefy';
-@import 'buefyoverrides.scss';
+
+
+.transparent-button {
+  background-color: red;
+  background-repeat:no-repeat;
+  border: none;
+  cursor:pointer;
+  overflow: hidden;
+  outline:none;
+}

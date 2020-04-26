@@ -1,16 +1,40 @@
-/*$dropdown-item-hover-background-color: #209cee;
-$dropdown-item-hover-color: #000000;
+$grey-lighter: #FDF6E3;
+$grey-light:   #eee8d5;
+$grey:         #839496;
+$grey-alt:     #586e75;
+$grey-dark:    #073642;
+$grey-darker:  #002B36;
+
+$orange       : #cb4b16;
+$yellow       : #b58900;
+$green        : #859900;
+$cyan         : #2aa198;
+$blue         : #268bd2;
+$purple       : #6c71c4;
+$red          : #d33682;
+
+$primary: $cyan !default;
+$warning      : $orange;
+$info: $blue;
+$yellow-invert: #fff;
+$light: $grey-lighter;
+$dark: darken($grey-darker, 3);
 
 
-$dropdown-content-background-color: #375a7f;
-$dropdown-item-color: #fff; 
-
-
-$dropdown-item-active-background-color: #209cee; 
-$dropdown-item-active-color: #000000; 
-*/
-
-
-$input-placeholder-color: #708090;
+$input-placeholder-color: $grey-alt;
 
 $modal-background-background-color: transparent;
+
+$tag-background-color: transparent;
+
+$datepicker-item-color:	$grey-light;
+$datepicker-item-disabled-color: $grey;
+$datepicker-item-hover-color: $grey-light;
+$datepicker-item-hover-background-color:	$grey-darker;
+
+
+$card-shadow: none;
+$card-background-color: $grey-darker;
+$card-header-box-shadow: none;
+$card-header-background-color: rgba($black-bis, 0.2);
+$card-footer-background-color: rgba($black-bis, 0.2);

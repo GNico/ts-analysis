@@ -105,7 +105,6 @@ import api from '../api/repository'
 import VisualizeChart from '../components/VisualizeChart.vue';
 import VisualizeBarSeries from '../components/VisualizeBarSeries.vue';
 import VisualizeMenuVisualization from '../components/VisualizeMenuVisualization.vue';
-import VisualizeMenuData from '../components/VisualizeMenuData.vue';
 import VisualizeMenuChartSettings from '../components/VisualizeMenuChartSettings.vue';
 import VisualizeMenuIndicators from '../components/VisualizeMenuIndicators.vue';
 import SearchSelect from '../components/SearchSelect.vue';
@@ -113,7 +112,7 @@ import SearchSelect from '../components/SearchSelect.vue';
 
 
 export default {
-  components: { VisualizeChart, VisualizeBarSeries, VisualizeMenuVisualization, VisualizeMenuData,
+  components: { VisualizeChart, VisualizeBarSeries, VisualizeMenuVisualization,
                 VisualizeMenuChartSettings, VisualizeMenuIndicators, SearchSelect },
   data () {
     return {
@@ -123,10 +122,6 @@ export default {
       {
           title: 'Visualization',
           component: 'VisualizeMenuVisualization'
-      },
-      {
-          title: 'Data',
-          component: 'VisualizeMenuData'
       },
       {
           title: 'Chart settings',

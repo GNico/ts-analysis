@@ -1,5 +1,4 @@
 import api from "../api/repository";
-import testmodule from './testmodule'
 
 
 
@@ -218,7 +217,4 @@ export default {
     state,
     mutations,
     actions,
-    modules: {
-       a: testmodule
-    }
 }

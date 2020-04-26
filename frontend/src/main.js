@@ -9,6 +9,7 @@ import DragPanes from 'highcharts/modules/drag-panes'
 import App from './App.vue'
 import router from './router/index'
 import store from './store/index'
+//import '@mdi/font/css/materialdesignicons.css'
 import Buefy from 'buefy'
 
 import stockInit from 'highcharts/modules/stock'
@@ -19,8 +20,8 @@ highchartsMore(Highcharts)
 Boost(Highcharts)
 DragPanes(Highcharts)
 Vue.use(VueRouter)
-Vue.use(Buefy, {defaultIconPack: 'fa'})
-
+//Vue.use(Buefy, {defaultIconPack: 'fa'})
+Vue.use(Buefy)
 //dark theme for highcharts
 require('./assets/themes/dark-unica.js');
 
