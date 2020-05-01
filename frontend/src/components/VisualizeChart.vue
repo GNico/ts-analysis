@@ -1,13 +1,13 @@
 <template>
-<div class="chart-container columns is-gapless is-multiline" >   
-  <div class="column is-1 char-sec">
+<div class="chart-container columns is-gapless is-multiline">   
+  <div class="column is-1 char-sec" :style="{ 'background-color': backgroundColor }">
     <div class="legends">
       <LegendSeriesTag color="red">Peeee pepepe </LegendSeriesTag>
       <LegendSeriesTag color="blue">Second series </LegendSeriesTag>     
     </div>
   </div>
-  <div class="column is-offset-1 is-11 char-sec chart" >
-    <highcharts class="chart" :constructor-type="'stockChart'" :options="chartOptions" :updateArgs="updateArgs" ref="chart"></highcharts>
+  <div class="column is-offset-1 is-11 char-sec " >
+    <highcharts class="char-sec" :constructor-type="'stockChart'" :options="chartOptions" :updateArgs="updateArgs" ref="chart"></highcharts>
   </div>
 </div>
 </template>
@@ -19,16 +19,72 @@ import LegendSeriesTag from '../components/LegendSeriesTag.vue';
 
 export default {
   components: { LegendSeriesTag },
+  props: {   
+    series: {
+      type: Array,
+      default: []
+    },
+    numAxes: {
+      type: Number,
+      default: 1    
+    },
+    backgroundColor: {
+      type: String,
+      default: "#073642"
+    },
+  },
   data () {
     return {
       updateArgs: [true, true, {duration: 1000}],
-      chartOptions: {
+    }
+  },
+  computed: {
+    isEmpty() {
+      return this.series.length ? false : true
+    },
+    axisOptions() {
+      console.log("trigger axisOptions")
+      console.log(this.isEmpty)
+      let axes = []
+      let axisHeightPercent = Math.floor(100 / this.numAxes)
+      let remainder = 100 % this.numAxes
+      for (var i = 0; i < this.numAxes; i++) {
+        axes.push({
+          title: '',
+          offset: false,
+          opposite: true,
+          resize: (i<this.numAxes-1) ? {
+            enabled: true,
+            lineColor: 'gray',
+            lineWidth: 2,
+          } : undefined,
+          crosshair: {
+            snap: this.isEmpty,
+            color: 'gray',
+            dashStyle: 'shortdot',
+            label: {
+              backgroundColor: '#001f27',
+              enabled: true,
+              format: '{value:.0f}'
+            }
+          },
+          labels: {
+            align: 'left',           
+          },
+          // settings for multiple panes in the chart
+          height: i==this.numAxes-1 ? '' + (axisHeightPercent + remainder) + '%' : '' + axisHeightPercent + '%' ,
+          top: '' + (i * axisHeightPercent) + '%',    
+        })
+      }
+      return axes
+    },
+    chartOptions() {
+      return {
         chart: {
           zoomType: 'x',
           panning: true,
           panKey: 'shift',
-          backgroundColor: "#073642",
-          //height: '700',
+          backgroundColor: this.backgroundColor,
           ignoreHiddenSeries: false,
           marginRight: 50,          
         },        
@@ -53,8 +109,7 @@ export default {
         },
         title: {
           text: ''
-        },
-       
+        },       
         tooltip: {
           split: true,
           shared: false,
@@ -76,123 +131,16 @@ export default {
           },
           type: 'datetime',
         },   
-        yAxis: this.calcAxis(3),
-        series: [ {
-          name: 'Pepega',
-          data: [
-          [
-              1524058200000,
-              177.84
-          ],
-          [
-              1524144600000,
-              172.8
-          ],
-          [
-              1524231000000,
-              165.72
-          ],
-          [
-              1524490200000,
-              165.24
-          ],
-          [
-              1524576600000,
-              162.94
-          ]],
-          yAxis: 0,
-        },
-        {
-          name: 'Other',
-          data:  [
-          [
-              1524058200000,
-              176.57
-          ],
-          [
-              1524144600000,
-              176.89
-          ],
-          [
-              1524231000000,
-              183.83
-          ],
-          [
-              1524490200000,
-              185.16
-          ],
-          [
-              1524576600000,
-              186.05
-          ]],
-          yAxis: 1,
-        },
-        {
-          name: 'Third',
-          data: [
-          [
-              1524058200000,
-              163.65
-          ],          
-          [
-              1524144600000,
-              164.22
-          ],
-          [
-              1524231000000,
-              162.32
-          ],
-          [
-              1524490200000,
-              165.26
-          ],
-          [
-              1524576600000,
-              169.1
-          ]],
-          yAxis: 2,
-        }] 
+        yAxis: this.axisOptions,
+        series: this.series     
       }
-    }
+    },
+    //cont
   },
   methods: {    
-    calcAxis(numAxes) {
-      let axisHeightPercent = Math.floor(100 / numAxes)
-      let remainder = 100 % numAxes
-      let axisOptions = []
-      for (var i = 0; i < numAxes; i++) {
-        axisOptions.push({
-          title: '',
-          offset: false,
-          opposite: true,
-          resize: (i<numAxes-1) ? {
-            enabled: true,
-            lineColor: 'gray',
-            lineWidth: 2,
-          } : undefined,
-          crosshair: {
-            snap: false,
-            color: 'gray',
-            dashStyle: 'shortdot',
-            label: {
-              backgroundColor: '#001f27',
-              enabled: true,
-              format: '{value:.0f}'
-            }
-          },
-          labels: {
-            align: 'left',           
-          },
-          // settings for multiple panes in the chart
-          height: i==numAxes-1 ? '' + (axisHeightPercent + remainder) + '%' : '' + axisHeightPercent + '%' ,
-          top: '' + (i * axisHeightPercent) + '%',    
-        })
-      }
-      return axisOptions
-    },
+  
   }
 }
-
 
 </script>
 
@@ -205,17 +153,12 @@ export default {
  }
 
 .char-sec {
-  background-color: #073642;
   height: inherit;
 }
 
 .legends {
   position: absolute;
   z-index: 99999;
-}
-
-.chart {
-  height: inherit;
 }
 
 </style>

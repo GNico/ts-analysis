@@ -1,210 +1,132 @@
 <template>
-
 <div>
-
-  <div class='page-container'>
-    <section class="page-section">
-      <div class="level">
-
-        <div class="level-left">
-          <template v-if="popo">
-            <div class="level-item">
-              <div class="button is-primary">New Visualization</div>
-            </div>
-            <div class="level-item">
-              or
-            </div>
-            <div class="level-item">
-              <b-dropdown aria-role="list">
-                  <button class="button" slot="trigger" slot-scope="{ active }">
-                      <span>Select Visualization</span>
-                      <b-icon :icon="active ? 'caret-up' : 'caret-down'"></b-icon>
-                  </button>
-                  <b-dropdown-item aria-role="listitem">  <b-tooltip label="description" type="is-dark" position="is-right">Action</b-tooltip></b-dropdown-item>
-                  <b-dropdown-item aria-role="listitem">Another action</b-dropdown-item>
-                  <b-dropdown-item aria-role="listitem">Something else</b-dropdown-item>
-              </b-dropdown>
-            </div>
-          </template>
-        </div>
-
-        <div class="level-right">
-          <SearchSelect 
-            :saved="[]"
-            :data="[]"
-            placeholder="Select client" 
-            ref=clientselect
-          />
-        </div>
-        
-      </div>
-    </section>
-
-    <hr>
-
-    <section class="page-section">
-      <div class="title is-3 has-text-link"> Unnamed Visualization {{ test }}
-      </div> 
-    </section>
-
-
-    <section>
-      <VisualizeBarSeries/>
-    </section>
-
-    <section class="columns is-variable is-2">
-      <div class="column is-2 ">
-
-        <div class="is-fullheight side-menu">        
-          <b-collapse
-            class="card"
-            animation="slide"
-            v-for="(collapse, index) of collapses"
-            :key="index"
-            :open="false">
-
-            <div
-              slot="trigger"
-              slot-scope="props"
-              class="card-header"
-              role="button">    
-              <p class="card-header-title">
-                  {{ collapse.title }}
-              </p>
-              <a class="card-header-icon">
-                  <b-icon
-                      :icon="props.open ? 'caret-up' : 'caret-down'">
-                  </b-icon>
-              </a>
-            </div>
-            <div class="card-content">
-                <div class="content">
-                  <component :is="collapse.component"> </component>
-                </div>
-            </div>
-          </b-collapse>
-        </div>
-      </div>
-
-      <div class="column">
-        <div class="main-content is-fullheight">
-          <VisualizeChart/>
-        </div>
-      </div>
-
-    </section>  
-  </div> 
+  <section class="section">
+    <VisualizeToolBar class="char-bar"/>
+    <VisualizeChart 
+      class="is-fullheight"
+      :series="series"/>
+  </section>
 </div>
 </template>
 
 
-
 <script>
-import api from '../api/repository'
 
 import VisualizeChart from '../components/VisualizeChart.vue';
-import VisualizeBarSeries from '../components/VisualizeBarSeries.vue';
-import VisualizeMenuVisualization from '../components/VisualizeMenuVisualization.vue';
-import VisualizeMenuChartSettings from '../components/VisualizeMenuChartSettings.vue';
-import VisualizeMenuIndicators from '../components/VisualizeMenuIndicators.vue';
-import SearchSelect from '../components/SearchSelect.vue';
-
+import VisualizeToolBar from '../components/VisualizeToolBar.vue';
 
 
 export default {
-  components: { VisualizeChart, VisualizeBarSeries, VisualizeMenuVisualization,
-                VisualizeMenuChartSettings, VisualizeMenuIndicators, SearchSelect },
+  components: { VisualizeChart, VisualizeToolBar },
   data () {
     return {
-      isOpen: [],
-      popo: true,
-      collapses: [
-      {
-          title: 'Visualization',
-          component: 'VisualizeMenuVisualization'
-      },
-      {
-          title: 'Chart settings',
-          component: 'VisualizeMenuChartSettings'
-      },
-      {
-          title: 'Indicators',
-          component: 'VisualizeMenuIndicators'
-      }
-      ],
-      selectedRange: { 
-        start: null,
-        end: null, 
-      },
-      tags: { name: 'All tags', id: "root", children: [] },
-      displayElements: {},
-      selectedItems: [],
-      flatData: [ 'root' ],
+      /*[ {
+          name: 'Pepega',
+          data: [
+          [
+              1524058200000,
+              177.84
+          ],
+          [
+              1524144600000,
+              172.8
+          ],
+          [
+              1524231000000,
+              165.72
+          ],
+          [
+              1524490200000,
+              165.24
+          ],
+          [
+              1524576600000,
+              162.94
+          ]],
+          yAxis: 0,
+        },
+        {
+          name: 'Other',
+          data:  [
+          [
+              1524058200000,
+              176.57
+          ],
+          [
+              1524144600000,
+              176.89
+          ],
+          [
+              1524231000000,
+              183.83
+          ],
+          [
+              1524490200000,
+              185.16
+          ],
+          [
+              1524576600000,
+              186.05
+          ]],
+          yAxis: 1,
+        },
+        {
+          name: 'Third',
+          data: [
+          [
+              1524058200000,
+              163.65
+          ],          
+          [
+              1524144600000,
+              164.22
+          ],
+          [
+              1524231000000,
+              162.32
+          ],
+          [
+              1524490200000,
+              165.26
+          ],
+          [
+              1524576600000,
+              169.1
+          ]],
+          yAxis: 2,
+        }]  */
+      
     }
   },
   computed: {
-    test() {
-      return this.$store.state.visualize.nest.name
+    series() {
+      return this.$store.getters['visualize/seriesAsList']
     }
   },
   methods: {
-    changeRange(event) {
-      this.$store.dispatch('visualize/updateRange', event)
-    },
-    selectAllNodes(event) {
-      if (event) {
-        this.selectedItems = this.flatData
-      } else {
-        this.selectedItems = []
-      }
-    }
-  },
-  created () {
-    api.getTags('movistar')
-    .then(response => {       
-      this.tags.children = response.data.tree
-      this.displayElements = { name: this.tags.name,
-                               id: this.tags.id,
-                               children: [] }
-    })
 
-  },
+  }
+
 }
-
 
 
 
 </script>
 
 
-<style>  
+<style scoped>
 
-.page-container {
-  padding: 1.25rem;
+.section {
+  padding: 1rem;
 }
 
-.page-section {
-  margin-bottom: 1.25rem;
-}
-
-.subsection {
+.char-bar {
   margin-bottom: 0.75rem;
 }
 
 .is-fullheight {
-  height: calc(100vh - 20rem);
-  min-height: calc(100vh - 20rem);
-}
-  
-.side-menu {
-  overflow-y: auto;
-}
-
-.main-content {
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
+  height: calc(100vh - 8.5rem);
+  min-height: calc(100vh - 8.5rem);
 }
 
 

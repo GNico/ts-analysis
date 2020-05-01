@@ -14,7 +14,7 @@
       <div class="field-body">
         <div class="field is-narrow">
           <div class="control">
-            <input class="input is-small" type="text">
+            <input class="input is-small" type="text" v-model="seriesOptions.name">
           </div>
         </div>
       </div>
@@ -28,11 +28,11 @@
         <div class="field is-narrow">
           <div class="control">
             <SearchSelect 
-              :saved="saved.client"
-              size="is-small"
-              :data="clientsSelectOptions"
-              placeholder="Seleccionar cliente" 
+              :saved="seriesOptions.client"
+              :data="clients"
               @selected="updateSelectOptions"  
+              size="is-small"
+              placeholder="" 
               ref=clientselect
             />
           </div>
@@ -53,6 +53,7 @@
               position="is-bottom"
               multilined>
               <b-input
+                v-model="seriesOptions.interval"
                 type="text"
                 size="is-small"              
                 validation-message="Invalid format"
@@ -76,12 +77,12 @@
               class="custom-field"
               :items="contextsTree" 
               :displayItems="displayContexts" 
-              v-model="selectedContexts" 
+              v-model="seriesOptions.contexts" 
             />
           </div>
         </div>
       </div>
-    </div>
+    </div> 
 
     <div class="field is-horizontal">
       <div class="field-label is-normal">
@@ -94,7 +95,7 @@
               class="custom-field"
               :items="tagsTree" 
               :displayItems="displayTags" 
-              v-model="selectedTags" 
+              v-model="seriesOptions.tags" 
             />
           </div>
         </div>
@@ -103,12 +104,12 @@
 
     <div class="field is-grouped is-grouped-right">
       <p class="control">
-        <a class="button is-primary is-small">
+        <a class="button is-primary is-small" @click="addSeries">
           OK
         </a>
       </p>
       <p class="control">
-        <a class="button is-danger is-small" @click="$emit('close')">
+        <a class="button is-danger is-small" @click="close">
           Cancel
         </a>
       </p>
@@ -123,114 +124,47 @@
 
 import SearchSelect from './SearchSelect.vue';
 import TreeView from './TreeView.vue';
+import { tagsAndContexts } from '../mixins/TagsAndContextsOptions.js';
 
 export default {
+  name: "VisualizeCardSeries",
+  mixins: [tagsAndContexts],
   components: { SearchSelect, TreeView },
   data () {
     return {
       seriesOptions: {
         name: '',
+        interval: '1H',
         client: '',
-        contexts: '',
-        tags: '',
-      },
-      saved: {
-        client: '',
-        contexts: '',
-        tags: '',
+        contexts: [],
+        tags: [],
+        yAxis: 0,
       },
       edit: false, 
       isOpen: false,
-      selectedTags: [],
     }
   },
   computed: {
-    seriesNames() {
-        return this.$store.getters['series/getSeriesNames']
-    },
     clients() {
-        return this.$store.state.clients.clients
+      return this.$store.getters['clients/readyClients']
     },
-    clientsSelectOptions() {
-        return this.clients.map(item => item.name);
-    },
-    contexts() {
-        //return this.$store.state.clients.contexts
-        return []
-    },
-    tags() {
-        return []
-        //return this.$store.state.clients.tags
-    },
-    tagsTree() {
-      let tree =  { name: 'All tags', id: "root", children: this.tags.tree }
-      return tree
-    },
-    contextsTree() {
-      let tree =  { name: 'All contexts', id: "root", children: this.contexts.tree }
-      return tree
-    },
-    displayTags() {
-      return { name: this.tagsTree.name,
-               id: this.tagsTree.id,
-               children: [] }
-    },
-    displayContexts() {
-      return { name: this.contextsTree.name,
-               id: this.contextsTree.id,
-               children: [] }
-    },
-    hasError() {
-        return this.seriesNames.includes(this.seriesOptions.name)
-    }
   },
   methods: {
-/*          let obj = this.$store.getters['series/getSeriesOptions'](value) 
-          this.seriesOptions.name = value
-          this.saved.client = obj.client 
-          await this.$store.dispatch('clients/updateTagsContexts', obj.client)
-          this.saved.tags = obj.tags
-          this.saved.contexts = obj.contexts
-      },
-      updateSelectOptions(value) {
-          this.seriesOptions.client = value
-          if (this.saved.client != value) {
-              this.$store.dispatch('clients/updateTagsContexts', this.seriesOptions.client)
-          }
-      },
-      addSeries() {
-          this.edit = true
-          this.$store.dispatch('series/addSeries', this.seriesOptions)
-      },
-      updateSeries() {
-          this.$store.dispatch('series/updateSeries', this.seriesOptions)
-      },
-      deleteSeries() {
-          this.$store.dispatch('series/deleteSeries', this.seriesOptions.name)
-      },
-      clearFields() {
-          this.seriesOptions.name = ''
-          this.$refs.clientselect.clear()
-          this.$refs.contextselect.clear()
-          this.$refs.tagselect.clear()
-          this.saved.client = ''
-          this.saved.contexts = ''
-          this.saved.tags = ''
-      },
-      editMode() {
-          this.edit = true
-      },
-      createMode() {
-          this.edit = false
-          this.clearFields()
-      }, */
+    close() {
+      this.$emit('close')
+    },
+    updateSelectOptions(value) {
+      this.seriesOptions.client = value  
+      this.updateContexts(value)
+      this.updateTags(value)
+    },
+    addSeries() {
+      this.$store.dispatch('visualize/addSeries', this.seriesOptions)
+      this.close()
+    }
   },
   watch: {
-      seriesNames() {
-          if (!this.seriesNames.includes(this.seriesOptions.name) && this.edit) {
-              this.clearFields()
-          } 
-      }
+
   }
 }
 
@@ -239,9 +173,7 @@ export default {
 
 <style scoped>
 
-.card {
-  min-width: 500px;
-}
+
 
 .custom-field {
   margin-top: 0.5rem;

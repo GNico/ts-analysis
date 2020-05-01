@@ -1,11 +1,9 @@
 import api from "../api/repository";
 
-
 const state = {
   clients: [],
   details: {},
 }
-
 
 const mutations = {
   set_clients(state, payload) {
@@ -19,9 +17,14 @@ const mutations = {
   },
   set_details(state, payload) {
     state.details = payload
-  }
+  },
 }
 
+const getters = {
+  readyClients: state => {
+    return state.clients.filter(item => item.indexing == false).map(item => item.name)
+  },
+}
 
 const actions = {
   addClient(store, form) {
@@ -50,13 +53,14 @@ const actions = {
             .then(response => {       
               store.commit('set_details', response.data) 
             })
-  },  
+  }, 
+  
 }
-
 
 export default {
   namespaced: true,
   state,
+  getters,
   actions,
   mutations
 }

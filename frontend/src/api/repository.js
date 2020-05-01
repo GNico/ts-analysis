@@ -59,7 +59,6 @@ export default {
         let url = "/clients/" + clientName + "/series/tags/"
         return repository.get(url)
     },
-
     getAnomalies(payload) {
         return repository.get("/anomalies/", {params: payload, paramsSerializer: params => transformArrayParams(params)})
     },

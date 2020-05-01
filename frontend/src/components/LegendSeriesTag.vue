@@ -5,7 +5,7 @@
   
   
   <span class="tag has-text-weight-bold is-family-monospace" :class="!hidden ? 'active-legend' : ''">  
-    <span class="legend-line" :style="{color: color}"> — </span> 
+    <span class="legend-line" :style="{color: lineColor()}"> — </span> 
     <slot></slot>
   </span>
   <template v-if="hover">
@@ -46,6 +46,15 @@ export default {
     },
     remove() {
       this.$emit('delete', this.id)
+    },
+    lineColor() {
+      if (!this.color) {
+        return 'transparent'
+      } else if (this.hidden) {
+        return ''
+      } else {
+        return this.color
+      }
     }
 
   }

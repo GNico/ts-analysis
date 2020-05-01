@@ -1,47 +1,27 @@
 <template>
-
 <div>
 
-  <b-modal 
-    :active.sync="isOpenAddSeries" 
-    has-modal-card 
-    :can-cancel="['escape', 'outside']" 
-    animation='' 
-    scroll='keep'>
-    <div class="modal-content">
-      <VisualizeCardSeries @close="isOpenAddSeries=false"/>
-    </div>
-  </b-modal>
+  <ModalCard 
+    v-for="item in options"
+    :key="item.name"
+    :isActive="item.open" 
+    @close="item.open=false">
+    <template v-slot="{closeHandler}">
+      <component :is="item.component" @close="closeHandler" class="options-card"/>
+    </template>  
+  </ModalCard>
 
-  <b-modal 
-    :active.sync="isOpenSettings" 
-    has-modal-card 
-    :can-cancel="['escape', 'outside']" 
-    animation='' 
-    scroll='keep'>
-    <div class="modal-content">
-      <VisualizeCardSettings/>
-    </div>
-  </b-modal>
 
   <div class="level">
     <div class="level-left has-text-weight-semibold">
-      <a class="level-item button is-info is-small" 
-        @click="isOpenAddSeries = true"
-        :class="isOpenAddSeries ? '' : 'is-outlined'">
-        <b-icon icon="chart-line" size=""></b-icon><span>Add series</span>
+      <a v-for="item in options" 
+        :key="item.name"
+        class="level-item button is-info is-small" 
+        @click="item.open = true"
+        :class="item.open ? '' : 'is-outlined'">
+        <b-icon :icon="item.icon" size=""></b-icon>
+        <span>{{item.name}}</span>
       </a>          
-
-      <a class="level-item button is-info is-outlined is-small">
-        <b-icon icon="finance"></b-icon>
-        <span>Indicators</span>
-      </a>
-
-      <a class="level-item button is-info is-small"
-        @click="isOpenSettings = true"
-        :class="isOpenSettings ? '' : 'is-outlined'">
-        <b-icon icon="cog"></b-icon><span>Settings</span>
-      </a>
 
       <a class="level-item button is-info is-outlined is-small">
         <b-icon icon="fullscreen"></b-icon>
@@ -101,30 +81,53 @@
       </div>  
 
       <div>
-        <a class="button is-primary is-small">
-          <b-icon icon="dots-vertical"/>
-        </a> 
+        <b-dropdown aria-role="list" position="is-bottom-left">
+            <a class="button is-primary is-small" slot="trigger">
+              <b-icon icon="dots-vertical"/>
+            </a>
+            <b-dropdown-item aria-role="listitem">Last day</b-dropdown-item>
+            <b-dropdown-item aria-role="listitem">Last week</b-dropdown-item>
+            <b-dropdown-item aria-role="listitem">Last month</b-dropdown-item>
+            <b-dropdown-item aria-role="listitem">Last year</b-dropdown-item>
+        </b-dropdown>
       </div>
-
     </div>
   </div>
-
 </div>
-
 </template>
 
 
 <script>
-import VisualizeCardSeries from './VisualizeCardSeries.vue';
-import VisualizeCardSettings from './VisualizeCardSettings.vue';
 
+import VisualizeCardSeries from './VisualizeCardSeries.vue';
+import VisualizeCardIndicators from './VisualizeCardIndicators.vue';
+import VisualizeCardSettings from './VisualizeCardSettings.vue';
+import ModalCard from './ModalCard.vue';
 
 export default {
-  components: { VisualizeCardSeries, VisualizeCardSettings },
+  components: { VisualizeCardSeries, VisualizeCardIndicators, VisualizeCardSettings, ModalCard},
   data () {
     return {
-      isOpenAddSeries: false,
-      isOpenSettings: false,
+      options: [
+        {
+          name: 'Add series',
+          icon: 'chart-line',        
+          component: 'VisualizeCardSeries',
+          open: false,
+        },
+        {
+          name: 'Indicators',
+          icon: 'finance',        
+          component: 'VisualizeCardIndicators',
+          open: false,
+        },
+        {
+          name: 'Settings',
+          icon: 'cog',        
+          component: 'VisualizeCardSettings',
+          open: false,
+        }
+      ],
     }
   },
   methods: {
@@ -158,6 +161,10 @@ export default {
   margin-bottom: 0;
   margin-right: 0.5rem;
 
+}
+
+.options-card {
+  overflow-y: auto;
 }
 
 </style>

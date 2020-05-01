@@ -78,7 +78,8 @@ class TagListView(APIView):
                         node['children'] = []
                     currentchildren = node['children']
 
-        response = { "tree": root, "flat": data }
+        #response = { "tree": root, "flat": data }
+        response = root
         return Response(response)
 
 
