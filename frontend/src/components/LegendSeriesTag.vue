@@ -10,7 +10,7 @@
   </span>
   <template v-if="hover">
     <b-tooltip :label="hidden ? 'Show' : 'Hide'" size="is-small" type="is-dark">
-      <a class="tag" @click="toggleVisibiity"><b-icon icon="eye" size="is-small"></b-icon></a>
+      <a class="tag" @click="toggleVisibiity"><b-icon :icon="hidden ? 'eye-off' : 'eye'" size="is-small"></b-icon></a>
     </b-tooltip>
     <b-tooltip label="Settings" size="is-small" type="is-dark">
       <a class="tag" @click="openSettings"><b-icon icon="cog" size="is-small"></b-icon></a>

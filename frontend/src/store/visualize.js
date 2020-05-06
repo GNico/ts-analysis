@@ -2,22 +2,18 @@ import api from "../api/repository";
 import { nanoid } from 'nanoid'
 
 
-const colors = ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066',
-        '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee']
+const colors = [ '#f45b5b', '#90ee7e', '#7798BF', '#aaeeee', '#ff0066',
+        '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee', '#2b908f']
 
 const state = {
-  /*  series: {
-     'idpepe': { id: 'an id', name: 'sarasa'},
-     'idsecond': { id: 'another', name: 'nonono', color: 'red'}
-    },
-    seriesIds: [ 'idpepe', 'idsecond' ], */
     series: {},
     seriesIds: [],
-    loading: 0,
+    panels: [],
     range: {
         start: null,
         end: null
     },
+    loading: 0,
 
 }
 
@@ -28,10 +24,17 @@ const getters = {
     seriesNames: state => {
         return state.seriesIds.map(id => state.series[id].name)
     }, 
+    getSeriesById: state => id => {
+        return (id && state.series.hasOwnProperty(id)) ? state.series[id] : null
+    },
     nextColor: state => {
         let index = state.seriesIds.length % colors.length 
         return colors[index]
+    },
+    numPanels: state => {
+        return state.panels.length ? state.panels.length : 1
     }
+
 }
 
 
@@ -50,15 +53,52 @@ const mutations = {
         let index = state.seriesIds.indexOf(id);
         if (index !== -1)  state.seriesIds.splice(index, 1);
     },
+    update_series(state, payload) { 
+        state.series[payload.id] = { ...state.series[payload.id], ...payload.seriesOptions }
+    },
     set_range(state, payload) {
         state.range = payload
     },
     set_loading(state, isLoading) {
-        if (isLoading)
+        if (isLoading) 
             state.loading += 1;
         else 
             state.loading -= 1;
-    }
+    },
+
+
+    add_series_to_panel(state, payload) {
+        let axisNumber = (!payload.hasOwnProperty("yAxis")) ? -1 : payload.yAxis
+        let newaxis = {}
+        if (axisNumber < 0 || axisNumber > state.panels.length-1) {
+            state.panels.push([payload.id])
+            newaxis['yAxis'] = state.panels.length-1
+        } else {
+            state.panels[axisNumber].push(payload.id)
+            newaxis['yAxis'] = parseInt(axisNumber)
+        }
+        state.series[payload.id] = { ...state.series[payload.id], ...newaxis } 
+    },
+    delete_series_from_panel(state, id) {
+        var shiftArray = false
+        for (var panelIndex = 0; panelIndex < state.panels.length; panelIndex++) { 
+            if (shiftArray) {
+                state.panels[panelIndex].forEach(series_id => state.series[series_id].yAxis -= 1 )
+            } else {
+                let index = state.panels[panelIndex].indexOf(id)
+                if (index !== -1) {
+                    state.panels[panelIndex].splice(index, 1)
+                    if (!state.panels[panelIndex].length) 
+                        state.panels.splice(panelIndex, 1) 
+                        shiftArray = true
+                        panelIndex -= 1
+                } 
+            }
+        }  
+    },
+
+
+
 }
 
 
@@ -67,8 +107,8 @@ const actions = {
         let id = nanoid()      
         seriesOptions.color = getters.nextColor
         seriesOptions.id = id
-      //  let newseries = { [id]: seriesOptions } 
         commit("add_series", seriesOptions)
+        commit("add_series_to_panel", seriesOptions)
         dispatch("fetchData", id)
     },
     fetchData({commit, state}, id) {
@@ -92,9 +132,19 @@ const actions = {
     },
     deleteSeries({commit}, id) {
         commit("delete_series", id)
+        commit("delete_series_from_panel", id)
+    },
+    updateSeries({commit}, payload) {
+        commit("update_series", payload)
     },
     updateRange({commit}, range) {
         commit("set_range", range)
+    },
+    moveSeriesDown({commit}, id) {
+
+    },
+    moveSeriesUp({commit}, id) {
+
     },
 
 

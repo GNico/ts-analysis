@@ -20,6 +20,20 @@
       </div>
     </div>
 
+
+    <div class="field is-horizontal">
+      <div class="field-label is-normal">
+        <label class="label">Panel</label>
+      </div>
+      <div class="field-body">
+        <div class="field is-narrow">
+          <div class="control">
+            <input class="input is-small" type="text" v-model="seriesOptions.yAxis">
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="field is-horizontal">
       <div class="field-label is-normal">
         <label class="label">Client</label>
@@ -140,8 +154,6 @@ export default {
         tags: [],
         yAxis: 0,
       },
-      edit: false, 
-      isOpen: false,
     }
   },
   computed: {

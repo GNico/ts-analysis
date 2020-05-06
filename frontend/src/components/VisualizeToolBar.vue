@@ -145,7 +145,6 @@ export default {
 .toolbar-right {
   display: flex;
   align-items: center;
-
 }
 
 .toolbar-right > div:not(:last-child)  {
@@ -160,7 +159,6 @@ export default {
 .datepicker-field > .label {
   margin-bottom: 0;
   margin-right: 0.5rem;
-
 }
 
 .options-card {

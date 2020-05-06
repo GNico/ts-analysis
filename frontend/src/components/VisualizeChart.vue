@@ -1,24 +1,11 @@
 <template>
-<div class="chart-container columns is-gapless is-multiline">   
-  <div class="column is-1 char-sec" :style="{ 'background-color': backgroundColor }">
-    <div class="legends">
-      <LegendSeriesTag color="red">Peeee pepepe </LegendSeriesTag>
-      <LegendSeriesTag color="blue">Second series </LegendSeriesTag>     
-    </div>
-  </div>
-  <div class="column is-offset-1 is-11 char-sec " >
-    <highcharts class="char-sec" :constructor-type="'stockChart'" :options="chartOptions" :updateArgs="updateArgs" ref="chart"></highcharts>
-  </div>
-</div>
+  <highcharts class="char-sec" :constructor-type="'stockChart'" :options="chartOptions" :updateArgs="updateArgs" ref="chart"></highcharts>
 </template>
 
 
 <script>
 
-import LegendSeriesTag from '../components/LegendSeriesTag.vue';
-
 export default {
-  components: { LegendSeriesTag },
   props: {   
     series: {
       type: Array,
@@ -30,8 +17,12 @@ export default {
     },
     backgroundColor: {
       type: String,
-      default: "#073642"
+      default: ''
     },
+    isLoading: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
@@ -40,11 +31,9 @@ export default {
   },
   computed: {
     isEmpty() {
-      return this.series.length ? false : true
+      return this.series.length > 0
     },
     axisOptions() {
-      console.log("trigger axisOptions")
-      console.log(this.isEmpty)
       let axes = []
       let axisHeightPercent = Math.floor(100 / this.numAxes)
       let remainder = 100 % this.numAxes
@@ -59,7 +48,7 @@ export default {
             lineWidth: 2,
           } : undefined,
           crosshair: {
-            snap: this.isEmpty,
+            snap: !this.isEmpty,
             color: 'gray',
             dashStyle: 'shortdot',
             label: {
@@ -130,15 +119,23 @@ export default {
             dashStyle: 'shortdot',            
           },
           type: 'datetime',
+          showEmpty: false
         },   
         yAxis: this.axisOptions,
         series: this.series     
       }
     },
-    //cont
   },
   methods: {    
   
+  },
+  watch: {
+    isLoading(newVal) {
+      if (newVal) 
+        this.$refs.chart.chart.showLoading()
+      else 
+        this.$refs.chart.chart.hideLoading()
+    }
   }
 }
 
@@ -148,17 +145,6 @@ export default {
 
 <style scoped>
 
-.chart-container { 
-  position: relative;
- }
 
-.char-sec {
-  height: inherit;
-}
-
-.legends {
-  position: absolute;
-  z-index: 99999;
-}
 
 </style>
