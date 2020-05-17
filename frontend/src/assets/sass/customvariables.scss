@@ -4,6 +4,7 @@ $grey:         #839496;
 $grey-alt:     #586e75;
 $grey-dark:    #073642;
 $grey-darker:  #002B36;
+$black-bis: rgb(18, 18, 18);
 
 $orange       : #cb4b16;
 $yellow       : #b58900;
@@ -18,12 +19,11 @@ $warning      : $orange;
 $info: $blue;
 $yellow-invert: #fff;
 $light: $grey-lighter;
-$dark: darken($grey-darker, 3);
+
+$dark: darken($grey-darker, 1);
 
 
 $input-placeholder-color: $grey-alt;
-
-$modal-background-background-color: transparent;
 
 $tag-background-color: transparent;
 
@@ -38,3 +38,8 @@ $card-background-color: $grey-darker;
 $card-header-box-shadow: none;
 $card-header-background-color: rgba($black-bis, 0.2);
 $card-footer-background-color: rgba($black-bis, 0.2);
+
+
+
+$modal-card-head-background-color: $dark;
+$modal-background-background-color: transparent;

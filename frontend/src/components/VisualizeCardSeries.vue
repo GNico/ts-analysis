@@ -1,141 +1,151 @@
 <template>
-<div class="card">
-  <header class="card-header">
-    <p class="card-header-title">
-      Add series
-    </p>    
-  </header>
 
-  <div class="card-content">
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">Name</label>
-      </div>
-      <div class="field-body">
-        <div class="field is-narrow">
-          <div class="control">
-            <input class="input is-small" type="text" v-model="seriesOptions.name">
+<ModalCard 
+  :isActive="isActive" 
+  title="Add series"
+  minheight="50%"
+  @close="close"
+  @accept="isEdit ? updateSeries() : addSeries()">
+
+  <div class="columns is-multiline is-marginless is-gapless is-paddingless">
+    <!--first column-->
+    <div class="column is-6"> 
+      <div class="field is-horizontal">
+        <div class="field-label is-small has-text-left">
+          <label class="label">Name</label>
+        </div>
+        <div class="field-body">
+          <div class="field is-narrow short-field">
+            <div class="control">
+              <input class="input is-small" type="text" v-model="seriesOptions.name">
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">Panel</label>
-      </div>
-      <div class="field-body">
-        <div class="field is-narrow">
-          <div class="control">
-            <input class="input is-small" type="text" v-model="seriesOptions.yAxis">
+      <div class="field is-horizontal">
+        <div class="field-label is-small has-text-left">
+          <label class="label">Client</label>
+        </div>
+        <div class="field-body">
+          <div class="field is-narrow short-field">
+            <div class="control">
+              <SearchSelect 
+                :saved="seriesOptions.client"
+                :data="clients"
+                @selected="updateSelectOptions"  
+                size="is-small"
+                placeholder="" 
+                ref=clientselect
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">Client</label>
-      </div>
-      <div class="field-body">
-        <div class="field is-narrow">
-          <div class="control">
-            <SearchSelect 
-              :saved="seriesOptions.client"
-              :data="clients"
-              @selected="updateSelectOptions"  
-              size="is-small"
-              placeholder="" 
-              ref=clientselect
-            />
+      <div class="field is-horizontal">
+        <div class="field-label is-small has-text-left">
+          <label class="label">Color</label>
+        </div>
+        <div class="field-body">
+          <div class="field is-narrow shortest-field">
+            <div class="control">
+              <SelectColor :value="selectedColor" @input="changeColor"/>
+            </div>
           </div>
         </div>
       </div>
+
     </div>
 
-   <b-field class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">Interval</label>
-      </div>
-      <div class="field-body">
-        <div class="field is-narrow">
-          <div class="control">
-            <b-tooltip
-              label="Input must be a number followed by a valid letter [ m = minutes, H = hour, D = day, W = week, M = month, y = year ]"
-              size="is-large"
-              position="is-bottom"
-              multilined>
-              <b-input
-                v-model="seriesOptions.interval"
-                type="text"
-                size="is-small"              
-                validation-message="Invalid format"
-                pattern="[0-9]+[mHDWMy]+">
-              </b-input> 
-            </b-tooltip>          
-          </div>              
+    <!--second column-->
+    <div class="column is-6">
+      <b-field class="field is-horizontal">
+        <div class="field-label is-small has-text-left">
+          <label class="label">Type</label>
         </div>
-      </div>
-    </b-field> 
+        <div class="field-body">
+          <div class="field is-narrow short-field">
+            <b-select size="is-small" v-model="seriesOptions.type">
+              <option>line</option>
+              <option>areaspline</option>
+              <option>spline</option>
+              <option>scatter</option>
+              <option>column</option>
+              <option>area</option>
+            </b-select>
+          </div>
+        </div>
+      </b-field>
 
-  
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">Contexts</label>
-      </div>
-      <div class="field-body">
-        <div class="field is-narrow">
-          <div class="control">
-            <TreeView 
-              class="custom-field"
-              :items="contextsTree" 
-              :displayItems="displayContexts" 
-              v-model="seriesOptions.contexts" 
-            />
+      <b-field class="field is-horizontal">
+        <div class="field-label is-small has-text-left">
+          <label class="label">Interval</label>
+        </div>
+        <div class="field-body">
+          <div class="field is-narrow shorter-field">
+            <div class="control">
+              <b-tooltip
+                label="Input must be a number followed by a valid letter [ m = minutes, H = hour, D = day, W = week, M = month, y = year ]"
+                size="is-large"
+                position="is-bottom"
+                multilined>
+                <b-input
+                  v-model="seriesOptions.interval"
+                  type="text"
+                  size="is-small"              
+                  validation-message="Invalid format"
+                  pattern="[0-9]+[mHDWMy]+">
+                </b-input> 
+              </b-tooltip>          
+            </div>              
+          </div>
+        </div>
+      </b-field>
+
+
+      <div class="field is-horizontal" v-if="!isEdit">
+        <div class="field-label is-small has-text-left">
+          <label class="label">Panel</label>
+        </div>
+        <div class="field-body">
+          <div class="field is-narrow shorter-field">
+            <div class="control">
+              <input class="input is-small" type="text" v-model="seriesOptions.yAxis">
+            </div>
           </div>
         </div>
       </div>
-    </div> 
 
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">Tags</label>
-      </div>
-      <div class="field-body">
-        <div class="field is-narrow">
-          <div class="control">
-            <TreeView 
-              class="custom-field"
-              :items="tagsTree" 
-              :displayItems="displayTags" 
-              v-model="seriesOptions.tags" 
-            />
-          </div>
-        </div>
-      </div>
     </div>
 
-    <div class="field is-grouped is-grouped-right">
-      <p class="control">
-        <a class="button is-primary is-small" @click="addSeries">
-          OK
-        </a>
-      </p>
-      <p class="control">
-        <a class="button is-danger is-small" @click="close">
-          Cancel
-        </a>
-      </p>
+    <div class="column is-full">
+      <div class="label is-small filters-label">Filters</div>
     </div>
-
-  </div>         
-</div>
+    <div class="column is-6">
+      <TreeView 
+        class="filters-box"
+        :items="tagsTree" 
+        :displayItems="displayTags" 
+        v-model="seriesOptions.tags" 
+      />
+    </div>
+    <div class="column is-6">
+      <TreeView 
+        class="filters-box"
+        :items="contextsTree" 
+        :displayItems="displayContexts" 
+        v-model="seriesOptions.contexts" 
+      />
+    </div>
+  </div>
+</ModalCard>
 </template>
 
 
 <script>
-
+import ModalCard from './ModalCard';
+import SelectColor from './SelectColor';  
 import SearchSelect from './SearchSelect.vue';
 import TreeView from './TreeView.vue';
 import { tagsAndContexts } from '../mixins/TagsAndContextsOptions.js';
@@ -143,7 +153,17 @@ import { tagsAndContexts } from '../mixins/TagsAndContextsOptions.js';
 export default {
   name: "VisualizeCardSeries",
   mixins: [tagsAndContexts],
-  components: { SearchSelect, TreeView },
+  components: { ModalCard, SearchSelect, TreeView, SelectColor },
+  props: {
+    id: {
+      type: String,
+      default: ''
+    },
+    isActive: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
       seriesOptions: {
@@ -152,7 +172,9 @@ export default {
         client: '',
         contexts: [],
         tags: [],
-        yAxis: 0,
+        color: '',
+        type: 'line',
+        yAxis: 0,        
       },
     }
   },
@@ -160,10 +182,22 @@ export default {
     clients() {
       return this.$store.getters['clients/readyClients']
     },
+    nextColor() {
+      return this.$store.getters['visualize/nextColor']
+    },
+    selectedColor() {
+      return this.seriesOptions.color ? this.seriesOptions.color : this.nextColor
+    },
+    isEdit() {
+      return this.id ? true : false
+    }
   },
   methods: {
     close() {
       this.$emit('close')
+    },
+    changeColor(value) {
+      this.seriesOptions.color = value  
     },
     updateSelectOptions(value) {
       this.seriesOptions.client = value  
@@ -171,12 +205,35 @@ export default {
       this.updateTags(value)
     },
     addSeries() {
+      this.seriesOptions.color = this.selectedColor
       this.$store.dispatch('visualize/addSeries', this.seriesOptions)
+      this.resetFields()
       this.close()
+    },
+    updateSeries() {
+      this.$store.dispatch('visualize/updateSeries', {id: this.id, seriesOptions: this.seriesOptions})
+      this.close()
+
+    },
+    resetFields() {
+      this.seriesOptions.name = ''
+      this.seriesOptions.color = ''
     }
   },
   watch: {
-
+    id: {
+      immediate: true,
+      handler(newVal) {
+        if (newVal) {
+          const requested = this.$store.getters['visualize/getSeriesById'](newVal) 
+          for (const key of Object.keys(requested)) {
+              if (this.seriesOptions.hasOwnProperty(key)) { 
+                  this.seriesOptions[key] = requested[key]
+              }
+          }
+        }
+      }
+    } 
   }
 }
 
@@ -185,11 +242,16 @@ export default {
 
 <style scoped>
 
-
-
-.custom-field {
-  margin-top: 0.5rem;
+.filters-label {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
+.filters-box {
+  padding-left: 0.5rem;
+  max-height: 15rem;
+  overflow-y: auto;
+  width: 95%;
+}
 
 </style>

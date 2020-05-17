@@ -1,23 +1,9 @@
 <template>
-<div class="level">
-    <div class="level-left">
-        <div class="level-item">
-            <input id="colorPicker" v-if="colorInputIsSupported" type="color" :value="value" @change="colorSelected">
-            <select v-else  value="Green" @change="colorSelected">
-                <option>Red</option>
-                <option>Green</option>
-                <option>Blue</option>
-                <option>Pink</option>
-                <option>Orange</option>
-                <option>Brown</option>
-                <option>Black</option>
-                <option>Purple</option>
-            </select>
-        </div>
-        <div class="level-item">
-            {{ value }}
-        </div>
-    </div>
+
+  <label class="label is-small color-box " :style="{'background-color': color}">
+    <input class="input is-small color-input" type="color" :value="color" @change="colorSelected" >
+  </label>   
+     
 </div>
 </template>
 
@@ -25,27 +11,44 @@
 <script>
 
 export default {
-    props: {
-        value: { 
-            required: true,
-        }
+  props: {
+    value: { 
+      type: String,
+      default: '#ff0000',
     },
-    data () {
-        return {
-            colorInputIsSupported: null,
-        }
-    },
-    created () {
-        let i = document.createElement('input')
-        i.setAttribute('type', 'color');
-        (i.type === 'color') ? this.colorInputIsSupported = true : this.colorInputIsSupported = false
-    },
-    methods: {
-        colorSelected (event) {
-            this.$emit('input', event.target.value)
-        }
+  },
+  data () {
+    return {
+      color: this.value,
     }
+  },
+  methods: {
+    colorSelected (event) {
+      this.color = event.target.value
+      this.$emit('input', this.color)
+    }
+  },
+  watch: {
+    value(newVal) {
+      this.color = newVal
+    }
+  }
 }
     
 
 </script>
+
+
+<style scoped>
+
+.color-box {
+  box-shadow: none;
+  border-radius: 3px;
+  border-width: 2px;
+}
+
+.color-input {
+  visibility: hidden;
+}
+
+</style>

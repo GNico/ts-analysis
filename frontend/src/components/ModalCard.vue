@@ -1,11 +1,24 @@
  <template>
   <div class="modal" :class="isActive ? 'is-active' : ''"  >
     <div class="modal-background" @click="close()"></div>
-    <div class="modal-card">
-      <slot :closeHandler="close"></slot>     
+    <div class="modal-card" :style="{'min-height': minheight, 'min-width': minwidth}">
+      <header class="modal-card-head">
+        <p class="modal-card-title">
+          {{title}}
+        </p>
+      </header>
+      <section class="modal-card-body">
+        <slot :closeHandler="close"></slot>     
+      </section>
+      <footer class="modal-card-foot">
+        <slot name="footer">
+          <button class="button is-small is-primary" @click="accept">OK</button>
+          <button class="button is-small is-danger" @click="close">Cancel</button>
+        </slot>
+      </footer>
     </div>
   </div>
- </template>
+</template>
 
 
 <script>
@@ -15,9 +28,24 @@ export default {
     isActive: {
       type: Boolean,
       required: true,
+    },
+    title: {
+      type: String,
+      default: ''
+    },
+    minheight: {
+      type: String,
+      default: '',
+    },   
+    minwidth: {
+      type: String,
+      default: '',
     }
   },
   methods: {
+    accept() {
+      this.$emit('accept')
+    },
     close() {
       this.$emit('close')
     },
@@ -46,7 +74,17 @@ export default {
 <style scoped>
 
 .modal-card {
-  max-height: 70%;
+  border: 2px solid rgba(255,255,255, 0.05);
+  border-radius: 10px;
 }
+
+.modal-card-foot {
+  justify-content: flex-end;
+}
+
+.modal-card-title {
+  font-size: 1.25rem;
+}
+
 
 </style>

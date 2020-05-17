@@ -9,17 +9,32 @@
       <div class="column is-1 char-sec" :style="{ 'background-color': backgroundColor }">
         <div class="legends">
           <LegendSeriesTag 
-            v-for="item in series"
+            v-for="item in sortedSeries"
+            :key="item.id"
             :color="item.color"
             :id="item.id"
             @delete="removeSeries"
             @show="toggleSeriesVisibility"
             @settings="openSeriesSettings">
-            {{item.name}}
+
+            <b-dropdown  v-if="sortedSeries.length > 1" aria-role="list"">
+              <p slot="trigger" role="button">
+                {{item.name}}
+              </p>
+              <b-dropdown-item v-if="item.yAxis > 0" aria-role="listitem" @click="moveUp(item.id)">
+                <span><b-icon icon="arrow-up-thick" size="is-small"/> Move up</span>
+              </b-dropdown-item>
+              <b-dropdown-item v-if="item.yAxis < sortedSeries.length-1" aria-role="listitem" @click="moveDown(item.id)">
+                <span><b-icon icon="arrow-down-thick" size="is-small"/> Move down</span>
+              </b-dropdown-item>
+            </b-dropdown>
+            <p v-else>
+              {{item.name}}
+            </p>       
           </LegendSeriesTag>
         </div>
       </div>
-      <div class="column is-offset-1 is-11 char-sec " >
+      <div class="column is-offset-1 is-11 char-sec" >
         <VisualizeChart 
           class="is-fullheight"
           :backgroundColor="backgroundColor"
@@ -30,13 +45,13 @@
     </div>
   </section>
 
-  <ModalCard 
+  
+ 
+  <VisualizeCardSeries 
     :isActive="isOpenSeriesEdit" 
-    @close="isOpenSeriesEdit=false">
-    <template v-slot="{closeHandler}">
-      <VisualizeCardSeriesEdit  @close="closeHandler"/>
-    </template>  
-  </ModalCard>
+    :id="currentSeriesId"
+    @close="isOpenSeriesEdit = false" />
+  
 
 </div>
 </template>
@@ -47,13 +62,12 @@ import VisualizeChart from '../components/VisualizeChart.vue';
 import VisualizeToolBar from '../components/VisualizeToolBar.vue';
 import LegendSeriesTag from '../components/LegendSeriesTag.vue';
 
-import ModalCard from '../components/ModalCard.vue';
-import VisualizeCardSeriesEdit from '../components/VisualizeCardSeriesEdit.vue';
+import VisualizeCardSeries from '../components/VisualizeCardSeries.vue';
 
 
 
 export default {
-  components: { VisualizeChart, VisualizeToolBar, LegendSeriesTag, ModalCard, VisualizeCardSeriesEdit },
+  components: { VisualizeChart, VisualizeToolBar, LegendSeriesTag, VisualizeCardSeries },
   data () {
     return {
       backgroundColor: '#073642',
@@ -64,6 +78,16 @@ export default {
   computed: {
     series() {
       return this.$store.getters['visualize/seriesAsList']
+    },
+    sortedSeries() {
+      function compare(a, b) {
+        if (a.yAxis < b.yAxis)
+          return -1;
+        if (a.yAxis > b.yAxis)
+          return 1;
+        return 0;
+      }
+      return this.series.sort(compare);
     },
     numPanels() {
       return this.$store.getters['visualize/numPanels']
@@ -86,7 +110,13 @@ export default {
     openSeriesSettings(id) {
       this.currentSeriesId = id
       this.isOpenSeriesEdit = true
-    }
+    },
+    moveUp(id) {
+      this.$store.dispatch("visualize/moveSeriesUp", id)
+    },
+    moveDown(id) {
+      this.$store.dispatch("visualize/moveSeriesDown", id)
+    },
   }
 }
 
@@ -113,7 +143,7 @@ export default {
 
 .legends {
   position: absolute;
-  z-index: 99999;
+  z-index: 999;
 }
 
 .section {

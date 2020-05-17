@@ -1,16 +1,12 @@
 <template>
 <div>
 
-  <ModalCard 
+  <component
     v-for="item in options"
     :key="item.name"
-    :isActive="item.open" 
-    @close="item.open=false">
-    <template v-slot="{closeHandler}">
-      <component :is="item.component" @close="closeHandler" class="options-card"/>
-    </template>  
-  </ModalCard>
-
+    :is="item.component"
+    :isActive="item.open"
+    @close="item.open=false"/>
 
   <div class="level">
     <div class="level-left has-text-weight-semibold">

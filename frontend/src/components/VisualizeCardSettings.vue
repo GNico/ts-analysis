@@ -1,12 +1,12 @@
 <template>
 
-<div class="card">
-  <header class="card-header">
-    <p class="card-header-title">
-      Chart settings
-    </p>    
-  </header>
-  <div class="card-content">  
+<ModalCard 
+  :isActive="isActive" 
+  title="Chart settings"
+  @close="close"
+  @accept="">
+
+
     <b-field label="Interval">
       <b-select size="is-small" :value="seriesOptions.interval" @change="changeSeriesOptions({interval: $event.target.value}); updateData()">
         <option value="30m">30 minutes</option>
@@ -34,46 +34,57 @@
           <input class="input is-small color-input" type="color" :value="seriesOptions.color" @change="changeSeriesOptions({color: $event.target.value })"> 
         </label>
     </b-field>
-  </div>
-</div>
+
+
+</ModalCard>
 </template>
 
 
 
 <script>
-  
+import ModalCard from './ModalCard';
+import SelectColor from './SelectColor';  
+
 export default {
-    components: {   },
-    data() {
-      return {
-        scoreValue: 0,
-      }
-    },
-    computed: {
-      seriesName() {
-        return this.$store.state.analysis.activeSeries
-      },
-      seriesOptions() {
-        return this.$store.getters['analysis/getSeriesOptions'](this.seriesName)
-      },
-      
-    },
-    methods: {
-      changeSeriesOptions(options) {
-        this.$store.dispatch('analysis/changeSeriesOptions', { name: this.seriesName, options: options})
-      },
-      updateData() {
-        this.$store.dispatch('analysis/fetchSeriesData', this.seriesName)
-      },
-    },
-    watch: {
-      'seriesOptions.scoreThreshold': {
-        handler: function (newval) {
-          this.scoreValue = newval
-        },
-        immediate: true
-      }
+  components: { ModalCard, SelectColor  },
+  props: {
+    isActive: {
+      type: Boolean,
+      default: false
     }
+  },
+  data() {
+    return {
+      scoreValue: 0,
+    }
+  },
+  computed: {
+    seriesName() {
+      return this.$store.state.analysis.activeSeries
+    },
+    seriesOptions() {
+      return this.$store.getters['analysis/getSeriesOptions'](this.seriesName)
+    },    
+  },
+  methods: {
+    close() {
+      this.$emit('close')
+    },
+    changeSeriesOptions(options) {
+      this.$store.dispatch('analysis/changeSeriesOptions', { name: this.seriesName, options: options})
+    },
+    updateData() {
+      this.$store.dispatch('analysis/fetchSeriesData', this.seriesName)
+    },
+  },
+  watch: {
+    'seriesOptions.scoreThreshold': {
+      handler: function (newval) {
+        this.scoreValue = newval
+      },
+      immediate: true
+    }
+  }
 }
 
 </script>

@@ -207,7 +207,7 @@ li {
   margin-bottom: 0.25rem;
 }
 ul {
-  padding-left: 2em;
+  padding-left: 1em;
   line-height: 1.5em;
   margin-top: 0.25rem;
 

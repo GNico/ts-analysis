@@ -26,7 +26,7 @@ export default {
   },
   data () {
     return {
-      updateArgs: [true, true, {duration: 1000}],
+      updateArgs: [true, true, false],
     }
   },
   computed: {
