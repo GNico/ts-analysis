@@ -1,18 +1,12 @@
 class SeriesAnalysis:
 
-  def __init__(self):
-    self.result = {}
+  def __init__(self, anomalies):
+    self.anomalies = anomalies
 
   def output_format(self):
     return {   
       "name": "test",
-      "anomalies": [
-        {
-          "from": 1535529600000,
-          "to": 1540936800000,
-          "score": 0.5
-        }
-      ],
+      "anomalies": list(map(lambda a: a.output_format(), self.anomalies)),
       "trend": [],
       "baseline": []
     }
