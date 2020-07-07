@@ -5,6 +5,10 @@
 @import '~buefy/src/scss/buefy';
 
 
+.modal-card-body {
+  background-color: $grey-dark;
+}
+
 .transparent-button {
   background-color: transparent;
   background-repeat:no-repeat;

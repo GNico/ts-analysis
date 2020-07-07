@@ -2,7 +2,7 @@
 
 <ModalCard 
   :isActive="isActive" 
-  title="Add series"
+  :title="isEdit ? 'Edit Series' : 'Add Series'"
   minheight="50%"
   @close="close"
   @accept="isEdit ? updateSeries() : addSeries()">
@@ -43,18 +43,21 @@
         </div>
       </div>
 
-      <div class="field is-horizontal">
+
+      <div class="field is-horizontal" v-if="!isEdit">
         <div class="field-label is-small has-text-left">
-          <label class="label">Color</label>
+          <label class="label">Panel</label>
         </div>
         <div class="field-body">
-          <div class="field is-narrow shortest-field">
-            <div class="control">
-              <SelectColor :value="selectedColor" @input="changeColor"/>
-            </div>
+          <div class="field is-narrow short-field">
+            <b-select size="is-small" v-model="seriesOptions.yAxis">
+              <option value="-1" default>New panel</option>
+              <option v-for="index in numPanels" :key="index" :value="index-1">{{index}}</option>
+            </b-select>
           </div>
         </div>
       </div>
+
 
     </div>
 
@@ -78,6 +81,7 @@
         </div>
       </b-field>
 
+  
       <b-field class="field is-horizontal">
         <div class="field-label is-small has-text-left">
           <label class="label">Interval</label>
@@ -103,19 +107,19 @@
         </div>
       </b-field>
 
-
-      <div class="field is-horizontal" v-if="!isEdit">
+      <div class="field is-horizontal">
         <div class="field-label is-small has-text-left">
-          <label class="label">Panel</label>
+          <label class="label">Color</label>
         </div>
         <div class="field-body">
-          <div class="field is-narrow shorter-field">
+          <div class="field is-narrow shortest-field">
             <div class="control">
-              <input class="input is-small" type="text" v-model="seriesOptions.yAxis">
+              <SelectColor :value="selectedColor" @input="changeColor"/>
             </div>
           </div>
         </div>
       </div>
+
 
     </div>
 
@@ -174,7 +178,7 @@ export default {
         tags: [],
         color: '',
         type: 'line',
-        yAxis: 0,        
+        yAxis: -1,        
       },
     }
   },
@@ -187,6 +191,9 @@ export default {
     },
     selectedColor() {
       return this.seriesOptions.color ? this.seriesOptions.color : this.nextColor
+    },
+    numPanels() {
+      return this.$store.getters['visualize/numPanels']
     },
     isEdit() {
       return this.id ? true : false

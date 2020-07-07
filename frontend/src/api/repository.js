@@ -18,8 +18,8 @@ const transformArrayParams = (params) => {
   let options = ''
   keys.forEach((key) => {
     const isParamTypeObject = typeof params[key] === 'object';
-    const isParamTypeArray = isParamTypeObject && (params[key].length >= 0)
-    if (!isParamTypeObject) {
+    const isParamTypeArray = isParamTypeObject && (params[key].length >= 0)   
+    if (!isParamTypeObject ) {
       options += `${key}=${params[key]}&`
     }
     if (isParamTypeObject && isParamTypeArray) {      

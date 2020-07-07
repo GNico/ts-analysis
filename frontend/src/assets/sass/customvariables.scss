@@ -6,21 +6,21 @@ $grey-dark:    #073642;
 $grey-darker:  #002B36;
 $black-bis: rgb(18, 18, 18);
 
-$orange       : #cb4b16;
-$yellow       : #b58900;
-$green        : #859900;
-$cyan         : #2aa198;
-$blue         : #268bd2;
-$purple       : #6c71c4;
-$red          : #d33682;
+$orange: 		#cb4b16;
+$yellow: 		#b58900;
+$green: 		#859900;
+$cyan:			#2aa198;
+$blue: 			#268bd2;
+$purple: 		#6c71c4;
+$red:			#d33682;
 
 $primary: $cyan !default;
-$warning      : $orange;
+$warning: $orange;
 $info: $blue;
 $yellow-invert: #fff;
 $light: $grey-lighter;
 
-$dark: darken($grey-darker, 1);
+$dark: darken($grey-dark, 1.5);
 
 
 $input-placeholder-color: $grey-alt;
@@ -33,13 +33,6 @@ $datepicker-item-hover-color: $grey-light;
 $datepicker-item-hover-background-color:	$grey-darker;
 
 
-$card-shadow: none;
-$card-background-color: $grey-darker;
-$card-header-box-shadow: none;
-$card-header-background-color: rgba($black-bis, 0.2);
-$card-footer-background-color: rgba($black-bis, 0.2);
-
-
-
 $modal-card-head-background-color: $dark;
 $modal-background-background-color: transparent;
+$modal-card-title-color: $grey-light;

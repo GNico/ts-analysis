@@ -6,7 +6,7 @@
     <VisualizeToolBar class="char-bar"/>
 
     <div class="chart-container columns is-gapless is-multiline">   
-      <div class="column is-1 char-sec" :style="{ 'background-color': backgroundColor }">
+     <!-- <div class="column is-1 char-sec" :style="{ 'background-color': backgroundColor }"> -->
         <div class="legends">
           <LegendSeriesTag 
             v-for="item in sortedSeries"
@@ -33,11 +33,15 @@
             </p>       
           </LegendSeriesTag>
         </div>
-      </div>
-      <div class="column is-offset-1 is-11 char-sec" >
+     <!-- </div> -->
+      <div class="column is-offset-1 is-12 char-sec" >
         <VisualizeChart 
           class="is-fullheight"
-          :backgroundColor="backgroundColor"
+          :backgroundColor="chartSettings.backgroundColor"
+          :lineWidth="chartSettings.lineWidth"
+          :marginLeft="chartSettings.marginLeft"
+          :marginTop="chartSettings.marginTop"
+          :marginBottom="chartSettings.marginBottom"
           :series="series"
           :isLoading="isFetchingData"
           :numAxes="numPanels"/>
@@ -97,6 +101,9 @@ export default {
     },
     isFetchingData() {
       return this.$store.state.visualize.loading > 0
+    },
+    chartSettings() {
+      return this.$store.state.visualize.settings
     }
   },
   methods: {

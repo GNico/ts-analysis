@@ -15,14 +15,30 @@ export default {
       type: Number,
       default: 1    
     },
+    isLoading: {
+      type: Boolean,
+      default: false
+    },
     backgroundColor: {
       type: String,
       default: ''
     },
-    isLoading: {
-      type: Boolean,
-      default: false
-    }
+    lineWidth: {
+      type: Number,
+      default: 2
+    },
+    marginLeft: {
+      type: Number,
+      default: 100
+    },
+    marginTop: {
+      type: Number,
+      default: 0
+    },
+    marginBottom: {
+      type: Number,
+      default: 0
+    },
   },
   data () {
     return {
@@ -40,6 +56,7 @@ export default {
       for (var i = 0; i < this.numAxes; i++) {
         axes.push({
           title: '',
+          gridLineWidth: 1, 
           offset: false,
           opposite: true,
           resize: (i<this.numAxes-1) ? {
@@ -74,9 +91,28 @@ export default {
           panning: true,
           panKey: 'shift',
           backgroundColor: this.backgroundColor,
+        //  plotBackgroundColor: '#FCFFC5',
           ignoreHiddenSeries: false,
-          marginRight: 50,          
-        },        
+          marginRight: 50,     
+          animation: false, 
+          showAxes: false,
+          spacingLeft: this.marginLeft,   
+          spacingTop: this.marginTop,
+          spacingBottom: this.marginBottom,
+        }, 
+        plotOptions: {
+          series: {
+            animation: false,
+            lineWidth: this.lineWidth,
+            states: {
+               hover: {
+                  lineWidth: this.lineWidth
+               },
+          
+            },
+
+          }
+        },       
         rangeSelector: {
           enabled: false
         },
@@ -102,6 +138,7 @@ export default {
         tooltip: {
           split: true,
           shared: false,
+          valueDecimals: 0,
           backgroundColor: '#001f27',
         },    
         legend: {
@@ -114,6 +151,7 @@ export default {
           width: 150,
         },     
         xAxis: {
+          gridLineWidth: 0, 
           crosshair: {
             color: 'gray',
             dashStyle: 'shortdot',            

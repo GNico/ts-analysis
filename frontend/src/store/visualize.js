@@ -13,8 +13,21 @@ const state = {
         end: null
     },
     loading: 0,
+    settings: {}
 }
 
+
+//returns a deep copy of the series object 
+function makeSeriesOptionsCopy(seriesOptions) {
+    let newSeriesOptions = { ...seriesOptions }
+    newSeriesOptions.tags = [ ...seriesOptions.tags ]
+    newSeriesOptions.contexts = [ ...seriesOptions.contexts ]
+    return newSeriesOptions
+}
+
+function compareArrays(array1, array2) {
+    return (array1.length === array2.length) && (array1.sort().every((value, index) => value === array2[index]))
+}
 
 const getters = {
     seriesAsList: state => {
@@ -24,7 +37,7 @@ const getters = {
         return state.seriesIds.map(id => state.series[id].name)
     }, 
     getSeriesById: state => id => {
-        return (id && state.series.hasOwnProperty(id)) ? state.series[id] : null
+        return (id && state.series.hasOwnProperty(id)) ? makeSeriesOptionsCopy(state.series[id]) : null
     },
     nextColor: state => {
         let index = state.seriesIds.length % colors.length 
@@ -35,15 +48,10 @@ const getters = {
     }
 }
 
-
 const mutations = {
     add_series(state, payload) {
         state.seriesIds.push(payload.id)
-        //make a deep copy of the series options object
-        let newseriesopts = { ...payload }        
-        newseriesopts.tags = [ ...payload.tags ]
-        newseriesopts.contexts = [ ...payload.contexts ]
-        let newseries = { [payload.id]: newseriesopts }
+        let newseries = { [payload.id]: payload }
         state.series = { ...state.series, ...newseries }
     },
     add_data(state, payload) {
@@ -58,8 +66,9 @@ const mutations = {
     update_series(state, seriesOptions) { 
         state.series[seriesOptions.id] = { ...state.series[seriesOptions.id], ...seriesOptions }
     },
-    set_range(state, payload) {
-        state.range = payload
+    set_range(state, {start, end}) {
+        state.range.start = start
+        state.range.end = end
     },
     set_loading(state, isLoading) {
         if (isLoading) 
@@ -134,22 +143,19 @@ const mutations = {
                 }
             }    
         }
+    },
+    set_settings(state, newSettings) {
+        state.settings = { ...newSettings }
     }
-
 }
-
-
-function compareArrays(array1, array2) {
-    return (array1.length === array2.length) && (array1.sort().every((value, index) => value === array2[index]))
-}
-
 
 const actions = {
     addSeries({commit, dispatch}, seriesOptions) {
+        let newSeriesOptions = makeSeriesOptionsCopy(seriesOptions)
         const newId = nanoid()      
-        seriesOptions.id = newId
-        commit("add_series", seriesOptions)
-        commit("add_series_to_panel", seriesOptions)
+        newSeriesOptions.id = newId
+        commit("add_series", newSeriesOptions)
+        commit("add_series_to_panel", newSeriesOptions)
         dispatch("fetchData", newId)
     },
     updateSeries({commit, state, dispatch}, {id, seriesOptions} ) {
@@ -158,11 +164,6 @@ const actions = {
                                 (state.series[id].client != seriesOptions.client) ||
                                 !compareArrays(state.series[id].tags, seriesOptions.tags) ||
                                 !compareArrays(state.series[id].contexts, seriesOptions.contexts) 
-
-        console.log(!compareArrays(state.series[id].tags, seriesOptions.tags) )
-        console.log(seriesOptions.tags)
-        console.log(state.series[id].tags)
-        console.log(shouldFetchData)
         commit("update_series", seriesOptions)
         if (shouldFetchData)
             dispatch("fetchData", id)
@@ -174,8 +175,8 @@ const actions = {
                     name: seriesOptions.client,
                     tags: seriesOptions.tags,
                     contexts: seriesOptions.contexts,
-                    start: state.range.start,
-                    end: state.range.end,
+                    start: state.range.start ? state.range.start.toISOString() : null ,
+                    end: state.range.end ? state.range.end.toISOString() : null,
                     interval: seriesOptions.interval})
                 .then(response => {       
                     commit('add_data', {id: id, data: response.data}) 
@@ -190,8 +191,9 @@ const actions = {
         commit("delete_series_from_panel", id)
         commit("delete_series", id)
     },
-    updateRange({commit}, range) {
+    updateRange({commit, state, dispatch}, range) {
         commit("set_range", range)
+        state.seriesIds.forEach(id =>  dispatch("fetchData", id))
     },
     moveSeriesDown({commit, state}, id) {
         const currentPanel = state.series[id].yAxis
@@ -203,12 +205,12 @@ const actions = {
     },
     moveSeriesUp({commit, state}, id) {
         const currentPanel = state.series[id].yAxis
-        //check for extreme cases where nothing should happen
-        if ( !((state.seriesIds.length <= 1) || currentPanel == 0) )
+        if (!((state.seriesIds.length <= 1) || currentPanel == 0))
             commit("move_series", {id: id, offset: -1})
-    
-
     },
+    changeSettings({commit}, newSettings) {
+        commit("set_settings", newSettings)
+    }
 
 }
 

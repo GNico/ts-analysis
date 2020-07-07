@@ -4,37 +4,81 @@
   :isActive="isActive" 
   title="Chart settings"
   @close="close"
-  @accept="">
+  @accept="updateSettings">
 
+  <div class="columns is-multiline is-marginless is-gapless is-paddingless">
 
-    <b-field label="Interval">
-      <b-select size="is-small" :value="seriesOptions.interval" @change="changeSeriesOptions({interval: $event.target.value}); updateData()">
-        <option value="30m">30 minutes</option>
-        <option value="1H">1 hour</option>
-        <option value="2H">2 hour</option>
-        <option value="6H">6 hours</option>
-        <option value="12H">12 hours</option>
-        <option value="1d">1 day</option>
-      </b-select>
-    </b-field>
+    <div class="column is-full"> 
+      <div class="field is-horizontal">
+        <div class="field-label is-small has-text-left">
+          <label class="label">Background</label>
+        </div>
+        <div class="field-body">
+          <div class="field is-narrow shorter-field">
+            <div class="control">
+              <SelectColor v-model="chartSettings.backgroundColor"/>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <b-field label="Chart type">
-      <b-select size="is-small" :value="seriesOptions.chartType" @change="changeSeriesOptions({chartType: $event.target.value})">
-        <option>line</option>
-        <option>areaspline</option>
-        <option>spline</option>
-        <option>scatter</option>
-        <option>column</option>
-        <option>area</option>
-      </b-select>
-    </b-field>
+      
+      <div class="field is-horizontal">
+        <div class="field-label is-small has-text-left">
+          <label class="label">Line width</label>
+        </div>
+        <div class="field-body">
+          <div class="field is-narrow shorter-field">
+            <div class="control">
+              <input class="input is-small" type="number" min="1" v-model.number="chartSettings.lineWidth">
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <b-field label="Series color" class=''>
-        <label class="input is-small color-box" :style="{ backgroundColor: seriesOptions.color}" >
-          <input class="input is-small color-input" type="color" :value="seriesOptions.color" @change="changeSeriesOptions({color: $event.target.value })"> 
-        </label>
-    </b-field>
+      <div class="field is-horizontal">
+        <div class="field-label is-small has-text-left">
+          <label class="label">Margin left</label>
+        </div>
+        <div class="field-body">
+          <div class="field is-narrow shorter-field">
+            <div class="control">
+              <input class="input is-small" type="number" min="0" v-model.number="chartSettings.marginLeft">
+            </div>
+          </div>
+        </div>
+      </div>
 
+       <div class="field is-horizontal">
+        <div class="field-label is-small has-text-left">
+          <label class="label">Margin top</label>
+        </div>
+        <div class="field-body">
+          <div class="field is-narrow shorter-field">
+            <div class="control">
+              <input class="input is-small" type="number" min="0" v-model.number="chartSettings.marginTop">
+            </div>
+          </div>
+        </div>
+      </div>
+
+       <div class="field is-horizontal">
+        <div class="field-label is-small has-text-left">
+          <label class="label">Margin bottom</label>
+        </div>
+        <div class="field-body">
+          <div class="field is-narrow shorter-field">
+            <div class="control">
+              <input class="input is-small" type="number" min="0" v-model.number="chartSettings.marginBottom">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  
+  </div>
 
 </ModalCard>
 </template>
@@ -42,6 +86,7 @@
 
 
 <script>
+import { ChartSettings } from '../config/settings.js';
 import ModalCard from './ModalCard';
 import SelectColor from './SelectColor';  
 
@@ -55,34 +100,41 @@ export default {
   },
   data() {
     return {
-      scoreValue: 0,
+      chartSettings: {
+        backgroundColor: ChartSettings.BACKGROUND_COLOR,
+        marginLeft: ChartSettings.MARGIN_LEFT,
+        marginTop: ChartSettings.MARGIN_TOP,
+        marginBottom: ChartSettings.MARGIN_BOTTOM,
+        lineWidth: ChartSettings.LINE_WIDTH,
+      }
     }
   },
   computed: {
-    seriesName() {
-      return this.$store.state.analysis.activeSeries
-    },
-    seriesOptions() {
-      return this.$store.getters['analysis/getSeriesOptions'](this.seriesName)
-    },    
+    savedSettings() {
+      return this.$store.state.visualize.settings
+    }
   },
   methods: {
     close() {
       this.$emit('close')
     },
-    changeSeriesOptions(options) {
-      this.$store.dispatch('analysis/changeSeriesOptions', { name: this.seriesName, options: options})
-    },
-    updateData() {
-      this.$store.dispatch('analysis/fetchSeriesData', this.seriesName)
+    updateSettings(options) {
+      this.$store.dispatch('visualize/changeSettings', this.chartSettings)
+      this.close()
     },
   },
   watch: {
-    'seriesOptions.scoreThreshold': {
-      handler: function (newval) {
-        this.scoreValue = newval
-      },
-      immediate: true
+    savedSettings: {
+      immediate: true,
+      handler: function (newSettings) {
+        if (newSettings) {
+          for (const key of Object.keys(newSettings)) {
+            if (this.chartSettings.hasOwnProperty(key)) { 
+                this.chartSettings[key] = newSettings[key]
+            }
+          }
+        }
+      }
     }
   }
 }

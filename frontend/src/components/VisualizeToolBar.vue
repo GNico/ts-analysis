@@ -31,7 +31,7 @@
             :first-day-of-week="1"
             placeholder="Click to select..."
             size="is-small"
-            @input="">
+            v-model="selectedRange.start">
 
             <button class="button is-primary is-small"
                 @click="selectedRange.start = new Date()">
@@ -53,7 +53,7 @@
             :first-day-of-week="1"
             placeholder="Click to select..."
             size="is-small"
-            @input="">
+            v-model="selectedRange.end">
 
             <button class="button is-primary is-small"
                 @click="selectedRange.end = new Date()">
@@ -104,6 +104,10 @@ export default {
   components: { VisualizeCardSeries, VisualizeCardIndicators, VisualizeCardSettings, ModalCard},
   data () {
     return {
+      selectedRange: {
+        start: null,
+        end: null
+      },
       options: [
         {
           name: 'Add series',
@@ -126,9 +130,23 @@ export default {
       ],
     }
   },
+  computed: {
+    range() {
+       return this.$store.state.visualize.range
+    }
+  },
   methods: {
     update() {
-
+      this.$store.dispatch('visualize/updateRange', this.selectedRange)
+    }
+  },
+  watch: {
+    range: {
+      immediate: true,
+      handler: function (newVal) {
+        this.selectedRange.start = newVal.start
+        this.selectedRange.end = newVal.end
+      }  
     }
   }
 }
