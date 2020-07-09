@@ -1,11 +1,11 @@
-import pandas as pd
 from .salib.model import series_analyzer
+from .salib.model import series
 
 '''
 Cada analisis devuelve el siguiente formato, donde cada key es opcional
 
 analysis result format =
-{   
+{
     "name": "description"
     "anomalies": [
         {"start": "timestamp",
@@ -18,22 +18,16 @@ analysis result format =
 }
 '''
 
-def SeriesArrayToPandasSeries(series):
-    dates, count = zip(*series)
-    dates = pd.to_datetime(dates,unit='ms')
-    return pd.Series(count, index=dates)
 
-
-def testAlgorithms(series):
-    #print("JSON series:", series)
-    pdseries = SeriesArrayToPandasSeries(series)
-    analysis = []
+def testAlgorithms(arr_series):
+    # print("JSON series:", series)
+    target_series = series.Series.fromArray(arr_series)
+    analyses = []
     analyzer = series_analyzer.SeriesAnalyzer()
-    salib_result = analyzer.analyze(pdseries)
-    analysis.append(salib_result.output_format())
-    analysis_results = {
-        "series": series,
-        "analysis": analysis
+    analyzer_result = analyzer.analyze(target_series)
+    analyses.append(analyzer_result.output_format())
+    result = {
+        "series": arr_series,
+        "analyses": analyses
     }
-    return analysis_results
-
+    return result
