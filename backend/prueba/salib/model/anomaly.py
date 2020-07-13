@@ -1,6 +1,8 @@
+from functools import total_ordering
 import pandas as pd
 
 
+@total_ordering
 class Anomaly:
 
     def __init__(self, start, end, score):
@@ -29,3 +31,6 @@ class Anomaly:
             self.start == other.start and \
             self.end == other.end and \
             self.score == other.score
+
+    def __lt__(self, other):
+        return ((self.start, self.end) < (other.start, other.end))
