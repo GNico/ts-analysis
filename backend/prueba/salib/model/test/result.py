@@ -1,5 +1,5 @@
 from . import metrics
-from . import classifications_builder
+from . import metric_classifications_builder
 
 
 class Result:
@@ -15,7 +15,7 @@ class Result:
     def build_anomaly_metrics(self):
         expected = self.test_case.expected_analysis.anomalies
         actual = self.actual_analysis.anomalies
-        tp, fp, tn, fn = classifications_builder.ClassificationsBuilder.build(
+        tp, fp, tn, fn = metric_classifications_builder.build(
             self.test_case.series,
             expected,
             actual)
