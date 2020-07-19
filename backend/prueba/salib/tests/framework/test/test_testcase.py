@@ -5,7 +5,7 @@ from model import anomaly
 from model import analysis
 from model import series
 from tests.framework import mock_analyzer
-import pandas as pd
+from model.test import metric_classifications_builder as cb
 
 
 class TestTestCase(unittest.TestCase):
@@ -43,10 +43,10 @@ class TestTestCase(unittest.TestCase):
         result = test.run()
         anomaly_metrics = result.anomaly_metrics
 
-        expected_tp = expected_from_epoch([[2, 2], [5, 5]])
-        expected_fp = expected_from_epoch([[4, 4]])
-        expected_tn = expected_from_epoch([[3, 3]])
-        expected_fn = expected_from_epoch([[6, 6]])
+        expected_tp = cb.interval_from_epoch([[2, 2], [5, 5]])
+        expected_fp = cb.interval_from_epoch([[4, 4]])
+        expected_tn = cb.interval_from_epoch([[3, 3]])
+        expected_fn = cb.interval_from_epoch([[6, 6]])
 
         self.assertEqual(expected_tp, anomaly_metrics.tp)
         self.assertEqual(expected_fp, anomaly_metrics.fp)
@@ -61,10 +61,3 @@ class TestTestCase(unittest.TestCase):
         self.assertEqual(1, anomaly_metrics.precision())
         self.assertEqual(1, anomaly_metrics.recall())
         self.assertEqual(1, anomaly_metrics.f1())
-
-
-def expected_from_epoch(expected):
-    return list(map(lambda e: [
-        pd.Timestamp(e[0], unit='s'),
-        pd.Timestamp(e[1], unit='s')
-    ], expected))

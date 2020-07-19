@@ -34,3 +34,6 @@ class Anomaly:
 
     def __lt__(self, other):
         return ((self.start, self.end) < (other.start, other.end))
+
+    def __str__(self):
+        return str(self.output_format())
