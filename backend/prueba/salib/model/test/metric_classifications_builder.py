@@ -1,24 +1,34 @@
 import pandas as pd
-from enum import Enum
+from enum import IntEnum
+from functools import total_ordering
 
 
-class Type(Enum):
-    TP = 0,
-    FP = 1,
-    TN = 2,
-    FN = 3
+class AnomalyType(IntEnum):
+    ACTUAL_START = 0,
+    ACTUAL_END = 1,
+    EXPECTED_START = 2,
+    EXPECTED_END = 3
 
 
-class AnomalyType(Enum):
-    ACTUAL = 0,
-    EXPECTED = 1
-
-
+@total_ordering
 class TaggedAnomaly:
 
-    def __init__(self, anomaly_type, anomaly):
-        self.type = anomaly_type
+    def __init__(self, anomaly, anomaly_type, timestamp):
         self.anomaly = anomaly
+        self.type = anomaly_type
+        self.timestamp = timestamp
+
+    def __eq__(self, other):
+        return ((self.timestamp, self.type) == (other.timestamp, other.type))
+
+    def __ne__(self, other):
+        return not (self == other)
+
+    def __lt__(self, other):
+        return ((self.timestamp, self.type) < (other.timestamp, other.type))
+
+    def __repr__(self):
+        return str(self.type) + "[" + str(self.timestamp) + "]"
 
 
 def build(series, expected_anomalies, actual_anomalies):
@@ -40,27 +50,53 @@ def build(series, expected_anomalies, actual_anomalies):
     current_expected = None
     current_actual = None
 
-    # TODO
     while anomalies_q:
-        peek_next = anomalies_q[0]
-        break
+        next_anomaly = anomalies_q.pop(0)
+        if next_anomaly.type == AnomalyType.ACTUAL_START:
+            if current_actual is None and current_expected is None:
+                tn.append([last_pos, next_anomaly.timestamp])
+                last_pos = next_anomaly.timestamp
+                current_actual = next_anomaly
+
+        elif next_anomaly.type == AnomalyType.ACTUAL_END:
+            if current_actual is not None and current_expected is not None:
+                tp.append([last_pos, next_anomaly.timestamp])
+                last_pos = next_anomaly.timestamp
+                current_actual = None
+
+        elif next_anomaly.type == AnomalyType.EXPECTED_START:
+            if current_actual is not None and current_expected is None:
+                fn.append([last_pos, next_anomaly.timestamp])
+                last_pos = next_anomaly.timestamp
+                current_expected = next_anomaly
+
+        elif next_anomaly.type == AnomalyType.EXPECTED_END:
+            if current_actual is None and current_expected is not None:
+                fp.append([last_pos, next_anomaly.timestamp])
+                last_pos = next_anomaly.timestamp
+                current_expected = None
+
+    # Edge cases on end
 
     return (tp, fp, tn, fn)
 
 
 def sorted_tagged_anomalies(expected_anomalies, actual_anomalies):
 
-    tagged_expected_anomalies = map(
-        lambda e: TaggedAnomaly(AnomalyType.EXPECTED, e),
-        expected_anomalies)
+    tagged_expected_anomalies = sum(map(
+        lambda e:
+            [TaggedAnomaly(e, AnomalyType.EXPECTED_START, e.start),
+             TaggedAnomaly(e, AnomalyType.EXPECTED_END, e.end)],
+        expected_anomalies), [])
 
-    tagged_actual_anomalies = map(
-        lambda e: TaggedAnomaly(AnomalyType.ACTUAL, e),
-        actual_anomalies)
+    tagged_actual_anomalies = sum(map(
+        lambda e:
+            [TaggedAnomaly(e, AnomalyType.ACTUAL_START, e.start),
+             TaggedAnomaly(e, AnomalyType.ACTUAL_END, e.end)],
+        actual_anomalies), [])
 
     return sorted(list(tagged_actual_anomalies)
-                  + list(tagged_expected_anomalies),
-                  key=lambda tagged_anomaly: tagged_anomaly.anomaly)
+                  + list(tagged_expected_anomalies))
 
 
 def assert_no_overlap(anomalies):

@@ -9,6 +9,9 @@ class Series:
         self.end = pdseries.index[-1]
         self.interval = interval
 
+    def span(self):
+        return self.end - self.start
+
     def from_array(arr, interval, unit='ms'):
         dates, count = zip(*arr)
         dates = pd.to_datetime(dates, unit=unit)
