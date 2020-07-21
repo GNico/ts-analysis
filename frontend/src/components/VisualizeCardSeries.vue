@@ -174,8 +174,8 @@ export default {
         name: '',
         interval: '1H',
         client: '',
-        contexts: [],
-        tags: [],
+        contexts: [ "root" ],
+        tags: [ "root" ],
         color: '',
         type: 'line',
         yAxis: -1,        
@@ -213,18 +213,53 @@ export default {
     },
     addSeries() {
       this.seriesOptions.color = this.selectedColor
+      this.removeRootNode()
       this.$store.dispatch('visualize/addSeries', this.seriesOptions)
       this.resetFields()
       this.close()
     },
     updateSeries() {
+      this.removeRootNode()
       this.$store.dispatch('visualize/updateSeries', {id: this.id, seriesOptions: this.seriesOptions})
       this.close()
-
     },
     resetFields() {
       this.seriesOptions.name = ''
       this.seriesOptions.color = ''
+      if (this.isEdit) {  //return to original from state
+        console.log("isedit")
+        this.copySeriesOptions(this.id)
+      }
+    },
+    checkAllSelected(selection) {
+      return (selection.length == 1 && selection[0] == "root") ? true : false
+    },
+    removeRootNode() {
+      if (this.checkAllSelected(this.seriesOptions.tags)) {
+        this.seriesOptions.tags = []
+      }
+      if (this.checkAllSelected(this.seriesOptions.contexts)) {
+        this.seriesOptions.contexts = []
+      }
+    },
+    addRootNode() {
+      if (!(Array.isArray(this.seriesOptions.tags) && this.seriesOptions.tags.length)) {
+        this.seriesOptions.tags = [ "root" ]
+        console.log("entra")
+        console.log(this.seriesOptions.tags )
+      }
+      if (!(Array.isArray(this.seriesOptions.contexts) && this.seriesOptions.contexts.length)) {
+        this.seriesOptions.contexts = [ "root" ]
+      }
+    },
+    copySeriesOptions(seriesId) {
+      const requested = this.$store.getters['visualize/getSeriesById'](seriesId) 
+        for (const key of Object.keys(requested)) {
+            if (this.seriesOptions.hasOwnProperty(key)) { 
+                this.seriesOptions[key] = requested[key]
+            }
+        }
+        this.addRootNode()
     }
   },
   watch: {
@@ -232,12 +267,7 @@ export default {
       immediate: true,
       handler(newVal) {
         if (newVal) {
-          const requested = this.$store.getters['visualize/getSeriesById'](newVal) 
-          for (const key of Object.keys(requested)) {
-              if (this.seriesOptions.hasOwnProperty(key)) { 
-                  this.seriesOptions[key] = requested[key]
-              }
-          }
+          this.copySeriesOptions(newVal)
         }
       }
     } 
