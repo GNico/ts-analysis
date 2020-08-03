@@ -110,8 +110,12 @@ def assert_no_overlap(anomalies):
         last_end = anomaly.end
 
 
-def interval_from_epoch(expected):
-    return list(map(lambda e: [
-        pd.Timestamp(e[0], unit='s'),
-        pd.Timestamp(e[1], unit='s')
-    ], expected))
+def interval_from_epochs(expected):
+    return [
+        pd.Timestamp(expected[0], unit='s'),
+        pd.Timestamp(expected[1], unit='s')
+    ]
+
+
+def intervals_from_epochs(expected):
+    return list(map(lambda e: interval_from_epochs(e), expected))

@@ -1,5 +1,4 @@
 import unittest
-import pandas as pd
 
 from model.test import testcase
 from model import anomaly
@@ -42,10 +41,10 @@ class TestTestCase(unittest.TestCase):
         result = test.run()
         anomaly_metrics = result.anomaly_metrics
 
-        expected_tp = cb.interval_from_epoch([[2, 2], [5, 5]])
-        expected_fp = cb.interval_from_epoch([[4, 4]])
-        expected_tn = cb.interval_from_epoch([[0, 0], [3, 3]])
-        expected_fn = cb.interval_from_epoch([[6, 6]])
+        expected_tp = cb.intervals_from_epochs([[2, 2], [5, 5]])
+        expected_fp = cb.intervals_from_epochs([[4, 4]])
+        expected_tn = cb.intervals_from_epochs([[0, 0], [3, 3]])
+        expected_fn = cb.intervals_from_epochs([[6, 6]])
 
         self.assertEqual(expected_tp, anomaly_metrics.tp)
         self.assertEqual(expected_fp, anomaly_metrics.fp)
@@ -80,6 +79,21 @@ class TestTestCase(unittest.TestCase):
         self.assertEqual(test_series.pdseries.index[4], anomalies[1].start)
         self.assertEqual(test_series.pdseries.index[5], anomalies[1].end)
 
+    def test_anomalies_from_mock_edge_case(self):
+        test_series = series.Series.from_array([
+            [0, 1],
+            [1, 0],
+            [2, 1]
+        ], 1, 's')
+
+        anomalies = anomalies_from_mock_series(test_series)
+
+        self.assertEqual(2, len(anomalies))
+        self.assertEqual(test_series.pdseries.index[0], anomalies[0].start)
+        self.assertEqual(test_series.pdseries.index[0], anomalies[0].end)
+        self.assertEqual(test_series.pdseries.index[2], anomalies[1].start)
+        self.assertEqual(test_series.pdseries.index[2], anomalies[1].end)
+
 
 def anomalies_from_mock_series(series):
     anomalies = []
@@ -90,12 +104,14 @@ def anomalies_from_mock_series(series):
         else:
             start = None
 
+        last = series.start
         for t, val in series.pdseries.items():
             if val == 1 and start is None:
                 start = t
             if val == 0 and start is not None:
-                anomalies.append(anomaly.Anomaly(start, t, 1.0))
+                anomalies.append(anomaly.Anomaly(start, last, 1.0))
                 start = None
+            last = t
 
         if start is not None:
             anomalies.append(anomaly.Anomaly(start, series.end, 1.0))
