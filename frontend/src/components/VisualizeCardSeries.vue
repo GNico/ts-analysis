@@ -135,10 +135,10 @@
       />
     </div>
     <div class="column is-6">
-      <TreeView 
+      <TreeSelect 
         class="filters-box"
-        :items="contextsTree" 
-        :displayItems="displayContexts" 
+        rootName="All contexts"
+        :itemsTree="allContexts"
         v-model="seriesOptions.contexts" 
       />
     </div>
@@ -152,12 +152,14 @@ import ModalCard from './ModalCard';
 import SelectColor from './SelectColor';  
 import SearchSelect from './SearchSelect.vue';
 import TreeView from './TreeView.vue';
+import TreeSelect from './TreeSelect.vue';
+
 import { tagsAndContexts } from '../mixins/TagsAndContextsOptions.js';
 
 export default {
   name: "VisualizeCardSeries",
   mixins: [tagsAndContexts],
-  components: { ModalCard, SearchSelect, TreeView, SelectColor },
+  components: { ModalCard, SearchSelect, TreeView, TreeSelect, SelectColor },
   props: {
     id: {
       type: String,
@@ -174,8 +176,8 @@ export default {
         name: '',
         interval: '1H',
         client: '',
-        contexts: [ "root" ],
-        tags: [ "root" ],
+        contexts: [],
+        tags: [],
         color: '',
         type: 'line',
         yAxis: -1,        
@@ -213,13 +215,11 @@ export default {
     },
     addSeries() {
       this.seriesOptions.color = this.selectedColor
-      this.removeRootNode()
       this.$store.dispatch('visualize/addSeries', this.seriesOptions)
       this.resetFields()
       this.close()
     },
     updateSeries() {
-      this.removeRootNode()
       this.$store.dispatch('visualize/updateSeries', {id: this.id, seriesOptions: this.seriesOptions})
       this.close()
     },
@@ -227,29 +227,7 @@ export default {
       this.seriesOptions.name = ''
       this.seriesOptions.color = ''
       if (this.isEdit) {  //return to original from state
-        console.log("isedit")
         this.copySeriesOptions(this.id)
-      }
-    },
-    checkAllSelected(selection) {
-      return (selection.length == 1 && selection[0] == "root") ? true : false
-    },
-    removeRootNode() {
-      if (this.checkAllSelected(this.seriesOptions.tags)) {
-        this.seriesOptions.tags = []
-      }
-      if (this.checkAllSelected(this.seriesOptions.contexts)) {
-        this.seriesOptions.contexts = []
-      }
-    },
-    addRootNode() {
-      if (!(Array.isArray(this.seriesOptions.tags) && this.seriesOptions.tags.length)) {
-        this.seriesOptions.tags = [ "root" ]
-        console.log("entra")
-        console.log(this.seriesOptions.tags )
-      }
-      if (!(Array.isArray(this.seriesOptions.contexts) && this.seriesOptions.contexts.length)) {
-        this.seriesOptions.contexts = [ "root" ]
       }
     },
     copySeriesOptions(seriesId) {
@@ -259,7 +237,6 @@ export default {
                 this.seriesOptions[key] = requested[key]
             }
         }
-        this.addRootNode()
     }
   },
   watch: {

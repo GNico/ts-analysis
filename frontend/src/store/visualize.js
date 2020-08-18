@@ -173,8 +173,8 @@ const actions = {
         commit('set_loading', true)
         return  api.getSeriesData({ 
                     name: seriesOptions.client,
-                    tags: seriesOptions.tags,
-                    contexts: seriesOptions.contexts,
+                    tags: (seriesOptions.tags && seriesOptions.tags.length == 1 && seriesOptions.tags[0] == "root") ? [] : seriesOptions.tags,
+                    contexts: (seriesOptions.contexts && seriesOptions.contexts.length == 1 && seriesOptions.contexts[0] == "root") ? [] : seriesOptions.contexts,
                     start: state.range.start ? state.range.start.toISOString() : null ,
                     end: state.range.end ? state.range.end.toISOString() : null,
                     interval: seriesOptions.interval})
