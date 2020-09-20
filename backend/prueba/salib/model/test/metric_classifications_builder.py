@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def build(series, expected_anomalies, actual_anomalies):
 
     tp = []
@@ -15,10 +16,6 @@ def build(series, expected_anomalies, actual_anomalies):
 
     assert_no_overlap(expected_anomalies)
     assert_no_overlap(actual_anomalies)
-
-    last_pos = start
-    last_expected = None
-    last_actual = None
 
     # TODO: optimize with bin-search?
     for i in range(start.second, end.second + 1):
@@ -42,6 +39,7 @@ def timestamp_included(ts, anomalies):
         if ts >= anom.start and ts <= anom.end:
             return True
     return False
+
 
 def assert_no_overlap(sorted_anomalies):
     if len(sorted_anomalies) == 0:

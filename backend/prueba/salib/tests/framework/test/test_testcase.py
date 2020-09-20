@@ -99,7 +99,7 @@ class TestTestCase(unittest.TestCase):
 def anomalies_from_mock_series(series):
     anomalies = []
 
-    if series.span().seconds > 0:
+    if series.span() > 0:
         if series.pdseries[0] == 1:
             start = series.start
         else:

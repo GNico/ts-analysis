@@ -10,9 +10,9 @@ class Series:
         self.interval = interval
 
     def span(self):
-        return self.end - self.start
+        return len(self.pdseries.index)
 
-    def from_array(arr, interval, unit='ms'):
+    def from_array(arr, interval, unit='s'):
         dates, count = zip(*arr)
         dates = pd.to_datetime(dates, unit=unit)
         return Series(pd.Series(count, index=dates), interval)
@@ -20,3 +20,6 @@ class Series:
     def __str__(self):
         return 'Series [' + str(self.start) + ' to ' + str(self.end) + ']' \
                 ' (' + str(self.interval) + ')'
+
+    def as_list(self):
+        return list(self.pdseries.values)
