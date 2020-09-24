@@ -1,6 +1,7 @@
 <template>
 <div>
-  <ChartSeries class="chart-section" :seriesData="chartData" :isLoading="loading" :anomalies="chartAnomalies"/> 
+  <highcharts class="chart chart-section" :constructor-type="'stockChart'" :options="chartOptions" :updateArgs="updateArgs" ref="chart"></highcharts>
+
   
   <div class="chart-footer chart-section">
     <div class="chart-footer-section">
@@ -25,42 +26,61 @@
   </div>
 </div>
 
-
 </template>
 
 
 <script>
-import ChartSeries from './ChartSeries.vue';
 
-    
 export default {
-    components: { ChartSeries },
+     props: {   
+      seriesData: {
+        type: Array,
+        default: []
+      },
+      anomalies: {
+        type: Array,
+        default: []
+      },
+      baseline: {
+        type: Array,
+        default: []
+      },
+      loading: {
+        type: Boolean,
+        default: false
+      },
+    },
     data() {
       return {
+        updateArgs: [true, true, {duration: 1000}],
         scoreValue: 0,
         showBaseline: true,
       }
     },
     computed: {
-      seriesData() {
-        return this.$store.state.analysis.results.series
-      },
-      baseline() {
-        return this.showBaseline ? this.$store.state.analysis.results.baseline : []
-      },
-      anomalies() {
-        return this.$store.state.analysis.results.anomalies
-      },
-      loading() {
-        return this.$store.state.analysis.loading
-      },
       chartData() {
-      /*  if (!this.seriesData) {
-          return []
-        } else if (this.showBaseline && this.baseline) {
-          return [ this.seriesData, this.baseline ]
-        } else { */
-          return  this.seriesData 
+        return [ 
+            {
+              name: 'Value',
+              data: this.seriesData,
+              zIndex: 1,
+              color: 'lightblue',
+            },
+            {
+              name: 'Expected',
+              type: 'arearange',
+              data: this.chartBaseline,
+              zIndex: 0,
+              lineWidth: 0,
+              linkedTo: ':previous',
+              fillOpacity: 0.3,
+              color: 'lightblue',
+
+              marker: {
+                  enabled: false
+              }
+            }
+          ]
         
       },
       chartAnomalies() {
@@ -70,7 +90,7 @@ export default {
           anoms.push({id: item.id,
                      from: item.from,
                      to: item.to,
-                     color: 'blue',
+                     color: 'red',
                      events: {
                       click: function(e) {
                         vm.setActiveAnomaly(this.options.id)
@@ -79,13 +99,74 @@ export default {
                     })
         }
         return anoms
-      }
+      },
+      chartBaseline() {
+        return this.showBaseline ? this.$store.state.analysis.results.baseline : []
+      },
+      chartOptions() {
+        return {
+          chart: {
+            zoomType: 'x',
+            panning: true,
+            panKey: 'shift',
+            backgroundColor: "#073642",
+          },
+          credits: false,
+          loading: {
+            labelStyle: {
+                color: 'white',
+                fontSize: '1.5rem'
+            },
+            style: {
+                backgroundColor: 'black'
+            }
+          },
+          title: {
+            text: this.title
+          },
+          xAxis: {
+            type: 'datetime',
+            plotBands: this.chartAnomalies,
+          },
+          yAxis: {
+            title: '',
+          },
+          rangeSelector: {
+            enabled: false
+          },
+          scrollbar: {
+            enabled: false
+          },
+          navigator: {
+            enabled: false
+          },
+          legend: {
+            enabled: false,
+          },
+          tooltip: {
+            split: false,
+            shared: true,
+            valueDecimals: 0,
+            backgroundColor: '#001f27',
+          },    
+          series: this.chartData,
+        }
+      },
     },
     methods: {
       setActiveAnomaly(id) {
         this.$store.dispatch('analysis/setActiveAnomaly', id)
+      }
+    },
+    watch: {
+      loading() {
+          if (this.loading) {
+            this.$refs.chart.chart.showLoading()
+          } else {
+            this.$refs.chart.chart.hideLoading()
+          }
+      }
     }
-  },
 }
 </script>
 

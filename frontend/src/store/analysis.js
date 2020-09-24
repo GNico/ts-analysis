@@ -62,8 +62,6 @@ const mutations = {
     add_results(state, results) {
         state.results = { ...results }
 
-        state.results.anomalies = [ ...results.anomalies ]
-        state.results.series = [ ...results.series ]
         //add an id and color to each anomaly for UI purposes
         var anoms = []
         var idx = 0

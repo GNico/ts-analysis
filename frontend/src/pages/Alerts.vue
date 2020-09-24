@@ -15,7 +15,12 @@
     </div>
 
     <div class="column main-content">
-      <AnalysisChart/>
+      <AnalysisChart 
+        :seriesData="seriesData"
+        :baseline="baseline"
+        :anomalies="anomalies"
+        :loading="loading"
+        />
       <hr>        
     </div>
 
@@ -34,6 +39,18 @@ import AnomaliesList from '../components/AnomaliesList.vue';
 export default {
     components: { AnalysisChart, AnalysisSettings, AnomaliesList },
     computed: {
+      seriesData() {
+        return this.$store.state.analysis.results.series
+      },
+      baseline() {
+        return this.$store.state.analysis.results.baseline
+      },
+      anomalies() {
+        return this.$store.state.analysis.results.anomalies
+      },
+      loading() {
+        return this.$store.state.analysis.loading
+      },
     },
     methods: {
     },
