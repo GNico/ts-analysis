@@ -127,10 +127,10 @@
       <div class="label is-small filters-label">Filters</div>
     </div>
     <div class="column is-6">
-      <TreeView 
+      <TreeSelect 
         class="filters-box"
-        :items="tagsTree" 
-        :displayItems="displayTags" 
+        rootName="All tags"
+        :itemsTree="allTags"
         v-model="seriesOptions.tags" 
       />
     </div>
@@ -151,7 +151,6 @@
 import ModalCard from './ModalCard';
 import SelectColor from './SelectColor';  
 import SearchSelect from './SearchSelect.vue';
-import TreeView from './TreeView.vue';
 import TreeSelect from './TreeSelect.vue';
 
 import { tagsAndContexts } from '../mixins/TagsAndContextsOptions.js';
@@ -159,7 +158,7 @@ import { tagsAndContexts } from '../mixins/TagsAndContextsOptions.js';
 export default {
   name: "VisualizeCardSeries",
   mixins: [tagsAndContexts],
-  components: { ModalCard, SearchSelect, TreeView, TreeSelect, SelectColor },
+  components: { ModalCard, SearchSelect, TreeSelect, SelectColor },
   props: {
     id: {
       type: String,

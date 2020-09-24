@@ -1,5 +1,5 @@
 <template>
-  <highcharts class="chart" :options="chartOptions" :updateArgs="updateArgs" ref="chart" @anomclicked="showmsg"></highcharts>
+  <highcharts class="chart" :constructor-type="'stockChart'" :options="chartOptions" :updateArgs="updateArgs" ref="chart"></highcharts>
 </template>
 
 <script>
@@ -8,9 +8,8 @@
 export default {
   props: {
     seriesData: {
-        default: function () {
-          return []
-        }
+      type: Array,
+      default: []
     },
     title: {
         type: String,
@@ -18,9 +17,7 @@ export default {
     },
     anomalies: {
         type: Array,
-        default: function () {
-          return []
-        }
+        default: []
     },
     isLoading: false,
   },  
@@ -36,7 +33,7 @@ export default {
     chartOptions() {
       return {
         chart: {
-          zoomType: 'xy',
+          zoomType: 'x',
           panning: true,
           panKey: 'shift',
           backgroundColor: "#073642",
@@ -57,21 +54,30 @@ export default {
         xAxis: {
           type: 'datetime',
           plotBands: this.anomalies,
+          /*plotBands: [{"id": 0, "from": 1509667200000, "to": 1511568000000, "color": 'orange'}, {"id": 1, "from": 1514764800000, "to": 1514851200000 , "color": 'orange' }, {"id": 2, "from": 1519171200000, "to": 1525478400000 , "color": 'orange'}, {"id": 3, "from": 1530576000000 , "to": 1533168000000, "color": 'orange'}, {"id": 4, "from": 1539561600000 , "to": 1540339200000 , "color": 'orange'}], */
           // plotLines: this.lines
         },
         yAxis: {
           title: '',
         },
         rangeSelector: {
-          enabled: true
+          enabled: false
         },
         scrollbar: {
-          enabled: true
+          enabled: false
+        },
+        navigator: {
+          enabled: false
         },
         legend: {
-          enabled: true,
+          enabled: false,
         },
-        series: this.seriesData
+        series: [
+          {
+            data: this.seriesData
+
+          }
+        ],
       }
     },
   },

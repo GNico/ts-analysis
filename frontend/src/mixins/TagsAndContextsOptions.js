@@ -8,7 +8,7 @@ export const tagsAndContexts = {
     }
   },  
   computed: {
-    contextsTree() {
+ /*   contextsTree() {
       return { name: 'All contexts', id: "root", children: this.allContexts }
     },
     tagsTree() {
@@ -19,7 +19,7 @@ export const tagsAndContexts = {
     },
     displayTags() {
       return { name: this.tagsTree.name, id: this.tagsTree.id, children: [] }
-    },
+    }, */
   },
   methods: {
     updateContexts(name) {

@@ -2,7 +2,7 @@
 <div>
   <BarSeries :activeSeries="activeSeries" @change="setActiveSeries"/>
 
-  <section class='page-container'>
+  <section class='section'>
     <div class="columns is-fullheight">
 
       <div class="column is-2 side-menu is-hidden-mobile">        
@@ -52,10 +52,10 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 
-.page-container {
-  padding: 1.25rem;
+.section {
+  padding: 1rem;
 }
 
 .is-fullheight {

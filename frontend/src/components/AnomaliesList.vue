@@ -41,10 +41,10 @@
 export default {
   computed: {
     anomalies() {
-      return this.$store.getters['analysis/getDisplayAnomalies']
+      return this.$store.getters['analysis/getAnomalies']
     },
     activeAnomaly() {
-      return this.$store.state.analysis.activeAnomaly
+      return this.$store.state.analysis.activeAnomalyId
     },
     selected() {
       return this.$store.getters['analysis/getAnomalyById'](this.activeAnomaly)

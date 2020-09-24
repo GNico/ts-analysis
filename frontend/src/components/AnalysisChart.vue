@@ -1,59 +1,22 @@
 <template>
 <div>
-  <DateRangeSelect class="chart-section" :range="range" :activeButton="seriesOptions.activeRangeButton" @input="changeSeriesOptions($event); updateData()"/>
   <ChartSeries class="chart-section" :seriesData="chartData" :isLoading="loading" :anomalies="chartAnomalies"/> 
+  
   <div class="chart-footer chart-section">
-
     <div class="chart-footer-section">
       <div class="chart-footer__field">
         <label class="checkbox label">
-          <input type="checkbox" :checked="seriesOptions.showBaseline" :value="seriesOptions.showBaseline" @change="changeSeriesOptions({showBaseline: !seriesOptions.showBaseline})">
+          <input type="checkbox" :checked="showBaseline" v-model="showBaseline">
           Show baseline
         </label>
       </div>
       <div class="chart-footer__field">
-        <label class="label"> Score threshold</label>
+   <!--     <label class="label"> Score threshold</label>
         <input class="slider is-marginless" type="range" step="1" min="0" max="100" 
               v-model="scoreValue" 
               @change="changeSeriesOptions({scoreThreshold: $event.target.value})">
-        <label class="tag is-info label"> {{ scoreValue }}</label>  
+        <label class="tag is-info label"> {{ scoreValue }}</label>   -->
 
-      </div>
-    </div>
-
-    <div class="chart-footer-section">
-      <div class="chart-footer__field">
-        <label class="label"> Intervalo </label>
-        <div class="select is-small">
-          <select :value="seriesOptions.interval" @change="changeSeriesOptions({interval: $event.target.value}); updateData()">
-            <option value="30m">30 minutos</option>
-            <option value="1H">1 hora</option>
-            <option value="2H">2 horas</option>
-            <option value="6H">6 horas</option>
-            <option value="12H">12 horas</option>
-            <option value="1d">1 dia</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="chart-footer__field">
-        <label class="label"> Tipo de grafico </label>
-        <div class="select is-small">
-          <select :value="seriesOptions.chartType" @change="changeSeriesOptions({chartType: $event.target.value})">
-            <option>line</option>
-            <option>areaspline</option>
-            <option>spline</option>
-            <option>scatter</option>
-            <option>column</option>
-            <option>area</option>
-          </select>
-        </div>
-      </div>
-       <div class="chart-footer__field">
-        <label class="label"> Color </label>
-        <label class="input is-small" :style="{ backgroundColor: seriesOptions.color}" >
-          <input class="input is-small color-box" type="color" :value="seriesOptions.color" @change="changeSeriesOptions({color: $event.target.value })"> 
-        </label>
       </div>
     </div>
 
@@ -68,46 +31,37 @@
 
 <script>
 import ChartSeries from './ChartSeries.vue';
-import DateRangeSelect from '../components/DateRangeSelect.vue';
 
     
 export default {
-    components: { DateRangeSelect, ChartSeries },
+    components: { ChartSeries },
     data() {
       return {
         scoreValue: 0,
+        showBaseline: true,
       }
     },
     computed: {
-      seriesName() {
-        return this.$store.state.analysis.activeSeries
-      },
-      seriesOptions() {
-        return this.$store.getters['analysis/getSeriesOptions'](this.seriesName)
-      },
       seriesData() {
-        return this.$store.getters['analysis/getDisplaySeriesData']
+        return this.$store.state.analysis.results.series
       },
       baseline() {
-        return this.$store.getters['analysis/getDisplayBaseline']
+        return this.showBaseline ? this.$store.state.analysis.results.baseline : []
       },
       anomalies() {
-        return this.$store.getters['analysis/getDisplayAnomalies']
-      },
-      range() {
-        return { start: this.seriesOptions.start, end: this.seriesOptions.end }
+        return this.$store.state.analysis.results.anomalies
       },
       loading() {
         return this.$store.state.analysis.loading
       },
       chartData() {
-        if (!this.seriesData) {
+      /*  if (!this.seriesData) {
           return []
-        } else if (this.seriesOptions.showBaseline && this.baseline) {
+        } else if (this.showBaseline && this.baseline) {
           return [ this.seriesData, this.baseline ]
-        } else {
-          return [ this.seriesData ]
-        }
+        } else { */
+          return  this.seriesData 
+        
       },
       chartAnomalies() {
         var vm = this
@@ -116,7 +70,7 @@ export default {
           anoms.push({id: item.id,
                      from: item.from,
                      to: item.to,
-                     color: item.color,
+                     color: 'blue',
                      events: {
                       click: function(e) {
                         vm.setActiveAnomaly(this.options.id)
@@ -128,24 +82,10 @@ export default {
       }
     },
     methods: {
-      changeSeriesOptions(options) {
-        this.$store.dispatch('analysis/changeSeriesOptions', { name: this.seriesName, options: options})
-      },
-      updateData() {
-        this.$store.dispatch('analysis/fetchSeriesData', this.seriesName)
-      },
       setActiveAnomaly(id) {
         this.$store.dispatch('analysis/setActiveAnomaly', id)
-      }
-    },
-    watch: {
-      'seriesOptions.scoreThreshold': {
-        handler: function (newval) {
-          this.scoreValue = newval
-        },
-        immediate: true
-      }
     }
+  },
 }
 </script>
 
