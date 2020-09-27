@@ -31,6 +31,15 @@
 
 <script>
 
+function getPlotBandOrLineById(id, axis) {
+  // loop through all plotBands/plotLines and check their id
+  for (var i = 0; i < axis.plotLinesAndBands.length; i++) {
+    if (axis.plotLinesAndBands[i].id === id) {
+      return axis.plotLinesAndBands[i];
+    }
+  }
+}
+
 export default {
      props: {   
       seriesData: {
@@ -49,6 +58,21 @@ export default {
         type: Boolean,
         default: false
       },
+      backgroundColor: {
+        type: String,
+        default: "#073642",
+      },
+      seriesColor: {
+        type: String, 
+        default: 'lightblue'
+      },
+      anomalyColor: {
+        type: String, 
+        default: 'orange'
+      },
+      activeAnomaly: {
+        type: String,
+      }
     },
     data() {
       return {
@@ -58,45 +82,78 @@ export default {
       }
     },
     computed: {
+      colorZones() {
+        var zones = []
+        this.anomalies.forEach(anom => {
+          var zone1 = { value: anom.from, color: this.seriesColor }
+          var zone2 = { value: anom.to, color: this.anomalyColor }
+          zones.push(zone1)
+          zones.push(zone2)
+        })
+        zones.push({color: this.color})
+        return zones
+
+      },
       chartData() {
         return [ 
-            {
-              name: 'Value',
-              data: this.seriesData,
-              zIndex: 1,
-              color: 'lightblue',
-            },
-            {
-              name: 'Expected',
-              type: 'arearange',
-              data: this.chartBaseline,
-              zIndex: 0,
-              lineWidth: 0,
-              linkedTo: ':previous',
-              fillOpacity: 0.3,
-              color: 'lightblue',
-
-              marker: {
-                  enabled: false
+          {
+            name: 'Value',
+            data: this.seriesData,
+            zoneAxis: 'x',
+            zones: this.colorZones, 
+            zIndex: 1,
+            color: this.seriesColor,
+            states: {
+              hover: {
+                lineWidthPlus: 0
               }
+            },
+          },
+          {
+            name: 'Expected',
+            type: 'arearange',
+            data: this.chartBaseline,
+            zIndex: 0,
+            lineWidth: 0,
+            linkedTo: ':previous',
+            fillOpacity: 0.3,
+            color: this.seriesColor,
+            states: {
+              hover: {
+                lineWidthPlus: 0
+              }
+            },
+            marker: {
+                enabled: false
             }
-          ]
+          }
+        ]
         
       },
       chartAnomalies() {
         var vm = this
         var anoms = []
         for (var item of this.anomalies) {
-          anoms.push({id: item.id,
-                     from: item.from,
-                     to: item.to,
-                     color: 'red',
-                     events: {
-                      click: function(e) {
-                        vm.setActiveAnomaly(this.options.id)
-                      } 
+          anoms.push({ id: item.id,
+                      from: item.from,
+                      to: item.to,
+                      color: this.backgroundColor,
+                      events: {
+                        click: function(e) {
+                          vm.setActiveAnomaly(this.options.id)
+                        }, 
+                        mouseover: function(e) {
+                          if (this.id != vm.activeAnomaly) {
+                            this.svgElem.attr('fill', 'rgba(173,216,230,0.3)');
+                          }
+                        },
+                        mouseout: function(e) {
+                          if (this.id != vm.activeAnomaly) {
+                            this.svgElem.attr('fill', this.options.color);
+                          }
+                        } 
                      }
-                    })
+          })
         }
         return anoms
       },
@@ -109,7 +166,7 @@ export default {
             zoomType: 'x',
             panning: true,
             panKey: 'shift',
-            backgroundColor: "#073642",
+            backgroundColor: this.backgroundColor,
           },
           credits: false,
           loading: {
@@ -155,16 +212,27 @@ export default {
     },
     methods: {
       setActiveAnomaly(id) {
-        this.$store.dispatch('analysis/setActiveAnomaly', id)
+        this.$emit('changeActive', id)
       }
     },
     watch: {
       loading() {
-          if (this.loading) {
-            this.$refs.chart.chart.showLoading()
+        if (this.loading) {
+          this.$refs.chart.chart.showLoading()
+        } else {
+          this.$refs.chart.chart.hideLoading()
+        }
+      },
+      activeAnomaly(newId) {
+        let axis = this.$refs.chart.chart.axes[0]
+        for (var i = 0; i < axis.plotLinesAndBands.length; i++) {
+          var band = axis.plotLinesAndBands[i]
+          if (band.id === newId) {
+            band.svgElem.attr('fill', 'rgba(173,216,230,0.3)')
           } else {
-            this.$refs.chart.chart.hideLoading()
+            band.svgElem.attr('fill', this.backgroundColor)
           }
+        }
       }
     }
 }

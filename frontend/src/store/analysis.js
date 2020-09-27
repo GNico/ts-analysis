@@ -39,7 +39,7 @@ const state = {
 
 const getters = {
 
-    getAnomalies: (state) => {
+ /*   getAnomalies: (state) => {
         if ((state.results.hasOwnProperty('anomalies') 
         && Array.isArray(state.results.anomalies) 
         && state.results.anomalies.length)) {
@@ -54,7 +54,7 @@ const getters = {
         && state.results.anomalies.length)) {
             return state.results.anomalies.find(item => item.id === id)
         }
-    }
+    } */
 
 }
 
@@ -67,7 +67,7 @@ const mutations = {
         var idx = 0
         for (var item of results.anomalies) {
             anoms.push({
-                    id: idx,
+                    id: idx.toString(),
                     from: item.from,
                     to: item.to,
                     color: getColorByvalue(item.score/100),
