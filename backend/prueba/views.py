@@ -116,22 +116,18 @@ def anomalies(request):
       #   anomalies = anomaly_detector.detectAnomalies(series)
        #  return JsonResponse(anomalies, safe=False)
 
-#temporal
+
+
 def testalgo(request):
-    if request.method == 'GET':
-        requestedName = request.GET.get('name', '')
-        requestedTags = request.GET.get('tags', '')
-        requestedContext= request.GET.get('contexts', '')
-        requestedStart = request.GET.get('start', '')
-        requestedEnd = request.GET.get('end', '')
-        requestedInterval = request.GET.get('interval', '1H')
-        series = services.get_series(client_name=requestedName,                                 
-                                start=requestedStart,
-                                end=requestedEnd,
-                                contexts=requestedContext, 
-                                tags=requestedTags,
-                                interval=requestedInterval)
+    #mock
+    import os
+    import json
+    test_file_path = os.environ.get('TEST_PATH')
+    test_file_path += "/algotest.json"
+
+    print(test_file_path)
+    with open(test_file_path) as test_file:
+        data = json.load(test_file)
+    return JsonResponse(data, safe=False)
 
 
-        anomalies = anomaly_detector.testAlgorythms(series)
-        return JsonResponse(anomalies, safe=False)

@@ -26,6 +26,11 @@
         :activeAnomaly="activeAnomaly"
         @changeActive="setActiveAnomaly"
         />
+
+        <label class="checkbox label">
+          <input type="checkbox" :checked="showBaseline" v-model="showBaseline">
+          Show baseline
+        </label>
       <hr>        
     </div>
 
@@ -43,12 +48,17 @@ import AnalysisAnomaliesTable from '../components/AnalysisAnomaliesTable.vue';
 
 export default {
     components: { AnalysisChart, AnalysisSettings, AnalysisAnomaliesTable },
+    data() {
+      return {
+        showBaseline: true,
+      }       
+    },
     computed: {
       seriesData() {
         return this.$store.state.analysis.results.series
       },
       baseline() {
-        return this.$store.state.analysis.results.baseline
+        return this.showBaseline ? this.$store.state.analysis.results.baseline : []
       },
       anomalies() {
         return this.$store.state.analysis.results.anomalies

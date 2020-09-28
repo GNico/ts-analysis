@@ -6,7 +6,6 @@
     <VisualizeToolBar class="char-bar"/>
 
     <div class="chart-container columns is-gapless is-multiline">   
-     <!-- <div class="column is-1 char-sec" :style="{ 'background-color': backgroundColor }"> -->
         <div class="legends">
           <LegendSeriesTag 
             v-for="item in sortedSeries"
@@ -33,7 +32,6 @@
             </p>       
           </LegendSeriesTag>
         </div>
-     <!-- </div> -->
       <div class="column is-offset-1 is-12 char-sec" >
         <VisualizeChart 
           class="is-fullheight"

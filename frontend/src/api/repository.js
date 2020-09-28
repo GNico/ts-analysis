@@ -62,9 +62,10 @@ export default {
     getAnomalies(payload) {
         return repository.get("/anomalies/", {params: payload, paramsSerializer: params => transformArrayParams(params)})
     },
-    //remove later
-    testAlgo(payload) {
-        return repository.get("/testalgo/", {params: payload, paramsSerializer: params => transformArrayParams(params)})
+    //maybe remove later
+    testAlgo() {
+        return repository.get("/testalgo/")
+        //return repository.get("/testalgo/", {params: payload, paramsSerializer: params => transformArrayParams(params)})
     }
 
 }

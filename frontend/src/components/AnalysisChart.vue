@@ -3,8 +3,7 @@
   <highcharts class="chart chart-section" :constructor-type="'stockChart'" :options="chartOptions" :updateArgs="updateArgs" ref="chart"></highcharts>
 
   
-  <div class="chart-footer chart-section">
-    <div class="chart-footer-section">
+ <!--     <div class="chart-footer-section">
       <div class="chart-footer__field">
         <label class="checkbox label">
           <input type="checkbox" :checked="showBaseline" v-model="showBaseline">
@@ -12,18 +11,17 @@
         </label>
       </div>
       <div class="chart-footer__field">
-   <!--     <label class="label"> Score threshold</label>
+      <label class="label"> Score threshold</label>
         <input class="slider is-marginless" type="range" step="1" min="0" max="100" 
               v-model="scoreValue" 
               @change="changeSeriesOptions({scoreThreshold: $event.target.value})">
-        <label class="tag is-info label"> {{ scoreValue }}</label>   -->
+        <label class="tag is-info label"> {{ scoreValue }}</label>  
 
       </div>
     </div>
+ -->
 
 
-
-  </div>
 </div>
 
 </template>
@@ -44,15 +42,15 @@ export default {
      props: {   
       seriesData: {
         type: Array,
-        default: []
+        default: () => { return [] }
       },
       anomalies: {
         type: Array,
-        default: []
+        default: () => { return [] }
       },
       baseline: {
         type: Array,
-        default: []
+        default: () => { return [] }
       },
       loading: {
         type: Boolean,
@@ -78,7 +76,6 @@ export default {
       return {
         updateArgs: [true, true, {duration: 1000}],
         scoreValue: 0,
-        showBaseline: true,
       }
     },
     computed: {
@@ -112,7 +109,7 @@ export default {
           {
             name: 'Expected',
             type: 'arearange',
-            data: this.chartBaseline,
+            data: this.baseline,
             zIndex: 0,
             lineWidth: 0,
             linkedTo: ':previous',
@@ -156,9 +153,6 @@ export default {
           })
         }
         return anoms
-      },
-      chartBaseline() {
-        return this.showBaseline ? this.$store.state.analysis.results.baseline : []
       },
       chartOptions() {
         return {
