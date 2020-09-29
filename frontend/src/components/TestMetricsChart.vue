@@ -1,23 +1,5 @@
 <template>
   <highcharts class="chart chart-section" :constructor-type="'stockChart'" :options="chartOptions" :updateArgs="updateArgs" ref="chart"></highcharts>
- 
- <!--     <div class="chart-footer-section">
-      <div class="chart-footer__field">
-        <label class="checkbox label">
-          <input type="checkbox" :checked="showBaseline" v-model="showBaseline">
-          Show baseline
-        </label>
-      </div>
-      <div class="chart-footer__field">
-      <label class="label"> Score threshold</label>
-        <input class="slider is-marginless" type="range" step="1" min="0" max="100" 
-              v-model="scoreValue" 
-              @change="changeSeriesOptions({scoreThreshold: $event.target.value})">
-        <label class="tag is-info label"> {{ scoreValue }}</label>  
-
-      </div>
-    </div>
- -->
 </template>
 
 
@@ -59,7 +41,11 @@ export default {
       extremes: {
         type: Object,
         default: () => { return {} }
-      }
+      },
+      metrics: {
+        type: Array,
+        default: () => { return [] }
+      },   
     },
     data() {
       return {
@@ -78,7 +64,34 @@ export default {
         })
         zones.push({color: this.color})
         return zones
-
+      },
+      chartBands() {
+        var bands = []
+        this.metrics.forEach(metric => {
+            let band = {
+                from: metric.from,
+                to: metric.to,
+                color: 'grey'
+            }
+            switch(metric.type) {
+                case "tp": 
+                    band.color = 'green'
+                    break;
+                case "tn":
+                    band.color = 'red'
+                    break;
+                case "fp":
+                    band.color = 'yellow'
+                    break;
+                case "fn":
+                    band.color = 'blue'
+                    break;      
+                default:
+                    break;  
+            }
+            bands.push(band)
+        })
+        return bands
       },
       chartData() {
         return [ 
@@ -116,33 +129,6 @@ export default {
         ]
         
       },
-      chartAnomalies() {
-        var vm = this
-        var anoms = []
-        for (var item of this.anomalies) {
-          anoms.push({ id: item.id,
-                      from: item.from,
-                      to: item.to,
-                      color: this.backgroundColor,
-                      events: {
-                        click: function(e) {
-                          vm.setActiveAnomaly(this.options.id)
-                        }, 
-                        mouseover: function(e) {
-                          if (this.id != vm.activeAnomaly) {
-                            this.svgElem.attr('fill', 'rgba(173,216,230,0.3)');
-                          }
-                        },
-                        mouseout: function(e) {
-                          if (this.id != vm.activeAnomaly) {
-                            this.svgElem.attr('fill', this.options.color);
-                          }
-                        } 
-                     }
-          })
-        }
-        return anoms
-      },
       chartOptions() {
         var vm = this
         return {
@@ -167,7 +153,7 @@ export default {
           },
           xAxis: {
             type: 'datetime',
-            plotBands: this.chartAnomalies,
+            plotBands: this.chartBands,
             events: {
               setExtremes: function(event) {
                 if (event.trigger !== 'sync') {                

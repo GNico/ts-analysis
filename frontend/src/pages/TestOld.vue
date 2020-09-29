@@ -40,7 +40,6 @@
     </div>
 
     <div class="column main-content">
-      <TestChart :chartsData="chartsData"/>
       <hr>
     </div>
 
@@ -51,14 +50,13 @@
 <script>
 import api from "../api/repository";
 
-import TestChart from '../components/TestChart.vue';
 import SearchSelect from '../components/SearchSelect.vue';
 import TreeView from '../components/TreeView.vue';
 
 
 
 export default {
-    components: { TestChart, SearchSelect, TreeView },
+    components: { SearchSelect, TreeView },
     data () {
       return {
         seriesOptions: {
