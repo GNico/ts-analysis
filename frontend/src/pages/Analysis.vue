@@ -24,8 +24,7 @@
         :anomalies="anomalies"
         :loading="loading"
         :activeAnomaly="activeAnomaly"
-        @changeActive="setActiveAnomaly"
-        />
+        @changeActive="setActiveAnomaly"/>
 
         <label class="checkbox label">
           <input type="checkbox" :checked="showBaseline" v-model="showBaseline">

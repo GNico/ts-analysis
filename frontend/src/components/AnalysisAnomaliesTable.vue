@@ -7,10 +7,12 @@
       :selected="selected"
       hoverable
       narrowed
+      sticky-header
+      :height="height"
       @select="changeActiveAnomaly($event)">
 
       <template slot-scope="props">
-        <b-table-column field="score" label="Score" sortable numeric>
+        <b-table-column field="score" label="Score" sortable numeric id="pija">
             {{ props.row.score }}
         </b-table-column>
 
@@ -34,10 +36,14 @@ export default {
   props: {
     anomalies: {
       type: Array,
-      default: []
+      default: () => { return [] }
     },
     activeAnomaly: {
       type: String,
+    },
+    height: {
+      type: [ Number, String ],
+      default: 250,
     }
   },
   computed: {

@@ -78,7 +78,6 @@ export default {
         })
         zones.push({color: this.color})
         return zones
-
       },
       chartData() {
         return [ 
@@ -113,8 +112,7 @@ export default {
                 enabled: false
             }
           }
-        ]
-        
+        ]        
       },
       chartAnomalies() {
         var vm = this

@@ -1,5 +1,5 @@
 <template>
-  <highcharts class="chart chart-section" :constructor-type="'stockChart'" :options="chartOptions" :updateArgs="updateArgs" ref="chart"></highcharts>
+  <highcharts :constructor-type="'stockChart'" :options="chartOptions" :updateArgs="updateArgs" ref="chart"></highcharts>
 </template>
 
 
@@ -33,7 +33,7 @@ export default {
       },
       anomalyColor: {
         type: String, 
-        default: 'orange'
+        default: 'purple'
       },
       activeAnomaly: {
         type: String,
@@ -45,7 +45,11 @@ export default {
       metrics: {
         type: Array,
         default: () => { return [] }
-      },   
+      }, 
+      metricColors: {
+        type: Object, 
+        default: () => { return {} }
+      }, 
     },
     data() {
       return {
@@ -66,30 +70,54 @@ export default {
         return zones
       },
       chartBands() {
+        var vm = this
         var bands = []
+        //anoms
+        for (var item of this.anomalies) {
+          bands.push({ id: item.id,
+                      from: item.from,
+                      to: item.to,
+                      color: 'transparent',
+                      zIndex: 3,
+                      events: {
+                        click: function(e) {
+                          vm.setActiveAnomaly(this.options.id)
+                        }, 
+                        mouseover: function(e) {
+                          if (this.id != vm.activeAnomaly) {
+                            this.svgElem.attr('fill', 'rgba(173,216,230,0.3)')  //.shadow({color: 'black', opacity: 1});
+                          }
+                        },
+                        mouseout: function(e) {
+                          if (this.id != vm.activeAnomaly) {
+                            this.svgElem.attr('fill', this.options.color);
+                          }
+                        } 
+                     }
+          })
+        }
+        //metrics
         this.metrics.forEach(metric => {
-            let band = {
-                from: metric.from,
-                to: metric.to,
-                color: 'grey'
-            }
-            switch(metric.type) {
-                case "tp": 
-                    band.color = 'green'
-                    break;
-                case "tn":
-                    band.color = 'red'
-                    break;
-                case "fp":
-                    band.color = 'yellow'
-                    break;
-                case "fn":
-                    band.color = 'blue'
-                    break;      
-                default:
-                    break;  
-            }
-            bands.push(band)
+          let band = {
+            from: metric.from,
+            to: metric.to,
+            zIndex: 1,
+            color: 'grey',
+          }
+          switch(metric.type) {
+            case "tp": 
+              band.color = this.metricColors.tp
+              break;
+            case "fp":
+              band.color = this.metricColors.fp
+              break;
+            case "fn":
+              band.color = this.metricColors.fn
+              break;      
+            default:
+              break;  
+          }
+          bands.push(band)
         })
         return bands
       },
@@ -100,7 +128,7 @@ export default {
             data: this.seriesData,
             zoneAxis: 'x',
             zones: this.colorZones, 
-            zIndex: 1,
+            zIndex: 5,
             color: this.seriesColor,
             states: {
               hover: {
@@ -115,7 +143,7 @@ export default {
             zIndex: 0,
             lineWidth: 0,
             linkedTo: ':previous',
-            fillOpacity: 0.3,
+            fillOpacity: 0.4,
             color: this.seriesColor,
             states: {
               hover: {
@@ -123,7 +151,7 @@ export default {
               }
             },
             marker: {
-                enabled: false
+              enabled: false
             }
           }
         ]
@@ -141,11 +169,11 @@ export default {
           credits: false,
           loading: {
             labelStyle: {
-                color: 'white',
-                fontSize: '1.5rem'
+              color: 'white',
+              fontSize: '1.5rem'
             },
             style: {
-                backgroundColor: 'black'
+              backgroundColor: 'black'
             }
           },
           title: {
@@ -213,9 +241,9 @@ export default {
         for (var i = 0; i < axis.plotLinesAndBands.length; i++) {
           var band = axis.plotLinesAndBands[i]
           if (band.id === newId) {
-            band.svgElem.attr('fill', 'rgba(173,216,230,0.3)')
-          } else {
-            band.svgElem.attr('fill', this.backgroundColor)
+            band.svgElem.attr('fill', 'rgba(173,216,230,0.3)').shadow({color: 'lightblue', opacity: 1})
+          } else if (band.id !== undefined) {
+            band.svgElem.attr('fill', 'transparent').shadow(false)        
           }
         }
       }
@@ -225,38 +253,6 @@ export default {
 
 
 <style>
-.chart-section {
-  margin-bottom: 0.25rem;
-}
 
-.chart-section > * {
-  margin: 0 0.5rem 0.5rem 0
-}
 
-.chart-footer {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-right: -1rem;
-}
-
-.chart-footer-section {
-  display: flex;
-  align-items: baseline; 
-}
-
-.chart-footer__field {
-  display: flex;
-  align-items: baseline;
-  margin-right: 1rem;
-}
-
-.chart-footer__field > .label {
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
-}  
-
-.color-box {
-  visibility: hidden;
-}
 </style>

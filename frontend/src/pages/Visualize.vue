@@ -32,7 +32,7 @@
             </p>       
           </LegendSeriesTag>
         </div>
-      <div class="column is-offset-1 is-12 char-sec" >
+      <div class="column is-offset-1 is-12" >
         <VisualizeChart 
           class="is-fullheight"
           :backgroundColor="chartSettings.backgroundColor"
