@@ -3,7 +3,7 @@ from model import series
 
 class TestSeriesBuilder:
 
-    def __init__(self, data, interval, unit='s'):
+    def __init__(self, data, interval=1, unit='s'):
         self.unit = unit
         self.interval = interval
         self.data = data
@@ -32,7 +32,11 @@ class TestSeriesBuilder:
 
     @staticmethod
     def constant(length, value=0, interval=1, unit='s'):
+        return TestSeriesBuilder.linear(length, value, 0, interval, unit)
+
+    @staticmethod
+    def linear(length, startvalue, slope, interval=1, unit='s'):
         data = []
         for i in range(length):
-            data.append([i*interval, value])
+            data.append([i*interval, startvalue + slope*i*interval])
         return TestSeriesBuilder(data, interval, unit)

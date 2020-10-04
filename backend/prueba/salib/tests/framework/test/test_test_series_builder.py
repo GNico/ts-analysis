@@ -58,3 +58,34 @@ class TestTestCase(unittest.TestCase):
         self.assertEqual([2]*5, series.as_list())
         self.assertEqual(pd.Timestamp('1970-01-01 00:00:00'), series.start)
         self.assertEqual(pd.Timestamp('1970-01-01 00:00:08'), series.end)
+
+    def test_compose_constants(self):
+        builder = tsb.TestSeriesBuilder.constant(10, 1)
+        builder.compose(tsb.TestSeriesBuilder.constant(10, 2))
+        series = builder.build()
+        self.assertEqual(10, series.span())
+        self.assertEqual([3]*10, series.as_list())
+        self.assertEqual(pd.Timestamp('1970-01-01 00:00:00'), series.start)
+        self.assertEqual(pd.Timestamp('1970-01-01 00:00:09'), series.end)
+
+    def test_build_linear(self):
+        series = tsb.TestSeriesBuilder.linear(10, 0, 1).build()
+        self.assertEqual(10, series.span())
+        self.assertEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], series.as_list())
+        self.assertEqual(pd.Timestamp('1970-01-01 00:00:00'), series.start)
+        self.assertEqual(pd.Timestamp('1970-01-01 00:00:09'), series.end)
+
+        series = tsb.TestSeriesBuilder.linear(4, 2, -2).build()
+        self.assertEqual(4, series.span())
+        self.assertEqual([2, 0, -2 , -4], series.as_list())
+        self.assertEqual(pd.Timestamp('1970-01-01 00:00:00'), series.start)
+        self.assertEqual(pd.Timestamp('1970-01-01 00:00:03'), series.end)
+
+    def test_build_linear_compose(self):
+        builder = tsb.TestSeriesBuilder.constant(4, 1)
+        builder.compose(tsb.TestSeriesBuilder.linear(4, 0, -2))
+        series = builder.build()
+        self.assertEqual(4, series.span())
+        self.assertEqual([1, -1, -3, -5], series.as_list())
+        self.assertEqual(pd.Timestamp('1970-01-01 00:00:00'), series.start)
+        self.assertEqual(pd.Timestamp('1970-01-01 00:00:03'), series.end)
