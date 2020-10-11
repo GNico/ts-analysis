@@ -1,131 +1,223 @@
 import api from "../api/repository";
-import getFixedSizeArray from "../common/fixedSizeArray"
+import { nanoid } from 'nanoid'
+
+const colors = [ '#f45b5b', '#90ee7e', '#7798BF', '#aaeeee', '#ff0066',
+        '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee', '#2b908f']
 
 const state = {
-  range: {
-    start: null,
-    end: null
-  },
+    series: {},
+    seriesIds: [],
+    panels: [],
+    range: {
+        start: null,
+        end: null
+    },
+    loading: 0,
+    settings: {}
+}
 
-  series: {},
-  loading: 0,  //using counter instead of boolean to track multiple series
-  activeSeries: {},
+
+//returns a deep copy of the series object 
+function makeSeriesOptionsCopy(seriesOptions) {
+    let newSeriesOptions = { ...seriesOptions }
+    newSeriesOptions.tags = [ ...seriesOptions.tags ]
+    newSeriesOptions.contexts = [ ...seriesOptions.contexts ]
+    return newSeriesOptions
+}
+
+function compareArrays(array1, array2) {
+    return (array1.length === array2.length) && (array1.sort().every((value, index) => value === array2[index]))
 }
 
 const getters = {
-    getSeriesNames: (state) => {
-        return Object.keys(state.series)
+    seriesAsList: state => {
+        return state.seriesIds.map(id => state.series[id])
     },
-    getDisplaySeriesData: (state) => {
-        let activeNames = Object.keys(state.series).filter(item => state.activeSeries[item])
-        return activeNames.map(function(itemName) {
-                            let { color, chartType, data, ...rest} = state.series[itemName]                
-                            return { name: itemName, color, type: chartType, data }
-                        })
+    seriesNames: state => {
+        return state.seriesIds.map(id => state.series[id].name)
+    }, 
+    getSeriesById: state => id => {
+        return (id && state.series.hasOwnProperty(id)) ? makeSeriesOptionsCopy(state.series[id]) : null
     },
-    getSeriesOptions: (state) => (name) => {
-        if (!(name in state.series) ) {
-            return {name: '',
-                    color: '#6fcd98',
-                    chartType: 'line',
-                    client: '',
-                    contexts: '',
-                    tags: '',
-                    interval: '1H'}
-        }
-        else {
-            let { data, ...rest} = state.series[name]
-            return rest
-        }
+    nextColor: state => {
+        let index = state.seriesIds.length % colors.length 
+        return colors[index]
     },
+    numPanels: state => {
+        return state.panels.length ? state.panels.length : 1
+    }
 }
-
 
 const mutations = {
-    set_range(state, payload) {
-        state.range = payload
-    },
     add_series(state, payload) {
-        state.series = { ...state.series, ...payload }
+        state.seriesIds.push(payload.id)
+        let newseries = { [payload.id]: payload }
+        state.series = { ...state.series, ...newseries }
     },
     add_data(state, payload) {
-        state.series[payload.name] = { ...state.series[payload.name] , data: payload.data }
+        state.series[payload.id] = { ...state.series[payload.id] , data: payload.data }
     },
-    set_active_series(state, payload) {
-        state.activeSeries = { ...state.activeSeries, ...payload }
+    delete_series(state, id) {
+        let { [id]:theId, ...rest} = state.series
+        state.series = rest
+        let index = state.seriesIds.indexOf(id);
+        if (index !== -1)  state.seriesIds.splice(index, 1);
     },
-    delete_series(state, payload) {
-        let { [payload]:name, ...rest} = state.series
-        state.series = rest 
-        let { [payload]:name2, ...rest2} = state.activeSeries
-        state.activeSeries = rest2
+    update_series(state, seriesOptions) { 
+        state.series[seriesOptions.id] = { ...state.series[seriesOptions.id], ...seriesOptions }
     },
-    update_series(state, payload) {
-        let { name, ...rest} = payload
-        state.series[name] = { ...state.series[name], ...rest }
+    set_range(state, {start, end}) {
+        state.range.start = start
+        state.range.end = end
     },
-
+    set_loading(state, isLoading) {
+        if (isLoading) 
+            state.loading += 1;
+        else 
+            state.loading -= 1;
+    },
+    add_series_to_panel(state, payload) {
+        let axisNumber = (!payload.hasOwnProperty("yAxis")) ? -1 : payload.yAxis
+        let newaxis = {}
+        if (axisNumber < 0 || axisNumber > state.panels.length-1) {
+            state.panels.push([payload.id])
+            newaxis['yAxis'] = state.panels.length-1
+        } else {
+            state.panels[axisNumber].push(payload.id)
+            newaxis['yAxis'] = parseInt(axisNumber)
+        }   
+        if (state.series.hasOwnProperty(payload.id)) {
+            state.series[payload.id] = { ...state.series[payload.id], ...newaxis } 
+        }
+    },
+    delete_series_from_panel(state, id) {
+        let axisNumber = state.series[id].yAxis
+        let seriesIndex = state.panels[axisNumber].indexOf(id)
+        if (seriesIndex != -1) { 
+            state.panels[axisNumber].splice(seriesIndex, 1)
+            //delete panel if empty 
+            if (state.panels[axisNumber].length == 0) {
+                state.panels.splice(axisNumber, 1)
+                //update new panel number on remaining series 
+                for (let i = axisNumber; i < state.panels.length; i++) {
+                    state.panels[i].forEach(function(item) {
+                        if (state.series.hasOwnProperty(item)) {
+                            let newaxis = { yAxis: i}
+                            state.series[item] = { ...state.series[item], ...newaxis}
+                        }
+                    })
+                }
+            }    
+        }
+    },
+    move_series(state, {id, offset}) {
+        let axisNumber = state.series[id].yAxis
+        let seriesIndex = state.panels[axisNumber].indexOf(id)
+        if (seriesIndex != -1) { 
+            //remove series from panel
+            state.panels[axisNumber].splice(seriesIndex, 1)  
+            //add series to new panel
+            const newAxisNumber = axisNumber + offset
+            let newaxis = {}
+            if (newAxisNumber < 0 || newAxisNumber > state.panels.length-1) {
+                state.panels.push([id])
+                newaxis['yAxis'] = state.panels.length-1
+            } else {
+                state.panels[newAxisNumber].push(id)
+                newaxis['yAxis'] = parseInt(newAxisNumber)
+            }   
+            if (state.series.hasOwnProperty(id)) {
+                state.series[id] = { ...state.series[id], ...newaxis } 
+            }
+            //remove leftover empty arrays
+            if (state.panels[axisNumber].length == 0) {
+                state.panels.splice(axisNumber, 1)
+                //update new panel number on remaining series 
+                for (let i = axisNumber; i < state.panels.length; i++) {
+                    state.panels[i].forEach(function(item) {
+                        if (state.series.hasOwnProperty(item)) {
+                            let newaxis = { yAxis: i}
+                            state.series[item] = { ...state.series[item], ...newaxis}
+                        }
+                    })
+                }
+            }    
+        }
+    },
+    set_settings(state, newSettings) {
+        state.settings = { ...newSettings }
+    }
 }
 
-
 const actions = {
-    fetchData(store, name) {
-        let targetData = store.rootGetters['series/getSeriesOptions'](name)
-        let displayData = state.series[name]
-        state.loading += 1
+    addSeries({commit, dispatch}, seriesOptions) {
+        let newSeriesOptions = makeSeriesOptionsCopy(seriesOptions)
+        const newId = nanoid()      
+        newSeriesOptions.id = newId
+        commit("add_series", newSeriesOptions)
+        commit("add_series_to_panel", newSeriesOptions)
+        dispatch("fetchData", newId)
+    },
+    updateSeries({commit, state, dispatch}, {id, seriesOptions} ) {
+        seriesOptions.id = id
+        const shouldFetchData = (state.series[id].interval != seriesOptions.interval) ||
+                                (state.series[id].client != seriesOptions.client) ||
+                                !compareArrays(state.series[id].tags, seriesOptions.tags) ||
+                                !compareArrays(state.series[id].contexts, seriesOptions.contexts) 
+        commit("update_series", seriesOptions)
+        if (shouldFetchData)
+            dispatch("fetchData", id)
+    },
+    fetchData({commit, state}, id) {
+        let seriesOptions = state.series[id]
+        commit('set_loading', true)
         return  api.getSeriesData({ 
-                    name: targetData.client,
-                    tags: targetData.tags,
-                    contexts: targetData.contexts,
-                    start: state.range.start,
-                    end: state.range.end,
-                    interval: displayData.interval})
+                    name: seriesOptions.client,
+                    tags: (seriesOptions.tags && seriesOptions.tags.length == 1 && seriesOptions.tags[0] == "root") ? [] : seriesOptions.tags,
+                    contexts: (seriesOptions.contexts && seriesOptions.contexts.length == 1 && seriesOptions.contexts[0] == "root") ? [] : seriesOptions.contexts,
+                    start: state.range.start ? state.range.start.toISOString() : null ,
+                    end: state.range.end ? state.range.end.toISOString() : null,
+                    interval: seriesOptions.interval})
                 .then(response => {       
-                    store.commit('add_data', {name: name, data: response.data}) 
-                    state.loading -= 1
+                    commit('add_data', {id: id, data: response.data}) 
+                    commit('set_loading', false)
                 })
                 .catch(error => { 
-                    state.loading -= 1
+                    commit('set_loading', false)
                     console.log('error loading series data')
                 })        
     },
-    addSeries(store, seriesOptions) {
-        let { name, ...rest} =  seriesOptions
-        let newseries = { [name]: rest }
-        store.commit("add_series", newseries)
-        store.commit("set_active_series", { [name]: true })
-        store.dispatch("fetchData", name)
+    deleteSeries({commit}, id) {
+        commit("delete_series_from_panel", id)
+        commit("delete_series", id)
     },
-    deleteSeries(store, seriesName) {
-        store.commit("delete_series", seriesName)
+    updateRange({commit, state, dispatch}, range) {
+        commit("set_range", range)
+        state.seriesIds.forEach(id =>  dispatch("fetchData", id))
     },
-    updateSeries(store, seriesOptions) {
-        let { name, ...rest} = seriesOptions
-        let current = state.series[name]
-        store.commit("update_series", seriesOptions)
-        if (rest.interval != current.interval) {
-            store.dispatch("fetchData", name)
-        }
+    moveSeriesDown({commit, state}, id) {
+        const currentPanel = state.series[id].yAxis
+        //check for extreme cases where nothing should happen
+        if ( !((state.seriesIds.length <= 1) || 
+                ((currentPanel == state.panels.length-1) && 
+                    (state.panels[currentPanel].length == 1))) )
+            commit("move_series", {id: id, offset: 1})
     },
-    changeSeriesActiveStatus(store, seriestatus) {
-        store.commit('set_active_series', seriestatus)
+    moveSeriesUp({commit, state}, id) {
+        const currentPanel = state.series[id].yAxis
+        if (!((state.seriesIds.length <= 1) || currentPanel == 0))
+            commit("move_series", {id: id, offset: -1})
     },
-
-    updateRange(store, range) {
-        store.commit("set_range", range)
-        Object.keys(state.series).forEach(key => {
-            store.dispatch('fetchData', key)
-        })
-    },
-    setActiveSeries(store, payload) {
-        store.commit("set_active_series", payload)
+    changeSettings({commit}, newSettings) {
+        commit("set_settings", newSettings)
     }
+
 }
 
 export default {
     namespaced: true,
     state,
     getters,
+    mutations,
     actions,
-    mutations
 }

@@ -26,8 +26,10 @@ $navbar-height: 4rem;
 
 html, body {
   height: 100%;
-  overflow: hidden;
+  overflow: auto;
 }
+
+
 
 ::-webkit-scrollbar {
     width: 10px;
@@ -54,11 +56,11 @@ html, body {
 
 
 
-/* #app {
+#app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-*/
+
 </style>

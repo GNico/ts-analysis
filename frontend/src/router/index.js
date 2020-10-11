@@ -5,32 +5,32 @@ function lazyLoad(view){
 }
 
 let routes = [
-	{
-		path: '/',
-		component: lazyLoad('Home')
-	},
-	{
-		path: '/Visualize',
-		component: lazyLoad('Visualize')
-	},
-	{
-		path: '/Anomalies',
-		component: lazyLoad('Analysis')
-	},
-	{
-		path: '/Alerts',
-		component: lazyLoad('Alerts')
-	},
-	{
-		path: '/Test',
-		component: lazyLoad('Test')
-	}
+  {
+    path: '/',
+    component: lazyLoad('Home')
+  },
+  {
+    path: '/Visualize',
+    component: lazyLoad('Visualize')
+  },
+  {
+    path: '/Analize',
+    component: lazyLoad('Analysis')
+  },
+  {
+    path: '/Alerts',
+    component: lazyLoad('Alerts')
+  },
+  {
+    path: '/Test',
+    component: lazyLoad('Test')
+  } 
 
 ];
 
 export default new VueRouter({
 
-	routes,
-	linkActiveClass: 'is-active'
+  routes,
+  linkActiveClass: 'is-active'
 
 });

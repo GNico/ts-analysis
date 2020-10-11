@@ -1,23 +1,5 @@
 <template>
-  <highcharts class="chart chart-section" :constructor-type="'stockChart'" :options="chartOptions" :updateArgs="updateArgs" ref="chart"></highcharts>
- 
- <!--     <div class="chart-footer-section">
-      <div class="chart-footer__field">
-        <label class="checkbox label">
-          <input type="checkbox" :checked="showBaseline" v-model="showBaseline">
-          Show baseline
-        </label>
-      </div>
-      <div class="chart-footer__field">
-      <label class="label"> Score threshold</label>
-        <input class="slider is-marginless" type="range" step="1" min="0" max="100" 
-              v-model="scoreValue" 
-              @change="changeSeriesOptions({scoreThreshold: $event.target.value})">
-        <label class="tag is-info label"> {{ scoreValue }}</label>  
-
-      </div>
-    </div>
- -->
+  <highcharts :constructor-type="'stockChart'" :options="chartOptions" :updateArgs="updateArgs" ref="chart"></highcharts>
 </template>
 
 
@@ -51,7 +33,7 @@ export default {
       },
       anomalyColor: {
         type: String, 
-        default: 'orange'
+        default: 'purple'
       },
       activeAnomaly: {
         type: String,
@@ -59,7 +41,15 @@ export default {
       extremes: {
         type: Object,
         default: () => { return {} }
-      }
+      },
+      metrics: {
+        type: Array,
+        default: () => { return [] }
+      }, 
+      metricColors: {
+        type: Object, 
+        default: () => { return {} }
+      }, 
     },
     data() {
       return {
@@ -79,6 +69,58 @@ export default {
         zones.push({color: this.color})
         return zones
       },
+      chartBands() {
+        var vm = this
+        var bands = []
+        //anoms
+        for (var item of this.anomalies) {
+          bands.push({ id: item.id,
+                      from: item.from,
+                      to: item.to,
+                      color: 'transparent',
+                      zIndex: 3,
+                      events: {
+                        click: function(e) {
+                          vm.setActiveAnomaly(this.options.id)
+                        }, 
+                        mouseover: function(e) {
+                          if (this.id != vm.activeAnomaly) {
+                            this.svgElem.attr('fill', 'rgba(173,216,230,0.3)')  //.shadow({color: 'black', opacity: 1});
+                          }
+                        },
+                        mouseout: function(e) {
+                          if (this.id != vm.activeAnomaly) {
+                            this.svgElem.attr('fill', this.options.color);
+                          }
+                        } 
+                     }
+          })
+        }
+        //metrics
+        this.metrics.forEach(metric => {
+          let band = {
+            from: metric.from,
+            to: metric.to,
+            zIndex: 1,
+            color: 'grey',
+          }
+          switch(metric.type) {
+            case "tp": 
+              band.color = this.metricColors.tp
+              break;
+            case "fp":
+              band.color = this.metricColors.fp
+              break;
+            case "fn":
+              band.color = this.metricColors.fn
+              break;      
+            default:
+              break;  
+          }
+          bands.push(band)
+        })
+        return bands
+      },
       chartData() {
         return [ 
           {
@@ -86,7 +128,7 @@ export default {
             data: this.seriesData,
             zoneAxis: 'x',
             zones: this.colorZones, 
-            zIndex: 1,
+            zIndex: 5,
             color: this.seriesColor,
             states: {
               hover: {
@@ -101,7 +143,7 @@ export default {
             zIndex: 0,
             lineWidth: 0,
             linkedTo: ':previous',
-            fillOpacity: 0.3,
+            fillOpacity: 0.4,
             color: this.seriesColor,
             states: {
               hover: {
@@ -109,37 +151,11 @@ export default {
               }
             },
             marker: {
-                enabled: false
+              enabled: false
             }
           }
-        ]        
-      },
-      chartAnomalies() {
-        var vm = this
-        var anoms = []
-        for (var item of this.anomalies) {
-          anoms.push({ id: item.id,
-                      from: item.from,
-                      to: item.to,
-                      color: this.backgroundColor,
-                      events: {
-                        click: function(e) {
-                          vm.setActiveAnomaly(this.options.id)
-                        }, 
-                        mouseover: function(e) {
-                          if (this.id != vm.activeAnomaly) {
-                            this.svgElem.attr('fill', 'rgba(173,216,230,0.3)');
-                          }
-                        },
-                        mouseout: function(e) {
-                          if (this.id != vm.activeAnomaly) {
-                            this.svgElem.attr('fill', this.options.color);
-                          }
-                        } 
-                     }
-          })
-        }
-        return anoms
+        ]
+        
       },
       chartOptions() {
         var vm = this
@@ -153,11 +169,11 @@ export default {
           credits: false,
           loading: {
             labelStyle: {
-                color: 'white',
-                fontSize: '1.5rem'
+              color: 'white',
+              fontSize: '1.5rem'
             },
             style: {
-                backgroundColor: 'black'
+              backgroundColor: 'black'
             }
           },
           title: {
@@ -165,7 +181,7 @@ export default {
           },
           xAxis: {
             type: 'datetime',
-            plotBands: this.chartAnomalies,
+            plotBands: this.chartBands,
             events: {
               setExtremes: function(event) {
                 if (event.trigger !== 'sync') {                
@@ -225,9 +241,9 @@ export default {
         for (var i = 0; i < axis.plotLinesAndBands.length; i++) {
           var band = axis.plotLinesAndBands[i]
           if (band.id === newId) {
-            band.svgElem.attr('fill', 'rgba(173,216,230,0.3)')
-          } else {
-            band.svgElem.attr('fill', this.backgroundColor)
+            band.svgElem.attr('fill', 'rgba(173,216,230,0.3)').shadow({color: 'lightblue', opacity: 1})
+          } else if (band.id !== undefined) {
+            band.svgElem.attr('fill', 'transparent').shadow(false)        
           }
         }
       }
@@ -237,38 +253,6 @@ export default {
 
 
 <style>
-.chart-section {
-  margin-bottom: 0.25rem;
-}
 
-.chart-section > * {
-  margin: 0 0.5rem 0.5rem 0
-}
 
-.chart-footer {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-right: -1rem;
-}
-
-.chart-footer-section {
-  display: flex;
-  align-items: baseline; 
-}
-
-.chart-footer__field {
-  display: flex;
-  align-items: baseline;
-  margin-right: 1rem;
-}
-
-.chart-footer__field > .label {
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
-}  
-
-.color-box {
-  visibility: hidden;
-}
 </style>

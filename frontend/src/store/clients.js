@@ -1,13 +1,9 @@
 import api from "../api/repository";
 
-
 const state = {
   clients: [],
-  tags: {},
-  contexts: [],
   details: {},
 }
-
 
 const mutations = {
   set_clients(state, payload) {
@@ -21,9 +17,14 @@ const mutations = {
   },
   set_details(state, payload) {
     state.details = payload
-  }
+  },
 }
 
+const getters = {
+  readyClients: state => {
+    return state.clients.filter(item => item.indexing == false).map(item => item.name)
+  },
+}
 
 const actions = {
   addClient(store, form) {
@@ -35,7 +36,7 @@ const actions = {
             })
   },
   deleteClient(store, name) {
-    return api.deleteClient(name)
+    return  api.deleteClient(name)
   },
   fetchClients(store) {
     return  api.getClients()
@@ -52,51 +53,14 @@ const actions = {
             .then(response => {       
               store.commit('set_details', response.data) 
             })
-  },
-  async fetchContexts(store, client) {
-    if (!client) {
-      store.commit('set_contexts', [])
-      return
-    } else {
-      return  api.getContexts(client)
-              .then(response => {
-                store.commit('set_contexts', response.data) 
-              })
-              .catch(error => { 
-                  console.log('error loading contexts data');
-              });
-    }
-  },
-  async fetchTags(store, client) {
-    if (!client) {
-      store.commit('set_tags', [])
-      return
-    } else {
-      return  api.getTags(client)
-              .then(response => {
-                store.commit('set_tags', response.data) 
-              })
-              .catch(error => { 
-                  console.log('error loading tags data');
-              });
-    }
-  },
-  async updateTagsContexts(store, client) {
-    if (client) {
-      let tgs = store.dispatch('fetchTags', client) 
-      let ctx = store.dispatch('fetchContexts', client)
-      let res = [ await tgs, await ctx ]
-    } else {
-      store.commit('set_tags', [] )
-      store.commit('set_contexts', [])           
-    }
-  },    
+  }, 
+  
 }
-
 
 export default {
   namespaced: true,
   state,
+  getters,
   actions,
   mutations
 }

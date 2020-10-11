@@ -18,7 +18,8 @@ BACKEND
 	DB_NAME='ts_django'
 	DB_USER='user'
 	DB_PASSWORD='pass'
-	ELASTIC_DATA_INDEX_PATH= path where you store the data that will be indexed
+	ELASTIC_DATA_INDEX_PATH= *full path where you store the data files that will be indexed*
+	[Optional] TEST_PATH= *full path of algorithm test results* (used to display test results in the UI)
 
 -create a virtual environment 'venv' in the backend directory
 	virtualenv venv

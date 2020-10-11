@@ -18,8 +18,8 @@ const transformArrayParams = (params) => {
   let options = ''
   keys.forEach((key) => {
     const isParamTypeObject = typeof params[key] === 'object';
-    const isParamTypeArray = isParamTypeObject && (params[key].length >= 0)
-    if (!isParamTypeObject) {
+    const isParamTypeArray = isParamTypeObject && (params[key].length >= 0)   
+    if (!isParamTypeObject ) {
       options += `${key}=${params[key]}&`
     }
     if (isParamTypeObject && isParamTypeArray) {      
@@ -59,13 +59,13 @@ export default {
         let url = "/clients/" + clientName + "/series/tags/"
         return repository.get(url)
     },
-
     getAnomalies(payload) {
-        return repository.get("/anomalies/", {params: payload, paramsSerializer: params => transformArrayParams(params)})
+        return repository.get("/analysis/", {params: payload, paramsSerializer: params => transformArrayParams(params)})
     },
-    //remove later
-    testAlgo(payload) {
-        return repository.get("/testalgo/", {params: payload, paramsSerializer: params => transformArrayParams(params)})
+    //maybe remove later
+    testAlgo() {
+        return repository.get("/testalgo/")
+        //return repository.get("/testalgo/", {params: payload, paramsSerializer: params => transformArrayParams(params)})
     }
 
 }

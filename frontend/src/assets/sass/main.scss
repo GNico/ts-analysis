@@ -3,4 +3,29 @@
 @import '~bulma/bulma';
 @import '~bulmaswatch/solar/_overrides.scss';
 @import '~buefy/src/scss/buefy';
-@import 'buefyoverrides.scss';
+
+
+.modal-card-body {
+  background-color: $grey-dark;
+}
+
+.transparent-button {
+  background-color: transparent;
+  background-repeat:no-repeat;
+  border: none;
+  cursor:pointer;
+  overflow: hidden;
+  outline:none;
+}
+
+.short-field {
+  width: 60%;
+}
+
+.shorter-field {
+  width: 30%;
+}
+
+.shortest-field {
+  width: 15%;
+}

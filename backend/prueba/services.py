@@ -56,7 +56,6 @@ def _calculate_progress(task):
 
 def get_series(client_name, start, end, contexts, tags, interval):
     client = Client.objects.get(name=client_name)
-    print(client.index_name)
     return search.get_series(client.index_name, start, end, contexts, tags, interval)
 
 def get_tags(client_name):

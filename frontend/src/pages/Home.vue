@@ -4,8 +4,8 @@
 
     <div class="buttons">
       <a class="button is-primary is-small" @click="isModalActive = true"> 
-        <b-icon pack="fas" icon="plus" size="is-small"></b-icon>
-        <span>New client</span>
+        <b-icon icon="plus" ></b-icon>
+        <span>Add client</span>
       </a>
     </div>
 
@@ -48,12 +48,12 @@
           <b-table-column label="Action" >
             <b-tooltip label="View details">
               <button class="transparent-button" @click="selectedView = props.row.name">
-                <b-icon icon="eye" type="is-primary"></b-icon>
+                <b-icon icon="eye-outline" type="is-primary"></b-icon>
               </button>
             </b-tooltip>
             <b-tooltip label="Edit">
               <button class="transparent-button">
-                <b-icon icon="edit" type="is-primary"></b-icon>
+                <b-icon icon="pencil" type="is-primary"></b-icon>
               </button>
             </b-tooltip>
             <b-tooltip label="Settings">
@@ -63,7 +63,7 @@
             </b-tooltip>
             <b-tooltip label="Delete">
               <button class="transparent-button" @click="confirmDelete(props.row.name)">
-                <b-icon icon="trash-alt" type="is-primary"></b-icon>
+                <b-icon icon="delete-forever" type="is-primary" size="is-samll"></b-icon>
               </button>
             </b-tooltip>
           </b-table-column> 
@@ -145,14 +145,4 @@ export default {
 
 
 <style>
-
-.transparent-button {
-  background-color: Transparent;
-  background-repeat:no-repeat;
-  border: none;
-  cursor:pointer;
-  overflow: hidden;
-  outline:none;
-}
-
 </style>

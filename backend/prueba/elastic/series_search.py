@@ -15,7 +15,7 @@ class SeriesSearch():
         ic = IndicesClient(es)
         res = ic.refresh(indexname)
 
-    def get_series(self, indexname, start='', end='', context='', tags='', interval='1H'):
+    def get_series(self, indexname, start='', end='', context=[], tags=[], interval='1H'):
         requestedData = []        
         index_pattern = indexname + '-*'
         query = {
@@ -48,13 +48,13 @@ class SeriesSearch():
             
         if tags:
             dict = {
-                "terms": {"tag.tree": [ tags ] }
+                "terms": {"tag.tree":  tags  }
             }
             query['query']['bool']['filter'].append(dict)
 
         if context:
             dict = {
-                "terms": {"context": [ context ] }
+                "terms": {"context":  context  }
             }
             query['query']['bool']['filter'].append(dict)
 

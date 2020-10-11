@@ -1,61 +1,89 @@
 <template>
-<div>
-  <BarSeries :activeSeries="activeSeries" @change="setActiveSeries"/>
 
-  <section class='page-container'>
-    <div class="columns is-fullheight">
+<section class='section'>
+  <div class="columns is-fullheight">
 
-      <div class="column is-2 side-menu is-hidden-mobile">        
-        <b-tabs type="is-toggle" expanded size="is-small">
-          <b-tab-item label="Analysis" icon-pack="fas" icon="chart-line">
-            <SettingsAnalysis/>
-          </b-tab-item>
-          <b-tab-item label="Details" icon-pack="fas" icon="file-alt">
-            <span> nothing here </span>
-          </b-tab-item>
-        </b-tabs>
-      </div>
+    <div class="column is-3 side-menu is-hidden-mobile">        
+      <b-tabs type="is-toggle" expanded size="is-small">
+        <b-tab-item label="Analysis" icon-pack="fas" icon="chart-line">
+          <AnalysisSettings/>
+        </b-tab-item>
+        <b-tab-item label="Results" icon-pack="fas" icon="file-alt">
+          <AnalysisAnomaliesTable 
+            :anomalies="anomalies"
+            :activeAnomaly="activeAnomaly"
+            @changeActive="setActiveAnomaly"/> 
+        </b-tab-item>
+      </b-tabs>
+    </div>
 
-      <div class="column main-content">
-        <AnalysisChart/>
-        <hr>
-        <AnomaliesList/>         
-      </div>
+    <div class="column main-content">
+      <AnalysisChart 
+        :seriesData="seriesData"
+        :baseline="baseline"
+        :anomalies="anomalies"
+        :loading="loading"
+        :activeAnomaly="activeAnomaly"
+        @changeActive="setActiveAnomaly"/>
 
-    </div>  
-  </section> 
-</div>
+        <label class="checkbox label">
+          <input type="checkbox" :checked="showBaseline" v-model="showBaseline">
+          Show baseline
+        </label>
+      <hr>        
+    </div>
+
+  </div>  
+</section> 
+
 </template>
 
 
-
 <script>
-import BarSeries from '../components/BarSeries.vue';
 import AnalysisChart from '../components/AnalysisChart.vue';
-import SettingsAnalysis from '../components/SettingsAnalysis.vue';
-import AnomaliesList from '../components/AnomaliesList.vue';
+import AnalysisSettings from '../components/AnalysisSettings.vue';
+import AnalysisAnomaliesTable from '../components/AnalysisAnomaliesTable.vue';
 
 
 export default {
-    components: { BarSeries, AnalysisChart, SettingsAnalysis, AnomaliesList },
+    components: { AnalysisChart, AnalysisSettings, AnalysisAnomaliesTable },
+    data() {
+      return {
+        showBaseline: true,
+      }       
+    },
     computed: {
-      activeSeries() {
-        return this.$store.state.analysis.activeSeries
+      seriesData() {
+        return this.$store.state.analysis.results.series
+      },
+      baseline() {
+        return this.showBaseline ? this.$store.state.analysis.results.baseline : []
+      },
+      anomalies() {
+        return this.$store.state.analysis.results.anomalies
+      },
+      loading() {
+        return this.$store.state.analysis.loading
+      },
+      activeAnomaly() {
+        return this.$store.state.analysis.activeAnomalyId
       }
     },
     methods: {
-      setActiveSeries(event) {
-        this.$store.dispatch("analysis/setActiveSeries", event)
+      setActiveAnomaly(id) {
+        this.$store.dispatch('analysis/setActiveAnomaly', id)
       }
     },
 }
+
 </script>
+
 
 
 <style>
 
-.page-container {
-  padding: 1.25rem;
+.section {
+  padding: 1rem;
 }
 
 .is-fullheight {

@@ -1,15 +1,3 @@
 <template>
-	
-	<h1> nothing here so far </h1>
-
-
+	<div>nothing here so far</div>
 </template>
-
-
-<script>
-
-export default {
-	
-}
-
-</script>
