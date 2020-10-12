@@ -10,6 +10,7 @@ class Anomaly:
         # inclusive
         self.end = end
         self.score = score
+        self.algo_tag = None
 
     def output_format(self):
         return {
@@ -18,6 +19,10 @@ class Anomaly:
             "score": self.score
         }
 
+    def tag_algo(self, algo_id):
+        self.algo_tag = algo_id
+
+    @staticmethod
     def from_epoch(start, end, score):
         start_t = pd.Timestamp(start, unit='s')
         end_t = pd.Timestamp(end, unit='s')

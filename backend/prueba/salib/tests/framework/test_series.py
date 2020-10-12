@@ -1,13 +1,13 @@
 import pandas as pd
 import unittest
-from model import series
+from model.series import Series
 
 
 class TestSeries(unittest.TestCase):
 
     def test_series_from_array(self):
 
-        test_s = series.Series.from_array([
+        test_s = Series.from_array([
             [0, 0],
             [1, 1],
             [2, 0],

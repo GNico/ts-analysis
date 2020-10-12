@@ -12,6 +12,13 @@ class Series:
     def span(self):
         return len(self.pdseries.index)
 
+    def time_idx(self, timestamp):
+        # ToDo optimize
+        for i in range(0, self.span()):
+            if self.pdseries.index[i] == timestamp:
+                return i
+        return None
+
     def from_array(arr, interval, unit='s'):
         dates, count = zip(*arr)
         dates = pd.to_datetime(dates, unit=unit)

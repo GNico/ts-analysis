@@ -1,4 +1,4 @@
-from . import result
+from .result import Result
 
 
 class TestCase:
@@ -10,4 +10,4 @@ class TestCase:
 
     def run(self):
         actual_analysis = self.analyzer.analyze(self.series)
-        return result.Result(self, actual_analysis)
+        return Result(self, actual_analysis)

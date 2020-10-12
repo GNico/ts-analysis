@@ -1,4 +1,4 @@
-from model import series
+from model.series import Series
 
 
 class TestSeriesBuilder:
@@ -12,13 +12,17 @@ class TestSeriesBuilder:
         if self.unit != other.unit or self.interval != other.interval:
             raise ValueError('Unit/interval mismatch')
 
-    def append(self, test_series):
+    def append(self, test_series, piecewise=False):
         self.assert_same_units(test_series)
         last_index = self.data[-1][0] + 1
         first_new_index = test_series.data[0][0]
+        if piecewise:
+            piecewise_diff = self.data[-1][1] - test_series.data[0][1]
+        else:
+            piecewise_diff = 0
         for e in test_series.data:
             new_index = last_index + e[0] - first_new_index
-            entry = e[1]
+            entry = e[1] + piecewise_diff
             self.data.append([new_index, entry])
 
     def compose(self, test_series):
@@ -28,7 +32,7 @@ class TestSeriesBuilder:
             self.data[i] = [index, self.data[i][1] + test_series.data[i][1]]
 
     def build(self):
-        return series.Series.from_array(self.data, self.interval, self.unit)
+        return Series.from_array(self.data, self.interval, self.unit)
 
     @staticmethod
     def constant(length, value=0, interval=1, unit='s'):

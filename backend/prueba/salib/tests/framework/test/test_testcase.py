@@ -1,10 +1,10 @@
 import unittest
 
-from model.test import testcase
-from model import anomaly
-from model import analysis
-from model import series
-from tests.framework import mock_analyzer
+from model.test.testcase import TestCase
+from model.anomaly import Anomaly
+from model.analysis import Analysis
+from model.series import Series
+from tests.framework.mock_analyzer import MockAnalyzer
 from model.test import metric_classifications_builder as cb
 
 
@@ -12,14 +12,14 @@ class TestTestCase(unittest.TestCase):
 
     def test_metrics_case1(self):
         actual_anomalies = [
-            anomaly.Anomaly.from_epoch(1, 1, 1.0),
-            anomaly.Anomaly.from_epoch(2, 2, 1.0),
-            anomaly.Anomaly.from_epoch(4, 4, 1.0)
+            Anomaly.from_epoch(1, 1, 1.0),
+            Anomaly.from_epoch(2, 2, 1.0),
+            Anomaly.from_epoch(4, 4, 1.0)
         ]
 
-        analyzer = mock_analyzer.MockAnalyzer(actual_anomalies)
+        analyzer = MockAnalyzer(actual_anomalies)
 
-        test_series = series.Series.from_array([
+        test_series = Series.from_array([
             [0, 0],
             [1, 1],
             [2, 0],
@@ -31,14 +31,13 @@ class TestTestCase(unittest.TestCase):
 
         expected_anomalies = anomalies_from_mock_series(test_series)
 
-        expected_analysis = analysis.Analysis(
-            "Test",
+        expected_analysis = Analysis(
             expected_anomalies,
             None,
             None
         )
 
-        test = testcase.TestCase(test_series, analyzer, expected_analysis)
+        test = TestCase(test_series, analyzer, expected_analysis)
         result = test.run()
         anomaly_metrics = result.anomaly_metrics
 
@@ -62,7 +61,7 @@ class TestTestCase(unittest.TestCase):
         self.assertAlmostEqual(0.4, anomaly_metrics.f1(), 2)
 
     def test_anomalies_from_mock(self):
-        test_series = series.Series.from_array([
+        test_series = Series.from_array([
             [0, 0],
             [1, 0],
             [2, 1],
@@ -81,7 +80,7 @@ class TestTestCase(unittest.TestCase):
         self.assertEqual(test_series.pdseries.index[5], anomalies[1].end)
 
     def test_anomalies_from_mock_edge_case(self):
-        test_series = series.Series.from_array([
+        test_series = Series.from_array([
             [0, 1],
             [1, 0],
             [2, 1]
@@ -110,11 +109,11 @@ def anomalies_from_mock_series(series):
             if val == 1 and start is None:
                 start = t
             if val == 0 and start is not None:
-                anomalies.append(anomaly.Anomaly(start, last, 1.0))
+                anomalies.append(Anomaly(start, last, 1.0))
                 start = None
             last = t
 
         if start is not None:
-            anomalies.append(anomaly.Anomaly(start, series.end, 1.0))
+            anomalies.append(Anomaly(start, series.end, 1.0))
 
     return anomalies
