@@ -5,12 +5,13 @@ import pandas as pd
 @total_ordering
 class Anomaly:
 
-    def __init__(self, start, end, score):
+    def __init__(self, start, end, score, desc=None):
         self.start = start
         # inclusive
         self.end = end
         self.score = score
         self.algo_tag = None
+        self.desc = desc
 
     def output_format(self):
         return {
