@@ -120,8 +120,8 @@ export default {
         name: "treetest",
       })
       .then(response => {       
-        this.chartData = response.data.series
-        this.popularTags = response.data.popular_tags
+        this.chartData = response.data
+        this.popularTags = []
       })
       .catch(error => { 
         console.log('error')

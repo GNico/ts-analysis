@@ -102,6 +102,7 @@ export default {
         }, 
         plotOptions: {
           series: {
+            allowPointSelect: true,            
             animation: false,
             lineWidth: this.lineWidth,
             states: {
