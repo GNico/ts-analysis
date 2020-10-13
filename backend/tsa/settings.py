@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'prueba',
+    'ts_project',
 ]
 
 MIDDLEWARE = [
@@ -64,7 +64,7 @@ ROOT_URLCONF = 'tsa.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['prueba/templates'],
+        'DIRS': ['ts_project/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
