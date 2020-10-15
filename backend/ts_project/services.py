@@ -48,20 +48,28 @@ def get_clients_info():
     return [ *indexing_clients, *ready_clients ]
 
 
+def get_series(client_name, start, end, contexts, tags, interval):
+    client = Client.objects.get(name=client_name)
+    return search.get_series(client.index_name, start, end, contexts, tags, interval)
+
+def get_tags_count(client_name, start, end, contexts, tags, size):
+    client = Client.objects.get(name=client_name)
+    return search.get_tags_count(client.index_name, start, end, contexts, tags, size)
+
+
+def get_tags(client_name):
+    client = Client.objects.get(name=client_name)
+    return search.get_tags(client.index_name)
+
+
+def get_contexts(client_name):
+    client = Client.objects.get(name=client_name)
+    return search.get_contexts(client.index_name)
+
+
 def _calculate_progress(task):
     total = task.info.get('total_events', 1)
     current = search.get_count(task.info.get('index_name'))
     return ceil(current * 100 / total)
 
 
-def get_series(client_name, start, end, contexts, tags, interval):
-    client = Client.objects.get(name=client_name)
-    return search.get_series(client.index_name, start, end, contexts, tags, interval)
-
-def get_tags(client_name):
-    client = Client.objects.get(name=client_name)
-    return search.get_tags(client.index_name)
-
-def get_contexts(client_name):
-    client = Client.objects.get(name=client_name)
-    return search.get_contexts(client.index_name)

@@ -13,6 +13,7 @@ export default {
       chartData: [],
       popularTags: [],
 
+      zoomEnabled: true,
       selectedPoint: {},
     }
   },
@@ -27,7 +28,8 @@ export default {
           events: {
             load: function() {
               this.rGroup = this.renderer.g('rGroup').add() // create an SVG group to allow translate
-            }
+            },      
+            selection: this.selectPointsByDrag
           }
           //backgroundColor: this.backgroundColor,
         },
@@ -69,7 +71,6 @@ export default {
                   chart.customTooltip = undefined
                 }
 
-
                 var tags = vm.popularTags.find(element => element.timestamp == point.x)
 
                 var text = ''
@@ -100,8 +101,6 @@ export default {
             } 
           }
         },  
-
-
         series: {        
           data: this.chartData,      
         }
@@ -114,14 +113,41 @@ export default {
       var elem = this.popularTags.find(element => element.timestamp == point)
       selectedPoint = { }
     },
+
+    selectPointsByDrag(e) {
+      if (typeof e.xAxis == 'undefined') { //reset button clicked
+        return true
+      }
+      if (this.zoomEnabled) {
+        return true
+      } else {
+        this.$refs.chart.chart.xAxis[0].removePlotBand('selection')
+
+        this.$refs.chart.chart.xAxis[0].addPlotBand({
+          id: 'selection',
+          from: e.xAxis[0].min,
+          to: e.xAxis[0].max,
+          color: '#FCFFC5',
+        })
+        return false
+      }
+      
+    }
+  },
+  created() {
+    window.addEventListener('keydown', (e) => {
+      if (e.key == 'Control') {
+        this.zoomEnabled = !this.zoomEnabled;
+      }
+    });
   },
   mounted: function () {
     api.getSeriesData({ 
         name: "treetest",
       })
       .then(response => {       
-        this.chartData = response.data.series
-        this.popularTags = response.data.popular_tags
+        this.chartData = response.data
+        this.popularTags = []
       })
       .catch(error => { 
         console.log('error')

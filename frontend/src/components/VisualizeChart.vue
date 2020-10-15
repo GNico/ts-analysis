@@ -107,10 +107,8 @@ export default {
             states: {
                hover: {
                   lineWidth: this.lineWidth
-               },
-          
+               },          
             },
-
           }
         },       
         rangeSelector: {

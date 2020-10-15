@@ -16,6 +16,32 @@ class SeriesView(APIView):
         return Response(data)
 
 
+class TagCountView(APIView):
+    def get(self, request, pk):
+        data = services.get_tags_count(
+            client_name=pk, 
+            start=request.query_params.get('start', ''),
+            end=request.query_params.get('end', ''),
+            contexts=request.query_params.getlist('contexts', []),             
+            tags=request.query_params.getlist('tags', []),             
+            size=request.query_params.get('size', 20))
+        return Response(data)
+
+
+class TagListView(APIView):
+    def get(self, request, pk):
+        data = services.get_tags(client_name=pk)      
+        response = listToTree(data)
+        return Response(response)
+
+
+class ContextListView(APIView):
+    def get(self, request, pk):
+        data = services.get_contexts(client_name=pk)
+        response = listToTree(data)
+        return Response(response)
+
+
 def listToTree(data):
     import re
     root = []
@@ -42,19 +68,3 @@ def listToTree(data):
                     node['children'] = []
                 currentchildren = node['children']
     return root
-
-
-class TagListView(APIView):
-    def get(self, request, pk):
-        data = services.get_tags(client_name=pk)      
-        response = listToTree(data)
-        return Response(response)
-
-
-class ContextListView(APIView):
-    def get(self, request, pk):
-        data = services.get_contexts(client_name=pk)
-        response = listToTree(data)
-        return Response(response)
-
-

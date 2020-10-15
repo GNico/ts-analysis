@@ -179,7 +179,7 @@ const actions = {
                     end: state.range.end ? state.range.end.toISOString() : null,
                     interval: seriesOptions.interval})
                 .then(response => {       
-                    commit('add_data', {id: id, data: response.data.series}) 
+                    commit('add_data', {id: id, data: response.data}) 
                     commit('set_loading', false)
                 })
                 .catch(error => { 
