@@ -51,6 +51,10 @@ export default {
         delete params.name
         return repository.get(url, {params: removeEmpty(params), paramsSerializer: params => transformArrayParams(params)})
     },
+    getTagsCount(params) {
+        let url = "/clients/" + params.name + "/series/tagcount/"
+        return repository.get(url, {params: removeEmpty(params), paramsSerializer: params => transformArrayParams(params)})
+    },
     getContexts(clientName) {
         let url = "/clients/" + clientName + "/series/contexts/"
         return repository.get(url)
@@ -62,7 +66,7 @@ export default {
     getAnomalies(payload) {
         return repository.get("/analysis/", {params: payload, paramsSerializer: params => transformArrayParams(params)})
     },
-    //maybe remove later
+    //should remove later
     testAlgo() {
         return repository.get("/testalgo/")
         //return repository.get("/testalgo/", {params: payload, paramsSerializer: params => transformArrayParams(params)})
