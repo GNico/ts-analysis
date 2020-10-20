@@ -1,6 +1,22 @@
 <template>
 <div>
-  <ExpChart :chartData="chartData" :popularTags="popularTags" @selection="getInfo"/>
+  <BaseChart :seriesData="chartData" 
+            :labelContent="labelContent" 
+            :zoomEnabled="zoomEnabled"
+            @selection="getInfo"
+            @changedExtremes="sync"
+            :extremes="extremes"/>
+
+  <BaseChart :seriesData="chartData" 
+            :labelContent="labelContent" 
+            :zoomEnabled="zoomEnabled"
+            @selection="getInfo"
+            @changedExtremes="sync"
+            :extremes="extremes"/>
+
+
+
+
 </div>
 </template>
 
@@ -8,26 +24,37 @@
 <script>
 import api from "../api/repository";
 
-import ExpChart from "../components/ExpChart";
+import BaseChart from "../components/BaseChart";
 
 export default {
-  components: { ExpChart },
+  components: { BaseChart },
   data () {
     return {
       chartData: [],
       popularTags: [],
+      zoomEnabled: true,
+      extremes: {}
     }
   },
   computed: {
-    
+    labelContent() {
+      var text = ''
+      for (var elem of this.popularTags) {
+        text += elem.tag + ': ' + elem.count + ' <br>'
+      }
+      return text
+    }
   },
   methods: {
+    sync(event) {
+      this.extremes = event
+    },
+
     getInfo(extremes) {
       api.getTagsCount({
-        name: "treetest",
+        name: "movistar",
         start: new Date(extremes.min).toISOString(),
         end: new Date(extremes.max).toISOString(),
-        size: 5
       })
       .then(response => {       
         this.popularTags = response.data
@@ -40,7 +67,7 @@ export default {
   },
   mounted: function () {
     api.getSeriesData({ 
-        name: "treetest",
+        name: "movistar",
       })
       .then(response => {       
         this.chartData = response.data
@@ -49,7 +76,14 @@ export default {
         console.log('error')
         console.log(error)
       })
-  }
+  },
+  created() {
+    window.addEventListener('keydown', (e) => {
+      if (e.key == 'Control') {
+        this.zoomEnabled = !this.zoomEnabled;
+      }
+    });
+  },
 }
 
 </script>

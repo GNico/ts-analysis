@@ -12,11 +12,7 @@ export default {
       type: Array,
       default: () => [] 
     },
-    anomalies: {
-      type: Array,
-      default: () => { return [] }
-    },
-    baseline: {
+    bands: {
       type: Array,
       default: () => { return [] }
     },
@@ -27,14 +23,26 @@ export default {
     zoomEnabled: {
       type: Boolean,
       default: true
+    },  
+    extremes: {
+      type: Object,
+      default: () => { return {} }
+    }, 
+    loading: {
+      type: Boolean,
+      default: false
+    },
+    backgroundColor: {    //refact
+      type: String,
+      default: "#073642",
+    },
+    lineWidth: {
+      type: Number,
+      default: 2
     },
     colors: {
       type: Object,
       default: () => {}
-    },
-    loading: {
-      type: Boolean,
-      default: false
     },
   },
   data () {
@@ -43,33 +51,61 @@ export default {
     }
   },
   computed: {
-   /* normalizedColors() {
-      var default = {
-        background: '',
-        labelBackground
+    interactiveBands() {
+      var vm = this
+      var bands = []
+      for (var item of this.bands) {
+        bands.push({ id: item.id,
+                    from: item.from,
+                    to: item.to,
+                    color: this.backgroundColor,
+                    events: {
+                      click: function(e) {
+                        vm.setActiveAnomaly(this.options.id)
+                      }, 
+                      mouseover: function(e) {
+                        if (this.id != vm.activeAnomaly) {
+                          this.svgElem.attr('fill', 'rgba(173,216,230,0.3)');
+                        }
+                      },
+                      mouseout: function(e) {
+                        if (this.id != vm.activeAnomaly) {
+                          this.svgElem.attr('fill', this.options.color);
+                        }
+                      } 
+                   }
+        })
       }
-    }, */
-
+      return bands
+    },
     chartOptions() {
       var vm = this
       return {
-        chart: {
+        chart: {          
           zoomType: 'x',
           panning: true,
           panKey: 'shift',
-          height: 400,
+          height: 250,
           events: {
             load: function() {
               this.rGroup = this.renderer.g('rGroup').add() // create an SVG group to allow translate
             },      
             selection: this.selectAreaByDrag,
             click: this.unselectByClick,
-          }
-          //backgroundColor: this.backgroundColor,
+          },
+          backgroundColor: this.backgroundColor,
         },
         credits: false,      
         xAxis: {
-          type: 'datetime',          
+          type: 'datetime',
+          plotBands: this.interactiveBands,
+          events: {
+            setExtremes: function(event) {
+              if (this.zoomEnabled && event.trigger !== 'sync') {
+                vm.$emit("changedExtremes", event);
+              }             
+            }     
+          },   
         },
         yAxis: {
           title: '',
@@ -93,9 +129,16 @@ export default {
           backgroundColor: '#001f27',
         },  
         plotOptions: {
-          series: {      
+          series: {
+            animation: false,
+            lineWidth: this.lineWidth,
+            states: {
+               hover: {
+                  lineWidth: this.lineWidth
+               },          
+            },
           }
-        },  
+        },         
         series: {        
           data: this.seriesData,      
         }
@@ -103,8 +146,25 @@ export default {
     },
   },
   methods: {
+    setActiveBand(id) {
+      this.$emit('changeActiveBand', id)
+    },
+    setChartExtremes(min, max) {
+      var chart = this.$refs.chart.chart
+      if (chart.xAxis[0].setExtremes) { // It is null while updating
+        chart.xAxis[0].setExtremes(min, max, undefined, false, {trigger: 'sync'})
+        if (chart.resetZoomButton != undefined) { // force hide or show reset button 
+          if ((min == undefined || min == chart.xAxis[0].dataMin) && 
+              (max == undefined) || (max == chart.xAxis[0].dataMax)) {
+            chart.resetZoomButton.hide()
+          } else {
+            chart.resetZoomButton.show()
+          }
+        }
+      }                      
+    }, 
     selectAreaByDrag(e) {
-      if (typeof e.xAxis == 'undefined') { //reset button clicked
+      if (typeof e.xAxis == 'undefined')  { //reset button clicked
         return true
       }
       if (this.zoomEnabled) {
@@ -135,6 +195,16 @@ export default {
     }
   },
   watch: {
+    loading() {
+      if (this.loading) {
+        this.$refs.chart.chart.showLoading()
+      } else {
+        this.$refs.chart.chart.hideLoading()
+      }
+    },
+    extremes(newVal) {
+      this.setChartExtremes(newVal.min, newVal.max)
+    },
     labelContent() {
       var chart = this.$refs.chart.chart
       if (chart.customTooltip) { // destroy the old one when rendering new
