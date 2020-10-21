@@ -5,14 +5,28 @@
             :zoomEnabled="zoomEnabled"
             @selection="getInfo"
             @changedExtremes="sync"
-            :extremes="extremes"/>
+            @crosshair="syncCrosshairs"
+            :extremes="extremes"
+            :syncCrosshair="syncCrosshair"
+            :syncCrosshairEnabled="true"/>
 
   <BaseChart :seriesData="chartData" 
             :labelContent="labelContent" 
             :zoomEnabled="zoomEnabled"
             @selection="getInfo"
             @changedExtremes="sync"
-            :extremes="extremes"/>
+            :extremes="extremes"
+            @crosshair="syncCrosshairs"
+            :syncCrosshair="syncCrosshair"
+            :syncCrosshairEnabled="true"/>
+
+  <BaseChart :seriesData="chartData" 
+          :labelContent="labelContent" 
+          :zoomEnabled="zoomEnabled"
+          @selection="getInfo"
+          @changedExtremes="sync"
+          :extremes="extremes"
+          :syncCrosshair="syncCrosshair"/>         
 
 
 
@@ -33,7 +47,8 @@ export default {
       chartData: [],
       popularTags: [],
       zoomEnabled: true,
-      extremes: {}
+      extremes: {},
+      syncCrosshair: {},
     }
   },
   computed: {
@@ -49,7 +64,9 @@ export default {
     sync(event) {
       this.extremes = event
     },
-
+    syncCrosshairs(event) {
+      this.syncCrosshair = event
+    },
     getInfo(extremes) {
       api.getTagsCount({
         name: "movistar",

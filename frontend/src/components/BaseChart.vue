@@ -24,6 +24,14 @@ export default {
       type: Boolean,
       default: true
     },  
+    syncCrosshairEnabled: {
+      type: Boolean,
+      default: false
+    },
+    syncCrosshair: {
+      type: Object,
+      default: () => {}
+    },
     extremes: {
       type: Object,
       default: () => { return {} }
@@ -34,7 +42,7 @@ export default {
     },
     backgroundColor: {    //refact
       type: String,
-      default: "#073642",
+      default: "",
     },
     lineWidth: {
       type: Number,
@@ -82,13 +90,29 @@ export default {
       var vm = this
       return {
         chart: {          
-          zoomType: 'x',
+          zoomType: 'x',          
           panning: true,
           panKey: 'shift',
-          height: 250,
+          height: 300,
+          resetZoomButton: {
+            theme: {
+              zIndex: 20,
+              fill: 'white',
+              stroke: 'silver',
+              r: 0,
+              states: {
+                  hover: {
+                      fill: '#41739D',
+                      style: {
+                          color: 'white'
+                      }
+                  }
+              }
+            }
+          },
           events: {
             load: function() {
-              this.rGroup = this.renderer.g('rGroup').add() // create an SVG group to allow translate
+              //this.rGroup = this.renderer.g('rGroup').add() // create an SVG group to allow translate
             },      
             selection: this.selectAreaByDrag,
             click: this.unselectByClick,
@@ -126,7 +150,7 @@ export default {
           split: false,
           shared: true,
           valueDecimals: 0,
-          backgroundColor: '#001f27',
+          //backgroundColor: '#001f27',
         },  
         plotOptions: {
           series: {
@@ -137,6 +161,20 @@ export default {
                   lineWidth: this.lineWidth
                },          
             },
+            point: {
+              events: {
+                mouseOver: function(event) {
+                  if (vm.syncCrosshairEnabled) {
+                    vm.$emit('crosshair', {chart: vm.$refs.chart.chart, x: event.target.x, type: 'over'})
+                  }
+                },
+                mouseOut: function(event) {
+                  if (vm.syncCrosshairEnabled) {
+                    vm.$emit('crosshair', {chart: vm.$refs.chart.chart, x: event.target.x, type: 'out'})
+                  }
+                }
+              }
+            }
           }
         },         
         series: {        
@@ -177,7 +215,7 @@ export default {
           id: 'selection',
           from: min,
           to: max,
-          color: '#FCFFC5',
+          color: 'rgba(0,0,0,0.5)',
         })
         this.$emit('selection', {min: min, max: max})
         return false
@@ -211,19 +249,45 @@ export default {
         chart.customTooltip.destroy()
         chart.customTooltip = undefined
       }
-      var text = '<div style="color: lightblue; overflow-y: scroll; max-height: ' + chart.chartHeight/4 + 'px;">'
+      var text = '<div style="color: #F0F0F0; overflow-y: scroll; max-height: ' + chart.chartHeight/4 + 'px;">'
       text += this.labelContent + '</div>'
       chart.customTooltip = chart.renderer.label(text, chart.plotSizeX /2, chart.plotTop, 'rect', undefined, undefined, true)
       .attr({ 
         'stroke-width': 1,
         zIndex: 8,
-        stroke: 'lightblue',
+        stroke: '#F0F0F0',
         r: 3,
-        fill: 'black'
+        fill: 'rgba(0,0,0,0.85)'
       })     
-      .add(chart.rGroup)
+      .add()
+      //.add(chart.rGroup)
       //chart.rGroup.translate(-chart.customTooltip.width / 2, -chart.customTooltip.height + 40).toFront()
-      chart.rGroup.toFront()
+    },
+    syncCrosshair() {
+      if (chart === this.syncCrosshair.chart) return;
+     // var pointstorefresh = []
+      var chart = this.$refs.chart.chart
+      chart.series.forEach((series) => {
+        series.points.forEach((point) => {
+          if (point.x === this.syncCrosshair.x) {
+            if (this.syncCrosshair.type === 'over') {
+              point.setState('hover');
+              point.state = '';
+              //pointstorefresh.push(point)
+              chart.xAxis[0].drawCrosshair(null, point);
+              chart.tooltip.refresh([point]);
+
+            } /*else {
+            point.setState();
+              chart.tooltip.hide();
+              chart.xAxis[0].hideCrosshair();
+             
+            }*/
+          }
+        })
+      })
+      //if (pointstorefresh.length > 0)
+      //  chart.tooltip.refresh(pointstorefresh);
     }
   },
 }
