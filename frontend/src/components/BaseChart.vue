@@ -36,6 +36,9 @@ export default {
       type: Object,
       default: () => { return {} }
     }, 
+    activeBand: {
+      type: String,
+    },
     loading: {
       type: Boolean,
       default: false
@@ -66,18 +69,23 @@ export default {
         bands.push({ id: item.id,
                     from: item.from,
                     to: item.to,
-                    color: this.backgroundColor,
+                    color: 'transparent',
+                    zIndex: 15,
                     events: {
                       click: function(e) {
-                        vm.setActiveAnomaly(this.options.id)
+                        if (vm.activeBand == this.options.id) {
+                          vm.setActiveBand('')
+                        } else {
+                          vm.setActiveBand(this.options.id)
+                        }
                       }, 
                       mouseover: function(e) {
-                        if (this.id != vm.activeAnomaly) {
+                        if (this.id != vm.activeBand) {
                           this.svgElem.attr('fill', 'rgba(173,216,230,0.3)');
                         }
                       },
                       mouseout: function(e) {
-                        if (this.id != vm.activeAnomaly) {
+                        if (this.id != vm.activeBand) {
                           this.svgElem.attr('fill', this.options.color);
                         }
                       } 
@@ -209,8 +217,8 @@ export default {
         return true
       } else {                
         this.$refs.chart.chart.xAxis[0].removePlotBand('selection')
-        var min = Math.round(e.xAxis[0].min)
-        var max = Math.round(e.xAxis[0].max)
+        let min = e.xAxis[0].min
+        let max = e.xAxis[0].max
         this.$refs.chart.chart.xAxis[0].addPlotBand({
           id: 'selection',
           from: min,
@@ -233,6 +241,19 @@ export default {
     }
   },
   watch: {
+    activeBand(newId) {
+      let axis = this.$refs.chart.chart.axes[0]
+      for (var i = 0; i < axis.plotLinesAndBands.length; i++) {        
+        var band = axis.plotLinesAndBands[i]
+        if (band.id != 'selection') {
+          if (band.id === newId) {
+            band.svgElem.attr('fill', 'rgba(173,216,230,0.3)').shadow({color: 'lightblue', opacity: 1})
+          } else if (band.id !== undefined) {            
+            band.svgElem.attr('fill', 'transparent').shadow(false)        
+          }
+        }
+      }
+    },
     loading() {
       if (this.loading) {
         this.$refs.chart.chart.showLoading()

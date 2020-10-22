@@ -227,7 +227,7 @@ export default {
           if (band.id === newId) {
             band.svgElem.attr('fill', 'rgba(173,216,230,0.3)')
           } else {
-            band.svgElem.attr('fill', this.backgroundColor)
+            band.svgElem.attr('fill', 'transparent')
           }
         }
       }
