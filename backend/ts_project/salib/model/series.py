@@ -1,4 +1,5 @@
 import pandas as pd
+from .utils import timestamp_to_epoch
 
 
 class Series:
@@ -30,3 +31,11 @@ class Series:
 
     def as_list(self):
         return list(self.pdseries.values)
+
+    def output_format(self):
+        output = []
+        for i in range(0, self.span()):
+            output.append(
+                [timestamp_to_epoch(self.pdseries.index[i]),
+                 int(self.pdseries[i])])
+        return output

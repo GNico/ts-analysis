@@ -1,9 +1,8 @@
 class Analysis:
 
-    def __init__(self, anomalies, trend, baseline):
+    def __init__(self, anomalies, baseline):
         self.anomalies = anomalies
         self.build_anomalies_map()
-        self.trend = trend
         self.baseline = baseline
 
     def anomalies_by_algo(self):
@@ -20,9 +19,7 @@ class Analysis:
     def output_format(self):
         anomalies = list(map(lambda a: a.output_format(), self.anomalies))
         baseline = self.baseline.output_format()
-        trend = self.trend.output_format()
         return {
             "anomalies": anomalies,
-            "trend": trend,
             "baseline": baseline
         }

@@ -1,4 +1,7 @@
-from . import metrics
+import json
+import os
+
+from .metrics import Metrics
 from . import metric_classifications_builder
 
 
@@ -19,4 +22,25 @@ class Result:
             self.test_case.series,
             expected,
             actual)
-        return metrics.Metrics(tp, fp, tn, fn)
+        return Metrics(tp, fp, tn, fn)
+
+    def id(self):
+        return self.test_case.id
+
+    def export_testcase(self):
+        output = self.actual_analysis.output_format()
+        output['series'] = self.test_case.series.output_format()
+        output['metrics'] = self.anomaly_metrics.output_format()
+        return output
+
+    def export_all(self):
+        output = {}
+        output['general'] = 'foo'
+        output['testcases'] = [self.export_testcase()]
+        return json.dumps(output)
+
+    def export_for_visuals(self):
+        output = self.export_all()
+        out_path = os.getcwd() + "/../algo_test_output/"
+        with open(out_path + self.id() + '.json', 'w') as f:
+            print(output, file=f)

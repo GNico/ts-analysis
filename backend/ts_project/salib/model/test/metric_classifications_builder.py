@@ -8,9 +8,6 @@ def build(series, expected_anomalies, actual_anomalies):
     tn = []
     fn = []
 
-    start = series.start
-    end = series.end
-
     expected_anomalies = sorted(expected_anomalies)
     actual_anomalies = sorted(actual_anomalies)
 
@@ -18,8 +15,7 @@ def build(series, expected_anomalies, actual_anomalies):
     assert_no_overlap(actual_anomalies)
 
     # TODO: optimize with bin-search?
-    for i in range(start.second, end.second + 1):
-        ts = pd.Timestamp(i, unit='s')
+    for ts in series.pdseries.index:
         is_actual = timestamp_included(ts, actual_anomalies)
         is_expected = timestamp_included(ts, expected_anomalies)
         if is_actual and is_expected:

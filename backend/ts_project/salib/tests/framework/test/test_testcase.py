@@ -29,15 +29,14 @@ class TestTestCase(unittest.TestCase):
             [6, 0]
         ], 1, 's')
 
-        expected_anomalies = anomalies_from_mock_series(test_series)
+        expected_anomalies = TestCase.anomalies_from_mock_series(test_series)
 
         expected_analysis = Analysis(
             expected_anomalies,
-            None,
             None
         )
 
-        test = TestCase(test_series, analyzer, expected_analysis)
+        test = TestCase("testcase1", test_series, analyzer, expected_analysis)
         result = test.run()
         anomaly_metrics = result.anomaly_metrics
 
@@ -71,7 +70,7 @@ class TestTestCase(unittest.TestCase):
             [6, 0]
         ], 1, 's')
 
-        anomalies = anomalies_from_mock_series(test_series)
+        anomalies = TestCase.anomalies_from_mock_series(test_series)
 
         self.assertEqual(2, len(anomalies))
         self.assertEqual(test_series.pdseries.index[2], anomalies[0].start)
@@ -86,34 +85,10 @@ class TestTestCase(unittest.TestCase):
             [2, 1]
         ], 1, 's')
 
-        anomalies = anomalies_from_mock_series(test_series)
+        anomalies = TestCase.anomalies_from_mock_series(test_series)
 
         self.assertEqual(2, len(anomalies))
         self.assertEqual(test_series.pdseries.index[0], anomalies[0].start)
         self.assertEqual(test_series.pdseries.index[0], anomalies[0].end)
         self.assertEqual(test_series.pdseries.index[2], anomalies[1].start)
         self.assertEqual(test_series.pdseries.index[2], anomalies[1].end)
-
-
-def anomalies_from_mock_series(series):
-    anomalies = []
-
-    if series.span() > 0:
-        if series.pdseries[0] == 1:
-            start = series.start
-        else:
-            start = None
-
-        last = series.start
-        for t, val in series.pdseries.items():
-            if val == 1 and start is None:
-                start = t
-            if val == 0 and start is not None:
-                anomalies.append(Anomaly(start, last, 1.0))
-                start = None
-            last = t
-
-        if start is not None:
-            anomalies.append(Anomaly(start, series.end, 1.0))
-
-    return anomalies

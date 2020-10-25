@@ -1,8 +1,12 @@
 import unittest
 
 from model.analyzer import Analyzer
-from model.test.test_series_builder import TestSeriesBuilder
 from model.algos.ema import EMA
+from model.algos.mock import NoBaseline
+from model.anomaly import Anomaly
+from model.analysis import Analysis
+from model.test.test_series_builder import TestSeriesBuilder
+from model.test.testcase import TestCase
 
 
 class TestEMA(unittest.TestCase):
@@ -28,6 +32,13 @@ class TestEMA(unittest.TestCase):
         self.assertEqual(100, series.time_idx(anomaly.start))
         self.assertEqual(105, series.time_idx(anomaly.end))
         self.assertEqual(1, anomaly.score)
+
+        expected_anomalies = [Anomaly.from_epoch(100, 105, 1.0)]
+        expected_analysis = Analysis(expected_anomalies, NoBaseline())
+
+        test_case = TestCase("test_ema", series, analyzer, expected_analysis)
+        result = test_case.run()
+        result.export_for_visuals()
 
     def build_triangle(self):
         sb_up = TestSeriesBuilder.linear(100, 0, 1)
