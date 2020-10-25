@@ -40,8 +40,8 @@ class TestAnomaly(unittest.TestCase):
         anomaly = Anomaly.from_epoch(1, 2, 1.0, 'awesome')
         anomaly.tag_algo('test_algo')
         expected = {
-            'from': 1,
-            'to': 2,
+            'from': 1000,
+            'to': 2000,
             'score': 1.0,
             'desc': 'awesome',
             'algo_id': 'test_algo'
