@@ -15,7 +15,7 @@ class SeriesSearch():
         ic = IndicesClient(es)
         res = ic.refresh(indexname)
 
-    def get_series(self, indexname, start='', end='', context=[], tags=[], interval='1H', show_tags=True):
+    def get_series(self, indexname, start='', end='', context=[], tags=[], interval='1H'):
         index_pattern = indexname + '-*'
         query = {
           "query": {
@@ -57,35 +57,13 @@ class SeriesSearch():
             }
             query['query']['bool']['filter'].append(dict)
 
-        if show_tags:
-            dict = {
-                "popular_terms": {
-                    "terms":  { 
-                        "field": "tag",
-                        "size": 3
-                    }                    
-                }
-            }
-            query['aggs']['my_aggregation']['aggs'] = dict
-
         response = es.search(index=index_pattern, size=0, body=query)
 
         series_data = []
-        popular_tags = []
         for element in response['aggregations']['my_aggregation']['buckets']:
             series_data.append([element['key'], element['doc_count']])
-            if show_tags:  
-                popular_tags.append({
-                    "timestamp": element['key'],
-                    "tags": element['popular_terms']['buckets']
-                }) 
 
-        requestedData = {}      
-        requestedData['series'] = series_data
-        if show_tags: 
-            requestedData['popular_tags'] = popular_tags
-
-        return requestedData
+        return series_data
 
 
     def get_contexts(self, indexname):
