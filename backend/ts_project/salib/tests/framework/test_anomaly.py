@@ -35,3 +35,15 @@ class TestAnomaly(unittest.TestCase):
         a4 = Anomaly.from_epoch(4, 5, 1.0)
         anomalies = [a3, a4, a2, a1]
         self.assertEqual([a1, a2, a3, a4], sorted(anomalies))
+
+    def test_output_format(self):
+        anomaly = Anomaly.from_epoch(1, 2, 1.0, 'awesome')
+        anomaly.tag_algo('test_algo')
+        expected = {
+            'from': 1,
+            'to': 2,
+            'score': 1.0,
+            'desc': 'awesome',
+            'algo_id': 'test_algo'
+        }
+        self.assertEqual(expected, anomaly.output_format())
