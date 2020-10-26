@@ -1,15 +1,25 @@
 <template>
-  <highcharts class="char-sec" :constructor-type="'stockChart'" :options="chartOptions" :updateArgs="updateArgs" ref="chart"></highcharts>
+
+<div class="fill-height-or-more">
+  <BaseChart v-for="seriesData in chartSeriesData" :seriesData="seriesData" :key="seriesData.id" :loading="isLoading"/>
+</div>
+<!--  <highcharts class="char-sec" :constructor-type="'stockChart'" :options="chartOptions" :updateArgs="updateArgs" ref="chart"></highcharts> -->
 </template>
 
 
 <script>
+import BaseChart from "./BaseChart";
 
 export default {
+  components: { BaseChart },
   props: {   
     series: {
       type: Array,
-      default: []
+      default: () => []
+    },
+    panels: {
+      type: Array,
+      default: () => []
     },
     numAxes: {
       type: Number,
@@ -49,6 +59,32 @@ export default {
     isEmpty() {
       return this.series.length > 0
     },
+    chartSeriesData() {
+      let allSeriesData = []
+      this.panels.forEach(panel => {
+        var seriesData = []
+        panel.forEach(seriesid => {
+          var s1 = this.series.find(elem => elem.id === seriesid)
+          seriesData.push({
+            name: s1.name,
+            data: s1.data,
+            id: s1.id,
+            color: s1.color,
+            visible: s1.visible,
+            lineWidth: this.lineWidth,
+            states: {
+               hover: {
+                  lineWidth: this.lineWidth
+               },          
+            },
+          })
+        })
+        allSeriesData.push(seriesData)
+      })
+      return allSeriesData 
+    },
+
+
     axisOptions() {
       let axes = []
       let axisHeightPercent = Math.floor(100 / this.numAxes)
@@ -91,7 +127,6 @@ export default {
           panning: true,
           panKey: 'shift',
           backgroundColor: this.backgroundColor,
-        //  plotBackgroundColor: '#FCFFC5',
           ignoreHiddenSeries: false,
           marginRight: 50,     
           animation: false, 
@@ -181,6 +216,14 @@ export default {
 
 <style scoped>
 
+.fill-height-or-more {
+  display: flex;
+  flex-direction: column;
+}
+
+.fill-height-or-more > * {
+  flex: 1;
+}
 
 
 </style>

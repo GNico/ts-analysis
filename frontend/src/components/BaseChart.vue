@@ -4,7 +4,6 @@
 
 
 <script>
-import api from "../api/repository";
 
 export default {
   props: {
@@ -24,18 +23,18 @@ export default {
       type: Boolean,
       default: true
     },  
-    syncCrosshairEnabled: {
-      type: Boolean,
-      default: false
-    },
-    syncCrosshair: {
-      type: Object,
-      default: () => {}
-    },
     extremes: {
       type: Object,
       default: () => { return {} }
     }, 
+    syncCrosshairEnabled: {
+      type: Boolean,
+      default: false
+    },
+    crosshair: {
+      type: Object,
+      default: () => {}
+    },
     activeBand: {
       type: String,
     },
@@ -55,6 +54,14 @@ export default {
       type: Object,
       default: () => {}
     },
+    margin: {
+      type: Object,
+      default: {
+        top: 0,
+        bottom: 0,
+        left: 100,
+      }
+    }
   },
   data () {
     return {
@@ -101,7 +108,13 @@ export default {
           zoomType: 'x',          
           panning: true,
           panKey: 'shift',
-          height: 300,
+          animation: false, 
+          ignoreHiddenSeries: false,
+          showAxes: false,
+          spacingLeft: this.margin.left ? this.margin.left : 0,   
+          spacingTop: this.margin.top ? this.margin.top : 0, 
+          spacingBottom: this.margin.bottom ? this.margin.bottom : 0, 
+          backgroundColor: this.backgroundColor,
           resetZoomButton: {
             theme: {
               zIndex: 20,
@@ -125,11 +138,25 @@ export default {
             selection: this.selectAreaByDrag,
             click: this.unselectByClick,
           },
-          backgroundColor: this.backgroundColor,
         },
-        credits: false,      
+        credits: false,  
+        loading: {
+          labelStyle: {
+              color: 'white',
+              fontSize: '1.5rem'
+          },
+          style: {
+              backgroundColor: 'black'
+          }
+        },    
         xAxis: {
+          gridLineWidth: 0, 
+          crosshair: {
+            color: 'gray',
+            dashStyle: 'shortdot',            
+          },
           type: 'datetime',
+          showEmpty: false,
           plotBands: this.interactiveBands,
           events: {
             setExtremes: function(event) {
@@ -140,7 +167,16 @@ export default {
           },   
         },
         yAxis: {
-          title: '',
+          crosshair: {
+            snap: false,
+            color: 'gray',
+            dashStyle: 'shortdot',
+            label: {
+              backgroundColor: 'rgba(0,0,0,0.85)',
+              enabled: true,
+              format: '{value:.0f}'
+            }
+          },
         },
         rangeSelector: {
           enabled: false
@@ -164,30 +200,18 @@ export default {
           series: {
             animation: false,
             lineWidth: this.lineWidth,
-            states: {
-               hover: {
-                  lineWidth: this.lineWidth
-               },          
-            },
             point: {
               events: {
                 mouseOver: function(event) {
                   if (vm.syncCrosshairEnabled) {
-                    vm.$emit('crosshair', {chart: vm.$refs.chart.chart, x: event.target.x, type: 'over'})
+                    vm.$emit('crosshairMove', {chart: vm.$refs.chart.chart, x: event.target.x, type: 'over'})
                   }
-                },
-                mouseOut: function(event) {
-                  if (vm.syncCrosshairEnabled) {
-                    vm.$emit('crosshair', {chart: vm.$refs.chart.chart, x: event.target.x, type: 'out'})
-                  }
-                }
+                },              
               }
             }
           }
         },         
-        series: {        
-          data: this.seriesData,      
-        }
+        series: this.seriesData,
       }
     },
   },
@@ -270,6 +294,7 @@ export default {
         chart.customTooltip.destroy()
         chart.customTooltip = undefined
       }
+      if (!this.labelContent) return;
       var text = '<div style="color: #F0F0F0; overflow-y: scroll; max-height: ' + chart.chartHeight/4 + 'px;">'
       text += this.labelContent + '</div>'
       chart.customTooltip = chart.renderer.label(text, chart.plotSizeX /2, chart.plotTop, 'rect', undefined, undefined, true)
@@ -284,31 +309,20 @@ export default {
       //.add(chart.rGroup)
       //chart.rGroup.translate(-chart.customTooltip.width / 2, -chart.customTooltip.height + 40).toFront()
     },
-    syncCrosshair() {
-      if (chart === this.syncCrosshair.chart) return;
-     // var pointstorefresh = []
+    crosshair() {
+      if (chart === this.crosshair.chart) return;
       var chart = this.$refs.chart.chart
       chart.series.forEach((series) => {
-        series.points.forEach((point) => {
-          if (point.x === this.syncCrosshair.x) {
-            if (this.syncCrosshair.type === 'over') {
+        var point = series.points.find(p => p.x === this.crosshair.x)
+        if (point) {
+          if (this.crosshair.type === 'over') {
               point.setState('hover');
               point.state = '';
-              //pointstorefresh.push(point)
               chart.xAxis[0].drawCrosshair(null, point);
               chart.tooltip.refresh([point]);
-
-            } /*else {
-            point.setState();
-              chart.tooltip.hide();
-              chart.xAxis[0].hideCrosshair();
-             
-            }*/
-          }
-        })
+            }
+        }
       })
-      //if (pointstorefresh.length > 0)
-      //  chart.tooltip.refresh(pointstorefresh);
     }
   },
 }
@@ -318,9 +332,6 @@ export default {
 
 <style>
 
-.highcharts-tooltip {
-  pointer-events: auto !important;
-}
 
 
 </style>

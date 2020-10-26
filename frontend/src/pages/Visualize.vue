@@ -1,72 +1,65 @@
 <template>
-
-
 <div>
   <section class="section">
     <VisualizeToolBar class="char-bar"/>
 
-    <div class="chart-container columns is-gapless is-multiline">   
-        <div class="legends">
-          <LegendSeriesTag 
-            v-for="item in sortedSeries"
-            :key="item.id"
-            :color="item.color"
-            :id="item.id"
-            @delete="removeSeries"
-            @show="toggleSeriesVisibility"
-            @settings="openSeriesSettings">
-
-            <b-dropdown  v-if="sortedSeries.length > 1" aria-role="list"">
-              <p slot="trigger" role="button">
-                {{item.name}}
-              </p>
-              <b-dropdown-item v-if="item.yAxis > 0" aria-role="listitem" @click="moveUp(item.id)">
-                <span><b-icon icon="arrow-up-thick" size="is-small"/> Move up</span>
-              </b-dropdown-item>
-              <b-dropdown-item v-if="item.yAxis < sortedSeries.length-1" aria-role="listitem" @click="moveDown(item.id)">
-                <span><b-icon icon="arrow-down-thick" size="is-small"/> Move down</span>
-              </b-dropdown-item>
-            </b-dropdown>
-            <p v-else>
+    <div class="chart-container is-gapless is-multiline">   
+      <div class="legends">
+        <LegendSeriesTag 
+          v-for="item in sortedSeries"
+          :key="item.id"
+          :color="item.color"
+          :id="item.id"
+          @delete="removeSeries"
+          @show="toggleSeriesVisibility"
+          @settings="openSeriesSettings">
+          <b-dropdown  v-if="sortedSeries.length > 1" aria-role="list"">
+            <p slot="trigger" role="button">
               {{item.name}}
-            </p>       
-          </LegendSeriesTag>
-        </div>
-      <div class="column is-offset-1 is-12" >
-        <VisualizeChart 
-          class="is-fullheight"
-          :backgroundColor="chartSettings.backgroundColor"
-          :lineWidth="chartSettings.lineWidth"
-          :marginLeft="chartSettings.marginLeft"
-          :marginTop="chartSettings.marginTop"
-          :marginBottom="chartSettings.marginBottom"
-          :series="series"
-          :isLoading="isFetchingData"
-          :numAxes="numPanels"/>
+            </p>
+            <b-dropdown-item v-if="item.yAxis > 0" aria-role="listitem" @click="moveUp(item.id)">
+              <span><b-icon icon="arrow-up-thick" size="is-small"/> Move up</span>
+            </b-dropdown-item>
+            <b-dropdown-item v-if="item.yAxis < sortedSeries.length-1" aria-role="listitem" @click="moveDown(item.id)">
+              <span><b-icon icon="arrow-down-thick" size="is-small"/> Move down</span>
+            </b-dropdown-item>
+          </b-dropdown>
+          <p v-else>
+            {{item.name}}
+          </p>       
+        </LegendSeriesTag>
       </div>
+      <VisualizeChart 
+        :key="componentKey"
+        class="is-fullheight"
+        :backgroundColor="chartSettings.backgroundColor"
+        :lineWidth="chartSettings.lineWidth"
+        :marginLeft="chartSettings.marginLeft"
+        :marginTop="chartSettings.marginTop"
+        :marginBottom="chartSettings.marginBottom"
+        :series="series"
+        :panels="panels"
+        :isLoading="isFetchingData"
+        :numAxes="numPanels"/>
     </div>
   </section>
-
-  
  
   <VisualizeCardSeries 
     :isActive="isOpenSeriesEdit" 
     :id="currentSeriesId"
     @close="isOpenSeriesEdit = false" />
   
-
 </div>
 </template>
 
-<script>
 
+<script>
 import VisualizeChart from '../components/VisualizeChart.vue';
 import VisualizeToolBar from '../components/VisualizeToolBar.vue';
 import LegendSeriesTag from '../components/LegendSeriesTag.vue';
-
 import VisualizeCardSeries from '../components/VisualizeCardSeries.vue';
 
-
+import api from "../api/repository";
 
 export default {
   components: { VisualizeChart, VisualizeToolBar, LegendSeriesTag, VisualizeCardSeries },
@@ -74,7 +67,8 @@ export default {
     return {
       backgroundColor: '#073642',
       isOpenSeriesEdit: false,
-      currentSeriesId: ''
+      currentSeriesId: '',
+      componentKey: 0,
     }
   },
   computed: {
@@ -102,6 +96,9 @@ export default {
     },
     chartSettings() {
       return this.$store.state.visualize.settings
+    },
+    panels() {
+      return this.$store.state.visualize.panels
     }
   },
   methods: {
@@ -122,13 +119,22 @@ export default {
     moveDown(id) {
       this.$store.dispatch("visualize/moveSeriesDown", id)
     },
+    forceRerender() {
+      this.componentKey += 1;
+    }
+  },
+
+  watch: {
+    numPanels() {
+      this.forceRerender()
+    }
   }
 }
 
 </script>
 
-<style scoped>
 
+<style scoped>
 .char-bar {
   margin-bottom: 0.75rem;
 }

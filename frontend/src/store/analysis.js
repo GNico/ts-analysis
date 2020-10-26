@@ -64,7 +64,7 @@ const mutations = {
 
         //add an id and color to each anomaly for UI purposes
         var anoms = []
-        var idx = 0
+        var idx = 1
         for (var item of results.anomalies) {
             anoms.push({
                     id: idx.toString(),
