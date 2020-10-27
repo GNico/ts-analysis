@@ -56,12 +56,12 @@ export default {
     },
     margin: {
       type: Object,
-      default: {
+      default: () => {return {
         top: 0,
         bottom: 0,
         left: 100,
-      }
-    }
+      }}
+    },
   },
   data () {
     return {
@@ -103,7 +103,7 @@ export default {
     },
     chartOptions() {
       var vm = this
-      return {
+      return {      
         chart: {          
           zoomType: 'x',          
           panning: true,
@@ -150,6 +150,7 @@ export default {
           }
         },    
         xAxis: {
+          ordinal: false,
           gridLineWidth: 0, 
           crosshair: {
             color: 'gray',
@@ -198,6 +199,9 @@ export default {
         },  
         plotOptions: {
           series: {
+            dataGrouping: {
+              enabled: false,
+            },
             animation: false,
             lineWidth: this.lineWidth,
             point: {
@@ -221,7 +225,7 @@ export default {
     },
     setChartExtremes(min, max) {
       var chart = this.$refs.chart.chart
-      if (chart.xAxis[0].setExtremes) { // It is null while updating
+     // if (chart.xAxis[0].setExtremes) { // It is null while updating
         chart.xAxis[0].setExtremes(min, max, undefined, false, {trigger: 'sync'})
         if (chart.resetZoomButton != undefined) { // force hide or show reset button 
           if ((min == undefined || min == chart.xAxis[0].dataMin) && 
@@ -231,7 +235,7 @@ export default {
             chart.resetZoomButton.show()
           }
         }
-      }                      
+      //}                      
     }, 
     selectAreaByDrag(e) {
       if (typeof e.xAxis == 'undefined')  { //reset button clicked

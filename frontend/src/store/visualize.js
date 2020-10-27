@@ -1,21 +1,8 @@
 import api from "../api/repository";
 import { nanoid } from 'nanoid'
 
-const colors = [ '#f45b5b', '#90ee7e', '#7798BF', '#aaeeee', '#ff0066',
+const colors = ['#f45b5b', '#90ee7e', '#7798BF', '#aaeeee', '#ff0066',
         '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee', '#2b908f']
-
-const state = {
-    series: {},
-    seriesIds: [],
-    panels: [],
-    range: {
-        start: null,
-        end: null
-    },
-    loading: 0,
-    settings: {}
-}
-
 
 //returns a deep copy of the series object 
 function makeSeriesOptionsCopy(seriesOptions) {
@@ -27,6 +14,22 @@ function makeSeriesOptionsCopy(seriesOptions) {
 
 function compareArrays(array1, array2) {
     return (array1.length === array2.length) && (array1.sort().every((value, index) => value === array2[index]))
+}
+
+const state = {
+    series: {},
+    seriesIds: [],
+    panels: [],
+    range: {
+        start: null,
+        end: null
+    },
+    loading: 0,
+    settings: {},
+    allSeriesRange: {
+        start: null,
+        end: null
+    }
 }
 
 const getters = {
@@ -45,7 +48,7 @@ const getters = {
     },
     numPanels: state => {
         return state.panels.length ? state.panels.length : 1
-    }
+    },
 }
 
 const mutations = {
@@ -146,6 +149,30 @@ const mutations = {
     },
     set_settings(state, newSettings) {
         state.settings = { ...newSettings }
+    },
+    adjust_all_series_range(state) {
+        if (state.range.start && state.range.end) {
+            state.allSeriesRange = state.range            
+        } else {
+            let axisMin = state.range.start
+            let axisMax = state.range.end
+            state.seriesIds.forEach(seriesId => {
+                let seriesData = state.series[seriesId].data
+                let currentMin = seriesData[0][0]
+                let currentMax = seriesData[seriesData.length -1][0]
+                if (!state.range.start) {
+                     if (!axisMin || axisMin > currentMin) {
+                        axisMin = currentMin
+                    }
+                } 
+                if (!state.range.end) {
+                     if (!axisMax || axisMax < currentMax) {
+                        axisMax = currentMax
+                    }
+                }
+            })
+            state.allSeriesRange = { start: axisMin, end: axisMax }
+        }       
     }
 }
 
@@ -179,8 +206,9 @@ const actions = {
                     end: state.range.end ? state.range.end.toISOString() : null,
                     interval: seriesOptions.interval})
                 .then(response => {       
-                    commit('add_data', {id: id, data: response.data}) 
+                    commit('add_data', {id: id, data: response.data})                     
                     commit('set_loading', false)
+                    commit('adjust_all_series_range')
                 })
                 .catch(error => { 
                     commit('set_loading', false)
@@ -190,15 +218,15 @@ const actions = {
     deleteSeries({commit}, id) {
         commit("delete_series_from_panel", id)
         commit("delete_series", id)
+        commit("adjust_all_series_range")
     },
     updateRange({commit, state, dispatch}, range) {
         commit("set_range", range)
         state.seriesIds.forEach(id =>  dispatch("fetchData", id))
     },
     moveSeriesDown({commit, state}, id) {
-        const currentPanel = state.series[id].yAxis
-        //check for extreme cases where nothing should happen
-        if ( !((state.seriesIds.length <= 1) || 
+        const currentPanel = state.series[id].yAxis        
+        if ( !((state.seriesIds.length <= 1) ||     //check for extreme cases where nothing should happen
                 ((currentPanel == state.panels.length-1) && 
                     (state.panels[currentPanel].length == 1))) )
             commit("move_series", {id: id, offset: 1})
@@ -211,7 +239,6 @@ const actions = {
     changeSettings({commit}, newSettings) {
         commit("set_settings", newSettings)
     }
-
 }
 
 export default {

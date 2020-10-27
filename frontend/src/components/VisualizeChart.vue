@@ -1,7 +1,13 @@
 <template>
 
 <div class="fill-height-or-more">
-  <BaseChart v-for="seriesData in chartSeriesData" :seriesData="seriesData" :key="seriesData.id" :loading="isLoading"/>
+  <BaseChart v-for="seriesData in chartSeriesData" 
+    :key="seriesData.id" 
+    :seriesData="seriesData" 
+    :loading="isLoading"
+    :extremes="extremes"
+    @changedExtremes="syncExtremes"
+    />
 </div>
 <!--  <highcharts class="char-sec" :constructor-type="'stockChart'" :options="chartOptions" :updateArgs="updateArgs" ref="chart"></highcharts> -->
 </template>
@@ -24,6 +30,13 @@ export default {
     numAxes: {
       type: Number,
       default: 1    
+    },
+    range: {
+      type: Object,
+      default: () => {return {
+        start: null,
+        end: null
+      }}
     },
     isLoading: {
       type: Boolean,
@@ -53,6 +66,7 @@ export default {
   data () {
     return {
       updateArgs: [true, true, false],
+      extremes: {},
     }
   },
   computed: {
@@ -78,6 +92,28 @@ export default {
                },          
             },
           })
+          if (this.range.start) {
+            seriesData.push({
+              data: [{
+                x: this.range.start,
+                y: 0
+              }],
+              color: 'rgba(0,0,0,0)',
+              enableMouseTracking: false,
+              showInLegend: false
+            })
+          }
+          if (this.range.end) {
+            seriesData.push({
+              data: [{
+                x: this.range.end,
+                y: 0
+              }],
+              color: 'rgba(0,0,0,0)',
+              enableMouseTracking: false,
+              showInLegend: false
+            })
+          }
         })
         allSeriesData.push(seriesData)
       })
@@ -85,7 +121,7 @@ export default {
     },
 
 
-    axisOptions() {
+   /* axisOptions() {
       let axes = []
       let axisHeightPercent = Math.floor(100 / this.numAxes)
       let remainder = 100 % this.numAxes
@@ -119,7 +155,7 @@ export default {
         })
       }
       return axes
-    },
+    }, 
     chartOptions() {
       return {
         chart: {
@@ -195,19 +231,14 @@ export default {
         yAxis: this.axisOptions,
         series: this.series     
       }
-    },
+    }, */
   },
-  methods: {    
+  methods: {  
+    syncExtremes(event) {
+      this.extremes = event
+    },  
   
-  },
-  watch: {
-    isLoading(newVal) {
-      if (newVal) 
-        this.$refs.chart.chart.showLoading()
-      else 
-        this.$refs.chart.chart.hideLoading()
-    }
-  }
+  },  
 }
 
 </script>

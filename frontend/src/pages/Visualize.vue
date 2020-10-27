@@ -40,7 +40,9 @@
         :series="series"
         :panels="panels"
         :isLoading="isFetchingData"
-        :numAxes="numPanels"/>
+        :numAxes="numPanels"
+        :range="range"
+        />
     </div>
   </section>
  
@@ -99,7 +101,10 @@ export default {
     },
     panels() {
       return this.$store.state.visualize.panels
-    }
+    },
+    range() {
+      return this.$store.state.visualize.allSeriesRange
+    } 
   },
   methods: {
     removeSeries(id) {
