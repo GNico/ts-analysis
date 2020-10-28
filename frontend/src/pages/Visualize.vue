@@ -1,7 +1,7 @@
 <template>
 <div>
   <section class="section">
-    <VisualizeToolBar class="char-bar"/>
+    <VisualizeToolBar class="char-bar" @refresh="forceRerender"/>
 
     <div class="chart-container is-gapless is-multiline">   
       <div class="legends">
@@ -128,7 +128,6 @@ export default {
       this.componentKey += 1;
     }
   },
-
   watch: {
     numPanels() {
       this.forceRerender()

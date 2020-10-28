@@ -40,7 +40,7 @@ export default {
     },
     loading: {
       type: Boolean,
-      default: false
+      default: true
     },
     backgroundColor: {    //refact
       type: String,
@@ -59,7 +59,7 @@ export default {
       default: () => {return {
         top: 0,
         bottom: 0,
-        left: 100,
+        left: 0,
       }}
     },
   },
@@ -69,6 +69,9 @@ export default {
     }
   },
   computed: {
+    isEmpty() {
+      return this.seriesData.length == 0
+    },
     interactiveBands() {
       var vm = this
       var bands = []
@@ -169,9 +172,10 @@ export default {
         },
         yAxis: {
           crosshair: {
-            snap: false,
+            snap: this.isEmpty,
             color: 'gray',
             dashStyle: 'shortdot',
+            showEmpty: false,
             label: {
               backgroundColor: 'rgba(0,0,0,0.85)',
               enabled: true,

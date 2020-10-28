@@ -96,8 +96,9 @@ export default {
       return zones
     },
     chartData() {
-      return [ 
-        {
+      let cdata = []
+      if (this.seriesData.length > 0) {
+        cdata.push({
           name: 'Value',
           data: this.seriesData,
           zoneAxis: 'x',
@@ -109,8 +110,10 @@ export default {
               lineWidthPlus: 0
             }
           },
-        },
-        {
+        })
+      }
+      if (this.baseline.length > 0) {
+        cdata.push({
           name: 'Expected',
           type: 'arearange',
           data: this.baseline,
@@ -127,36 +130,10 @@ export default {
           marker: {
               enabled: false
           }
-        }
-      ]        
-    },
-  /*  chartAnomalies() {
-      var vm = this
-      var anoms = []
-      for (var item of this.anomalies) {
-        anoms.push({ id: item.id,
-                    from: item.from,
-                    to: item.to,
-                    color: this.backgroundColor,
-                    events: {
-                      click: function(e) {
-                        vm.setActiveAnomaly(this.options.id)
-                      }, 
-                      mouseover: function(e) {
-                        if (this.id != vm.activeAnomaly) {
-                          this.svgElem.attr('fill', 'rgba(173,216,230,0.3)');
-                        }
-                      },
-                      mouseout: function(e) {
-                        if (this.id != vm.activeAnomaly) {
-                          this.svgElem.attr('fill', this.options.color);
-                        }
-                      } 
-                   }
         })
       }
-      return anoms
-    }, */
+      return cdata
+    },
     chartOptions() {
       var vm = this
       return {

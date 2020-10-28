@@ -19,8 +19,8 @@
         <span>{{item.name}}</span>
       </a>          
 
-      <a class="level-item button is-info is-outlined is-small">
-        <b-icon icon="fullscreen"></b-icon>
+      <a class="level-item button is-info is-outlined is-small" @click="$emit('refresh')">
+        <b-icon icon="refresh"></b-icon><span>Refresh</span>
       </a>
     </div>
 
@@ -115,12 +115,12 @@ export default {
           component: 'VisualizeCardSeries',
           open: false,
         },
-        {
+    /*    {
           name: 'Indicators',
           icon: 'finance',        
           component: 'VisualizeCardIndicators',
           open: false,
-        },
+        }, */
         {
           name: 'Settings',
           icon: 'cog',        

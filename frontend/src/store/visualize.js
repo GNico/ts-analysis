@@ -187,17 +187,18 @@ const actions = {
     },
     updateSeries({commit, state, dispatch}, {id, seriesOptions} ) {
         seriesOptions.id = id
-        const shouldFetchData = (state.series[id].interval != seriesOptions.interval) ||
-                                (state.series[id].client != seriesOptions.client) ||
-                                !compareArrays(state.series[id].tags, seriesOptions.tags) ||
-                                !compareArrays(state.series[id].contexts, seriesOptions.contexts) 
+        const shouldFetchData = 
+            (seriesOptions.hasOwnProperty('interval') && (state.series[id].interval != seriesOptions.interval)) ||
+            (seriesOptions.hasOwnProperty('client') && (state.series[id].client != seriesOptions.client)) ||
+            (seriesOptions.hasOwnProperty('tags') && !compareArrays(state.series[id].tags, seriesOptions.tags)) ||
+            (seriesOptions.hasOwnProperty('contexts') && !compareArrays(state.series[id].contexts, seriesOptions.contexts))
         commit("update_series", seriesOptions)
         if (shouldFetchData)
             dispatch("fetchData", id)
     },
     fetchData({commit, state}, id) {
         let seriesOptions = state.series[id]
-        commit('set_loading', true)
+        commit('set_loading', true)      
         return  api.getSeriesData({ 
                     name: seriesOptions.client,
                     tags: (seriesOptions.tags && seriesOptions.tags.length == 1 && seriesOptions.tags[0] == "root") ? [] : seriesOptions.tags,
