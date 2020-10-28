@@ -3,10 +3,12 @@ from model.utils import timestamp_to_epoch
 
 class Metrics:
 
-    def __init__(self, tp_ranges, fp_ranges, fn_ranges, tp, fp, tn, fn):
+    def __init__(self, tp_ranges, fp_ranges, fn_ranges, tn_ranges,
+                 tp, fp, tn, fn):
         self.tp_ranges = tp_ranges
         self.fp_ranges = fp_ranges
         self.fn_ranges = fn_ranges
+        self.tn_ranges = tn_ranges
         self.tp = tp
         self.fp = fp
         self.tn = tn
@@ -60,7 +62,6 @@ class Metrics:
 
     @staticmethod
     def format_error(error, type):
-        print(error)
         return {
             'from': timestamp_to_epoch(error[0]),
             'to': timestamp_to_epoch(error[1]),

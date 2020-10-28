@@ -18,11 +18,12 @@ class Result:
     def build_anomaly_metrics(self):
         expected = self.test_case.expected_analysis.anomalies
         actual = self.actual_analysis.anomalies
-        tp_ranges, fp_ranges, fn_ranges, tp, fp, tn, fn = mcb.build(
+        tp_ranges, fp_ranges, fn_ranges, tn_ranges, tp, fp, tn, fn = mcb.build(
             self.test_case.series,
             expected,
             actual)
-        return Metrics(tp_ranges, fp_ranges, fn_ranges, tp, fp, tn, fn)
+        return Metrics(tp_ranges, fp_ranges, fn_ranges, tn_ranges,
+                       tp, fp, tn, fn)
 
     def id(self):
         return self.test_case.id

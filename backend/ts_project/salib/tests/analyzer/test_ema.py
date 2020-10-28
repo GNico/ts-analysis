@@ -33,7 +33,10 @@ class TestEMA(unittest.TestCase):
         self.assertEqual(105, series.time_idx(anomaly.end))
         self.assertEqual(1, anomaly.score)
 
-        expected_anomalies = [Anomaly.from_epoch(100, 105, 1.0)]
+        expected_anomalies = [
+            Anomaly.from_epoch(100, 103, 1.0),
+            Anomaly.from_epoch(10, 25, 1.0),
+        ]
         expected_analysis = Analysis(expected_anomalies, NoBaseline())
 
         test_case = TestCase("test_ema", series, analyzer, expected_analysis)
