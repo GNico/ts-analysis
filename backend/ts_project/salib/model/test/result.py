@@ -2,7 +2,7 @@ import json
 import os
 
 from .metrics import Metrics
-from . import metric_classifications_builder
+from . import metric_classifications_builder as mcb
 
 
 class Result:
@@ -18,11 +18,11 @@ class Result:
     def build_anomaly_metrics(self):
         expected = self.test_case.expected_analysis.anomalies
         actual = self.actual_analysis.anomalies
-        tp, fp, tn, fn = metric_classifications_builder.build(
+        tp_ranges, fp_ranges, fn_ranges, tp, fp, tn, fn = mcb.build(
             self.test_case.series,
             expected,
             actual)
-        return Metrics(tp, fp, tn, fn)
+        return Metrics(tp_ranges, fp_ranges, fn_ranges, tp, fp, tn, fn)
 
     def id(self):
         return self.test_case.id

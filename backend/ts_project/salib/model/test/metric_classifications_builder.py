@@ -21,13 +21,17 @@ def build(series, expected_anomalies, actual_anomalies):
         if is_actual and is_expected:
             tp.append(ts)
         elif is_actual and not is_expected:
-            fp.append(ts)
+            fn.append(ts)
         elif not is_actual and not is_expected:
             tn.append(ts)
         elif not is_actual and is_expected:
-            fn.append(ts)
+            fp.append(ts)
 
-    return (tp, fp, tn, fn)
+    tp_ranges = []
+    fp_ranges = []
+    fn_ranges = []
+
+    return (tp_ranges, fp_ranges, fn_ranges, tp, fp, tn, fn)
 
 
 def timestamp_included(ts, anomalies):
