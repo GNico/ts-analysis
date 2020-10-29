@@ -20,6 +20,7 @@ class Series:
                 return i
         return None
 
+    @staticmethod
     def from_array(arr, interval, unit='s'):
         dates, count = zip(*arr)
         dates = pd.to_datetime(dates, unit=unit)
@@ -31,6 +32,9 @@ class Series:
 
     def as_list(self):
         return list(self.pdseries.values)
+
+    def step(self):
+        return pd.to_timedelta(self.interval, unit='s')
 
     def output_format(self):
         output = []

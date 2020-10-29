@@ -37,7 +37,7 @@ class EMA:
                 start = val[0]
             elif within_std and start is not None:
                 score = 1.0  # ToDo
-                new_anomaly = Anomaly(start, val[0], score)
+                new_anomaly = Anomaly(series, start, val[0], score)
                 anomalies.append(new_anomaly)
                 start = None
         return anomalies

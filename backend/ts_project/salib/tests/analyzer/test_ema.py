@@ -34,8 +34,8 @@ class TestEMA(unittest.TestCase):
         self.assertEqual(1, anomaly.score)
 
         expected_anomalies = [
-            Anomaly.from_epoch(100, 103, 1.0),
-            Anomaly.from_epoch(10, 25, 1.0),
+            Anomaly.from_epoch(series, 100, 103, 1.0),
+            Anomaly.from_epoch(series, 10, 25, 1.0),
         ]
         expected_analysis = Analysis(expected_anomalies, NoBaseline())
 

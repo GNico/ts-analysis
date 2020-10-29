@@ -11,14 +11,6 @@ from model.test import metric_classifications_builder as mcb
 class TestTestCase(unittest.TestCase):
 
     def test_metrics_case1(self):
-        actual_anomalies = [
-            Anomaly.from_epoch(1, 1, 1.0),
-            Anomaly.from_epoch(2, 2, 1.0),
-            Anomaly.from_epoch(4, 4, 1.0)
-        ]
-
-        analyzer = MockAnalyzer(actual_anomalies)
-
         test_series = Series.from_array([
             [0, 0],
             [1, 1],
@@ -29,6 +21,14 @@ class TestTestCase(unittest.TestCase):
             [6, 1],
             [7, 0]
         ], 1, 's')
+
+        actual_anomalies = [
+            Anomaly.from_epoch(test_series, 1, 1, 1.0),
+            Anomaly.from_epoch(test_series, 2, 2, 1.0),
+            Anomaly.from_epoch(test_series, 4, 4, 1.0)
+        ]
+
+        analyzer = MockAnalyzer(actual_anomalies)
 
         expected_anomalies = TestCase.anomalies_from_mock_series(test_series)
 
@@ -56,9 +56,9 @@ class TestTestCase(unittest.TestCase):
         self.assertEqual(2, anomaly_metrics.fn_count())
         self.assertEqual(3, anomaly_metrics.tn_count())
 
-        expected_tp_ranges = mcb.epochs_to_ranges([[1, 1]])
-        expected_fp_ranges = mcb.epochs_to_ranges([[2, 2], [4, 4]])
-        expected_fn_ranges = mcb.epochs_to_ranges([[5, 6]])
+        expected_tp_ranges = mcb.epochs_to_ranges([[1, 2]])
+        expected_fp_ranges = mcb.epochs_to_ranges([[2, 3], [4, 5]])
+        expected_fn_ranges = mcb.epochs_to_ranges([[5, 7]])
 
         self.assertEqual(expected_tp_ranges, anomaly_metrics.tp_ranges)
         self.assertEqual(expected_fp_ranges, anomaly_metrics.fp_ranges)

@@ -44,7 +44,7 @@ def build(series, expected_anomalies, actual_anomalies):
             start_ts = ts
 
         if last_type != type:
-            ranges[last_type].append([start_ts, last_ts])
+            ranges[last_type].append([start_ts, ts])
             start_ts = ts
             last_type = type
         last_ts = ts

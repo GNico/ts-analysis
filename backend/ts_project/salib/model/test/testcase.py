@@ -29,11 +29,11 @@ class TestCase:
                 if val == 1 and start is None:
                     start = t
                 if val == 0 and start is not None:
-                    anomalies.append(Anomaly(start, last, 1.0))
+                    anomalies.append(Anomaly(series, start, last, 1.0))
                     start = None
                 last = t
 
             if start is not None:
-                anomalies.append(Anomaly(start, series.end, 1.0))
+                anomalies.append(Anomaly(series, start, series.end, 1.0))
 
         return anomalies
