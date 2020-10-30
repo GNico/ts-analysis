@@ -62,6 +62,11 @@ export default {
         left: 0,
       }}
     },
+
+    aux: {
+      type: String,
+      default: 'nada'
+    }
   },
   data () {
     return {
@@ -262,7 +267,7 @@ export default {
           to: max,
           color: 'rgba(0,0,0,0.5)',
         })
-        this.$emit('selection', {min: min, max: max})
+        this.$emit('selection', {min: min, max: max})   
         return false
       }    
     },
@@ -302,17 +307,13 @@ export default {
       this.setChartExtremes(newVal.min, newVal.max)
     },
     labelContent() {
-     /* var atext = ''
-      for (var elem of this.labelContent) {
-        atext += elem.tag + ': ' + elem.count + ' <br>'
-      } */
       var chart = this.$refs.chart.chart
       if (chart.customTooltip) { // destroy the old one when rendering new
         chart.customTooltip.destroy()
         chart.customTooltip = undefined
       }
       if (!this.labelContent) return;
-      var text = '<div style="color: #F0F0F0; overflow-y: scroll; max-height: ' + chart.chartHeight/4 + 'px;">'
+      var text = '<div style="color: #F0F0F0; overflow-y: scroll; max-height: ' + chart.chartHeight/3 + 'px;">'
       text += this.labelContent + '</div>'
       chart.customTooltip = chart.renderer.label(text, chart.plotSizeX /2, chart.plotTop, 'rect', undefined, undefined, true)
       .attr({ 

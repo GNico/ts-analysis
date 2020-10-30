@@ -12,7 +12,8 @@
     @crosshairMove="syncCrosshairs"
     :crosshair="crosshair"
     :syncCrosshairEnabled="false"
-    @selection="getTagsCount($event, panel.id)"
+    @selection="getTagsCount(panel.id, $event)"
+    :aux="panel.id"
 
   />
 </div>
@@ -45,12 +46,10 @@ export default {
         end: null
       }}
     },
-
     tagsCount: {
       type: Object,
       default: () => {}
     },
-
     zoomEnabled: {
       type: Boolean,
       default: true
@@ -135,31 +134,18 @@ export default {
       })
       return allSeriesData 
     },
-    labelContent() {
-      return "asd"
-     /* let content = {}
-      this.tagsCount.forEach(panel => {
-        var text = ''
-        panel.series.forEach(series => {
-          text += '<strong>' + series.name + '</strong> <br>'
-          for (var elem of series.tags) {
-            text += elem.tag + ': ' + elem.count + ' <br>'
-          }     
-        })
-        content[panel.id] = text
-      })
-      return content */
-    }
   },
   methods: {  
     transform(panelId) {
       var text = ''
       if (this.tagsCount[panelId]) {
-        this.tagsCount[panelId].forEach(series => {
+        this.tagsCount[panelId].forEach((series, index) => {
           text += '<strong>' + series.name + '</strong> <br>'
-          for (var elem of series.tags) {
-            text += elem.tag + ': ' + elem.count + ' <br>'
-          }   
+          series.tags.forEach(elem => {
+            text += elem.tag + ': ' + ((elem.count * 100) / series.total).toFixed(1) + '% <br>'
+          })
+          if (index !== this.tagsCount[panelId].length -1)
+            text += '<hr style="margin-top: 0.5rem; margin-bottom:0.5rem">'
         })
       }
       return text
@@ -170,15 +156,14 @@ export default {
     syncCrosshairs(event) {
       this.crosshair = event
     },
-    getTagsCount(extremes, panelId) {
-      console.log(panelId)
+    getTagsCount(panelId, extremes) {
       let seriesIds = []
-      let panel = this.chartSeriesData.find(elem => elem.id = panelId)
+      let panel = this.chartSeriesData.find(elem => elem.id == panelId)
       panel.data.forEach(series => {
         if (series.id)  //filter invisible series
           seriesIds.push(series.id)
       })
-      this.$emit('tagsCountRequest', {panelId: panelId, seriesIds: seriesIds, extremes: extremes })
+      this.$emit('tagsCountRequest', {panelId: panelId, seriesIds: seriesIds, extremes: extremes }) 
     },
 
   },  

@@ -37,6 +37,7 @@ class SeriesSearch():
     def get_tags_count(self, indexname, start='', end='', context=[], tags=[], size=3):
         index_pattern = indexname + '-*'
         query = self._build_series_query(start, end, context, tags)
+        total_docs = es.count(index=index_pattern, body=query)
         query["aggs"] = {
             "popular_tags": {
               "terms": {
@@ -49,7 +50,7 @@ class SeriesSearch():
         tags_count = []
         for element in response['aggregations']['popular_tags']['buckets']:
             tags_count.append({"tag": element['key'], "count": element['doc_count'] })
-        return tags_count
+        return { "total": total_docs['count'], "tags_count": tags_count }
 
 
     def get_contexts(self, indexname):

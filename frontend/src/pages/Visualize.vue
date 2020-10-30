@@ -141,24 +141,26 @@ export default {
     toggleZoom() {
       this.zoomEnabled = !this.zoomEnabled
     },
-
     getTagsCount(request) {
-
- /*     this.$set(this.tagsCount, request.panelId, [])
+      this.$set(this.tagsCount, request.panelId, [])
       request.seriesIds.forEach(seriesId => {
         let series = this.$store.getters['visualize/getSeriesById'](seriesId)
         api.getTagsCount({
-          name: series.client,          
+          name: series.client, 
+          tags: series.tags,
+          contexts: series.contexts,
           start: new Date(request.extremes.min).toISOString(),
           end: new Date(request.extremes.max).toISOString(),
         })
         .then(response => {   
-    
-          this.tagsCount[request.panelId].push({name: series.name, tags: response.data})
+          this.tagsCount[request.panelId].push({
+            name: series.name, 
+            total: response.data.total, 
+            tags: response.data.tags_count
+          })
         }) 
-      }) */
+      }) 
     },
-
     forceRerender() {
       this.componentKey += 1;
     }
