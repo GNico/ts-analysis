@@ -22,6 +22,15 @@
       <a class="level-item button is-info is-outlined is-small" @click="$emit('refresh')">
         <b-icon icon="refresh"></b-icon><span>Refresh</span>
       </a>
+
+      <a class="level-item button is-info is-outlined is-small" @click="$emit('zoomToggle')">
+        <template v-if="zoomEnabled">
+          <b-icon icon="information-variant"></b-icon><span>Enable info</span>
+        </template>
+        <template v-else>
+          <b-icon icon="magnify-plus-outline"></b-icon><span>Enable zoom</span>
+        </template>
+      </a>
     </div>
 
     <div class="level-right toolbar-right">
@@ -102,6 +111,12 @@ import ModalCard from './ModalCard.vue';
 
 export default {
   components: { VisualizeCardSeries, VisualizeCardIndicators, VisualizeCardSettings, ModalCard},
+  props: {
+    zoomEnabled: {
+      type: Boolean,
+      default: true
+    }
+  },
   data () {
     return {
       selectedRange: {

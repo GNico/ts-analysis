@@ -107,6 +107,10 @@ export default {
     chartOptions() {
       var vm = this
       return {      
+        boost: {
+          enabled: false,
+          useGPUTranslations: true,
+        },
         chart: {          
           zoomType: 'x',          
           panning: true,
@@ -204,7 +208,8 @@ export default {
         plotOptions: {
           series: {
             dataGrouping: {
-              enabled: false,
+              enabled: true,
+              approximation: 'sum'
             },
             animation: false,
             lineWidth: this.lineWidth,
@@ -297,6 +302,10 @@ export default {
       this.setChartExtremes(newVal.min, newVal.max)
     },
     labelContent() {
+     /* var atext = ''
+      for (var elem of this.labelContent) {
+        atext += elem.tag + ': ' + elem.count + ' <br>'
+      } */
       var chart = this.$refs.chart.chart
       if (chart.customTooltip) { // destroy the old one when rendering new
         chart.customTooltip.destroy()
@@ -318,19 +327,22 @@ export default {
       //chart.rGroup.translate(-chart.customTooltip.width / 2, -chart.customTooltip.height + 40).toFront()
     },
     crosshair() {
-      if (chart === this.crosshair.chart) return;
       var chart = this.$refs.chart.chart
+      if (chart === this.crosshair.chart) return;
+      var points = []
       chart.series.forEach((series) => {
         var point = series.points.find(p => p.x === this.crosshair.x)
-        if (point) {
-          if (this.crosshair.type === 'over') {
-              point.setState('hover');
-              point.state = '';
-              chart.xAxis[0].drawCrosshair(null, point);
-              chart.tooltip.refresh([point]);
-            }
+        if (point && point.hasOwnProperty('color') ) {  //if color present it means boost module is not active
+            if (this.crosshair.type === 'over') {
+                point.setState('hover');
+                point.state = '';
+                chart.xAxis[0].drawCrosshair(null, point);
+                points.push(point)
+              }
         }
       })
+      if (points.length > 0)
+        chart.tooltip.refresh(points);
     }
   },
 }

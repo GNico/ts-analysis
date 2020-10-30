@@ -1,7 +1,11 @@
 <template>
 <div>
   <section class="section">
-    <VisualizeToolBar class="char-bar" @refresh="forceRerender"/>
+    <VisualizeToolBar 
+      class="char-bar" 
+      :zoomEnabled="zoomEnabled"
+      @zoomToggle="toggleZoom"
+      @refresh="forceRerender"/>
 
     <div class="chart-container is-gapless is-multiline">   
       <div class="legends">
@@ -42,6 +46,9 @@
         :isLoading="isFetchingData"
         :numAxes="numPanels"
         :range="range"
+        :zoomEnabled="zoomEnabled"
+        :tagsCount="tagsCount"
+        @tagsCountRequest="getTagsCount"
         />
     </div>
   </section>
@@ -62,15 +69,18 @@ import LegendSeriesTag from '../components/LegendSeriesTag.vue';
 import VisualizeCardSeries from '../components/VisualizeCardSeries.vue';
 
 import api from "../api/repository";
+import { nanoid } from 'nanoid'
 
 export default {
   components: { VisualizeChart, VisualizeToolBar, LegendSeriesTag, VisualizeCardSeries },
   data () {
     return {
       backgroundColor: '#073642',
-      isOpenSeriesEdit: false,
+      isOpenSeriesEdit: false,      
       currentSeriesId: '',
       componentKey: 0,
+      zoomEnabled: true,
+      tagsCount: {}
     }
   },
   computed: {
@@ -100,7 +110,11 @@ export default {
       return this.$store.state.visualize.settings
     },
     panels() {
-      return this.$store.state.visualize.panels
+      let panels = []
+      this.$store.state.visualize.panels.forEach(panelSeriesIds => {
+        panels.push({id: nanoid(), seriesIds: panelSeriesIds})
+      })
+      return panels
     },
     range() {
       return this.$store.state.visualize.allSeriesRange
@@ -124,6 +138,27 @@ export default {
     moveDown(id) {
       this.$store.dispatch("visualize/moveSeriesDown", id)
     },
+    toggleZoom() {
+      this.zoomEnabled = !this.zoomEnabled
+    },
+
+    getTagsCount(request) {
+
+ /*     this.$set(this.tagsCount, request.panelId, [])
+      request.seriesIds.forEach(seriesId => {
+        let series = this.$store.getters['visualize/getSeriesById'](seriesId)
+        api.getTagsCount({
+          name: series.client,          
+          start: new Date(request.extremes.min).toISOString(),
+          end: new Date(request.extremes.max).toISOString(),
+        })
+        .then(response => {   
+    
+          this.tagsCount[request.panelId].push({name: series.name, tags: response.data})
+        }) 
+      }) */
+    },
+
     forceRerender() {
       this.componentKey += 1;
     }
@@ -132,7 +167,14 @@ export default {
     numPanels() {
       this.forceRerender()
     }
-  }
+  },
+  created() {
+    window.addEventListener('keydown', (e) => {
+      if (e.key == 'Control') {
+        this.toggleZoom()
+      }
+    });
+  },
 }
 
 </script>
