@@ -75,7 +75,7 @@ export default {
   components: { VisualizeChart, VisualizeToolBar, LegendSeriesTag, VisualizeCardSeries },
   data () {
     return {
-      backgroundColor: '#073642',
+      //backgroundColor: '#073642',
       isOpenSeriesEdit: false,      
       currentSeriesId: '',
       componentKey: 0,

@@ -44,7 +44,7 @@ export default {
     },
     backgroundColor: {    //refact
       type: String,
-      default: "",
+      default: '',
     },
     lineWidth: {
       type: Number,
@@ -62,11 +62,6 @@ export default {
         left: 0,
       }}
     },
-
-    aux: {
-      type: String,
-      default: 'nada'
-    }
   },
   data () {
     return {
@@ -313,15 +308,17 @@ export default {
         chart.customTooltip = undefined
       }
       if (!this.labelContent) return;
-      var text = '<div style="color: #F0F0F0; overflow-y: scroll; max-height: ' + chart.chartHeight/3 + 'px;">'
+      var text = ''
+      text += '<div style="overflow-y: scroll; max-height: ' + chart.chartHeight/3 + 'px;">'
+
       text += this.labelContent + '</div>'
       chart.customTooltip = chart.renderer.label(text, chart.plotSizeX /2, chart.plotTop, 'rect', undefined, undefined, true)
       .attr({ 
-        'stroke-width': 1,
+        //'stroke-width': 1,
         zIndex: 8,
-        stroke: '#F0F0F0',
-        r: 3,
-        fill: 'rgba(0,0,0,0.85)'
+        //stroke: '#F0F0F0',
+        //r: 3,
+        //fill: 'rgba(0,0,0,0.85)'
       })     
       .add()
       //.add(chart.rGroup)

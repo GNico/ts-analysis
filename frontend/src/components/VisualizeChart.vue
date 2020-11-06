@@ -11,7 +11,7 @@
     @changedExtremes="syncExtremes"
     @crosshairMove="syncCrosshairs"
     :crosshair="crosshair"
-    :syncCrosshairEnabled="false"
+    :syncCrosshairEnabled="true"
     @selection="getTagsCount(panel.id, $event)"
     :aux="panel.id"
 
@@ -140,13 +140,14 @@ export default {
       var text = ''
       if (this.tagsCount[panelId]) {
         this.tagsCount[panelId].forEach((series, index) => {
-          text += '<strong>' + series.name + '</strong> <br>'
+          text += '<table class="table is-narrow is-bordered is-fullwidth has-text-grey has-background-black">'
+          text += '<thead><tr><th colspan="2" ><strong class="has-text-grey-light">' + series.name + '</strong> </th> </thead>'
           series.tags.forEach(elem => {
-            text += elem.tag + ': ' + ((elem.count * 100) / series.total).toFixed(1) + '% <br>'
+            text += '<tr><td class="has-text-right has-text-grey-light">' + ((elem.count * 100) / series.total).toFixed(1) + '%</td>' 
+            text += '<td> ' +  elem.tag + '</td>'
           })
-          if (index !== this.tagsCount[panelId].length -1)
-            text += '<hr style="margin-top: 0.5rem; margin-bottom:0.5rem">'
         })
+        text += '</table>'
       }
       return text
     },
@@ -174,6 +175,7 @@ export default {
 
 
 <style scoped>
+
 
 .fill-height-or-more {
   display: flex;
