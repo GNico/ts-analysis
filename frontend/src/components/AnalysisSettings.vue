@@ -3,6 +3,24 @@
 <div>
   <div class="field is-horizontal">
     <div class="field-label has-text-left">
+      <label class="label">Name</label>
+    </div>
+    <div class="field-body">
+      <div class="field is-narrow short-field">
+        <div class="control">
+          <b-input 
+            type="text" 
+            size="is-small" 
+            placeholder="This field is optional"
+            :lazy="true" 
+            v-model="settings.name"/>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-horizontal">
+    <div class="field-label has-text-left">
       <label class="label">Client</label>
     </div>
     <div class="field-body">
@@ -49,7 +67,6 @@
     </div>
   </b-field>
   
-
   <b-field class="field is-horizontal">
     <div class="field-label has-text-left">
       <label class="label">Interval</label>
@@ -87,9 +104,7 @@
     </a>
   </b-field>
 
-
 </div>
-
 </template>
 
 
@@ -98,25 +113,31 @@ import SearchSelect from './SearchSelect.vue';
 import TreeSelect from './TreeSelect.vue';
 import { tagsAndContexts } from '../mixins/TagsAndContextsOptions.js';
 
+const defaultSettings = {
+  name: '',
+  client: '',
+  contexts: [],
+  tags: [],
+  interval: '1H',
+  parameters: '',
+}
+
 export default {
   name: "AnalysisSettings",
   mixins: [tagsAndContexts],
   components:  { SearchSelect, TreeSelect },
   data () {
     return {
-      settings: {
-        client: '',
-        contexts: [],
-        tags: [],
-        interval: '1H',
-        parameters: '',
-      }
+      settings: { ...defaultSettings }
     }
   },
   computed: {
     clients() {
       return this.$store.getters['clients/readyClients']
     },
+    id() {
+      return this.$store.state.analysis.activeAnalysisId
+    }
   },
   methods: {
     updateSelectOptions(value) {
@@ -124,8 +145,31 @@ export default {
       this.updateContexts(value)
       this.updateTags(value)
     },
+    resetFields() {
+      this.settings = { ...defaultSettings }
+    },
     runAnalysis() {
-      this.$store.dispatch('analysis/analizeSeries', this.settings)
+      this.$store.dispatch('analysis/runAnalysis', this.id)
+    }
+  },
+  watch: {
+    settings: {
+      deep: true,
+      handler(newVal) {
+        this.$store.dispatch('analysis/updateSettings', {id: this.id, ...this.settings})
+      }
+    },
+    id: {
+      immediate: true,
+      handler(newVal) {
+        const storeSettings = this.$store.getters['analysis/getAnalysisById'](newVal) 
+        this.resetFields()
+        for (const key of Object.keys(storeSettings)) {
+          if (this.settings.hasOwnProperty(key)) { 
+            this.settings[key] = storeSettings[key]
+          }
+        }        
+      }
     }
   }
 }
