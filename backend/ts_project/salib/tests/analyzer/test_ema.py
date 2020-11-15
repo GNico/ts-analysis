@@ -41,7 +41,15 @@ class TestEMA(unittest.TestCase):
 
         test_case = TestCase("test_ema", series, analyzer, expected_analysis)
         result = test_case.run()
-        result.export_for_visuals()
+        # result.export_for_visuals()
+        metrics = result.anomaly_metrics
+        self.assertEquals(4, metrics.tp_count())
+        self.assertEquals(178, metrics.tn_count())
+        self.assertEquals(2, metrics.fp_count())
+        self.assertEquals(16, metrics.fn_count())
+        self.assertAlmostEquals(0.666, metrics.precision(), 2)
+        self.assertAlmostEquals(0.2, metrics.recall(), 2)
+        self.assertAlmostEquals(0.307, metrics.f1(), 2)
 
     def build_triangle(self):
         sb_up = TestSeriesBuilder.linear(100, 0, 1)
