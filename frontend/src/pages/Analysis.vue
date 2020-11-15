@@ -4,7 +4,7 @@
   <!-- top bar -->
   <div class="wide-container is-flex"> 
     <div class="bar-buttons">
-      <a class="button is-primary" @click="addItem"> 
+      <a class="button is-primary is-small" @click="addItem"> 
         New Analysis
       </a>   
     </div>
@@ -28,7 +28,7 @@
 
         <div class="colums">
           <div class="column is-4">
-            <AnalysisSettings/>
+            <AnalysisSettings @run="activeTab='Results'"/>
           </div>
           <div class="column">
             <BaseChart :loading="true"/>
@@ -61,7 +61,7 @@ export default {
   components: {  BarItemButton, BaseChart, AnalysisSettings, ResultsTab},
   data () {
     return {        
-      activeTab: "Results",
+      activeTab: "Settings",
     }
   },
   computed: {
@@ -74,6 +74,7 @@ export default {
   },
   methods: {
     addItem() {
+      this.activeTab="Settings"
       this.$store.dispatch("analysis/createAnalysis")
     },
     removeItem(id) {
@@ -81,7 +82,8 @@ export default {
     },
     toggleActive(id) {
       this.$store.dispatch("analysis/setActiveAnalysis", id)
-    }
+    },
+
   /*  getInfo(extremes) {
       api.getTagsCount({
         name: "treetest",

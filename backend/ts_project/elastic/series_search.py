@@ -16,14 +16,14 @@ class SeriesSearch():
         res = ic.refresh(indexname)
 
 
-    def get_series(self, indexname, start='', end='', context=[], tags=[], interval='1H'):
+    def get_series(self, indexname, start='', end='', context=[], tags=[], interval='1h'):
         index_pattern = indexname + '-*'
         query = self._build_series_query(start, end, context, tags)
         query["aggs"] = {
             "interval_aggregation": {
               "date_histogram": {
                 "field":     "@timestamp",
-                "interval":  interval
+                "fixed_interval":  interval
               }
             }
         }

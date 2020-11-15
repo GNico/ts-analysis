@@ -1,5 +1,5 @@
 <template>
-<a class="button is-info is-flex" @click="toggle" :class="{ 'is-outlined': !isActive }">
+<a class="button is-small is-info is-flex" @click="toggle" :class="{ 'is-outlined': !isActive }">
     {{name}}
     <button class="delete is-small" @click="deleted"></button>
 </a> 

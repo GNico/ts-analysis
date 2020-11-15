@@ -12,7 +12,6 @@
             type="text" 
             size="is-small" 
             placeholder="This field is optional"
-            :lazy="true" 
             v-model="settings.name"/>
         </div>
       </div>
@@ -75,7 +74,7 @@
       <div class="field is-narrow shorter-field">
         <div class="control">
           <b-tooltip
-            label="Input must be a number followed by a valid letter [ m = minutes, H = hour, D = day, W = week, M = month, y = year ]"
+            label="Input must be a number followed by a valid letter [ m = minutes, h = hour, d = day ]"
             size="is-large"
             position="is-bottom"
             multilined>
@@ -83,8 +82,8 @@
               v-model="settings.interval"
               type="text"
               size="is-small"              
-              validation-message="Invalid format"
-              pattern="[0-9]+[mHDWMy]+">
+              validation-message=""
+              pattern="[0-9]+[mhd]+">
             </b-input> 
           </b-tooltip>          
         </div>              
@@ -118,7 +117,7 @@ const defaultSettings = {
   client: '',
   contexts: [],
   tags: [],
-  interval: '1H',
+  interval: '1h',
   parameters: '',
 }
 
@@ -149,6 +148,7 @@ export default {
       this.settings = { ...defaultSettings }
     },
     runAnalysis() {
+      this.$emit('run')
       this.$store.dispatch('analysis/runAnalysis', this.id)
     }
   },
