@@ -1,36 +1,46 @@
 <template>
 
-<div>
-    <b-table 
-      v-if="!isEmpty"
-      :data="anomalies" 
-      :selected="selected"
-      hoverable
-      narrowed
-      sticky-header
-      :height="height"
-      @select="changeActiveAnomaly($event)">
+<b-table 
+  v-if="!isEmpty"
+  :data="anomalies" 
+  :selected="selected"      
+  narrowed
+  sticky-header
+  :opened-detailed="openRows"
+  detailed
+  detail-key="id"
+  :show-detail-icon="false"
+  :height="height"
+  @select="changeActiveAnomaly($event)">
 
-      <template slot-scope="props">
-        <b-table-column field="score" label="Score" sortable numeric id="pija">
-            {{ props.row.score }}
-        </b-table-column>
+  <template slot-scope="props">
+    <b-table-column field="score" label="Score" sortable numeric >
+        {{ props.row.score }}
+    </b-table-column>
 
-        <b-table-column field="from" label="Start date" sortable centered>
-          {{ new Date(props.row.from).toLocaleString('es-AR', {month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}) }}      
-        </b-table-column>
-        
-        <b-table-column field="to" label="End date" sortable centered>
-          {{ new Date(props.row.to).toLocaleString('es-AR', {month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}) }}
-        </b-table-column>
-      </template>
-      
-    </b-table>
-</div>
+    <b-table-column field="from" label="Start date" sortable centered>
+      {{ new Date(props.row.from).toLocaleString('es-AR', {month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}) }}      
+    </b-table-column>
+    
+    <b-table-column field="to" label="End date" sortable centered>
+      {{ new Date(props.row.to).toLocaleString('es-AR', {month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}) }}
+    </b-table-column>
+  </template>
+
+  <template slot="detail" slot-scope="props">
+    <article :id="props.row.id" class="extra has-text-centered">                    
+      <p>
+          <strong>{{ props.row.id }}</strong>
+          <br>
+          {{ props.row }}
+      </p>
+    </article>
+  </template>
+  
+</b-table>
 </template>
 
 <script>
-
 
 export default {
   props: {
@@ -43,12 +53,30 @@ export default {
     },
     height: {
       type: [ Number, String ],
-      default: 250,
+      default: undefined,
     }
   },
   computed: {
     selected() {
       return this.anomalies.find(item => item.id === this.activeAnomaly)
+    },    
+    openRows() {
+      if (this.selected) {
+        this.$nextTick(function () {
+          var element = document.getElementById(this.activeAnomaly);
+          element = element.closest('.detail').previousElementSibling
+          var scrollamount = element.offsetTop
+          var tableWrapper = element.closest('.table-wrapper')
+          if (tableWrapper) {            
+           tableWrapper.scroll(0, scrollamount)
+           if (! (tableWrapper.scrollHeight - tableWrapper.scrollTop === tableWrapper.clientHeight)) {
+            tableWrapper.scroll(0, scrollamount -  40)
+           }
+
+          }  
+        })
+      }
+      return this.selected ? [this.selected.id] : []
     },
     isEmpty() {
       return (!this.anomalies || !this.anomalies.length)
@@ -57,9 +85,8 @@ export default {
   methods: {
     changeActiveAnomaly(event) {
       this.$emit('changeActive', event.id)
-    }
+    },
   }
 }
-
-
 </script>
+

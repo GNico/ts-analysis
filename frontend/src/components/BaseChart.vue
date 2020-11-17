@@ -203,7 +203,6 @@ export default {
           split: false,
           shared: true,
           valueDecimals: 0,
-          //backgroundColor: '#001f27',
         },  
         plotOptions: {
           series: {

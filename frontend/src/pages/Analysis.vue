@@ -1,6 +1,5 @@
 <template>
 <div class="fullh">
-
   <!-- top bar -->
   <div class="wide-container is-flex"> 
     <div class="bar-buttons">
@@ -15,47 +14,38 @@
           :name="item.name ? item.name : 'Unnamed analysis'" 
           :isActive="(activeAnalysisId == item.id)"  
           @deleted="removeItem"
-          @click="toggleActive"
-        />
+          @click="toggleActive"/>
       </div>
     </div>
   </div>  
 
   <!-- content -->  
   <div v-show="activeAnalysisId != ''" class="wide-container main-section">
-    <b-tabs type="is-toggle"  :animated="false" v-model="activeTab">
-      <b-tab-item label="Settings" icon="cog" value="Settings">
-
+    <b-tabs type="is-toggle"  :animated="false" v-model="activeTab" >
+      <b-tab-item label="Settings" icon="cog" value="Settings" >
         <div class="colums">
-          <div class="column is-4">
+          <div class="column is-3">
             <AnalysisSettings @run="activeTab='Results'"/>
           </div>
           <div class="column">
             <BaseChart :loading="true"/>
           </div>
         </div>
-
       </b-tab-item>
-      <b-tab-item label="Results" icon="file-chart" value="Results">
+      <b-tab-item label="Results" icon="file-chart" value="Results" :disabled="!hasResults">
         <ResultsTab/>
       </b-tab-item>
     </b-tabs>
   </div>
-
-
-
-
 </div>
 </template>
 
 
 <script>
-//import api from "../api/repository";
 import BarItemButton from '../components/BarItemButton';
 import AnalysisSettings from '../components/AnalysisSettings';
 import BaseChart from "../components/BaseChart";
 import ResultsTab from "../components/ResultsTab";
-
 
 export default {
   components: {  BarItemButton, BaseChart, AnalysisSettings, ResultsTab},
@@ -69,8 +59,13 @@ export default {
       return this.$store.state.analysis.all
     },
     activeAnalysisId() {
+      this.activeTab = "Settings"
       return this.$store.state.analysis.activeAnalysisId
     },
+    hasResults() {
+      let res = this.$store.getters['analysis/getResultsById'](this.activeAnalysisId) 
+      return Object.keys(res).length != 0
+    }
   },
   methods: {
     addItem() {
@@ -83,21 +78,6 @@ export default {
     toggleActive(id) {
       this.$store.dispatch("analysis/setActiveAnalysis", id)
     },
-
-  /*  getInfo(extremes) {
-      api.getTagsCount({
-        name: "treetest",
-        start: new Date(extremes.min).toISOString(),
-        end: new Date(extremes.max).toISOString(),
-      })
-      .then(response => {       
-        this.popularTags = response.data
-      })
-      .catch(error => { 
-        console.log('error')
-        console.log(error)
-      })
-    } */
   },
   mounted: function () {
   },
@@ -142,6 +122,4 @@ export default {
   margin-right: 0.75rem;
   margin-bottom: 1.25rem;
 }
-
-
 </style>

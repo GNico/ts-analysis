@@ -1,98 +1,47 @@
 <template>
 
 <div>
-  <div class="field is-horizontal">
-    <div class="field-label has-text-left">
-      <label class="label">Name</label>
-    </div>
-    <div class="field-body">
-      <div class="field is-narrow short-field">
-        <div class="control">
-          <b-input 
-            type="text" 
-            size="is-small" 
-            placeholder="This field is optional"
-            v-model="settings.name"/>
-        </div>
-      </div>
-    </div>
-  </div>
+  <b-field horizontal label="Name">
+    <b-input 
+          type="text" 
+          size="is-small" 
+          placeholder="This field is optional"
+          v-model="settings.name"/>
+  </b-field>
 
-  <div class="field is-horizontal">
-    <div class="field-label has-text-left">
-      <label class="label">Client</label>
-    </div>
-    <div class="field-body">
-      <div class="field is-narrow short-field">
-        <div class="control">
-          <SearchSelect 
-            :saved="settings.client"
-            :data="clients"
-            @selected="updateSelectOptions"
-            size="is-small"
-            placeholder="" 
-            ref=clientselect
-          />
-        </div>
-      </div>
-    </div>
-  </div>
+  <b-field horizontal label="Client">
+    <SearchSelect 
+          :saved="settings.client"
+          :data="clients"
+          @selected="updateSelectOptions"
+          size="is-small"
+          placeholder="" 
+          ref=clientselect />
+  </b-field>
 
-  <b-field class="field is-horizontal">
-    <div class="field-label has-text-left">
-      <label class="label">Tags</label>
-    </div>
-    <div class="field-body">
-      <TreeSelect 
+  <b-field horizontal label="Tags">
+    <TreeSelect 
         class="filters-box"
         rootName="All tags"
         :itemsTree="allTags"
-        v-model="settings.tags" 
-      />
-    </div>
+        v-model="settings.tags"/>
   </b-field>
 
-  <b-field class="field is-horizontal">
-    <div class="field-label has-text-left">
-      <label class="label">Contexts</label>
-    </div>
-    <div class="field-body">
-      <TreeSelect 
+  <b-field horizontal label="Contexts">
+    <TreeSelect 
         class="filters-box"
         rootName="All contexts"
         :itemsTree="allContexts"
-        v-model="settings.contexts" 
-      />
-    </div>
-  </b-field>
-  
-  <b-field class="field is-horizontal">
-    <div class="field-label has-text-left">
-      <label class="label">Interval</label>
-    </div>
-    <div class="field-body">
-      <div class="field is-narrow shorter-field">
-        <div class="control">
-          <b-tooltip
-            label="Input must be a number followed by a valid letter [ m = minutes, h = hour, d = day ]"
-            size="is-large"
-            position="is-bottom"
-            multilined>
-            <b-input
-              v-model="settings.interval"
-              type="text"
-              size="is-small"              
-              validation-message=""
-              pattern="[0-9]+[mhd]+">
-            </b-input> 
-          </b-tooltip>          
-        </div>              
-      </div>
-    </div>
+        v-model="settings.contexts"/>
   </b-field>
 
-  <b-field label="Parameters">
-    <b-input type="textarea" 
+
+  <b-field horizontal label="Interval">
+    <b-input v-model="settings.interval" type="text" pattern="^[0-9]+[mhd]$" size="is-small" />
+  </b-field>
+
+  <b-field horizontal label="Parameters">
+       <b-input type="textarea" 
              v-model="settings.parameters"
              placeholder="ej: {parametername: value, parametername2: value2}"/>
   </b-field>
@@ -174,3 +123,15 @@ export default {
   }
 }
 </script>
+
+
+
+<style>
+
+.filters-box {
+  padding-top: 0.25rem;
+  max-height: 15rem;
+  overflow-y: auto;
+}
+
+</style>

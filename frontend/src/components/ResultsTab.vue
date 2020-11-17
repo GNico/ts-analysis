@@ -64,17 +64,24 @@
             <strong class="has-text-white">Show baseline</strong>
           </b-checkbox>        
         </b-field>
+
+        <b-field horizontal label="">
+          <b-checkbox v-model="showTrend">
+            <strong class="has-text-white">Show trend</strong>
+          </b-checkbox>        
+        </b-field>
       </div>
 
       <AnalysisAnomaliesTable 
         v-else
+        id="anom-table"
         :anomalies="filteredAnomalies"
         :activeAnomaly="activeAnomaly"
         @changeActive="setActiveAnomaly"/> 
     </div>
 
     <div class="column main-content">
-      <AnalysisChart 
+      <AnalysisChart       
         :seriesData="seriesData"
         :baseline="baseline"
         :anomalies="filteredAnomalies"
@@ -98,6 +105,7 @@ export default {
       return {
         showFiltersMenu: false,
         showBaseline: true,
+        showTrend: false,
         scoreThreshold: 0,
         minDuration: '',
         minDurationTime: 0,

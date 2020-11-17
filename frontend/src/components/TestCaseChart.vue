@@ -44,16 +44,13 @@
     <AnalysisAnomaliesTable
       :anomalies="actualAnomalies"        
       :activeAnomaly="activeAnomaly"
-      height=270                       
-      @changeActive="setActiveAnomaly" /> 
-    <div>
-      {{ activeAnomalyInfo }}
-    </div>
-      
-
+      height=330                      
+      @changeActive="setActiveAnomaly" />     
   </div>
+
   <div class="column">
     <TestMetricsChart
+      :title="chartData.id"
       :seriesData="chartData.series"
       :anomalies="actualAnomalies"
       :baseline="chartData.baseline"
@@ -73,7 +70,7 @@
 <script>
 import AnalysisAnomaliesTable from '../components/AnalysisAnomaliesTable.vue';
 import TestMetricsChart from '../components/TestMetricsChart.vue';
-
+import { nanoid } from 'nanoid'
 
 export default {
   components: { AnalysisAnomaliesTable, TestMetricsChart },
@@ -82,6 +79,7 @@ export default {
       type: Object,
       default: () => { 
         return {
+          id: '',
           series: [],
           anomalies: [],
           baseline: [],
@@ -107,15 +105,13 @@ export default {
   computed: {
     actualAnomalies() {
       var anoms = []
-      var idx = 0
       for (var item of this.chartData.anomalies) {
           anoms.push({
-            id: idx.toString(),
+            id: nanoid(7),
             from: item.from,
             to: item.to,
             score: item.score,
           })
-          idx++
       }
       return anoms
     },
@@ -143,7 +139,6 @@ export default {
 
 .fixedsize {
   height: 400px;   
-  overflow-y: auto;
 }
 
 .outline {
