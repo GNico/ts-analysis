@@ -1,104 +1,125 @@
 <template>
-
-<section class='section'>
-  <div class="columns is-fullheight">
-
-    <div class="column is-3 side-menu is-hidden-mobile">        
-      <b-tabs type="is-toggle" expanded size="is-small">
-        <b-tab-item label="Analysis" icon-pack="fas" icon="chart-line">
-          <AnalysisSettings/>
-        </b-tab-item>
-        <b-tab-item label="Results" icon-pack="fas" icon="file-alt">
-          <AnalysisAnomaliesTable 
-            :anomalies="anomalies"
-            :activeAnomaly="activeAnomaly"
-            @changeActive="setActiveAnomaly"/> 
-        </b-tab-item>
-      </b-tabs>
+<div class="fullh">
+  <!-- top bar -->
+  <div class="wide-container is-flex"> 
+    <div class="bar-buttons">
+      <a class="button is-primary is-small" @click="addItem"> 
+        New Analysis
+      </a>   
     </div>
-
-    <div class="column main-content">
-      <AnalysisChart 
-        :seriesData="seriesData"
-        :baseline="baseline"
-        :anomalies="anomalies"
-        :loading="loading"
-        :activeAnomaly="activeAnomaly"
-        @changeActive="setActiveAnomaly"/>
-
-        <label class="checkbox label">
-          <input type="checkbox" :checked="showBaseline" v-model="showBaseline">
-          Show baseline
-        </label>
-      <hr>        
+    <div class="scroll-container">
+      <div class="control" v-for="(item, index) in analysisList" :key="item.id" >
+        <BarItemButton  
+          :id="item.id"
+          :name="item.name ? item.name : 'Unnamed analysis'" 
+          :isActive="(activeAnalysisId == item.id)"  
+          @deleted="removeItem"
+          @click="toggleActive"/>
+      </div>
     </div>
-
   </div>  
-</section> 
 
+  <!-- content -->  
+  <div v-show="activeAnalysisId != ''" class="wide-container main-section">
+    <b-tabs type="is-toggle"  :animated="false" v-model="activeTab" >
+      <b-tab-item label="Settings" icon="cog" value="Settings" >
+        <div class="colums">
+          <div class="column is-3">
+            <AnalysisSettings @run="activeTab='Results'"/>
+          </div>
+          <div class="column">
+            <BaseChart :loading="true"/>
+          </div>
+        </div>
+      </b-tab-item>
+      <b-tab-item label="Results" icon="file-chart" value="Results" :disabled="!hasResults">
+        <ResultsTab/>
+      </b-tab-item>
+    </b-tabs>
+  </div>
+</div>
 </template>
 
 
 <script>
-import AnalysisChart from '../components/AnalysisChart.vue';
-import AnalysisSettings from '../components/AnalysisSettings.vue';
-import AnalysisAnomaliesTable from '../components/AnalysisAnomaliesTable.vue';
-
+import BarItemButton from '../components/BarItemButton';
+import AnalysisSettings from '../components/AnalysisSettings';
+import BaseChart from "../components/BaseChart";
+import ResultsTab from "../components/ResultsTab";
 
 export default {
-    components: { AnalysisChart, AnalysisSettings, AnalysisAnomaliesTable },
-    data() {
-      return {
-        showBaseline: true,
-      }       
+  components: {  BarItemButton, BaseChart, AnalysisSettings, ResultsTab},
+  data () {
+    return {        
+      activeTab: "Settings",
+    }
+  },
+  computed: {
+    analysisList() {
+      return this.$store.state.analysis.all
     },
-    computed: {
-      seriesData() {
-        return this.$store.state.analysis.results.series
-      },
-      baseline() {
-        return this.showBaseline ? this.$store.state.analysis.results.baseline : []
-      },
-      anomalies() {
-        return this.$store.state.analysis.results.anomalies
-      },
-      loading() {
-        return this.$store.state.analysis.loading
-      },
-      activeAnomaly() {
-        return this.$store.state.analysis.activeAnomalyId
-      }
+    activeAnalysisId() {
+      this.activeTab = "Settings"
+      return this.$store.state.analysis.activeAnalysisId
     },
-    methods: {
-      setActiveAnomaly(id) {
-        this.$store.dispatch('analysis/setActiveAnomaly', id)
-      }
+    hasResults() {
+      let res = this.$store.getters['analysis/getResultsById'](this.activeAnalysisId) 
+      return Object.keys(res).length != 0
+    }
+  },
+  methods: {
+    addItem() {
+      this.activeTab="Settings"
+      this.$store.dispatch("analysis/createAnalysis")
     },
+    removeItem(id) {
+      this.$store.dispatch("analysis/removeAnalysis", id)
+    },
+    toggleActive(id) {
+      this.$store.dispatch("analysis/setActiveAnalysis", id)
+    },
+  },
+  mounted: function () {
+  },
+  created() {
+    
+  },
 }
 
 </script>
 
 
+<style scoped>
 
-<style>
-
-.section {
-  padding: 1rem;
+.fullh {
+  height: calc(100vh - 3.5rem);
 }
 
-.is-fullheight {
-  height: calc(100vh - 9rem);
-  min-height: calc(100vh - 9rem);
+.wide-container {
+  padding: 1.25rem 1.25rem 0rem 1.25rem;
+}
+
+.main-section {
+  border-top: 2px solid rgba(255,255,255,0.05);
+}
+
+.idk {
+  padding: 0;
 }
   
-.side-menu {
-  overflow-y: auto;
+.bar-buttons {
+  margin-bottom: 1.25rem;
+  margin-right: 1rem;
 }
 
-.main-content {
+.scroll-container {
   display: flex;
-  flex-direction: column;
-  overflow-y: overlay;
-  overflow-x: hidden;
+  flex-wrap: wrap;
+  overflow: overlay;
+}
+
+.scroll-container > div {
+  margin-right: 0.75rem;
+  margin-bottom: 1.25rem;
 }
 </style>

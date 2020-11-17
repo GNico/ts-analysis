@@ -1,7 +1,7 @@
 <template>
 
   <label class="label is-small color-box " :style="{'background-color': color}">
-    <input class="input is-small color-input" type="color" :value="color" @change="colorSelected" >
+    <input class="input is-small color-input" type="color" :value="color" @change="colorSelected"> 
   </label>   
      
 </div>

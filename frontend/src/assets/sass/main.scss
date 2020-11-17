@@ -29,3 +29,11 @@
 .shortest-field {
   width: 15%;
 }
+
+.field-label {   
+  flex-grow: 2; 
+}
+
+.b-table .table tr.detail {
+  background: $grey-darker;
+}

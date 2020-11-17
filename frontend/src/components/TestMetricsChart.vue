@@ -50,6 +50,10 @@ export default {
         type: Object, 
         default: () => { return {} }
       }, 
+      title: {
+        type: String,
+        default: ''
+      }
     },
     data() {
       return {

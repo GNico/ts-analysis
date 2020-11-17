@@ -1,133 +1,148 @@
 <template>
-  <highcharts class="char-sec" :constructor-type="'stockChart'" :options="chartOptions" :updateArgs="updateArgs" ref="chart"></highcharts>
+
+<div class="section  is-fullheight">
+  
+  <b-input v-model="rowToOpen"> </b-input>
+  <a class="button" @click="openDetail"> Open </a>
+  <a class="button" @click="closeDetail"> Close </a> 
+
+
+  <div class="columns">
+    <div class="column is-4 side-menu">
+      <b-table
+        id="btable"
+        :data="thedata"
+        ref="table"
+        detailed
+        :selected.sync="selected"
+        :opened-detailed="openRows"
+        :height="700"
+        sticky-header
+        detail-key="id" >
+
+        <template slot-scope="props">
+          <b-table-column field="id" label="ID" width="40" numeric >
+              {{ props.row.id }}
+          </b-table-column>
+
+          <b-table-column field="name" label="First Name" >
+              <template>
+                  {{ props.row.name}}
+              </template>                
+          </b-table-column>
+        </template>
+
+
+        <template slot="detail" slot-scope="props">
+            <div :id="props.row.id">                    
+              <p>
+                  <strong>{{ props.row.name }}</strong>
+                  <small>31m</small>
+                  <br>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Proin ornare magna eros, eu pellentesque tortor vestibulum ut.
+                  Maecenas non massa sem. Etiam finibus odio quis feugiat facilisis.
+              </p>
+            </div>
+        </template>
+      </b-table>
+    </div>
+
+    <div class="column">
+      Something else
+    </div>
+  </div>
+
+</div> 
+
 </template>
 
 
 <script>
-import api from "../api/repository";
+
 
 export default {
-  data () {
-    return {
-      updateArgs: [true, true, false],
-      chartData: [],
-      popularTags: [],
-
-      selectedPoint: {},
-    }
-  },
-  computed: {
-    chartOptions() {
-      var vm = this
+    components: { },
+    data() {
       return {
-        chart: {
-          zoomType: 'x',
-          panning: true,
-          panKey: 'shift',
-          events: {
-            load: function() {
-              this.rGroup = this.renderer.g('rGroup').add() // create an SVG group to allow translate
-            }
+        rowToOpen: '',
+        openRows: [],
+        selected: null
+      }       
+    },
+    computed: {
+      thedata() {
+        let arr = []
+        for (var i = 0; i < 50; i++) {
+          let item = {
+            id: i.toString(),
+            name: "item " + i
           }
-          //backgroundColor: this.backgroundColor,
-        },
-        credits: false,      
-        xAxis: {
-          type: 'datetime',          
-        },
-        yAxis: {
-          title: '',
-        },
-        rangeSelector: {
-          enabled: false
-        },
-        scrollbar: {
-          enabled: false
-        },
-        navigator: {
-          enabled: false
-        },
-        legend: {
-          enabled: false,
-        },
-        tooltip: {
-          split: false,
-          shared: true,
-          valueDecimals: 0,
-          backgroundColor: '#001f27',
-        },  
-        plotOptions: {
-          series: {      
-            allowPointSelect: true,
-            events: {
-              click: function (event) {
-                var point = event.point
-                var chart = point.series.chart
-
-                if (chart.customTooltip) { // destroy the old one when rendering new
-                  chart.customTooltip.destroy()
-                  chart.customTooltip = undefined
-                }
-
-
-                var tags = vm.popularTags.find(element => element.timestamp == point.x)
-
-                var text = ''
-                for (var tag of tags.tags) {
-                  text += tag.key + ': ' + tag.doc_count + ' <br>'
-                }
-
-                //var text = point.series.name + ': <strong>' + elem + '</strong> <br>' + "something  <br>something  <br>something  <br>"
-
-                chart.customTooltip = chart.renderer.label( // render tooltip
-                    text ,
-                    chart.plotSizeX - 150, 40 // point.x
-                    //chart.plotTop + point.plotY // point.y
-                  )
-                  .attr({ // style tooltip
-                    'stroke-width': 1,
-                    zIndex: 8,
-                    stroke: point.series.color,
-                    padding: 8,
-                    r: 3,
-                    fill: 'rgb(247, 247, 247)'
-                  })
-                  .add(chart.rGroup)
-
-                chart.rGroup.translate(-chart.customTooltip.width / 2, -chart.customTooltip.height + 40).toFront()
-
-              }  
-            } 
-          }
-        },  
-
-
-        series: {        
-          data: this.chartData,      
+          arr.push(item)
         }
+        return arr
       }
     },
-  },
-  methods: {
-    pointClicked(point) {
-      console.log(point)
-      var elem = this.popularTags.find(element => element.timestamp == point)
-      selectedPoint = { }
+    methods: {
+      openDetail() {
+        this.openRows = [ this.rowToOpen ]
+
+        this.$nextTick(function () {
+          var element = document.getElementById(this.rowToOpen);
+          element = element.parentNode.parentNode.parentNode.previousElementSibling
+
+          var scrollamount = element.offsetTop
+
+
+         // element.scrollIntoView({block: "start"});
+
+          var table = document.getElementById("btable");
+          var tableWrapper = null;
+          for (var i = 0; i < table.childNodes.length; i++) {
+              if (table.childNodes[i].className && table.childNodes[i].className.includes("table-wrapper")) {
+                tableWrapper = table.childNodes[i];
+                break;
+              }
+          }     
+            
+          if (tableWrapper) {
+            tableWrapper.scroll(0, scrollamount - 40)
+         //   if (! (tableWrapper.scrollHeight - tableWrapper.scrollTop  === tableWrapper.clientHeight))
+         //     tableWrapper.scroll(0, tableWrapper.scrollTop - 40)
+          }  
+        })
+      },
+      closeDetail() {
+        this.openRows = []
+        //this.$refs.table.closeDetailRow({id: this.rowToOpen})
+      }
     },
-  },
-  mounted: function () {
-    api.getSeriesData({ 
-        name: "treetest",
-      })
-      .then(response => {       
-        this.chartData = response.data
-        this.popularTags = []
-      })
-      .catch(error => { 
-        console.log('error')
-        console.log(error)
-      })
-  }
 }
 
 </script>
+
+
+
+<style>
+
+.section {
+  padding: 1rem;
+}
+
+
+.is-fullheight {
+  height: calc(100vh - 9rem);
+  min-height: calc(100vh - 9rem);
+}
+  
+.side-menu {
+  overflow-y: auto;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  overflow-y: overlay;
+  overflow-x: hidden;
+}
+</style>

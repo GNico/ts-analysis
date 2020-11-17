@@ -67,6 +67,8 @@ export default {
       let idx = this.data.findIndex(item => item == selected)
       if (idx != -1) {
         this.$refs.autocomplete.setSelected(this.data[idx])
+      } else {
+        this.clear()
       }
     },
     closeOptions() {            

@@ -1,43 +1,35 @@
 import api from "../api/repository";
+import { nanoid } from 'nanoid'
 
 
-
-//returns color from a tricolor gradient according to a 0 to 1 value
-function getColorByvalue(value) {
-    let color1 = ''
-    let color2 = ''
-    if (value<0.5) {
-    value = value*2
-    color1 = 'e4e814' //center - yellow
-    color2 = '00ff00' //left - green
-    } else {
-    value = (value-0.5)*2
-    color1 = 'db1313'  //right - red
-    color2 = 'e4e814' //center - yellow
-    }
-    var hex = function(x) {
-      x = x.toString(16);
-      return (x.length == 1) ? '0' + x : x;
-    };
-    var r = Math.ceil(parseInt(color1.substring(0,2), 16) * value + parseInt(color2.substring(0,2), 16) * (1-value));
-    var g = Math.ceil(parseInt(color1.substring(2,4), 16) * value + parseInt(color2.substring(2,4), 16) * (1-value));
-    var b = Math.ceil(parseInt(color1.substring(4,6), 16) * value + parseInt(color2.substring(4,6), 16) * (1-value));
-    return  '#' + (hex(r) + hex(g) + hex(b));
-}
 
 const state = {
-  settings: {},
-  results: {
+  /*results: {
     series: [],
     anomalies: [],
     baseline: [],
     trend: []
-  },
+  }, */
   activeAnomalyId: '',
   loading: false,
+
+
+
+  all: [],
+  activeAnalysisId: '',
+  results: []
+
 }
 
 const getters = {
+    getAnalysisById: (state) => (id) => {
+        let item = state.all.find(elem => elem.id == id)
+        return item ? item : {}
+    },
+    getResultsById: (state) => (id) => {
+        let item = state.results.find(elem => elem.id == id)
+        return item ? item : {}
+    },
 
  /*   getAnomalies: (state) => {
         if ((state.results.hasOwnProperty('anomalies') 
@@ -59,32 +51,84 @@ const getters = {
 }
 
 const mutations = {
-    add_results(state, results) {
-        state.results = { ...results }
-
-        //add an id and color to each anomaly for UI purposes
-        var anoms = []
-        var idx = 0
-        for (var item of results.anomalies) {
-            anoms.push({
-                    id: idx.toString(),
-                    from: item.from,
-                    to: item.to,
-                    color: getColorByvalue(item.score/100),
-                    score: item.score,
-                })
-            idx++
-        }
-        state.results.anomalies = anoms
+    add_analysis(state, payload) {
+        state.all.push(payload)
+        state.activeAnalysisId = payload.id
     },
+    set_active(state, id) {
+        if (state.all.find(elem => elem.id == id)) {
+            state.activeAnalysisId = id
+        } else {
+            state.activeAnalysisId = ''
+        }
+    },
+    remove_analysis(state, id) {
+        let index = state.all.findIndex(elem => elem.id == id)
+        if (index > -1) {
+            if (state.all[index].id == state.activeAnalysisId)
+                state.activeAnalysisId = ''
+            state.all.splice(index, 1)
+        }
+    },
+    update_analysis(state, settings) {
+        if (settings.hasOwnProperty('id')) {
+            let index = state.all.findIndex(elem => elem.id == settings.id)
+            if (index > -1) {
+                let updated = { ...state.all[index] , ...settings}
+                state.all.splice(index, 1, updated)
+            }
+        }
+    },
+    add_results(state,  {id, loading, results}) {
+        results.id = id
+        results.loading = loading
+        if (results.hasOwnProperty('anomalies') && results.anomalies.length > 0) {
+            var anoms = []
+            for (var item of results.anomalies) {
+                anoms.push({
+                        id: nanoid(6),
+                        from: item.from,
+                        to: item.to,
+                       // color: getColorByvalue(item.score/100),
+                        score: item.score,
+                })
+            }
+            results.anomalies = anoms
+        }
+        let index = state.results.findIndex(elem => elem.id == id)
+        if (index >= -1) {
+            state.results.splice(index, 1, results)
+        } else {
+            state.results.push(results)
+        } 
+    },
+
+
+
     set_active_anomaly(state, anomalyId) {
         state.activeAnomalyId = anomalyId
     }
 }
 
 const actions = {
-	analizeSeries(store, settings) {
-       return  api.getAnomalies({
+    createAnalysis(store) {
+        store.commit('add_analysis', { id: nanoid(5) })
+    },
+    setActiveAnalysis(store, id) {
+        store.commit('set_active', id)
+    },
+    removeAnalysis(store, id) {
+        store.commit('remove_analysis', id)
+    },
+    updateSettings(store, settings) {
+        store.commit('update_analysis', settings)
+    },
+	runAnalysis({commit, getters}, id) {
+        let settings = getters.getAnalysisById(id)
+        if (Object.keys(settings).length == 0) return
+
+        commit('add_results', {id: id, loading: true, results: {} })
+        return  api.getAnomalies({
                     name: settings.client,
                     tags: settings.tags,
                     contexts: settings.contexts,
@@ -94,12 +138,15 @@ const actions = {
                     //config: seriesOpts.config
                 })
                 .then(response => {       
-                    store.commit('add_results', response.data) 
+                    commit('add_results', {id: id, loading: false, results: response.data}) 
                 })
                 .catch(error => { 
                     console.log('error retrieving analysis')
                 }) 
+        
     },
+
+
     setActiveAnomaly(store, id) {
         store.commit('set_active_anomaly', id)
     },

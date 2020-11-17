@@ -90,7 +90,7 @@
           <div class="field is-narrow shorter-field">
             <div class="control">
               <b-tooltip
-                label="Input must be a number followed by a valid letter [ m = minutes, H = hour, D = day, W = week, M = month, y = year ]"
+                label="Input must be a number followed by a valid letter [ m = minutes, h = hour, d = day ]"
                 size="is-large"
                 position="is-bottom"
                 multilined>
@@ -99,7 +99,7 @@
                   type="text"
                   size="is-small"              
                   validation-message="Invalid format"
-                  pattern="[0-9]+[mHDWMy]+">
+                  pattern="[0-9]+[mhd]+">
                 </b-input> 
               </b-tooltip>          
             </div>              
@@ -173,7 +173,7 @@ export default {
     return {
       seriesOptions: {
         name: '',
-        interval: '1H',
+        interval: '1h',
         client: '',
         contexts: [],
         tags: [],
