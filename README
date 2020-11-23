@@ -11,23 +11,36 @@ BACKEND
 -Create postgres user, password y database.
 	sudo su - postgres
 	psql
-	CREATE USER 'user' WITH PASSWORD 'pass';
-	CREATE DATABASE ts_django OWNER user;
+	CREATE USER 'tsa' WITH PASSWORD 'pass';
+	CREATE DATABASE ts_django OWNER tsa;
 
--Set environmental variables 
+- Install python3.6
+	sudo add-apt-repository ppa:deadsnakes/ppa
+	sudo apt update
+	sudo apt install python3.6 python3.6-dev python3.6-venv
+
+-create a virtual environment 'venv' in the backend directory
+	virtualenv --python=python3.6 venv
+
+-Set environmental variables in venv/bin/activate
 	DB_NAME='ts_django'
-	DB_USER='user'
+	DB_USER='tsa'
 	DB_PASSWORD='pass'
 	ELASTIC_DATA_INDEX_PATH= *full path where you store the data files that will be indexed*
 	[Optional] TEST_PATH= *full path of algorithm test results* (used to display test results in the UI)
 
--create a virtual environment 'venv' in the backend directory
-	virtualenv venv
+	export DB_NAME='ts_django'
+	export DB_USER='tsa'
+	export DB_PASSWORD='tsa'
+	export ELASTIC_DATA_INDEX_PATH='/home/jmartty/tsa/ts-analysis/tests/data/'
 
 -activate the venv
 	source venv/bin/activate	
 
 -install dependencies
+  sudo apt install python3-venv python3-pip
+  pip install --upgrade pip setuptools wheel
+  sudo apt install libblas3 liblapack3 liblapack-dev libblas-dev libfreetype6-dev
 	python3 -m pip install -r requirements.txt
 
 -make migrations
