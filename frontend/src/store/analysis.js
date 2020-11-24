@@ -4,21 +4,10 @@ import { nanoid } from 'nanoid'
 
 
 const state = {
-  /*results: {
-    series: [],
-    anomalies: [],
-    baseline: [],
-    trend: []
-  }, */
-  activeAnomalyId: '',
-  loading: false,
-
-
-
   all: [],
   activeAnalysisId: '',
-  results: []
-
+  results: [],
+  activeAnomalyId: '',
 }
 
 const getters = {
@@ -96,7 +85,7 @@ const mutations = {
             results.anomalies = anoms
         }
         let index = state.results.findIndex(elem => elem.id == id)
-        if (index >= -1) {
+        if (index > -1) {
             state.results.splice(index, 1, results)
         } else {
             state.results.push(results)
@@ -126,7 +115,6 @@ const actions = {
 	runAnalysis({commit, getters}, id) {
         let settings = getters.getAnalysisById(id)
         if (Object.keys(settings).length == 0) return
-
         commit('add_results', {id: id, loading: true, results: {} })
         return  api.getAnomalies({
                     name: settings.client,
@@ -142,8 +130,7 @@ const actions = {
                 })
                 .catch(error => { 
                     console.log('error retrieving analysis')
-                }) 
-        
+                })         
     },
 
 

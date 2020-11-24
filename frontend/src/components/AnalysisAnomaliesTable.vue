@@ -1,6 +1,7 @@
 <template>
 
 <b-table 
+  class='scrollable'
   v-if="!isEmpty"
   :data="anomalies" 
   :selected="selected"      
@@ -10,12 +11,11 @@
   detailed
   detail-key="id"
   :show-detail-icon="false"
-  :height="height"
   @select="changeActiveAnomaly($event)">
 
   <template slot-scope="props">
     <b-table-column field="score" label="Score" sortable numeric >
-        {{ props.row.score }}
+       <span class="tag is-info is-small">{{ props.row.score }}</span>
     </b-table-column>
 
     <b-table-column field="from" label="Start date" sortable centered>
@@ -25,6 +25,7 @@
     <b-table-column field="to" label="End date" sortable centered>
       {{ new Date(props.row.to).toLocaleString('es-AR', {month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}) }}
     </b-table-column>
+
   </template>
 
   <template slot="detail" slot-scope="props">
@@ -72,7 +73,6 @@ export default {
            if (! (tableWrapper.scrollHeight - tableWrapper.scrollTop === tableWrapper.clientHeight)) {
             tableWrapper.scroll(0, scrollamount -  40)
            }
-
           }  
         })
       }
@@ -90,3 +90,9 @@ export default {
 }
 </script>
 
+<style>
+.scrollable {
+  overflow-y: auto;
+  height: inherit;
+}
+</style>

@@ -66,6 +66,7 @@ export default {
   data () {
     return {
       updateArgs: [true, true, false],
+      arrows: undefined,
     }
   },
   computed: {
@@ -79,8 +80,8 @@ export default {
         bands.push({ id: item.id,
                     from: item.from,
                     to: item.to,
-                    color: 'transparent',
-                    zIndex: 15,
+                    color: 'rgba(255,0,0,0.8)',  //red
+                    zIndex: 0,
                     events: {
                       click: function(e) {
                         if (vm.activeBand == this.options.id) {
@@ -109,7 +110,6 @@ export default {
       return {      
         boost: {
           enabled: false,
-          useGPUTranslations: true,
         },
         chart: {          
           zoomType: 'x',          
@@ -167,7 +167,8 @@ export default {
           showEmpty: false,
           plotBands: this.interactiveBands,
           events: {
-            setExtremes: function(event) {
+            afterSetExtremes: function(event) {
+              vm.drawArrows()
               if (this.zoomEnabled && event.trigger !== 'sync') {
                 vm.$emit("changedExtremes", event);
               }             
@@ -274,21 +275,47 @@ export default {
         }
         chart.xAxis[0].removePlotBand('selection')
       }
+    },
+    drawArrows() {
+      this.clearArrows()
+      if (!this.activeBand) return
+      var chart = this.$refs.chart.chart
+      let axis = chart.xAxis[0]
+      for (let i = 0; i < axis.plotLinesAndBands.length; i++) { 
+        let band = axis.plotLinesAndBands[i]
+          if (band.id === this.activeBand) {
+            this.arrows = chart.renderer.text('→', chart.xAxis[0].toPixels(band.options.from, true) - 20, 20)
+            .attr({
+            })
+            .css({
+                color: 'yellow',
+                fontSize: '20px'
+            })
+            .add();
+          }
+      }
+    },
+    clearArrows() {
+      if (this.arrows) {
+        this.arrows.destroy()
+      }
+      this.arrows = undefined
     }
   },
   watch: {
     activeBand(newId) {
       let axis = this.$refs.chart.chart.axes[0]
-      for (var i = 0; i < axis.plotLinesAndBands.length; i++) {        
-        var band = axis.plotLinesAndBands[i]
+      for (let i = 0; i < axis.plotLinesAndBands.length; i++) {        
+        let band = axis.plotLinesAndBands[i]
         if (band.id != 'selection') {
           if (band.id === newId) {
-            band.svgElem.attr('fill', 'rgba(173,216,230,0.3)').shadow({color: 'lightblue', opacity: 1})
+            band.svgElem.attr('fill', 'rgba(173,216,230,0.3)').shadow({color: 'rgba(173,216,230,0.3)', opacity: 1}) //rgba(173,216,230,0.3)'
           } else if (band.id !== undefined) {            
-            band.svgElem.attr('fill', 'transparent').shadow(false)        
+            band.svgElem.attr('fill', 'rgba(255,0,0,0.8)').shadow(false)        
           }
         }
       }
+      this.drawArrows()
     },
     loading() {
       if (this.loading) {
@@ -309,17 +336,12 @@ export default {
       if (!this.labelContent) return;
       var text = ''
       text += '<div style="overflow-y: scroll; max-height: ' + chart.chartHeight/3 + 'px;">'
-
       text += this.labelContent + '</div>'
       chart.customTooltip = chart.renderer.label(text, chart.plotSizeX /2, chart.plotTop, 'rect', undefined, undefined, true)
-      .attr({ 
-        //'stroke-width': 1,
-        zIndex: 8,
-        //stroke: '#F0F0F0',
-        //r: 3,
-        //fill: 'rgba(0,0,0,0.85)'
-      })     
-      .add()
+        .attr({ 
+          zIndex: 8,
+        })     
+        .add()
       //.add(chart.rGroup)
       //chart.rGroup.translate(-chart.customTooltip.width / 2, -chart.customTooltip.height + 40).toFront()
     },

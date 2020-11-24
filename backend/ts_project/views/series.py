@@ -12,7 +12,7 @@ class SeriesView(APIView):
             end=request.query_params.get('end', ''),
             contexts=request.query_params.getlist('contexts', []),             
             tags=request.query_params.getlist('tags', []),             
-            interval=request.query_params.get('interval', '1H'))
+            interval=request.query_params.get('interval', '1h'))
         return Response(data)
 
 

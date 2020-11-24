@@ -18,7 +18,6 @@
       </div>
     </div>
   </div>  
-
   <!-- content -->  
   <div v-show="activeAnalysisId != ''" class="wide-container main-section">
     <b-tabs type="is-toggle"  :animated="false" v-model="activeTab" >
@@ -33,7 +32,8 @@
         </div>
       </b-tab-item>
       <b-tab-item label="Results" icon="file-chart" value="Results" :disabled="!hasResults">
-        <ResultsTab/>
+        <AnalysisResultsTab v-if="hasResults"/>
+        <span v-else> No results yet. Run analysis first! </span>
       </b-tab-item>
     </b-tabs>
   </div>
@@ -45,10 +45,10 @@
 import BarItemButton from '../components/BarItemButton';
 import AnalysisSettings from '../components/AnalysisSettings';
 import BaseChart from "../components/BaseChart";
-import ResultsTab from "../components/ResultsTab";
+import AnalysisResultsTab from "../components/AnalysisResultsTab";
 
 export default {
-  components: {  BarItemButton, BaseChart, AnalysisSettings, ResultsTab},
+  components: {  BarItemButton, BaseChart, AnalysisSettings, AnalysisResultsTab},
   data () {
     return {        
       activeTab: "Settings",
@@ -59,7 +59,7 @@ export default {
       return this.$store.state.analysis.all
     },
     activeAnalysisId() {
-      this.activeTab = "Settings"
+      //this.activeTab = "Settings"
       return this.$store.state.analysis.activeAnalysisId
     },
     hasResults() {
@@ -79,13 +79,7 @@ export default {
       this.$store.dispatch("analysis/setActiveAnalysis", id)
     },
   },
-  mounted: function () {
-  },
-  created() {
-    
-  },
 }
-
 </script>
 
 
@@ -101,10 +95,6 @@ export default {
 
 .main-section {
   border-top: 2px solid rgba(255,255,255,0.05);
-}
-
-.idk {
-  padding: 0;
 }
   
 .bar-buttons {

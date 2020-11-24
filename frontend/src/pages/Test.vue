@@ -1,21 +1,16 @@
 <template>
-
 <div class="section">
   <template v-for="testcase in testcases">
     <TestCaseChart :chartData="testcase"/>
     <hr>
   </template>
 </div>
-
-
 </template>
-
 
 
 <script>
 import TestCaseChart from '../components/TestCaseChart.vue';
 import api from "../api/repository";
-
 
 export default {
   components: { TestCaseChart },
@@ -42,9 +37,7 @@ export default {
   }
 
 }
-
 </script>
-
 
 
 <style scoped>

@@ -4,7 +4,6 @@
 
 
 <script>
-
 export default {
      props: {   
       seriesData: {
@@ -158,8 +157,7 @@ export default {
               enabled: false
             }
           }
-        ]
-        
+        ]      
       },
       chartOptions() {
         var vm = this

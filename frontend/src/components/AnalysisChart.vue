@@ -1,40 +1,12 @@
 <template>
- 
-  <BaseChart :seriesData="chartData" 
-            :bands="anomalies"
-            :activeBand="activeAnomaly"
-            @changeActiveBand="setActiveAnomaly"
-            :zoomEnabled="zoomEnabled"
-            :loading="loading"
-            :backgroundColor="backgroundColor"/>
- 
- <!--  
-            :labelContent="labelContent" 
-            :zoomEnabled="zoomEnabled"
-            @selection="getInfo"
-            @changedExtremes="sync"
-            :extremes="extremes"
-            :activeBand="activeAnom"
-            @changeActiveBand="changeActiveAnom"
-
-
-    <div class="chart-footer-section">
-      <div class="chart-footer__field">
-        <label class="checkbox label">
-          <input type="checkbox" :checked="showBaseline" v-model="showBaseline">
-          Show baseline
-        </label>
-      </div>
-      <div class="chart-footer__field">
-      <label class="label"> Score threshold</label>
-        <input class="slider is-marginless" type="range" step="1" min="0" max="100" 
-              v-model="scoreValue" 
-              @change="changeSeriesOptions({scoreThreshold: $event.target.value})">
-        <label class="tag is-info label"> {{ scoreValue }}</label>  
-
-      </div>
-    </div>
- -->
+ <BaseChart 
+  :seriesData="chartData" 
+  :bands="anomalies"
+  :activeBand="activeAnomaly"
+  @changeActiveBand="setActiveAnomaly"
+  :zoomEnabled="zoomEnabled"
+  :loading="loading"
+  :backgroundColor="backgroundColor"/>
 </template>
 
 
@@ -66,11 +38,11 @@ export default {
     },
     seriesColor: {
       type: String, 
-      default: 'lightblue'
+      default: '#e7ec98'
     },
     anomalyColor: {
       type: String, 
-      default: 'orange'
+      default: 'yellow'
     },
     activeAnomaly: {
       type: String,
@@ -102,7 +74,7 @@ export default {
           name: 'Value',
           data: this.seriesData,
           zoneAxis: 'x',
-          zones: this.colorZones, 
+          zones: undefined, 
           zIndex: 2,
           color: this.seriesColor,
           states: {

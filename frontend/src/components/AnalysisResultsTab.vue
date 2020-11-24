@@ -1,5 +1,6 @@
 <template>
-  <div class="columns is-fullheight">
+  <div v-if="loading"> Retrieving analysis results... </div>
+  <div v-else class="columns is-fullheight">
     <div class="column is-4 side-menu is-hidden-mobile">        
       <div class="table-header has-text-white">
         <div> <strong class="has-text-grey-light" > <i> {{ sidebarTitle }} </i></strong></div>
@@ -193,20 +194,17 @@ export default {
       }
     },
 }
-
 </script>
 
 
-
 <style scoped>
-
 
 .is-fullheight {
   max-height: calc(100vh - 3.5rem);
 }
   
 .side-menu {
-  overflow-y: auto;
+  height: calc(100vh - 17rem);
 }
 
 .main-content {
@@ -222,6 +220,5 @@ export default {
   margin-bottom: 0.5rem;
   align-items: center;
 }
-
 
 </style>
