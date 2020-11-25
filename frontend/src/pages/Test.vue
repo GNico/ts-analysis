@@ -16,23 +16,23 @@ export default {
   components: { TestCaseChart },
   data() {
     return {
-      testcases: {},  
+      testcases: {},
     }
   },
   computed: {
 
   },
   methods: {
-   
+
   },
   mounted: function () {
-    api.testAlgo()
-      .then(response => {       
+    let source = this.$route.query.source
+    api.testAlgo(source)
+      .then(response => {
         this.testcases = response.data.testcases
       })
-      .catch(error => { 
-        console.log('error retrieving testcases')
-        console.log(error)
+      .catch(error => {
+        console.log('Error retrieving testcases:', error)
       })
   }
 

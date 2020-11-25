@@ -1,4 +1,5 @@
 import pandas as pd
+from .utils import timestamp_to_epoch
 
 
 class Series:
@@ -10,9 +11,17 @@ class Series:
         self.interval = interval
 
     def span(self):
-        return self.end - self.start
+        return len(self.pdseries.index)
 
-    def from_array(arr, interval, unit='ms'):
+    def time_idx(self, timestamp):
+        # ToDo optimize
+        for i in range(0, self.span()):
+            if self.pdseries.index[i] == timestamp:
+                return i
+        return None
+
+    @staticmethod
+    def from_array(arr, interval, unit='s'):
         dates, count = zip(*arr)
         dates = pd.to_datetime(dates, unit=unit)
         return Series(pd.Series(count, index=dates), interval)
@@ -20,3 +29,17 @@ class Series:
     def __str__(self):
         return 'Series [' + str(self.start) + ' to ' + str(self.end) + ']' \
                 ' (' + str(self.interval) + ')'
+
+    def as_list(self):
+        return list(self.pdseries.values)
+
+    def step(self):
+        return pd.to_timedelta(self.interval, unit='s')
+
+    def output_format(self):
+        output = []
+        for i in range(0, self.span()):
+            output.append(
+                [timestamp_to_epoch(self.pdseries.index[i]),
+                 int(self.pdseries[i])])
+        return output

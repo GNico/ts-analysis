@@ -1,15 +1,24 @@
-from . import analysis
-from . import anomaly
+from .analysis import Analysis
+from .algos.mock import NoBaseline
 
 
 class Analyzer:
 
-    def __init__(self):
-        # TODO add configuration
-        self.config = {}
+    def __init__(self, anomalies_algos,
+                 baseline_algo=NoBaseline(),
+                 config={}):
+        self.anomalies_algos = anomalies_algos
+        self.baseline_algo = baseline_algo
+        self.config = config
 
     def analyze(self, series):
-        # TODO analyzers
-        anomaly1 = anomaly.Anomaly(1535529600000, 1540936800000, 0.5)
-        anomalies = [anomaly1]
-        return analysis.Analysis(anomalies)
+
+        all_anomalies = []
+        for algo in self.anomalies_algos:
+            anomalies = algo.anomalies(series)
+            for anomaly in anomalies:
+                anomaly.tag_algo(algo.id())
+            all_anomalies.extend(anomalies)
+
+        baseline = self.baseline_algo.baseline(series)
+        return Analysis(all_anomalies, baseline)

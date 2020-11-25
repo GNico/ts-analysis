@@ -1,4 +1,4 @@
-from model import analysis
+from model.analysis import Analysis
 
 
 class MockAnalyzer:
@@ -7,4 +7,4 @@ class MockAnalyzer:
         self.anomalies = anomalies
 
     def analyze(self, pdseries):
-        return analysis.Analysis("MockAnalyzer", self.anomalies, None, None)
+        return Analysis(self.anomalies, None)
