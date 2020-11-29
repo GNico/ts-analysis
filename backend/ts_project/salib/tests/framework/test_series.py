@@ -19,5 +19,5 @@ class TestSeries(unittest.TestCase):
 
         self.assertEqual(pd.Timestamp('1970-01-01 00:00:00'), test_s.start)
         self.assertEqual(pd.Timestamp('1970-01-01 00:00:06'), test_s.end)
-        self.assertEqual(1, test_s.interval)
+        self.assertEqual(1, test_s.interval.seconds)
         self.assertEqual(7, test_s.span())

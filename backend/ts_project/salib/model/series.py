@@ -4,11 +4,18 @@ from .utils import timestamp_to_epoch
 
 class Series:
 
-    def __init__(self, pdseries, interval):
+    def __init__(self, pdseries, interval=None):
         self.pdseries = pdseries
         self.start = pdseries.index[0]
         self.end = pdseries.index[-1]
-        self.interval = interval
+        if interval is None:
+            self.interval = self.calculate_interval(interval)
+        else:
+            self.interval = interval
+
+    def calculate_interval(self, interval):
+        self.interval = pdseries.index[0] - pdseries.index[1]
+        # ToDo validate equal spaced indices
 
     def span(self):
         return len(self.pdseries.index)
@@ -24,7 +31,7 @@ class Series:
     def from_array(arr, interval, unit='s'):
         dates, count = zip(*arr)
         dates = pd.to_datetime(dates, unit=unit)
-        return Series(pd.Series(count, index=dates), interval)
+        return Series(pd.Series(count, index=dates), pd.to_timedelta(interval, unit='s'))
 
     def __str__(self):
         return 'Series [' + str(self.start) + ' to ' + str(self.end) + ']' \
@@ -34,7 +41,7 @@ class Series:
         return list(self.pdseries.values)
 
     def step(self):
-        return pd.to_timedelta(self.interval, unit='s')
+        return self.interval
 
     def output_format(self):
         output = []
