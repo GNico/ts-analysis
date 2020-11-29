@@ -6,6 +6,8 @@ class Series:
 
     def __init__(self, pdseries, interval=None):
         self.pdseries = pdseries
+        if len(pdseries.index) < 2:
+            raise RuntimeError("Series must contain 2 or more data points!")
         self.start = pdseries.index[0]
         self.end = pdseries.index[-1]
         if interval is None:
