@@ -1,7 +1,7 @@
 from functools import total_ordering
 import pandas as pd
 
-from model.utils import timestamp_to_epoch
+from .utils import timestamp_to_epoch
 
 
 @total_ordering

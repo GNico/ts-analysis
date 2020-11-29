@@ -1,6 +1,7 @@
 class Analysis:
 
-    def __init__(self, anomalies, baseline):
+    def __init__(self, series, anomalies, baseline):
+        self.series = series
         self.anomalies = anomalies
         self.build_anomalies_map()
         self.baseline = baseline
@@ -17,9 +18,11 @@ class Analysis:
             self.anomalies_by_algo[algo_id].append(anomaly)
 
     def output_format(self):
+        series = self.series.output_format()
         anomalies = list(map(lambda a: a.output_format(), self.anomalies))
         baseline = self.baseline.output_format()
         return {
+            "series": series,
             "anomalies": anomalies,
             "baseline": baseline
         }

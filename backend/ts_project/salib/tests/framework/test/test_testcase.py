@@ -33,6 +33,7 @@ class TestTestCase(unittest.TestCase):
         expected_anomalies = TestCase.anomalies_from_mock_series(test_series)
 
         expected_analysis = Analysis(
+            test_series,
             expected_anomalies,
             None
         )

@@ -21,4 +21,4 @@ class Analyzer:
             all_anomalies.extend(anomalies)
 
         baseline = self.baseline_algo.baseline(series)
-        return Analysis(all_anomalies, baseline)
+        return Analysis(series, all_anomalies, baseline)

@@ -37,7 +37,7 @@ class TestEMA(unittest.TestCase):
             Anomaly.from_epoch(series, 100, 103, 1.0),
             Anomaly.from_epoch(series, 10, 25, 1.0),
         ]
-        expected_analysis = Analysis(expected_anomalies, NoBaseline())
+        expected_analysis = Analysis(series, expected_anomalies, NoBaseline())
 
         test_case = TestCase("test_ema", series, analyzer, expected_analysis)
         result = test_case.run()

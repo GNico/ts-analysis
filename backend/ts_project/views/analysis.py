@@ -6,7 +6,8 @@ from .. import services
 import pandas as pd
 
 from ..salib.model.series import Series
-
+from ..salib.model.analyzer import Analyzer
+from ..salib.model.algos.ema import EMA
 
 class AnalysisView(APIView):
     def get(self, request):
@@ -22,15 +23,12 @@ class AnalysisView(APIView):
         dates = [pd.to_datetime(item[0], unit="ms") for item in data_series]
         count  = [item[1] for item in data_series]
         ts = pd.Series(count, index=dates)
-        print("SERIES:", ts)
-        series = Series(ts)
-        print("INTERVAL", series.interval)
 
-        response = {
-            "series": series,
-            "anomalies": anomalies, 
-        }
-        print("RESPONSE: ", response)
+        series = Series(ts)
+        ema = EMA(decay=0.99, threshold=3)
+        analyzer = Analyzer(anomalies_algos=[ema])
+        analysis = analyzer.analyze(series)
+        response = analysis.output_format()
         return Response(response)
 
 

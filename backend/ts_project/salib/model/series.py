@@ -11,13 +11,13 @@ class Series:
         self.start = pdseries.index[0]
         self.end = pdseries.index[-1]
         if interval is None:
-            self.interval = self.calculate_interval(interval)
+            self.interval = self.calculate_interval()
         else:
             self.interval = interval
 
-    def calculate_interval(self, interval):
-        self.interval = pdseries.index[0] - pdseries.index[1]
-        # ToDo validate equal spaced indices
+    def calculate_interval(self):
+        # ToDo validate equal spaced indices, taking first two points for now
+        return self.pdseries.index[0] - self.pdseries.index[1]
 
     def span(self):
         return len(self.pdseries.index)
