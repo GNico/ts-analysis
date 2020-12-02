@@ -3,10 +3,13 @@
   :seriesData="chartData" 
   :bands="anomalies"
   :activeBand="activeAnomaly"
-  @changeActiveBand="setActiveAnomaly"
   :zoomEnabled="zoomEnabled"
   :loading="loading"
-  :backgroundColor="backgroundColor"/>
+  :backgroundColor="backgroundColor"
+  @changeActiveBand="setActiveAnomaly"
+  @changedExtremes="updateExtremes"
+  :extremes="extremes"
+  />
 </template>
 
 
@@ -40,13 +43,15 @@ export default {
       type: String, 
       default: '#e7ec98'
     },
-    anomalyColor: {
-      type: String, 
-      default: 'yellow'
-    },
     activeAnomaly: {
       type: String,
     },
+    start: {
+      default: null,
+    },
+    end: {
+      default: null,
+    }
   },
   data() {
     return {
@@ -56,7 +61,13 @@ export default {
     }
   },
   computed: {
-    colorZones() {
+    extremes() {
+      return {
+        start: this.start,
+        end: this.end
+      }
+    },
+    /*colorZones() {
       var zones = []
       this.anomalies.forEach(anom => {
         var zone1 = { value: anom.from, color: this.seriesColor }
@@ -66,15 +77,15 @@ export default {
       })
       zones.push({color: this.color})
       return zones
-    },
+    }, */
     chartData() {
       let cdata = []
       if (this.seriesData.length > 0) {
         cdata.push({
           name: 'Value',
           data: this.seriesData,
-          zoneAxis: 'x',
-          zones: undefined, 
+         // zoneAxis: 'x',
+         // zones: undefined, 
           zIndex: 2,
           color: this.seriesColor,
           states: {
@@ -167,7 +178,11 @@ export default {
   methods: {
     setActiveAnomaly(id) {
       this.$emit('changeActive', id)
-    },    
+    },   
+    updateExtremes(event) {
+      this.$emit('update:start', event.start)
+      this.$emit('update:end', event.end)
+    } 
   },
   watch: {
     activeAnomaly(newId) {

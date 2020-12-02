@@ -123,26 +123,7 @@ export default {
 
 
 
-<style>
-
-.section {
-  padding: 1rem;
-}
+<style scoped>
 
 
-.is-fullheight {
-  height: calc(100vh - 9rem);
-  min-height: calc(100vh - 9rem);
-}
-  
-.side-menu {
-  overflow-y: auto;
-}
-
-.main-content {
-  display: flex;
-  flex-direction: column;
-  overflow-y: overlay;
-  overflow-x: hidden;
-}
 </style>

@@ -77,7 +77,7 @@
         v-else
         id="anom-table"
         :anomalies="filteredAnomalies"
-        :activeAnomaly="activeAnomaly"
+        :activeAnomaly="filteredActiveAnomaly"
         @changeActive="setActiveAnomaly"/> 
     </div>
 
@@ -87,9 +87,12 @@
         :baseline="baseline"
         :anomalies="filteredAnomalies"
         :loading="loading"
-        :activeAnomaly="activeAnomaly"
-        @changeActive="setActiveAnomaly"/>
+        :activeAnomaly="filteredActiveAnomaly"
+        @changeActive="setActiveAnomaly"
 
+        :start.sync="selectedRangeTimestamp.start"
+        :end.sync="selectedRangeTimestamp.end"
+        />
     </div>
   </div>  
 </template>
@@ -120,6 +123,9 @@ export default {
       id() {
         return this.$store.state.analysis.activeAnalysisId
       },
+      activeAnomaly() {
+        return this.$store.state.analysis.activeAnomalyId
+      },
       results() {
         return this.$store.getters['analysis/getResultsById'](this.id) 
       },
@@ -147,15 +153,15 @@ export default {
         return {start, end}
       },
       filteredAnomalies() {
-        let filtered = []
-        this.anomalies.forEach(elem => {
-          if (elem.score > this.scoreThreshold 
-            && (parseInt(elem.to) - parseInt(elem.from) > this.minDurationTime)
-            && (!this.selectedRangeTimestamp.start || parseInt(elem.from) > this.selectedRangeTimestamp.start)
-            && (!this.selectedRangeTimestamp.end || parseInt(elem.from) < this.selectedRangeTimestamp.end))
-            filtered.push(elem)
-        })
-        return filtered
+        return this.anomalies.filter(elem => 
+          (elem.score > this.scoreThreshold 
+          && (parseInt(elem.to) - parseInt(elem.from) > this.minDurationTime)
+          && (!this.selectedRangeTimestamp.start || parseInt(elem.from) > this.selectedRangeTimestamp.start)
+          && (!this.selectedRangeTimestamp.end || parseInt(elem.from) < this.selectedRangeTimestamp.end)))
+      },
+      filteredActiveAnomaly() {
+        let filteredAnom = this.filteredAnomalies.find(elem => elem.id === this.activeAnomaly)
+        return filteredAnom ? filteredAnom.id : ''
       },
       activeAnomaly() {
         return this.$store.state.analysis.activeAnomalyId

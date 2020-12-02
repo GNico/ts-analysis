@@ -69,9 +69,9 @@ export default {
           var scrollamount = element.offsetTop
           var tableWrapper = element.closest('.table-wrapper')
           if (tableWrapper) {            
-           tableWrapper.scroll(0, scrollamount)
+           tableWrapper.scroll(0, scrollamount - 32)
            if (! (tableWrapper.scrollHeight - tableWrapper.scrollTop === tableWrapper.clientHeight)) {
-            tableWrapper.scroll(0, scrollamount -  40)
+            tableWrapper.scroll(0, scrollamount -  32)
            }
           }  
         })

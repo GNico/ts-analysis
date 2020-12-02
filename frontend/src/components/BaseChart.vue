@@ -50,10 +50,6 @@ export default {
       type: Number,
       default: 2
     },
-    colors: {
-      type: Object,
-      default: () => {}
-    },
     margin: {
       type: Object,
       default: () => {return {
@@ -235,15 +231,15 @@ export default {
     setChartExtremes(min, max) {
       var chart = this.$refs.chart.chart
      // if (chart.xAxis[0].setExtremes) { // It is null while updating
-        chart.xAxis[0].setExtremes(min, max, undefined, false, {trigger: 'sync'})
-        if (chart.resetZoomButton != undefined) { // force hide or show reset button 
-          if ((min == undefined || min == chart.xAxis[0].dataMin) && 
-              (max == undefined) || (max == chart.xAxis[0].dataMax)) {
-            chart.resetZoomButton.hide()
-          } else {
-            chart.resetZoomButton.show()
-          }
+      chart.xAxis[0].setExtremes(min, max, undefined, false, {trigger: 'sync'})
+      if (chart.resetZoomButton != undefined) { // force hide or show reset button 
+        if ((min == undefined || min == chart.xAxis[0].dataMin) && 
+            (max == undefined) || (max == chart.xAxis[0].dataMax)) {
+          chart.resetZoomButton.hide()
+        } else {
+          chart.resetZoomButton.show()
         }
+      }
       //}                      
     }, 
     selectAreaByDrag(e) {
@@ -309,7 +305,7 @@ export default {
         let band = axis.plotLinesAndBands[i]
         if (band.id != 'selection') {
           if (band.id === newId) {
-            band.svgElem.attr('fill', 'rgba(173,216,230,0.3)').shadow({color: 'rgba(173,216,230,0.3)', opacity: 1}) //rgba(173,216,230,0.3)'
+            band.svgElem.attr('fill', 'rgba(173,216,230,0.3)').shadow({color: 'rgba(173,216,230,0.3)', opacity: 1})
           } else if (band.id !== undefined) {            
             band.svgElem.attr('fill', 'rgba(255,0,0,0.8)').shadow(false)        
           }

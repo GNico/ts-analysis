@@ -13,7 +13,6 @@
     :crosshair="crosshair"
     :syncCrosshairEnabled="true"
     @selection="getTagsCount(panel.id, $event)"
-    :aux="panel.id"
 
   />
 </div>
@@ -23,7 +22,6 @@
 <script>
 import BaseChart from "./BaseChart";
 
-//labelContent[panel.id]
 export default {
   components: { BaseChart },
   props: {   
@@ -166,8 +164,15 @@ export default {
       })
       this.$emit('tagsCountRequest', {panelId: panelId, seriesIds: seriesIds, extremes: extremes }) 
     },
-
-  },  
+  }, 
+  watch: {
+    range: {
+      deep: true,
+      handler(newval) {
+        this.extremes = { ...newval }
+      }
+    }
+  } 
 }
 
 </script>
@@ -175,8 +180,6 @@ export default {
 
 
 <style scoped>
-
-
 .fill-height-or-more {
   display: flex;
   flex-direction: column;
@@ -185,6 +188,4 @@ export default {
 .fill-height-or-more > * {
   flex: 1;
 }
-
-
 </style>
