@@ -167,9 +167,9 @@ export default {
   }, 
   watch: {
     range: {
-      deep: true,
+      //deep: true,
       handler(newval) {
-        this.extremes = { ...newval }
+        this.extremes = { }
       }
     }
   } 

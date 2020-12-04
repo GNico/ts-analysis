@@ -73,30 +73,33 @@ export default {
       var vm = this
       var bands = []
       for (var item of this.bands) {
-        bands.push({ id: item.id,
-                    from: item.from,
-                    to: item.to,
-                    color: 'rgba(255,0,0,0.8)',  //red
-                    zIndex: 0,
-                    events: {
-                      click: function(e) {
-                        if (vm.activeBand == this.options.id) {
-                          vm.setActiveBand('')
-                        } else {
-                          vm.setActiveBand(this.options.id)
-                        }
-                      }, 
-                      mouseover: function(e) {
-                        if (this.id != vm.activeBand) {
-                          this.svgElem.attr('fill', 'rgba(173,216,230,0.3)');
-                        }
-                      },
-                      mouseout: function(e) {
-                        if (this.id != vm.activeBand) {
-                          this.svgElem.attr('fill', this.options.color);
-                        }
-                      } 
-                   }
+        bands.push({ 
+          id: item.id,
+          from: item.from,
+          to: item.to,
+          color: (item.id == this.activeBand) ? 'rgba(173,216,230,0.3)' : 'rgba(255,0,0,0.8)',  //red
+          borderWidth: (item.id == this.activeBand) ? 2 : 0,
+          borderColor:  (item.id == this.activeBand) ? 'rgba(173,216,230,1)' : '',
+          zIndex: 0,
+          events: {
+            click: function(e) {
+              if (vm.activeBand == this.options.id) {
+                vm.setActiveBand('')
+              } else {
+                vm.setActiveBand(this.options.id)
+              }
+            }, 
+            mouseover: function(e) {
+              if (this.id != vm.activeBand) {
+                this.svgElem.attr('fill', 'rgba(173,216,230,0.3)');
+              }
+            },
+            mouseout: function(e) {
+              if (this.id != vm.activeBand) {
+                this.svgElem.attr('fill', this.options.color);
+              }
+            } 
+          }
         })
       }
       return bands
@@ -125,12 +128,12 @@ export default {
               stroke: 'silver',
               r: 0,
               states: {
-                  hover: {
-                      fill: '#41739D',
-                      style: {
-                          color: 'white'
-                      }
+                hover: {
+                  fill: '#41739D',
+                  style: {
+                    color: 'white'
                   }
+                }
               }
             }
           },
@@ -213,7 +216,7 @@ export default {
               events: {
                 mouseOver: function(event) {
                   if (vm.syncCrosshairEnabled) {
-                    vm.$emit('crosshairMove', {chart: vm.$refs.chart.chart, x: event.target.x, type: 'over'})
+                   // vm.$emit('crosshairMove', {chart: vm.$refs.chart.chart, x: event.target.x, type: 'over'})
                   }
                 },              
               }
@@ -230,7 +233,6 @@ export default {
     },
     setChartExtremes(min, max) {
       var chart = this.$refs.chart.chart
-     // if (chart.xAxis[0].setExtremes) { // It is null while updating
       chart.xAxis[0].setExtremes(min, max, undefined, false, {trigger: 'sync'})
       if (chart.resetZoomButton != undefined) { // force hide or show reset button 
         if ((min == undefined || min == chart.xAxis[0].dataMin) && 
@@ -240,9 +242,9 @@ export default {
           chart.resetZoomButton.show()
         }
       }
-      //}                      
     }, 
-    selectAreaByDrag(e) {
+    //return true for zoom, false to prevent zoom
+    selectAreaByDrag(e) {   
       if (typeof e.xAxis == 'undefined')  { //reset button clicked
         return true
       }
@@ -263,7 +265,7 @@ export default {
       }    
     },
     unselectByClick() {
-      var chart = this.$refs.chart.chart
+      let chart = this.$refs.chart.chart
       if (!this.zoomEnabled) {
         if (chart.customTooltip) {
           chart.customTooltip.destroy()
@@ -275,7 +277,7 @@ export default {
     drawArrows() {
       this.clearArrows()
       if (!this.activeBand) return
-      var chart = this.$refs.chart.chart
+      let chart = this.$refs.chart.chart
       let axis = chart.xAxis[0]
       for (let i = 0; i < axis.plotLinesAndBands.length; i++) { 
         let band = axis.plotLinesAndBands[i]
@@ -296,22 +298,39 @@ export default {
         this.arrows.destroy()
       }
       this.arrows = undefined
-    }
-  },
-  watch: {
-    activeBand(newId) {
-      let axis = this.$refs.chart.chart.axes[0]
+    },
+  /*  highlightActive() {
+      this.clearArrows()
+      let chart = this.$refs.chart.chart
+      let axis = chart.axes[0]
       for (let i = 0; i < axis.plotLinesAndBands.length; i++) {        
         let band = axis.plotLinesAndBands[i]
         if (band.id != 'selection') {
-          if (band.id === newId) {
+          if (band.id === this.activeBand) {
             band.svgElem.attr('fill', 'rgba(173,216,230,0.3)').shadow({color: 'rgba(173,216,230,0.3)', opacity: 1})
-          } else if (band.id !== undefined) {            
+            this.arrows = chart.renderer.text('→', chart.xAxis[0].toPixels(band.options.from, true) - 20, 20)
+              .attr({
+              })
+              .css({
+                  color: 'yellow',
+                  fontSize: '20px'
+              })
+              .add();
+          } else if (band.id !== undefined) {   
             band.svgElem.attr('fill', 'rgba(255,0,0,0.8)').shadow(false)        
           }
         }
-      }
-      this.drawArrows()
+      } 
+    }, */
+  },
+  watch: {
+    activeBand(newId) {
+      this.drawArrows() 
+      //this.highlightActive()
+    },
+    extremes(newVal, oldVal) {
+      if (newVal.min != oldVal.min || newVal.max != oldVal.max)
+        this.setChartExtremes(newVal.min, newVal.max)
     },
     loading() {
       if (this.loading) {
@@ -320,11 +339,8 @@ export default {
         this.$refs.chart.chart.hideLoading()
       }
     },
-    extremes(newVal) {
-      this.setChartExtremes(newVal.min, newVal.max)
-    },
     labelContent() {
-      var chart = this.$refs.chart.chart
+      let chart = this.$refs.chart.chart
       if (chart.customTooltip) { // destroy the old one when rendering new
         chart.customTooltip.destroy()
         chart.customTooltip = undefined
@@ -342,7 +358,7 @@ export default {
       //chart.rGroup.translate(-chart.customTooltip.width / 2, -chart.customTooltip.height + 40).toFront()
     },
     crosshair() {
-      var chart = this.$refs.chart.chart
+      let chart = this.$refs.chart.chart
       if (chart === this.crosshair.chart) return;
       var points = []
       chart.series.forEach((series) => {

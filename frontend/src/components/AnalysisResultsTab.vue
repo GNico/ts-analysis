@@ -90,8 +90,8 @@
         :activeAnomaly="filteredActiveAnomaly"
         @changeActive="setActiveAnomaly"
 
-        :start.sync="selectedRangeTimestamp.start"
-        :end.sync="selectedRangeTimestamp.end"
+        :range="selectedRangeTimestamp"
+        @updateRange="updateRange"
         />
     </div>
   </div>  
@@ -142,20 +142,21 @@ export default {
         return !this.loading && this.results.hasOwnProperty("anomalies") ? this.results.anomalies : []
       },
       selectedRangeTimestamp() {
-        let start = null
-        let end = null
+        let start = undefined
+        let end = undefined
         if (this.selectedRange.start) {
           start = Math.round(this.selectedRange.start.getTime());
+
         }
         if (this.selectedRange.end) {
           end = Math.round(this.selectedRange.end.getTime());
         }
         return {start, end}
-      },
+      }, 
       filteredAnomalies() {
         return this.anomalies.filter(elem => 
           (elem.score > this.scoreThreshold 
-          && (parseInt(elem.to) - parseInt(elem.from) > this.minDurationTime)
+          && (parseInt(elem.to) - parseInt(elem.from) >= this.minDurationTime)
           && (!this.selectedRangeTimestamp.start || parseInt(elem.from) > this.selectedRangeTimestamp.start)
           && (!this.selectedRangeTimestamp.end || parseInt(elem.from) < this.selectedRangeTimestamp.end)))
       },
@@ -171,6 +172,10 @@ export default {
       }
     },
     methods: {
+      updateRange(event) {     
+        this.selectedRange.start = new Date(event.start)
+        this.selectedRange.end = new Date(event.end)
+      },
       setActiveAnomaly(id) {
         this.$store.dispatch('analysis/setActiveAnomaly', id)
       },
@@ -178,6 +183,10 @@ export default {
         this.showFiltersMenu = !this.showFiltersMenu
       },
       checkValid() {
+        if (!this.minDuration) {
+          this.minDurationTime = 0
+          return
+        }
         if (this.$refs.regexinput.checkHtml5Validity()) {
           let numbers = this.minDuration.match(/\d+/g)
           let letter = this.minDuration.match(/[mhd]/g)

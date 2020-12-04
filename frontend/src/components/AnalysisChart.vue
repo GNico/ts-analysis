@@ -46,11 +46,14 @@ export default {
     activeAnomaly: {
       type: String,
     },
-    start: {
-      default: null,
-    },
-    end: {
-      default: null,
+    range: {
+      type: Object,
+      default: () => {
+        return {
+          start: null,
+          end: null
+        }
+      }
     }
   },
   data() {
@@ -58,34 +61,23 @@ export default {
       scoreValue: 0,
       labelContent: '',
       zoomEnabled: true,
+      
     }
   },
   computed: {
     extremes() {
+      
       return {
-        start: this.start,
-        end: this.end
+        min: this.range.start,
+        max: this.range.end
       }
-    },
-    /*colorZones() {
-      var zones = []
-      this.anomalies.forEach(anom => {
-        var zone1 = { value: anom.from, color: this.seriesColor }
-        var zone2 = { value: anom.to, color: this.anomalyColor }
-        zones.push(zone1)
-        zones.push(zone2)
-      })
-      zones.push({color: this.color})
-      return zones
-    }, */
+    }, 
     chartData() {
       let cdata = []
       if (this.seriesData.length > 0) {
         cdata.push({
           name: 'Value',
           data: this.seriesData,
-         // zoneAxis: 'x',
-         // zones: undefined, 
           zIndex: 2,
           color: this.seriesColor,
           states: {
@@ -117,71 +109,13 @@ export default {
       }
       return cdata
     },
-    chartOptions() {
-      var vm = this
-      return {
-        chart: {
-          zoomType: 'x',
-          panning: true,
-          panKey: 'shift',
-          backgroundColor: this.backgroundColor,
-        },
-        credits: false,
-        loading: {
-          labelStyle: {
-              color: 'white',
-              fontSize: '1.5rem'
-          },
-          style: {
-              backgroundColor: 'black'
-          }
-        },
-        title: {
-          text: this.title
-        },
-        xAxis: {
-          type: 'datetime',
-          plotBands: this.chartAnomalies,
-          events: {
-            setExtremes: function(event) {
-              if (event.trigger !== 'sync') {                
-                vm.$emit("changedExtremes", event);
-              }           
-            }     
-          },   
-        },
-        yAxis: {
-          title: '',
-        },
-        rangeSelector: {
-          enabled: false
-        },
-        scrollbar: {
-          enabled: false
-        },
-        navigator: {
-          enabled: false
-        },
-        legend: {
-          enabled: false,
-        },
-        tooltip: {
-          split: false,
-          shared: true,
-          valueDecimals: 0,
-          backgroundColor: '#001f27',
-        },    
-        series: this.chartData,
-      }
-    },
   },
   methods: {
     setActiveAnomaly(id) {
       this.$emit('changeActive', id)
     },   
     updateExtremes(event) {
-      this.$emit('update:start', event.start)
-      this.$emit('update:end', event.end)
+      this.$emit('updateRange', { start: Math.round(event.min), end: Math.round(event.max) })
     } 
   },
   watch: {
@@ -198,11 +132,7 @@ export default {
     }
   },
   created() {
-    window.addEventListener('keydown', (e) => {
-      if (e.key == 'Control') {
-        this.zoomEnabled = !this.zoomEnabled;
-      }
-    });
+   
   },
 }
 </script>
