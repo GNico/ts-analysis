@@ -38,11 +38,14 @@ class EMA:
             ema_val = val[1]
             series_val = pdseries[val[0]]
             diff = abs(series_val - ema_val)
-            std_high = diffs_mean + self.threshold*diffs_std
-            std_low = diffs_mean - self.threshold*diffs_std
+            threshold = self.threshold*diffs_std
+            std_high = diffs_mean + threshold
+            std_low = diffs_mean - threshold
             within_std_high = diff < std_high
             within_std_low = diff > std_low
-            baseline.add_point(val[0], std_low, std_high)
+
+            baseline.add_point(val[0], ema_val-threshold, ema_val+threshold)
+
             within_std = within_std_high and within_std_low
             if not within_std and start is None:
                 start = val[0]
