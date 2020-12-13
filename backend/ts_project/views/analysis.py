@@ -26,7 +26,7 @@ class AnalysisView(APIView):
 
         series = Series(ts)
         ema = EMA(decay=0.99, threshold=3)
-        analyzer = Analyzer(anomalies_algos=[ema])
+        analyzer = Analyzer(anomalies_algos=[ema], baseline_algo=ema)
         analysis = analyzer.analyze(series)
         response = analysis.output_format()
         return Response(response)
