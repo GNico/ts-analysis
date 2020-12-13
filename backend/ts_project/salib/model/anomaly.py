@@ -17,9 +17,13 @@ class Anomaly:
         self.desc = desc
 
     def output_format(self):
+        from_timestamp = timestamp_to_epoch(self.start)
+        to_timestamp = timestamp_to_epoch(self.end + self.series.step())
+        if from_timestamp == to_timestamp:
+            print("START", self.start, "END", self.end, "STEP", self.series.step())
         return {
-            "from": timestamp_to_epoch(self.start),
-            "to": timestamp_to_epoch(self.end + self.series.step()),
+            "from": from_timestamp,
+            "to": to_timestamp,
             "score": self.score,
             "desc": self.desc,
             "algo_id": self.algo_tag

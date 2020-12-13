@@ -17,7 +17,7 @@ class Series:
 
     def calculate_interval(self):
         # ToDo validate equal spaced indices, taking first two points for now
-        return self.pdseries.index[0] - self.pdseries.index[1]
+        return self.pdseries.index[1] - self.pdseries.index[0]
 
     def span(self):
         return len(self.pdseries.index)
