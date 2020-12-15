@@ -4,6 +4,12 @@
 
 
 <script>
+function sum(arr) {
+  var sum =  arr.reduce(function (s, res) {
+    return s + res;
+  }, 0);  
+  return sum;
+}
 
 export default {
   props: {
@@ -205,6 +211,14 @@ export default {
           valueDecimals: 0,
         },  
         plotOptions: {
+          arearange: {
+            dataGrouping: {
+              enabled: true,
+              approximation: function (low, high) {
+                return [sum(low), sum(high)];
+              },
+            }
+          },
           series: {
             dataGrouping: {
               enabled: true,

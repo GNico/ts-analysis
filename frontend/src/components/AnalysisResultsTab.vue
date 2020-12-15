@@ -10,7 +10,7 @@
       </div>
 
       <div v-if="showFiltersMenu">
-        <b-field horizontal label="Date range">
+      <!--  <b-field horizontal label="Date range">
           <b-datepicker             
             :first-day-of-week="1"
             placeholder="From"
@@ -44,7 +44,9 @@
               <span>Clear</span>
             </button>
           </b-datepicker>
-        </b-field>
+        </b-field>  
+
+      -->
 
         <b-field horizontal label="Min Duration">
           <b-tooltip
@@ -58,6 +60,12 @@
 
         <b-field horizontal label="Score threshold">
           <b-slider v-model="scoreThreshold" lazy indicator></b-slider>
+        </b-field>
+
+        <b-field horizontal label="">
+          <b-checkbox v-model="showSeries">
+            <strong class="has-text-white">Show series</strong>
+          </b-checkbox>        
         </b-field>
             
         <b-field horizontal label="">
@@ -89,10 +97,9 @@
         :loading="loading"
         :activeAnomaly="filteredActiveAnomaly"
         @changeActive="setActiveAnomaly"
+        @updateRange="updateRange" />
 
-        :range="selectedRangeTimestamp"
-        @updateRange="updateRange"
-        />
+        <!--  :range="selectedRangeTimestamp" -->
     </div>
   </div>  
 </template>
@@ -109,6 +116,7 @@ export default {
       return {
         showFiltersMenu: false,
         showBaseline: true,
+        showSeries: true,
         showTrend: false,
         scoreThreshold: 0,
         minDuration: '',
@@ -133,7 +141,7 @@ export default {
         return this.results.loading
       },
       seriesData() {
-        return !this.loading && this.results.hasOwnProperty("series") ? this.results.series :  [] 
+        return !this.loading && this.results.hasOwnProperty("series") && this.showSeries ? this.results.series :  [] 
       },
       baseline() {
         return (!this.loading && this.results.hasOwnProperty("baseline") && this.showBaseline) ? this.results.baseline : []
@@ -144,13 +152,10 @@ export default {
       selectedRangeTimestamp() {
         let start = undefined
         let end = undefined
-        if (this.selectedRange.start) {
-          start = Math.round(this.selectedRange.start.getTime());
-
-        }
-        if (this.selectedRange.end) {
-          end = Math.round(this.selectedRange.end.getTime());
-        }
+        if (this.selectedRange.start) 
+          start = Math.round(this.selectedRange.start.getTime())
+        if (this.selectedRange.end) 
+          end = Math.round(this.selectedRange.end.getTime())      
         return {start, end}
       }, 
       filteredAnomalies() {
@@ -173,8 +178,8 @@ export default {
     },
     methods: {
       updateRange(event) {     
-        this.selectedRange.start = new Date(event.start)
-        this.selectedRange.end = new Date(event.end)
+       // this.selectedRange.start = new Date(event.start)
+       // this.selectedRange.end = new Date(event.end)
       },
       setActiveAnomaly(id) {
         this.$store.dispatch('analysis/setActiveAnomaly', id)

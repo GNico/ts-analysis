@@ -1,19 +1,14 @@
 <template>
-
 <TreeView 
   :items="fullTree" 
   :displayItems="displayTree"
   :value="value" 
-  @input="(event) => $emit('input', event)"
-/>
-
+  @input="(event) => $emit('input', event)" />
 </template>
 
 
-<script>
-    
+<script>    
 import TreeView from './TreeView.vue';
-
 
 export default {
   name: "TreeSelect",

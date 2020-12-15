@@ -66,25 +66,32 @@ export default {
   },
   computed: {
     extremes() {
-      
       return {
         min: this.range.start,
         max: this.range.end
       }
     }, 
     chartData() {
-      let cdata = []
+      var cdata = []
       if (this.seriesData.length > 0) {
         cdata.push({
           name: 'Value',
+          type: 'line',
           data: this.seriesData,
           zIndex: 2,
+          fillOpacity: 1,
           color: this.seriesColor,
           states: {
             hover: {
               lineWidthPlus: 0
             }
           },
+        })
+      } else {
+        cdata.push({          
+          color: 'rgba(0,0,0,0)',
+          enableMouseTracking: false,
+          showInLegend: false
         })
       }
       if (this.baseline.length > 0) {
@@ -94,7 +101,7 @@ export default {
           data: this.baseline,
           zIndex: 1,
           lineWidth: 0,
-          linkedTo: ':previous',
+          //linkedTo: ':previous',
           fillOpacity: 0.3,
           color: this.seriesColor,
           states: {
