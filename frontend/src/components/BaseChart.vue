@@ -4,12 +4,18 @@
 
 
 <script>
+import { nanoid } from 'nanoid'
+
 function sum(arr) {
   var sum =  arr.reduce(function (s, res) {
     return s + res;
   }, 0);  
   return sum;
 }
+
+
+var internalFunctionId = '' //  workaround for multiple callbacks highcharts issue 
+                            //  https://github.com/highcharts/highcharts/issues/6943
 
 export default {
   props: {
@@ -111,10 +117,16 @@ export default {
       return bands
     },
     chartOptions() {
+      var functionId = nanoid()
+      internalFunctionId = functionId
+
       var vm = this
       return {      
         boost: {
           enabled: false,
+        },
+        mapNavigation: {
+          enableMouseWheelZoom: true,
         },
         chart: {          
           zoomType: 'x',          
@@ -173,6 +185,7 @@ export default {
           plotBands: this.interactiveBands,
           events: {
             afterSetExtremes: function(event) {
+              if (functionId != internalFunctionId) return
               vm.drawArrows()
               if (this.zoomEnabled && event.trigger !== 'sync') {
                 vm.$emit("changedExtremes", event);
@@ -192,6 +205,12 @@ export default {
               format: '{value:.0f}'
             }
           },
+          events: {
+            afterSetExtremes: function(event) {
+              if (event.min || event.max)
+                vm.$refs.chart.chart.yAxis[0].setExtremes(undefined, undefined, undefined, false, {trigger: 'resetYaxis'})
+            }
+          }
         },
         rangeSelector: {
           enabled: false

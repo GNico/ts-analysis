@@ -101,7 +101,6 @@ export default {
           data: this.baseline,
           zIndex: 1,
           lineWidth: 0,
-          //linkedTo: ':previous',
           fillOpacity: 0.3,
           color: this.seriesColor,
           states: {

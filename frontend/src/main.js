@@ -4,28 +4,29 @@ import Highcharts from 'highcharts'
 import HighchartsVue from 'highcharts-vue'
 import highchartsMore from 'highcharts/highcharts-more'
 import Boost from 'highcharts/modules/boost'
-
-import DragPanes from 'highcharts/modules/drag-panes'
-import App from './App.vue'
+import stockInit from 'highcharts/modules/stock'
+import Map from 'highcharts/modules/map'
 import router from './router/index'
 import store from './store/index'
 //import '@mdi/font/css/materialdesignicons.css'
 import Buefy from 'buefy'
+import App from './App.vue'
 
-import stockInit from 'highcharts/modules/stock'
-stockInit(Highcharts)
 
 Vue.use(HighchartsVue)
+Vue.use(VueRouter)
+Vue.use(Buefy)
+//Vue.use(Buefy, {defaultIconPack: 'fa'})
+stockInit(Highcharts)
 highchartsMore(Highcharts)
 Boost(Highcharts)
-DragPanes(Highcharts)
-Vue.use(VueRouter)
-//Vue.use(Buefy, {defaultIconPack: 'fa'})
-Vue.use(Buefy)
+Map(Highcharts)
 //dark theme for highcharts
 require('./assets/themes/dark-unica.js');
-
 require('./assets/sass/main.scss');
+
+
+
 
 new Vue({
   el: '#app',
