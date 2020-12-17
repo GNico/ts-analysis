@@ -1,5 +1,12 @@
 <template>
-  <highcharts class="char-sec" :constructor-type="'stockChart'" :options="chartOptions" :updateArgs="updateArgs" ref="chart"></highcharts>
+  <highcharts 
+    class="char-sec" 
+    :constructor-type="'stockChart'" 
+    :options="chartOptions" 
+    :updateArgs="updateArgs" 
+    ref="chart  
+    @wheel.native.prevent="wheelZoom"
+  />
 </template>
 
 
@@ -14,7 +21,7 @@ function sum(arr) {
 }
 
 
-var internalFunctionId = '' //  workaround for multiple callbacks highcharts issue 
+var internalFunctionId = '' //  workaround for multiple callbacks highcharts issue"
                             //  https://github.com/highcharts/highcharts/issues/6943
 
 export default {
@@ -75,6 +82,7 @@ export default {
     return {
       updateArgs: [true, true, false],
       arrows: undefined,
+      cursorPosition: 0,
     }
   },
   computed: {
@@ -125,9 +133,9 @@ export default {
         boost: {
           enabled: false,
         },
-        mapNavigation: {
+        /*mapNavigation: {
           enableMouseWheelZoom: true,
-        },
+        }, */
         chart: {          
           zoomType: 'x',          
           panning: true,
@@ -174,6 +182,7 @@ export default {
           }
         },    
         xAxis: {
+          allowDecimals: false,
           ordinal: false,
           gridLineWidth: 0, 
           crosshair: {
@@ -185,7 +194,7 @@ export default {
           plotBands: this.interactiveBands,
           events: {
             afterSetExtremes: function(event) {
-              if (functionId != internalFunctionId) return
+              if (functionId != internalFunctionId) return    //workaround for multiple callbacks highcharts issue 
               vm.drawArrows()
               if (this.zoomEnabled && event.trigger !== 'sync') {
                 vm.$emit("changedExtremes", event);
@@ -195,6 +204,7 @@ export default {
         },
         yAxis: {
           crosshair: {
+            allowDecimals: false,
             snap: this.isEmpty,
             color: 'gray',
             dashStyle: 'shortdot',
@@ -248,6 +258,7 @@ export default {
             point: {
               events: {
                 mouseOver: function(event) {
+                  //vm.cursorPosition = event.target.x
                   if (vm.syncCrosshairEnabled) {
                    // vm.$emit('crosshairMove', {chart: vm.$refs.chart.chart, x: event.target.x, type: 'over'})
                   }
@@ -332,29 +343,35 @@ export default {
       }
       this.arrows = undefined
     },
-  /*  highlightActive() {
-      this.clearArrows()
-      let chart = this.$refs.chart.chart
-      let axis = chart.axes[0]
-      for (let i = 0; i < axis.plotLinesAndBands.length; i++) {        
-        let band = axis.plotLinesAndBands[i]
-        if (band.id != 'selection') {
-          if (band.id === this.activeBand) {
-            band.svgElem.attr('fill', 'rgba(173,216,230,0.3)').shadow({color: 'rgba(173,216,230,0.3)', opacity: 1})
-            this.arrows = chart.renderer.text('→', chart.xAxis[0].toPixels(band.options.from, true) - 20, 20)
-              .attr({
-              })
-              .css({
-                  color: 'yellow',
-                  fontSize: '20px'
-              })
-              .add();
-          } else if (band.id !== undefined) {   
-            band.svgElem.attr('fill', 'rgba(255,0,0,0.8)').shadow(false)        
-          }
-        }
-      } 
-    }, */
+    wheelZoom(event) {
+      var sensitivity = 0.7
+      var zoomAmount = (event.deltaY > 0) ?  (1 / sensitivity) : sensitivity
+      //console.log(event.deltaY)
+      var chart = this.$refs.chart.chart
+      var dataMin = chart.xAxis[0].dataMin
+      var dataMax = chart.xAxis[0].dataMax
+      var min = Math.round(chart.xAxis[0].min)
+      var max = Math.round(chart.xAxis[0].max)
+      var diff = max - min 
+
+      var newZoomedDiff = Math.round(diff * zoomAmount)
+
+      if (newZoomedDiff > (dataMax - dataMin)) {
+        chart.xAxis[0].setExtremes(undefined, undefined, undefined, false, {trigger: 'zoom'})
+        return
+      }
+
+      if (this.cursorPosition < min || this.cursorPosition > max) { 
+        this.cursorPosition = min + (diff / 2)
+      }
+      var cursorDistanceToMin = this.cursorPosition - min 
+      var cursorPercentLeft = (cursorDistanceToMin / diff)
+      var newCursorDistanceToMin = newZoomedDiff * cursorPercentLeft
+      var newCursorDistanceToMax = newZoomedDiff - newCursorDistanceToMin
+      var newMin = Math.round(this.cursorPosition - newCursorDistanceToMin)
+      var newMax = Math.round(this.cursorPosition + newCursorDistanceToMax)
+      chart.xAxis[0].setExtremes(newMin, newMax, undefined, false, {trigger: 'zoom'})
+    }  
   },
   watch: {
     activeBand(newId) {

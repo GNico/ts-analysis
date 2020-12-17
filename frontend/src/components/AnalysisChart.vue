@@ -80,6 +80,7 @@ export default {
           data: this.seriesData,
           zIndex: 2,
           fillOpacity: 1,
+          enableMouseTracking: true,
           color: this.seriesColor,
           states: {
             hover: {
