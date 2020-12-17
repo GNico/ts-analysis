@@ -4,7 +4,7 @@
     :constructor-type="'stockChart'" 
     :options="chartOptions" 
     :updateArgs="updateArgs" 
-    ref="chart  
+    ref="chart"
     @wheel.native.prevent="wheelZoom"
   />
 </template>
