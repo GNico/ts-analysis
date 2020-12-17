@@ -43,7 +43,6 @@
         </div>
       </div>
 
-
       <div class="field is-horizontal" v-if="!isEdit">
         <div class="field-label is-small has-text-left">
           <label class="label">Panel</label>
@@ -57,7 +56,6 @@
           </div>
         </div>
       </div>
-
 
     </div>
 
@@ -80,7 +78,6 @@
           </div>
         </div>
       </b-field>
-
   
       <b-field class="field is-horizontal">
         <div class="field-label is-small has-text-left">
@@ -119,7 +116,6 @@
           </div>
         </div>
       </div>
-
 
     </div>
 

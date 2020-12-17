@@ -194,7 +194,7 @@ export default {
           plotBands: this.interactiveBands,
           events: {
             afterSetExtremes: function(event) {
-              if (functionId != internalFunctionId) return    //workaround for multiple callbacks highcharts issue 
+             // if (functionId != internalFunctionId) return    //workaround for multiple callbacks highcharts issue 
               vm.drawArrows()
               if (this.zoomEnabled && event.trigger !== 'sync') {
                 vm.$emit("changedExtremes", event);
@@ -215,12 +215,6 @@ export default {
               format: '{value:.0f}'
             }
           },
-          events: {
-            afterSetExtremes: function(event) {
-              if (event.min || event.max)
-                vm.$refs.chart.chart.yAxis[0].setExtremes(undefined, undefined, undefined, false, {trigger: 'resetYaxis'})
-            }
-          }
         },
         rangeSelector: {
           enabled: false
@@ -258,9 +252,9 @@ export default {
             point: {
               events: {
                 mouseOver: function(event) {
-                  //vm.cursorPosition = event.target.x
+                  vm.cursorPosition = event.target.x
                   if (vm.syncCrosshairEnabled) {
-                   // vm.$emit('crosshairMove', {chart: vm.$refs.chart.chart, x: event.target.x, type: 'over'})
+                    vm.$emit('crosshairMove', {chart: vm.$refs.chart.chart, x: event.target.x, type: 'over'})
                   }
                 },              
               }
@@ -346,21 +340,17 @@ export default {
     wheelZoom(event) {
       var sensitivity = 0.7
       var zoomAmount = (event.deltaY > 0) ?  (1 / sensitivity) : sensitivity
-      //console.log(event.deltaY)
       var chart = this.$refs.chart.chart
       var dataMin = chart.xAxis[0].dataMin
       var dataMax = chart.xAxis[0].dataMax
       var min = Math.round(chart.xAxis[0].min)
       var max = Math.round(chart.xAxis[0].max)
       var diff = max - min 
-
       var newZoomedDiff = Math.round(diff * zoomAmount)
-
       if (newZoomedDiff > (dataMax - dataMin)) {
         chart.xAxis[0].setExtremes(undefined, undefined, undefined, false, {trigger: 'zoom'})
         return
       }
-
       if (this.cursorPosition < min || this.cursorPosition > max) { 
         this.cursorPosition = min + (diff / 2)
       }
@@ -371,12 +361,12 @@ export default {
       var newMin = Math.round(this.cursorPosition - newCursorDistanceToMin)
       var newMax = Math.round(this.cursorPosition + newCursorDistanceToMax)
       chart.xAxis[0].setExtremes(newMin, newMax, undefined, false, {trigger: 'zoom'})
+
     }  
   },
   watch: {
     activeBand(newId) {
       this.drawArrows() 
-      //this.highlightActive()
     },
     extremes(newVal, oldVal) {
       if (newVal.min != oldVal.min || newVal.max != oldVal.max)

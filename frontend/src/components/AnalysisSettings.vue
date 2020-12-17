@@ -1,5 +1,4 @@
 <template>
-
 <div>
   <b-field horizontal label="Name">
     <b-input 
@@ -35,7 +34,6 @@
         v-model="settings.contexts"/>
   </b-field>
 
-
   <b-field horizontal label="Interval">
     <b-input v-model="settings.interval" type="text" pattern="^[0-9]+[mhd]$" size="is-small" />
   </b-field>
@@ -51,7 +49,6 @@
       Run analysis
     </a>
   </b-field>
-
 </div>
 </template>
 
