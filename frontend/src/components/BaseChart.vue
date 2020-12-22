@@ -133,9 +133,6 @@ export default {
         boost: {
           enabled: false,
         },
-        /*mapNavigation: {
-          enableMouseWheelZoom: true,
-        }, */
         chart: {          
           zoomType: 'x',          
           panning: true,

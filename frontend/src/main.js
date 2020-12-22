@@ -5,7 +5,6 @@ import HighchartsVue from 'highcharts-vue'
 import highchartsMore from 'highcharts/highcharts-more'
 import Boost from 'highcharts/modules/boost'
 import stockInit from 'highcharts/modules/stock'
-import Map from 'highcharts/modules/map'
 import router from './router/index'
 import store from './store/index'
 //import '@mdi/font/css/materialdesignicons.css'
@@ -20,7 +19,6 @@ Vue.use(Buefy)
 stockInit(Highcharts)
 highchartsMore(Highcharts)
 Boost(Highcharts)
-Map(Highcharts)
 //dark theme for highcharts
 require('./assets/themes/dark-unica.js');
 require('./assets/sass/main.scss');

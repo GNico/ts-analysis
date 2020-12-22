@@ -7,8 +7,10 @@ const colors = ['#f45b5b', '#90ee7e', '#7798BF', '#aaeeee', '#ff0066',
 //returns a deep copy of the series object 
 function makeSeriesOptionsCopy(seriesOptions) {
     let newSeriesOptions = { ...seriesOptions }
-    newSeriesOptions.tags = [ ...seriesOptions.tags ]
-    newSeriesOptions.contexts = [ ...seriesOptions.contexts ]
+    if (newSeriesOptions.tags) 
+        newSeriesOptions.tags = [ ...seriesOptions.tags ]
+    if (newSeriesOptions.contexts)
+        newSeriesOptions.contexts = [ ...seriesOptions.contexts ]
     return newSeriesOptions
 }
 

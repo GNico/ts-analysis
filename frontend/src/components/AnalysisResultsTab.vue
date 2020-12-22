@@ -1,5 +1,6 @@
 <template>
-  <div v-if="loading"> Retrieving analysis results... </div>
+<div>
+  <div v-if="loading" class="is-size-5 has-text-centered"><i :class="loading ?  'mdi mdi-loading icn-spinner' : ''"></i> Performing analysis</div>
   <div v-else class="columns is-fullheight">
     <div class="column is-4 side-menu is-hidden-mobile">        
       <div class="table-header has-text-white">
@@ -102,6 +103,7 @@
         <!--  :range="selectedRangeTimestamp" -->
     </div>
   </div>  
+</div>
 </template>
 
 
@@ -243,6 +245,20 @@ export default {
   justify-content: space-between;
   margin-bottom: 0.5rem;
   align-items: center;
+}
+
+.icn-spinner {
+  animation: spin-animation 0.7s infinite;
+  display: inline-block;
+}
+
+@keyframes spin-animation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
 }
 
 </style>

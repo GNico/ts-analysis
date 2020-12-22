@@ -33,7 +33,7 @@
       </b-tab-item>
       <b-tab-item label="Results" icon="file-chart" value="Results" :disabled="!hasResults">
         <AnalysisResultsTab v-if="hasResults"/>
-        <span v-else> No results yet. Run analysis first! </span>
+        <span v-else class="is-size-5"> No results yet. Run analysis first! </span>
       </b-tab-item>
     </b-tabs>
   </div>

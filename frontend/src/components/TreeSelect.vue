@@ -2,8 +2,8 @@
 <TreeView 
   :items="fullTree" 
   :displayItems="displayTree"
-  :value="value" 
-  @input="(event) => $emit('input', event)" />
+  :value="normalizedValue" 
+  @input="normalizedInputEmit" />
 </template>
 
 
@@ -25,14 +25,22 @@ export default {
     value: {
       type: Array,
       required: false,
-      default: null
     },
   },
   data () {
     return { 
+
     }
   },
   computed: {
+    //@input="(event) => $emit('input', event)"
+    normalizedValue() {  
+      if (!this.value)
+        return []
+      else if (this.value.length == 0 )
+        return [ "root" ]
+      else return this.value
+    },
     fullTree() {
       return { name: this.rootName, id: "root", children: this.itemsTree }
     },
@@ -41,6 +49,13 @@ export default {
     }
   },
   methods: {
+    normalizedInputEmit(values) {
+      let event = values
+      if (values.length == 0) event = null
+      if (values.length == 1 && values[0] == "root") event = []
+      this.$emit('input', event) 
+    }
+
   },
 }
 

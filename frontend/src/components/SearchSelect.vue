@@ -8,15 +8,13 @@
     @select="emitSelected"
     ref=autocomplete 
     @keydown.native.enter="$event.target.blur(); closeOptions()"
-    @blur="onBlur"
-  > 
-    <template slot="empty">No results</template>
+    @blur="onBlur"> 
+      <template slot="empty">No results</template>
   </b-autocomplete>  
 </template>
 
 
 <script>
-
 export default {
   name: "SearchSelect",
   props: {
@@ -87,5 +85,4 @@ export default {
     },
   }
 }
-
 </script>
