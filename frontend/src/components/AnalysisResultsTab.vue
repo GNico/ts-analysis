@@ -55,13 +55,24 @@
             size="is-large"
             position="is-bottom"
             multilined>
-            <b-input v-model="minDuration" @input="checkValid" ref="regexinput" type="text" pattern="^[0-9]+[mhd]$" size="is-small" expanded/>
+            <b-input 
+              v-model="minDuration" 
+              @input="checkValid" 
+              ref="regexinput" 
+              type="text" 
+              pattern="^[0-9]+[mhd]$" 
+              size="is-small" 
+              expanded
+              icon-right="close-circle"
+              icon-right-clickable
+              @icon-right-click="minDuration = ''"/>
           </b-tooltip> 
         </b-field>
 
-        <b-field horizontal label="Score threshold">
+        <b-field horizontal label="Score threshold" >
           <b-slider v-model="scoreThreshold" lazy indicator></b-slider>
         </b-field>
+
 
         <b-field horizontal label="">
           <b-checkbox v-model="showSeries">
