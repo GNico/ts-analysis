@@ -1,5 +1,6 @@
 import api from "../api/repository";
 import { nanoid } from 'nanoid'
+import { DefaultChartSettings } from '../config/settings';
 
 const colors = ['#f45b5b', '#90ee7e', '#7798BF', '#aaeeee', '#ff0066',
         '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee', '#2b908f']
@@ -15,7 +16,9 @@ function makeSeriesOptionsCopy(seriesOptions) {
 }
 
 function compareArrays(array1, array2) {
-    return (array1.length === array2.length) && (array1.sort().every((value, index) => value === array2[index]))
+    return  array1 && array2 
+            && (array1.length === array2.length) 
+            && (array1.sort().every((value, index) => value === array2[index]))
 }
 
 const state = {
@@ -27,7 +30,13 @@ const state = {
         end: null
     },
     loading: 0,
-    settings: {},
+    settings: {
+        backgroundColor: DefaultChartSettings.BACKGROUND_COLOR,
+        lineWidth: DefaultChartSettings.LINE_WIDTH,
+        marginTop: DefaultChartSettings.MARGIN_TOP,
+        marginBottom: DefaultChartSettings.MARGIN_BOTTOM,
+        marginLeft: DefaultChartSettings.MARGIN_LEFT
+    },
     allSeriesRange: {
         start: null,
         end: null
@@ -206,8 +215,10 @@ const actions = {
         commit('set_loading', true)      
         return  api.getSeriesData({ 
                     name: seriesOptions.client,
-                    tags: (seriesOptions.tags && seriesOptions.tags.length == 1 && seriesOptions.tags[0] == "root") ? [] : seriesOptions.tags,
-                    contexts: (seriesOptions.contexts && seriesOptions.contexts.length == 1 && seriesOptions.contexts[0] == "root") ? [] : seriesOptions.contexts,
+                    tags: seriesOptions.tags,
+                    contexts: seriesOptions.contexts,
+                    //tags: (seriesOptions.tags && seriesOptions.tags.length == 1 && seriesOptions.tags[0] == "root") ? [] : seriesOptions.tags,
+                    //contexts: (seriesOptions.contexts && seriesOptions.contexts.length == 1 && seriesOptions.contexts[0] == "root") ? [] : seriesOptions.contexts,
                     start: state.range.start ? state.range.start.toISOString() : null ,
                     end: state.range.end ? state.range.end.toISOString() : null,
                     interval: seriesOptions.interval})

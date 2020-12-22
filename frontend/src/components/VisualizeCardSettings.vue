@@ -14,7 +14,7 @@
           <label class="label">Background</label>
         </div>
         <div class="field-body">
-          <div class="field is-narrow shorter-field">
+          <div class="field is-narrow short-field">
             <div class="control">
               <SelectColor v-model="chartSettings.backgroundColor"/>
             </div>
@@ -74,10 +74,7 @@
           </div>
         </div>
       </div>
-
     </div>
-
-  
   </div>
 
 </ModalCard>
@@ -86,7 +83,6 @@
 
 
 <script>
-import { ChartSettings } from '../config/settings.js';
 import ModalCard from './ModalCard';
 import SelectColor from './SelectColor';  
 
@@ -101,11 +97,11 @@ export default {
   data() {
     return {
       chartSettings: {
-        backgroundColor: ChartSettings.BACKGROUND_COLOR,
-        marginLeft: ChartSettings.MARGIN_LEFT,
-        marginTop: ChartSettings.MARGIN_TOP,
-        marginBottom: ChartSettings.MARGIN_BOTTOM,
-        lineWidth: ChartSettings.LINE_WIDTH,
+        backgroundColor: '',
+        marginLeft: 50,
+        marginTop: 50,
+        marginBottom: 50,
+        lineWidth: 5,
       }
     }
   },

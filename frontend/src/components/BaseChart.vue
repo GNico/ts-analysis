@@ -11,7 +11,7 @@
 
 
 <script>
-import { nanoid } from 'nanoid'
+import { DefaultChartSettings } from '../config/settings.js'
 
 function sum(arr) {
   var sum =  arr.reduce(function (s, res) {
@@ -21,14 +21,11 @@ function sum(arr) {
 }
 
 
-var internalFunctionId = '' //  workaround for multiple callbacks highcharts issue"
-                            //  https://github.com/highcharts/highcharts/issues/6943
-
 export default {
   props: {
     seriesData: {
       type: Array,
-      default: () => [] 
+      default: () => { return [] }
     },
     bands: {
       type: Array,
@@ -52,7 +49,7 @@ export default {
     },
     crosshair: {
       type: Object,
-      default: () => {}
+      default: () => { return {} }
     },
     activeBand: {
       type: String,
@@ -61,21 +58,9 @@ export default {
       type: Boolean,
       default: true
     },
-    backgroundColor: {    //refact
-      type: String,
-      default: '',
-    },
-    lineWidth: {
-      type: Number,
-      default: 2
-    },
-    margin: {
+    settings: {
       type: Object,
-      default: () => {return {
-        top: 0,
-        bottom: 0,
-        left: 0,
-      }}
+      default: () => { return {} }
     },
   },
   data () {
@@ -86,6 +71,21 @@ export default {
     }
   },
   computed: {
+    normalizedSettings() {
+      return {
+        backgroundColor: this.settings.hasOwnProperty("backgroundColor") ? this.settings.backgroundColor : DefaultChartSettings.BACKGROUND_COLOR,
+        anomalyColor: this.settings.hasOwnProperty("anomalyColor") ? this.settings.anomalyColor : DefaultChartSettings.ANOMALY_COLOR,
+        anomalyArrowColor: this.settings.hasOwnProperty("anomalyArrowColor") ? this.settings.anomalyArrowColor : DefaultChartSettings.ANOMALY_ARROW_COLOR,
+        highlightedColor: this.settings.hasOwnProperty("highlightedColor") ? this.settings.highlightedColor : DefaultChartSettings.HIGHLIGHT_ANOMALY_COLOR,
+        highlightedBorderColor: this.settings.hasOwnProperty("highlightedBorderColor") ? this.settings.highlightedBorderColor : DefaultChartSettings.HIGHLIGHT_ANOMALY_BORDER_COLOR,
+        selectBandColor: this.settings.hasOwnProperty("selectBandColor") ? this.settings.selectBandColor : DefaultChartSettings.SELECTION_BAND_COLOR,
+        lineWidth: this.settings.hasOwnProperty("lineWidth") ? this.settings.lineWidth : DefaultChartSettings.LINE_WIDTH,
+        marginTop: this.settings.hasOwnProperty("marginTop") ? this.settings.marginTop : DefaultChartSettings.MARGIN_TOP,
+        marginBottom: this.settings.hasOwnProperty("marginBottom") ? this.settings.marginBottom : DefaultChartSettings.MARGIN_BOTTOM,
+        marginLeft: this.settings.hasOwnProperty("marginLeft") ? this.settings.marginLeft : DefaultChartSettings.MARGIN_LEFT,
+
+      }
+    },
     isEmpty() {
       return this.seriesData.length == 0
     },
@@ -97,9 +97,9 @@ export default {
           id: item.id,
           from: item.from,
           to: item.to,
-          color: (item.id == this.activeBand) ? 'rgba(173,216,230,0.3)' : 'rgba(255,0,0,0.8)',  //red
+          color: (item.id == this.activeBand) ? this.normalizedSettings.highlightedColor : this.normalizedSettings.anomalyColor, 
           borderWidth: (item.id == this.activeBand) ? 2 : 0,
-          borderColor:  (item.id == this.activeBand) ? 'rgba(173,216,230,1)' : '',
+          borderColor:  (item.id == this.activeBand) ? this.normalizedSettings.highlightedBorderColor : '',
           zIndex: 0,
           events: {
             click: function(e) {
@@ -111,7 +111,7 @@ export default {
             }, 
             mouseover: function(e) {
               if (this.id != vm.activeBand) {
-                this.svgElem.attr('fill', 'rgba(173,216,230,0.3)');
+                this.svgElem.attr('fill', vm.normalizedSettings.highlightedColor);
               }
             },
             mouseout: function(e) {
@@ -125,9 +125,10 @@ export default {
       return bands
     },
     chartOptions() {
-      var functionId = nanoid()
-      internalFunctionId = functionId
-
+      //  var functionId = nanoid()
+      //  internalFunctionId = functionId
+      //  workaround for multiple callbacks highcharts issue"
+      //  https://github.com/highcharts/highcharts/issues/6943
       var vm = this
       return {      
         boost: {
@@ -140,10 +141,10 @@ export default {
           animation: false, 
           ignoreHiddenSeries: false,
           showAxes: false,
-          spacingLeft: this.margin.left ? this.margin.left : 0,   
-          spacingTop: this.margin.top ? this.margin.top : 0, 
-          spacingBottom: this.margin.bottom ? this.margin.bottom : 0, 
-          backgroundColor: this.backgroundColor,
+          spacingLeft: this.normalizedSettings.marginLeft, 
+          spacingTop: this.normalizedSettings.marginTop,  
+          spacingBottom: this.normalizedSettings.marginBottom,
+          backgroundColor: this.normalizedSettings.backgroundColor,
           resetZoomButton: {
             theme: {
               zIndex: 20,
@@ -245,7 +246,7 @@ export default {
               approximation: 'sum'
             },
             animation: false,
-            lineWidth: this.lineWidth,
+            lineWidth: this.normalizedSettings.lineWidth,
             point: {
               events: {
                 mouseOver: function(event) {
@@ -293,7 +294,7 @@ export default {
           id: 'selection',
           from: min,
           to: max,
-          color: 'rgba(0,0,0,0.5)',
+          color: this.normalizedSettings.selectBandColor,
         })
         this.$emit('selection', {min: min, max: max})   
         return false
@@ -321,7 +322,7 @@ export default {
             .attr({
             })
             .css({
-                color: 'yellow',
+                color: this.normalizedSettings.anomalyArrowColor,
                 fontSize: '20px'
             })
             .add();

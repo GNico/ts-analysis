@@ -109,7 +109,7 @@
           <label class="label">Color</label>
         </div>
         <div class="field-body">
-          <div class="field is-narrow shortest-field">
+          <div class="field is-narrow shorter-field">
             <div class="control">
               <SelectColor :value="selectedColor" @input="changeColor"/>
             </div>

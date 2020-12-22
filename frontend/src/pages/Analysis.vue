@@ -25,10 +25,7 @@
         <div class="colums">
           <div class="column is-3">
             <AnalysisSettings @run="activeTab='Results'"/>
-          </div>
-          <div class="column">
-            <BaseChart :loading="true"/>
-          </div>
+          </div>          
         </div>
       </b-tab-item>
       <b-tab-item label="Results" icon="file-chart" value="Results" :disabled="!hasResults">
@@ -44,11 +41,10 @@
 <script>
 import BarItemButton from '../components/BarItemButton';
 import AnalysisSettings from '../components/AnalysisSettings';
-import BaseChart from "../components/BaseChart";
 import AnalysisResultsTab from "../components/AnalysisResultsTab";
 
 export default {
-  components: {  BarItemButton, BaseChart, AnalysisSettings, AnalysisResultsTab},
+  components: {  BarItemButton, AnalysisSettings, AnalysisResultsTab},
   data () {
     return {        
       activeTab: "Settings",

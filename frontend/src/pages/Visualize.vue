@@ -36,11 +36,7 @@
       <VisualizeChart 
         :key="componentKey"
         class="is-fullheight"
-        :backgroundColor="chartSettings.backgroundColor"
-        :lineWidth="chartSettings.lineWidth"
-        :marginLeft="chartSettings.marginLeft"
-        :marginTop="chartSettings.marginTop"
-        :marginBottom="chartSettings.marginBottom"
+        :settings="chartSettings"
         :series="series"
         :panels="panels"
         :isLoading="isFetchingData"

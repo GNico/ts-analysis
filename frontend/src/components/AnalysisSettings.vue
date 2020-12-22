@@ -2,36 +2,36 @@
 <div>
   <b-field horizontal label="Name">
     <b-input 
-          type="text" 
-          size="is-small" 
-          placeholder="This field is optional"
-          v-model="settings.name"/>
+      type="text" 
+      size="is-small" 
+      placeholder="This field is optional"
+      v-model="settings.name"/>
   </b-field>
 
   <b-field horizontal label="Client">
     <SearchSelect 
-          :saved="settings.client"
-          :data="clients"
-          @selected="updateSelectOptions"
-          size="is-small"
-          placeholder="" 
-          ref=clientselect />
+      :saved="settings.client"
+      :data="clients"
+      @selected="updateSelectOptions"
+      size="is-small"
+      placeholder="" 
+      ref=clientselect />
   </b-field>
 
   <b-field horizontal label="Tags">
     <TreeSelect 
-        class="filters-box"
-        rootName="All tags"
-        :itemsTree="allTags"
-        v-model="settings.tags"/>
+      class="filters-box"
+      rootName="All tags"
+      :itemsTree="allTags"
+      v-model="settings.tags"/>
   </b-field>
 
   <b-field horizontal label="Contexts">
     <TreeSelect 
-        class="filters-box"
-        rootName="All contexts"
-        :itemsTree="allContexts"
-        v-model="settings.contexts"/>
+      class="filters-box"
+      rootName="All contexts"
+      :itemsTree="allContexts"
+      v-model="settings.contexts"/>
   </b-field>
 
   <b-field horizontal label="Interval">
@@ -39,9 +39,10 @@
   </b-field>
 
   <b-field horizontal label="Parameters">
-       <b-input type="textarea" 
-             v-model="settings.parameters"
-             placeholder="ej: {parametername: value, parametername2: value2}"/>
+    <b-input 
+      type="textarea" 
+      v-model="settings.parameters"
+      placeholder="ej: {parametername: value, parametername2: value2}"/>
   </b-field>
 
   <b-field class="has-text-right">

@@ -5,7 +5,6 @@
   :activeBand="activeAnomaly"
   :zoomEnabled="zoomEnabled"
   :loading="loading"
-  :backgroundColor="backgroundColor"
   @changeActiveBand="setActiveAnomaly"
   @changedExtremes="updateExtremes"
   :extremes="extremes"
@@ -14,6 +13,7 @@
 
 
 <script>
+import { DefaultChartSettings } from '../config/settings'
 import BaseChart from "./BaseChart";
 
 export default {
@@ -35,13 +35,9 @@ export default {
       type: Boolean,
       default: false
     },
-    backgroundColor: {
-      type: String,
-      default: "#073642",
-    },
     seriesColor: {
       type: String, 
-      default: '#e7ec98'
+      default: DefaultChartSettings.SERIES_COLOR
     },
     activeAnomaly: {
       type: String,
@@ -102,8 +98,8 @@ export default {
           data: this.baseline,
           zIndex: 1,
           lineWidth: 0,
-          fillOpacity: 0.3,
-          color: this.seriesColor,
+          fillOpacity: DefaultChartSettings.BASELINE_OPACITY,
+          color: DefaultChartSettings.BASELINE_COLOR,
           states: {
             hover: {
               lineWidthPlus: 0
@@ -143,41 +139,3 @@ export default {
   },
 }
 </script>
-
-
-<style>
-.chart-section {
-  margin-bottom: 0.25rem;
-}
-
-.chart-section > * {
-  margin: 0 0.5rem 0.5rem 0
-}
-
-.chart-footer {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-right: -1rem;
-}
-
-.chart-footer-section {
-  display: flex;
-  align-items: baseline; 
-}
-
-.chart-footer__field {
-  display: flex;
-  align-items: baseline;
-  margin-right: 1rem;
-}
-
-.chart-footer__field > .label {
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
-}  
-
-.color-box {
-  visibility: hidden;
-}
-</style>

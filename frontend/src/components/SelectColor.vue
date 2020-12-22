@@ -1,6 +1,6 @@
 <template>
 
-  <label class="label is-small color-box " :style="{'background-color': color}">
+  <label class="label is-small color-box" :style="{'background-color': color}">
     <input class="input is-small color-input" type="color" :value="color" @change="colorSelected"> 
   </label>   
      
@@ -44,7 +44,9 @@ export default {
 .color-box {
   box-shadow: none;
   border-radius: 3px;
-  border-width: 2px;
+  border-width: 1px;
+  border: solid;
+  border-color: rgba(255,255,255,0.5)
 }
 
 .color-input {

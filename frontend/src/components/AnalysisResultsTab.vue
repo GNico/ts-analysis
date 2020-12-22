@@ -120,11 +120,10 @@
 
 <script>
 import AnalysisChart from '../components/AnalysisChart.vue';
-import AnalysisSettings from '../components/AnalysisSettings.vue';
 import AnalysisAnomaliesTable from '../components/AnalysisAnomaliesTable.vue';
 
 export default {
-    components: { AnalysisChart, AnalysisSettings, AnalysisAnomaliesTable },
+    components: { AnalysisChart, AnalysisAnomaliesTable },
     data() {
       return {
         showFiltersMenu: false,

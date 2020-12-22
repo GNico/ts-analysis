@@ -13,6 +13,7 @@
     :crosshair="crosshair"
     :syncCrosshairEnabled="true"
     @selection="getTagsCount(panel.id, $event)"
+    :settings="settings"
 
   />
 </div>
@@ -56,7 +57,11 @@ export default {
       type: Boolean,
       default: false
     },
-    backgroundColor: {
+    settings: {
+      type: Object,
+      default: () => {}
+    },
+ /*   backgroundColor: {
       type: String,
       default: ''
     },
@@ -75,7 +80,7 @@ export default {
     marginBottom: {
       type: Number,
       default: 0
-    },
+    },*/
   },
   data () {
     return {
@@ -98,10 +103,10 @@ export default {
             type: s1.type,
             color: s1.color,
             visible: s1.visible,
-            lineWidth: this.lineWidth,
+            lineWidth: this.settings.lineWidth,
             states: {
               hover: {
-                lineWidth: this.lineWidth
+                lineWidth: this.settings.lineWidth
               },          
             },
           })
