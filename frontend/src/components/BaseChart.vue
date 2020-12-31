@@ -5,7 +5,7 @@
     :options="chartOptions" 
     :updateArgs="updateArgs" 
     ref="chart"
-    @wheel.native.prevent="wheelZoom"
+    @wheel.native="wheelZoom"
   />
 </template>
 
@@ -19,7 +19,6 @@ function sum(arr) {
   }, 0);  
   return sum;
 }
-
 
 export default {
   props: {
@@ -73,17 +72,26 @@ export default {
   computed: {
     normalizedSettings() {
       return {
-        backgroundColor: this.settings.hasOwnProperty("backgroundColor") ? this.settings.backgroundColor : DefaultChartSettings.BACKGROUND_COLOR,
-        anomalyColor: this.settings.hasOwnProperty("anomalyColor") ? this.settings.anomalyColor : DefaultChartSettings.ANOMALY_COLOR,
-        anomalyArrowColor: this.settings.hasOwnProperty("anomalyArrowColor") ? this.settings.anomalyArrowColor : DefaultChartSettings.ANOMALY_ARROW_COLOR,
-        highlightedColor: this.settings.hasOwnProperty("highlightedColor") ? this.settings.highlightedColor : DefaultChartSettings.HIGHLIGHT_ANOMALY_COLOR,
-        highlightedBorderColor: this.settings.hasOwnProperty("highlightedBorderColor") ? this.settings.highlightedBorderColor : DefaultChartSettings.HIGHLIGHT_ANOMALY_BORDER_COLOR,
-        selectBandColor: this.settings.hasOwnProperty("selectBandColor") ? this.settings.selectBandColor : DefaultChartSettings.SELECTION_BAND_COLOR,
-        lineWidth: this.settings.hasOwnProperty("lineWidth") ? this.settings.lineWidth : DefaultChartSettings.LINE_WIDTH,
-        marginTop: this.settings.hasOwnProperty("marginTop") ? this.settings.marginTop : DefaultChartSettings.MARGIN_TOP,
-        marginBottom: this.settings.hasOwnProperty("marginBottom") ? this.settings.marginBottom : DefaultChartSettings.MARGIN_BOTTOM,
-        marginLeft: this.settings.hasOwnProperty("marginLeft") ? this.settings.marginLeft : DefaultChartSettings.MARGIN_LEFT,
-
+        backgroundColor: this.settings.hasOwnProperty("backgroundColor") ? 
+          this.settings.backgroundColor : DefaultChartSettings.BACKGROUND_COLOR,
+        anomalyColor: this.settings.hasOwnProperty("anomalyColor") ? 
+          this.settings.anomalyColor : DefaultChartSettings.ANOMALY_COLOR,
+        anomalyArrowColor: this.settings.hasOwnProperty("anomalyArrowColor") ? 
+          this.settings.anomalyArrowColor : DefaultChartSettings.ANOMALY_ARROW_COLOR,
+        highlightedColor: this.settings.hasOwnProperty("highlightedColor") ? 
+          this.settings.highlightedColor : DefaultChartSettings.HIGHLIGHT_ANOMALY_COLOR,
+        highlightedBorderColor: this.settings.hasOwnProperty("highlightedBorderColor") ? 
+          this.settings.highlightedBorderColor : DefaultChartSettings.HIGHLIGHT_ANOMALY_BORDER_COLOR,
+        selectBandColor: this.settings.hasOwnProperty("selectBandColor") ? 
+          this.settings.selectBandColor : DefaultChartSettings.SELECTION_BAND_COLOR,
+        lineWidth: this.settings.hasOwnProperty("lineWidth") ? 
+          this.settings.lineWidth : DefaultChartSettings.LINE_WIDTH,
+        marginTop: this.settings.hasOwnProperty("marginTop") ? 
+          this.settings.marginTop : DefaultChartSettings.MARGIN_TOP,
+        marginBottom: this.settings.hasOwnProperty("marginBottom") ? 
+          this.settings.marginBottom : DefaultChartSettings.MARGIN_BOTTOM,
+        marginLeft: this.settings.hasOwnProperty("marginLeft") ? 
+          this.settings.marginLeft : DefaultChartSettings.MARGIN_LEFT,
       }
     },
     isEmpty() {
@@ -252,7 +260,7 @@ export default {
                 mouseOver: function(event) {
                   vm.cursorPosition = event.target.x
                   if (vm.syncCrosshairEnabled) {
-                    vm.$emit('crosshairMove', {chart: vm.$refs.chart.chart, x: event.target.x, type: 'over'})
+                   // vm.$emit('crosshairMove', {chart: vm.$refs.chart.chart, x: event.target.x, type: 'over'})
                   }
                 },              
               }
@@ -336,6 +344,7 @@ export default {
       this.arrows = undefined
     },
     wheelZoom(event) {
+      if (!this.zoomEnabled) return
       var sensitivity = 0.7
       var zoomAmount = (event.deltaY > 0) ?  (1 / sensitivity) : sensitivity
       var chart = this.$refs.chart.chart
@@ -359,7 +368,6 @@ export default {
       var newMin = Math.round(this.cursorPosition - newCursorDistanceToMin)
       var newMax = Math.round(this.cursorPosition + newCursorDistanceToMax)
       chart.xAxis[0].setExtremes(newMin, newMax, undefined, false, {trigger: 'zoom'})
-
     }  
   },
   watch: {
@@ -390,7 +398,7 @@ export default {
       chart.customTooltip = chart.renderer.label(text, chart.plotSizeX /2, chart.plotTop, 'rect', undefined, undefined, true)
         .attr({ 
           zIndex: 8,
-        })     
+        })
         .add()
       //.add(chart.rGroup)
       //chart.rGroup.translate(-chart.customTooltip.width / 2, -chart.customTooltip.height + 40).toFront()

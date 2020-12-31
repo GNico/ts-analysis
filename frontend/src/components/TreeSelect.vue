@@ -3,7 +3,7 @@
   :items="fullTree" 
   :displayItems="displayTree"
   :value="normalizedValue" 
-  @input="normalizedInputEmit" />
+  @input="normalizedInputEmit"/>
 </template>
 
 
@@ -39,7 +39,7 @@ export default {
         return []
       else if (this.value.length == 0 )
         return [ "root" ]
-      else return this.value
+      else return [ ...this.value ]
     },
     fullTree() {
       return { name: this.rootName, id: "root", children: this.itemsTree }
@@ -50,12 +50,12 @@ export default {
   },
   methods: {
     normalizedInputEmit(values) {
-      let event = values
+      console.log(values)
+      let event = [ ...values ] 
       if (values.length == 0) event = null
       if (values.length == 1 && values[0] == "root") event = []
       this.$emit('input', event) 
     }
-
   },
 }
 

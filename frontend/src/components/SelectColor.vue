@@ -46,7 +46,7 @@ export default {
   border-radius: 3px;
   border-width: 1px;
   border: solid;
-  border-color: rgba(255,255,255,0.5)
+  border-color: rgba(255,255,255,0.2)
 }
 
 .color-input {

@@ -4,6 +4,7 @@
   <BaseChart v-for="panel in chartSeriesData" 
     :key="panel.id"
     :seriesData="panel.data" 
+    :settings="settings"
     :labelContent="transform(panel.id)"
     :zoomEnabled="zoomEnabled"
     :loading="isLoading"
@@ -13,7 +14,6 @@
     :crosshair="crosshair"
     :syncCrosshairEnabled="true"
     @selection="getTagsCount(panel.id, $event)"
-    :settings="settings"
 
   />
 </div>
@@ -61,26 +61,6 @@ export default {
       type: Object,
       default: () => {}
     },
- /*   backgroundColor: {
-      type: String,
-      default: ''
-    },
-    lineWidth: {
-      type: Number,
-      default: 2
-    },
-    marginLeft: {
-      type: Number,
-      default: 100
-    },
-    marginTop: {
-      type: Number,
-      default: 0
-    },
-    marginBottom: {
-      type: Number,
-      default: 0
-    },*/
   },
   data () {
     return {
