@@ -260,7 +260,7 @@ export default {
                 mouseOver: function(event) {
                   vm.cursorPosition = event.target.x
                   if (vm.syncCrosshairEnabled) {
-                   // vm.$emit('crosshairMove', {chart: vm.$refs.chart.chart, x: event.target.x, type: 'over'})
+                    vm.$emit('crosshairMove', {chart: vm.$refs.chart.chart, x: event.target.x, type: 'over'})
                   }
                 },              
               }

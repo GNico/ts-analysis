@@ -2,7 +2,7 @@
 <div class="container">
   <div class="section">
 
-    <div class="buttons">
+ <!--   <div class="buttons">
       <a class="button is-primary is-small" @click="isModalActive = true"> 
         <b-icon icon="plus" ></b-icon>
         <span>Add client</span>
@@ -11,7 +11,24 @@
 
     <b-modal :active.sync="isModalActive" has-modal-card>
       <FormNewClient @submit="addClient"/>
-    </b-modal>  
+    </b-modal>   -->
+
+    <b-dropdown class="top-button" position="is-bottom-right" append-to-body trap-focus>
+      <a
+        class="button is-primary is-small"
+        slot="trigger"
+        role="button">
+        <b-icon  icon="playlist-plus"></b-icon>
+        <span>New Entry</span>
+      </a>
+      <b-dropdown-item
+          aria-role="menu-item"
+          :focusable="false"
+          custom
+          paddingless>
+          <FormNewClient @submit="addClient"/>
+      </b-dropdown-item>
+    </b-dropdown>
 
     <b-table :data="clients" striped>        
       <template slot-scope="props">
@@ -112,10 +129,11 @@ export default {
       },
       confirmDelete(name) {
         this.$buefy.dialog.confirm({
-          title: 'Deleting account',
+          title: 'Deleting client',
           message: 'Are you sure you want to <b>delete</b> this item? This action cannot be undone.',
-          confirmText: 'Delete Account',
+          confirmText: 'Delete Client',
           type: 'is-danger',
+          scroll: 'keep',
           hasIcon: true,
           onConfirm: () => this.deleteClient(name) //this.$buefy.toast.open(name)
         })
@@ -144,5 +162,8 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
+.top-button {
+  margin-bottom: 0.75rem;
+}
 </style>
