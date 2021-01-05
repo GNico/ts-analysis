@@ -48,9 +48,18 @@ def get_clients_info():
     return [ *indexing_clients, *ready_clients ]
 
 
+def get_client_details(client_name):
+    client = Client.objects.get(name=client_name)
+    series_data = search.get_series(indexname=client.index_name, interval='7d')
+    series_range = search.get_series_range(indexname=client.index_name)
+    tags_count = search.get_tags(indexname=client.index_name)
+    return { 'data': series_data, 'range': series_range, 'tagsCount': len(tags_count) }
+
+
 def get_series(client_name, start, end, contexts, tags, interval):
     client = Client.objects.get(name=client_name)
     return search.get_series(client.index_name, start, end, contexts, tags, interval)
+
 
 def get_tags_count(client_name, start, end, contexts, tags, size):
     client = Client.objects.get(name=client_name)

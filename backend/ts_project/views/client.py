@@ -23,7 +23,8 @@ class ClientListView(APIView):
 
 class ClientView(APIView):
     def get(self, request, pk):
-        return Response({'details': 'some client details'})
+        data = services.get_client_details(pk)
+        return Response(data)
 
     def delete(self, request, pk):
         services.delete_client(pk)

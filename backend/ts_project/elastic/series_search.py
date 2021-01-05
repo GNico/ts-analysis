@@ -33,6 +33,18 @@ class SeriesSearch():
             series_data.append([element['key'], element['doc_count']])
         return series_data
 
+    def get_series_range(self, indexname):
+        index_pattern = indexname + '-*'
+        query = self._build_series_query()
+        query["aggs"] = {
+            "max_val": { "max": { "field": "@timestamp" } },
+            "min_val": { "min": { "field": "@timestamp" } }
+        }
+        response = es.search(index=index_pattern, size=0, body=query)
+        min_val = response['aggregations']['min_val']['value_as_string']
+        max_val = response['aggregations']['max_val']['value_as_string']
+        return { 'start': min_val, 'end': max_val }
+
 
     def get_tags_count(self, indexname, start='', end='', context=[], tags=[], size=3):
         index_pattern = indexname + '-*'
@@ -93,7 +105,7 @@ class SeriesSearch():
         return requestedData
 
 
-    def _build_series_query(self, start, end, context, tags):
+    def _build_series_query(self, start='', end='', context=[], tags=[]):
         query = {
           "query": {
             "bool": {
