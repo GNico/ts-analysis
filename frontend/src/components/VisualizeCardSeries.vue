@@ -111,7 +111,7 @@
         <div class="field-body">
           <div class="field is-narrow shorter-field">
             <div class="control">
-              <SelectColor :value="selectedColor" @input="changeColor"/>
+              <ColorSelect :value="selectedColor" @input="changeColor"/>
             </div>
           </div>
         </div>
@@ -145,16 +145,16 @@
 
 <script>
 import ModalCard from './ModalCard';
-import SelectColor from './SelectColor';  
-import SearchSelect from './SearchSelect.vue';
-import TreeSelect from './TreeSelect.vue';
+import ColorSelect from './inputs/ColorSelect';  
+import SearchSelect from './inputs/SearchSelect.vue';
+import TreeSelect from './inputs/TreeSelect.vue';
 
 import { tagsAndContexts } from '../mixins/TagsAndContextsOptions.js';
 
 export default {
   name: "VisualizeCardSeries",
   mixins: [tagsAndContexts],
-  components: { ModalCard, SearchSelect, TreeSelect, SelectColor },
+  components: { ModalCard, SearchSelect, TreeSelect, ColorSelect },
   props: {
     id: {
       type: String,

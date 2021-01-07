@@ -16,7 +16,7 @@
         <div class="field-body">
           <div class="field is-narrow short-field">
             <div class="control">
-              <SelectColor v-model="chartSettings.backgroundColor"/>
+              <ColorSelect v-model="chartSettings.backgroundColor"/>
             </div>
           </div>
         </div>
@@ -84,10 +84,10 @@
 
 <script>
 import ModalCard from './ModalCard';
-import SelectColor from './SelectColor';  
+import ColorSelect from './inputs/ColorSelect';  
 
 export default {
-  components: { ModalCard, SelectColor  },
+  components: { ModalCard, ColorSelect  },
   props: {
     isActive: {
       type: Boolean,

@@ -33,6 +33,7 @@ class SeriesSearch():
             series_data.append([element['key'], element['doc_count']])
         return series_data
 
+
     def get_series_range(self, indexname):
         index_pattern = indexname + '-*'
         query = self._build_series_query()
@@ -105,6 +106,22 @@ class SeriesSearch():
         return requestedData
 
 
+    def get_last_events(self, indexname, start='', end='', context=[], tags=[], size=10):
+        requestedData = []
+        index_pattern = indexname + '-*'
+        query = self._build_series_query(start, end, context, tags)
+        query["sort"] = [{   
+              "@timestamp": {
+                "order": "desc"
+              }
+        }]   
+        response = es.search(index=index_pattern, size=size, body=query)
+        for element in response["hits"]["hits"]:
+            requestedData.append([element['_source']['@timestamp'], element['_source']['tag']])
+        return requestedData
+
+
+        
     def _build_series_query(self, start='', end='', context=[], tags=[]):
         query = {
           "query": {

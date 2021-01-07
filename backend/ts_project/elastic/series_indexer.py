@@ -22,7 +22,7 @@ class SeriesIndexer():
     def index(self, name, data):      
         try:
             bulk(es, self._make_documents(name, data))
-        except BulkIndexError:
+        except Exception:   #BulkIndexError
             raise(IndexingError)
            
     def delete(self, name):

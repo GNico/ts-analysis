@@ -234,7 +234,6 @@ export default {
 
 
 <style scoped>
-
 .is-fullheight {
   max-height: calc(100vh - 3.5rem);
 }
@@ -257,18 +256,5 @@ export default {
   align-items: center;
 }
 
-.icn-spinner {
-  animation: spin-animation 0.7s infinite;
-  display: inline-block;
-}
-
-@keyframes spin-animation {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(359deg);
-  }
-}
 
 </style>

@@ -7,20 +7,6 @@ export const tagsAndContexts = {
       allContexts: []
     }
   },  
-  computed: {
- /*   contextsTree() {
-      return { name: 'All contexts', id: "root", children: this.allContexts }
-    },
-    tagsTree() {
-      return { name: 'All tags', id: "root", children: this.allTags }
-    },
-    displayContexts() {
-      return { name: this.contextsTree.name, id: this.contextsTree.id, children: [] }
-    },
-    displayTags() {
-      return { name: this.tagsTree.name, id: this.tagsTree.id, children: [] }
-    }, */
-  },
   methods: {
     updateContexts(name) {
       if (name) {

@@ -39,7 +39,7 @@
 
 
 <script>
-import BarItemButton from '../components/BarItemButton';
+import BarItemButton from '../components/inputs/BarItemButton';
 import AnalysisSettings from '../components/AnalysisSettings';
 import AnalysisResultsTab from "../components/AnalysisResultsTab";
 

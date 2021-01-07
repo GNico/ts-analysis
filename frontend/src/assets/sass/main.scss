@@ -37,3 +37,17 @@
 .b-table .table tr.detail {
   background: $grey-darker;
 }
+
+.icn-spinner {
+  animation: spin-animation 0.7s infinite;
+  display: inline-block;
+}
+
+@keyframes spin-animation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
+}

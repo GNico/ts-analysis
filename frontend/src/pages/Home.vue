@@ -1,19 +1,7 @@
 <template>
 <div class="container">
   <div class="section">
-
- <!--   <div class="buttons">
-      <a class="button is-primary is-small" @click="isModalActive = true"> 
-        <b-icon icon="plus" ></b-icon>
-        <span>Add client</span>
-      </a>
-    </div>
-
-    <b-modal :active.sync="isModalActive" has-modal-card>
-      <FormNewClient @submit="addClient"/>
-    </b-modal>   -->
-
-    <b-dropdown class="top-button" position="is-bottom-right" append-to-body trap-focus>
+    <b-dropdown ref="dropdown" class="top-button" position="is-bottom-right" append-to-body trap-focus>
       <a
         class="button is-primary is-small"
         slot="trigger"
@@ -22,25 +10,74 @@
         <span>New Entry</span>
       </a>
       <b-dropdown-item
-          aria-role="menu-item"
-          :focusable="false"
-          custom
-          paddingless>
-          <FormNewClient @submit="addClient"/>
+        aria-role="menu-item"
+        :focusable="false"
+        custom
+        paddingless>
+        <FormNewClient @submit="addClient"/>
       </b-dropdown-item>
     </b-dropdown>
 
-    <b-table :data="clients" striped>        
+    <b-table 
+      :data="clients" 
+      detailed    
+      :opened-detailed="openRows"
+      detail-key="name"
+      :show-detail-icon="false"
+      :checked-rows.sync="checkedRows"
+      striped>       
+
       <template slot-scope="props">
-        <b-table-column field="name" label="Client">
+        <b-table-column sortable field="name" label="Client">
           {{ props.row.name }}
         </b-table-column>
 
-        <b-table-column v-if="props.row.indexing" colspan=4 field="count"  label="Status">
+        <!--Ready status-->
+        <template v-if="['Ready','Failed'].includes(props.row.status)")>
+          <b-table-column sortable field="count" label="Status">
+            <span class="tag" :class="props.row.status == 'Ready' ? 'is-success' : 'is-danger'">
+              {{props.row.status}}
+            </span> 
+          </b-table-column>
+          <b-table-column sortable field="created"  label="Created">
+            {{ formatDate(props.row.created) }}
+          </b-table-column>
+          <b-table-column sortable field="modified" label="Last modified">
+            {{ formatDate(props.row.modified) }}
+          </b-table-column>    
+          
+          <b-table-column label="Action" >
+            <template v-if="props.row.status == 'Ready'">
+              <b-tooltip label="View details">
+                <button class="transparent-button" @click="toggleDetails(props.row.name)">
+                  <b-icon icon="eye-outline" type="is-primary"></b-icon>
+                </button>
+              </b-tooltip>
+              <b-tooltip label="Edit">
+                <button class="transparent-button">
+                  <b-icon icon="pencil" type="is-primary"></b-icon>
+                </button>
+              </b-tooltip>
+              <b-tooltip label="Settings">
+                <button class="transparent-button">
+                  <b-icon icon="cog" type="is-primary"></b-icon>
+                </button>
+              </b-tooltip>
+            </template>
+            <b-tooltip label="Delete">
+              <button class="transparent-button" @click="confirmDelete(props.row.name)">
+                <b-icon icon="delete-forever" type="is-primary" size="is-samll"></b-icon>
+              </button>
+            </b-tooltip>
+          </b-table-column> 
+        </template>
+
+        <!--Other status-->
+        <b-table-column v-else colspan=4 sortable field="count"  label="Status">
           <div class="columns is-vcentered">
             <div class="column is-3">
-              <span class="tag is-info">
-                Indexing...
+              <span class="tag" :class="props.row.status == 'Indexing' ? 'is-info' : 'is-link'">
+                {{ props.row.status }}
               </span> 
             </div>
             <div class="column">
@@ -49,73 +86,43 @@
           </div>
         </b-table-column>
 
-        <template v-else>
-          <b-table-column field="count" label="Status">
-            <span class="tag is-success">
-              Ready
-            </span> 
-          </b-table-column>
-          <b-table-column field="created"  label="Created">
-            {{ formatDate(props.row.created) }}
-          </b-table-column>
-          <b-table-column field="modified" label="Last modified">
-            {{ formatDate(props.row.modified) }}
-          </b-table-column>    
-          
-          <b-table-column label="Action" >
-            <b-tooltip label="View details">
-              <button class="transparent-button" @click="selectedView = props.row.name">
-                <b-icon icon="eye-outline" type="is-primary"></b-icon>
-              </button>
-            </b-tooltip>
-            <b-tooltip label="Edit">
-              <button class="transparent-button">
-                <b-icon icon="pencil" type="is-primary"></b-icon>
-              </button>
-            </b-tooltip>
-            <b-tooltip label="Settings">
-              <button class="transparent-button">
-                <b-icon icon="cog" type="is-primary"></b-icon>
-              </button>
-            </b-tooltip>
-            <b-tooltip label="Delete">
-              <button class="transparent-button" @click="confirmDelete(props.row.name)">
-                <b-icon icon="delete-forever" type="is-primary" size="is-samll"></b-icon>
-              </button>
-            </b-tooltip>
-          </b-table-column> 
-        </template>
-      </template>      
+      </template>    
+
+      <!--Row details-->
+      <template slot="detail" slot-scope="props">
+        <ClientDetails :name="props.row.name" :clientDetails="clientDetails"/>
+      </template>  
     </b-table>
   </div>  
 
 
-  <div class="section">
-    <ClientDetails :name="selectedView"/>
-  </div>
+
+
 
 </div>  
 </template>
 
 
 <script>
-
 import FormNewClient from '../components/FormNewClient'
 import ClientDetails from '../components/ClientDetails'
+//import CientsTable from '../components/ClientsTable'
 
 export default {
     components: {  FormNewClient, ClientDetails },
     data() {
       return {
-        isModalActive: false,
         polling: null,
-        selectedView: null,
+        openRows: [],
       }
     },
     computed: {
       clients() {        
         return this.$store.state.clients.clients
       },
+      clientDetails() {
+        return this.$store.state.clients.details
+      }
     },
     methods: {
       pollClients () {
@@ -124,9 +131,14 @@ export default {
         }, 3000)
       },
       addClient(form) {
-        this.isModalActive = false
         this.$store.dispatch('clients/addClient', form)
-      },
+        this.$refs.dropdown.isActive = false
+        this.$buefy.toast.open({
+          message: 'Creating new entry',
+          type: 'is-success',
+          duration: 2500,
+        })
+      },      
       confirmDelete(name) {
         this.$buefy.dialog.confirm({
           title: 'Deleting client',
@@ -135,21 +147,34 @@ export default {
           type: 'is-danger',
           scroll: 'keep',
           hasIcon: true,
-          onConfirm: () => this.deleteClient(name) //this.$buefy.toast.open(name)
+          onConfirm: () => this.deleteClient(name)
         })
       },
       deleteClient(name) {
         this.$store.dispatch('clients/deleteClient', name)
+        this.$buefy.toast.open({
+          message: 'Deleting ' + name,
+          type: 'is-danger',
+        })
       },
       formatDate(input) {
         let dateObj = new Date(input)
         const year = dateObj.getFullYear()
         const month = (dateObj.getMonth()+1).toString().padStart(2, '0')
         const day = dateObj.getDate().toString().padStart(2, '0')
-        const hour = dateObj.getHours()
-        const minutes = dateObj.getMinutes()
-        return `${day}-${month}-${year} ${hour}:${minutes}`
-      }
+        const hour = dateObj.getHours().toString().padStart(2, '0')
+        const minutes = dateObj.getMinutes().toString().padStart(2, '0')
+        return `${day}/${month}/${year} - ${hour}:${minutes}`
+      },    
+      toggleDetails(name) {
+        let index = this.openRows.findIndex(elem => elem == name)
+        if (index != -1) {
+          this.openRows.splice(index, 1)
+        } else {
+          this.openRows.push(name)
+          this.$store.dispatch('clients/fetchClientDetails', name) 
+        }
+      },
     },
     created () {
       this.pollClients()
@@ -158,7 +183,6 @@ export default {
       clearInterval(this.polling)
     },
 }
-
 </script>
 
 

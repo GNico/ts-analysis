@@ -55,8 +55,8 @@
 
 
 <script>
-import SearchSelect from './SearchSelect.vue';
-import TreeSelect from './TreeSelect.vue';
+import SearchSelect from './inputs/SearchSelect.vue';
+import TreeSelect from './inputs/TreeSelect.vue';
 import { tagsAndContexts } from '../mixins/TagsAndContextsOptions.js';
 
 const defaultSettings = {

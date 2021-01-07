@@ -12,11 +12,11 @@ def addtask():
 def index_series_data(self, client_name, filenames):
     indexer = series_indexer.SeriesIndexer()
     self.update_state(state='PROGRESS',
-                      meta={'client_name': client_name, 
-                            'index_name': indexer.get_index_name(client_name), 
-                            'total_events': count_total_events(filenames) 
-                            })
-
+                      meta={
+                        'client_name': client_name, 
+                        'index_name': indexer.get_index_name(client_name), 
+                        'total_events': count_total_events(filenames) 
+                      })
     try:
         for filename in filenames:
             with open(filename) as f:
@@ -25,10 +25,15 @@ def index_series_data(self, client_name, filenames):
         client = Client.objects.get(name=client_name)
         client.index_name = indexer.get_index_name(client_name)
         client.task_id = ''
-        client.indexing = False
+        client.status = 'Ready'
         client.save()
+        _update_client_state(client_name, indexer.get_index_name(client_name), 'Ready')
     except series_indexer.IndexingError:
-        print("hubo un error en indexing")
+        client = Client.objects.get(name=client_name)
+        client.index_name = indexer.get_index_name(client_name)
+        client.task_id = ''
+        client.status = 'Failed'
+        client.save()
 
 
 def count_total_events(filenames):
