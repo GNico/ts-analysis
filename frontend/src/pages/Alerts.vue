@@ -2,54 +2,53 @@
 
 <div class="section  is-fullheight">
   
-  <b-input v-model="rowToOpen"> </b-input>
-  <a class="button" @click="openDetail"> Open </a>
-  <a class="button" @click="closeDetail"> Close </a> 
-
-
   <div class="columns">
-    <div class="column is-4 side-menu">
-      <b-table
-        id="btable"
-        :data="thedata"
-        ref="table"
-        detailed
-        :selected.sync="selected"
-        :opened-detailed="openRows"
-        :height="700"
-        sticky-header
-        detail-key="id" >
+    <div class="column is-6 side-menu">
 
-        <template slot-scope="props">
-          <b-table-column field="id" label="ID" width="40" numeric >
-              {{ props.row.id }}
-          </b-table-column>
+ <!--   <draggable tag="div">
 
-          <b-table-column field="name" label="First Name" >
-              <template>
-                  {{ props.row.name}}
-              </template>                
-          </b-table-column>
-        </template>
+      <div class="pipeline-item" v-for="(collapse, index) of collapses">
+        <b-collapse
+          class="card"
+          animation="slide"
+          :key="collapse.id"
+          :open="isOpen == collapse.id"
+          @open="isOpen = collapse.id">
+          <div slot="trigger" slot-scope="props" class="card-header">
+            <p class="card-header-title">{{ collapse.title }}</p>
+            <a class="card-header-icon">
+              <b-icon :icon="props.open ? 'menu-down' : 'menu-up'"/>
+            </a>
+          </div>
+          <div class="card-content">
+            <div class="content">{{ collapse.text }}</div>
+          </div>
+        </b-collapse>
 
 
-        <template slot="detail" slot-scope="props">
-            <div :id="props.row.id">                    
-              <p>
-                  <strong>{{ props.row.name }}</strong>
-                  <small>31m</small>
-                  <br>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Proin ornare magna eros, eu pellentesque tortor vestibulum ut.
-                  Maecenas non massa sem. Etiam finibus odio quis feugiat facilisis.
-              </p>
-            </div>
-        </template>
-      </b-table>
+        <a class="button"> {{index + 1}} </a>
+        <a class="button"> Delete </a>
+      </div>
+
+
+    </draggable>
+
+
+
+      
     </div>
 
     <div class="column">
-      Something else
+      <draggable 
+        v-model="myArray" 
+        group="people" 
+        @start="drag=true" 
+        @end="drag=false">
+        <div v-for="element in myArray" :key="element.id" class="box">{{element.name}}</div>
+      </draggable>
+
+-->
+
     </div>
   </div>
 
@@ -59,21 +58,59 @@
 
 
 <script>
-
+//import draggable from 'vuedraggable'
 
 export default {
-    components: { },
+   // components: { draggable },
     data() {
       return {
         rowToOpen: '',
         openRows: [],
-        selected: null
+        selected: null,
+        myArray: this.initial(),
+        isOpen: 0,
+        collapses: [
+          {
+              id: 1,
+              title: 'Title 1',
+              text: 'Text 1'
+          },
+          {
+              id: 2,
+              title: 'Title 2',
+              text: 'Text 2'
+          },
+          {
+              id: 3,
+              title: 'Title 3',
+              text: 'Text 3'
+          },
+        
+        {
+              id: 4,
+              title: 'Title 4',
+              text: 'Text 4'
+          },
+          {
+              id: 5,
+              title: 'Title 5',
+              text: 'Text 5'
+          },
+          {
+              id: 6,
+              title: 'Title 6',
+              text: 'Text 6'
+          }
+        ]
       }       
     },
-    computed: {
-      thedata() {
+    computed: {      
+    
+    },
+    methods: {
+      initial() {
         let arr = []
-        for (var i = 0; i < 50; i++) {
+        for (var i = 0; i < 10; i++) {
           let item = {
             id: i.toString(),
             name: "item " + i
@@ -81,9 +118,7 @@ export default {
           arr.push(item)
         }
         return arr
-      }
-    },
-    methods: {
+      },
       openDetail() {
         this.openRows = [ this.rowToOpen ]
 
@@ -124,6 +159,18 @@ export default {
 
 
 <style scoped>
+.pipeline-item {
+  display: flex;
+  align-items: center;
+  margin: 0 -0.25rem;
+}
 
+.pipeline-item .card {
+  flex: 1;
+  margin-bottom: 0.5rem;
+}
 
+.pipeline-item * {
+  margin: 0 0.25rem;
+}
 </style>

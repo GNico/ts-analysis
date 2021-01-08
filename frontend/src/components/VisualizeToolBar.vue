@@ -19,10 +19,14 @@
         <span>{{item.name}}</span>
       </a>          
 
+      <a class="level-item button is-info is-outlined is-small" @click="$emit('export')">
+        <b-icon icon="download"></b-icon><span>Export data</span>
+      </a> 
+
       <a class="level-item button is-info is-outlined is-small" @click="$emit('refresh')">
         <b-icon icon="refresh"></b-icon><span>Refresh</span>
       </a>
-
+      
       <a class="level-item button is-info is-outlined is-small" @click="$emit('zoomToggle')">
         <template v-if="zoomEnabled">
           <b-icon icon="information-variant"></b-icon><span>Enable info</span>
@@ -153,7 +157,7 @@ export default {
   methods: {
     update() {
       this.$store.dispatch('visualize/updateRange', this.selectedRange)
-    }
+    },
   },
   watch: {
     range: {

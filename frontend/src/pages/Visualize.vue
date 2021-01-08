@@ -5,7 +5,8 @@
       class="char-bar" 
       :zoomEnabled="zoomEnabled"
       @zoomToggle="toggleZoom"
-      @refresh="forceRerender"/>
+      @refresh="forceRerender"
+      @export="exportSeriesData"/>
 
     <div class="chart-container is-gapless is-multiline">   
       <div class="legends">
@@ -159,6 +160,16 @@ export default {
     },
     forceRerender() {
       this.componentKey += 1;
+    },
+    exportSeriesData() {
+      if (!this.series || !this.series.length>0) return
+      let dataStr = JSON.stringify(this.series);
+      let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      let exportFileDefaultName = 'data.json';
+      let linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
     }
   },
   watch: {
