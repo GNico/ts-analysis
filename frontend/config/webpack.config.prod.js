@@ -1,10 +1,8 @@
 'use strict';
 
 const webpack                  = require('webpack');
-const merge                    = require('webpack-merge');
-const OptimizeCSSAssetsPlugin  = require('optimize-css-assets-webpack-plugin');
+const { merge }                = require('webpack-merge');
 const MiniCSSExtractPlugin     = require('mini-css-extract-plugin');
-const UglifyJSPlugin           = require('uglifyjs-webpack-plugin');
 const CompressionPlugin        = require('compression-webpack-plugin');
 const helpers                  = require('./helpers');
 const commonConfig             = require('./webpack.config.common');
@@ -20,18 +18,11 @@ const webpackConfig = merge(commonConfig, {
         chunkFilename: 'js/[id].[hash].chunk.js'
     },
     optimization: {
+        minimize: true,
         runtimeChunk: 'single',
         minimizer: [
-            new OptimizeCSSAssetsPlugin({
-                cssProcessorPluginOptions: {
-                    preset: [ 'default', { discardComments: { removeAll: true } } ],
-                }
-            }),
-            new UglifyJSPlugin({
-                cache: true,
-                parallel: true,
-                sourceMap: !isProd
-            })
+             `...`,
+            new CssMinimizerPlugin(),
         ],
         splitChunks: {
             chunks: 'all',

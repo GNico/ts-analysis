@@ -1,14 +1,14 @@
 'use strict';
 
 const webpack              = require('webpack');
-const merge                = require('webpack-merge');
-const helpers              = require('./helpers');
+const { merge }            = require('webpack-merge');
+const helpers             = require('./helpers');
 const commonConfig         = require('./webpack.config.common');
 const environment          = require('./env/dev.env');
 
 const webpackConfig = merge(commonConfig, {
     mode: 'development',
-    devtool: 'cheap-module-eval-source-map',
+    devtool: 'eval-cheap-module-source-map',
     output: {
         path: helpers.root('dist'),
         publicPath: '/',

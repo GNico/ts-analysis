@@ -24,7 +24,6 @@
       :opened-detailed="openRows"
       detail-key="name"
       :show-detail-icon="false"
-      :checked-rows.sync="checkedRows"
       striped>       
 
       <template slot-scope="props">

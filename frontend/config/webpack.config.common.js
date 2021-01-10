@@ -2,7 +2,6 @@
 
 const VueLoaderPlugin      = require('vue-loader/lib/plugin');
 const HtmlPlugin           = require('html-webpack-plugin');
-const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
 const helpers              = require('./helpers');
 const isDev                = process.env.NODE_ENV === 'development';
 
@@ -59,16 +58,13 @@ const webpackConfig = {
           },
           {
             test: /\.(png|jpg|gif|svg)$/,
-            loader: 'file-loader',
-            options: {
-              name: '[name].[ext]?[hash]'
-            }
+            type: 'asset/resource'            
           }
         ]
     },
     plugins: [
         new VueLoaderPlugin(),
-        new HtmlPlugin({ template: 'index.html', chunksSortMode: 'dependency' })
+        new HtmlPlugin({ template: 'index.html', chunksSortMode: 'auto' })
     ]
 };
 
