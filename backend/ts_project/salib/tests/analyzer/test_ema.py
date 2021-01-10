@@ -1,10 +1,12 @@
 import unittest
 
 from model.analyzer import Analyzer
-from model.algos.ema import EMA
-from model.algos.mock import NoBaseline
+from model.pipeline.components.mock import NoBaseline
 from model.anomaly import Anomaly
 from model.analysis import Analysis
+from model.pipeline.pipeline import Pipeline
+from model.pipeline.component_factory import ComponentFactory
+from model.pipeline.params.float import Float, BoundedFloat
 from model.test.test_series_builder import TestSeriesBuilder
 from model.test.testcase import TestCase
 
@@ -13,18 +15,21 @@ class TestEMA(unittest.TestCase):
 
     def test_ema(self):
         series = self.build_triangle()
-        decay = 0.95
-        threshold = 1
-        ema = EMA(decay=decay, threshold=threshold)
+        
+        factory = ComponentFactory('EMA')
+        factory.set_param_value('decay', 0.95)
+        factory.set_param_value('threshold', 1)
+        ema = factory.build()
 
-        analyzer = Analyzer(anomalies_algos=[ema])
+        pipeline = Pipeline([ema])
+        analyzer = Analyzer(pipeline=pipeline)
         analysis = analyzer.analyze(series)
         anomalies = analysis.anomalies
 
         self.assertEqual(1, len(anomalies))
         self.assertEqual(1, len(analysis.anomalies_by_algo))
         algo_ids = list(analysis.anomalies_by_algo.keys())
-        algo_key = "EMA("+str(decay)+","+str(threshold)+")"
+        algo_key = "EMA("+str(ema.decay())+","+str(ema.threshold())+")"
         self.assertEqual([algo_key], algo_ids)
         self.assertEqual(analysis.anomalies_by_algo[algo_key], anomalies)
 
