@@ -3,8 +3,7 @@
   <b-collapse
     class="card"
     animation="slide"
-    :open="isOpen == index"
-    @open="isOpen = index">
+    :open="false">
     <template #trigger="props">
         <div
             class="card-header"
@@ -22,7 +21,7 @@
     </template>
     <div class="card-content">
         <div class="content">
-            {{ text }}
+            {{ node }}
         </div>
     </div>
   </b-collapse>
@@ -33,15 +32,24 @@
 
 export default {
   props: {
-    title: {
+    path: {
       type: String,
       default: 'Unknown'
+    },
+    node: {
+      type: Object,
+      default: 'sarasa'
     }
   },
   data() {
     return {
-      isOpen: true,
+      isOpen: false,
       text: 'Lorem ipsum'
+    }
+  },
+  computed: {
+    title() {
+      return this.path + ' - ' + this.node.title
     }
   }
 }

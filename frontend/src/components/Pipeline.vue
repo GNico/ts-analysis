@@ -2,10 +2,10 @@
 <div>
   <Tree 
     :value="treeData"
-    indent="50"
+    :indent=50
     draggingNodePositionMode='top_left_corner'>
     <span slot-scope="{node, index, path, tree}">
-      <PipeNode :title="path.join('.')"/>
+      <PipeNode :path="path.join('.')" :node="node" />
     </span>
   </Tree>
 
@@ -25,7 +25,8 @@ export default {
   data() {
     return {
       treeData: [
-        {title: 'node 1'}, 
+        {title: 'node 1',
+         opts: {one: 1, two: 2}}, 
         {title: 'node 3'},
         {title: 'node 4'},
         {title: 'node 2', 
