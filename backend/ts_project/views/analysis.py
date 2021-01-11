@@ -7,7 +7,7 @@ import pandas as pd
 
 from ..salib.model.series import Series
 from ..salib.model.analyzer import Analyzer
-from ..salib.model.algos.ema import EMA
+from ..salib.model.pipeline.pipeline import Pipeline
 
 class AnalysisView(APIView):
     def get(self, request):
@@ -25,8 +25,13 @@ class AnalysisView(APIView):
         ts = pd.Series(count, index=dates)
 
         series = Series(ts)
-        ema = EMA(decay=0.99, threshold=3)
-        analyzer = Analyzer(anomalies_algos=[ema], baseline_algo=ema)
+
+        factory = ComponentFactory('EMA')
+        factory.set_param_value('decay', 0.99)
+        factory.set_param_value('threshold', 3)
+        ema = factory.build()
+        pipeline = Pipeline([ema])
+        analyzer = Analyzer(pipeline=[pipeline], baseline_algo=ema)
         analysis = analyzer.analyze(series)
         response = analysis.output_format()
         return Response(response)

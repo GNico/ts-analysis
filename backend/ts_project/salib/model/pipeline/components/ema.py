@@ -1,13 +1,15 @@
 import numpy as np
-from ..anomaly import Anomaly
-from ..baseline import Baseline
+from ..component import Component
+from ..params.float import Float, BoundedFloat
+from ...anomaly import Anomaly
+from ...baseline import Baseline
 
+class EMA(Component):
 
-class EMA:
-
-    def __init__(self, decay, threshold):
-        self.decay = decay
-        self.threshold = threshold
+    def __init__(self):
+        super().__init__()
+        self.add_required_param(BoundedFloat('decay', 0, 1, 0.9))
+        self.add_required_param(Float('threshold', 2))
 
     def anomalies(self, series):
         return self.do(series)[0]
@@ -15,12 +17,18 @@ class EMA:
     def baseline(self, series):
         return self.do(series)[1]
 
+    def decay(self):
+        return self.get_param('decay').value
+
+    def threshold(self):
+        return self.get_param('decay').value
+
     def do(self, series):
         anomalies = []
         baseline = Baseline()
         pdseries = series.pdseries
-        min_periods = self.decay*10
-        ema = pdseries.ewm(com=self.decay, min_periods=min_periods)
+        min_periods = self.decay()*10
+        ema = pdseries.ewm(com=self.decay(), min_periods=min_periods)
         ema = ema.mean().dropna()
         diffs = []
         for val in ema.items():
@@ -38,7 +46,7 @@ class EMA:
             ema_val = val[1]
             series_val = pdseries[val[0]]
             diff = abs(series_val - ema_val)
-            threshold = self.threshold*diffs_std
+            threshold = self.threshold()*diffs_std
             std_high = diffs_mean + threshold
             std_low = diffs_mean - threshold
             within_std_high = diff < std_high
@@ -57,4 +65,4 @@ class EMA:
         return (anomalies, baseline)
 
     def id(self):
-        return "EMA(" + str(self.decay) + "," + str(self.threshold) + ")"
+        return "EMA(" + str(self.decay()) + "," + str(self.threshold()) + ")"
