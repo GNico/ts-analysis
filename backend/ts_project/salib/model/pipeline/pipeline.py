@@ -6,6 +6,8 @@ class Pipeline:
     def execute(self, series):
         all_anomalies = []
         # ToDo improve with AND/OR logic
+        # Change to node graph connecting 
+        # Transformers -> detectors -> aggregators 
         # For now it's all OR
         for algo in self.algos:
             anomalies = algo.anomalies(series)

@@ -1,5 +1,6 @@
 from .components.ema import EMA
 
+# ToDo: rename to node factory, split into transformers, detectors, aggregators
 class ComponentFactory:
 
     COMPONENT_NAMES = {
