@@ -1,36 +1,42 @@
 <template>
 
 <div>
-  <div class="columns">    
-    <div class="column is-offset-1 is-3">
-      <PipeNodeList 
-        title="Transformers" 
-        type="transformer"
-        :nodeSpecs="nodeSpecs" 
-        :nodes="nodes" 
-        @newNode="createNode"
-        @nodeParamsUpdate="updateNodeParams"
-        @nodeInputUpdate="updateNodeInputs"/>
-    </div>
-    <div class="column is-offset-1 is-3">
-      <PipeNodeList 
-        title="Detectors" 
-        type="detector"
-        :nodeSpecs="nodeSpecs" 
-        :nodes="nodes" 
-        @newNode="createNode"/>
-    </div>
-    <div class="column is-offset-1 is-3">
-      <PipeNodeList 
-        title="Aggregators" 
-        type="aggregator"
-        :nodeSpecs="nodeSpecs" 
-        :nodes="nodes" 
-        @newNode="createNode"/>
+  <div class="container section">
+    <div class="columns has-background-grey-dark">    
+      <div class="column is-4">
+        <PipeNodeList 
+          title="Transformers" 
+          type="transformer"
+          :nodeSpecs="nodeSpecs" 
+          :nodes="nodes" 
+          @newNode="createNode"
+          @nodeParamsUpdate="updateNodeParams"
+          @nodeSourceUpdate="updateNodeSource"/>
+      </div>
+      <div class="column  is-4">
+        <PipeNodeList 
+          title="Detectors" 
+          type="detector"
+          :nodeSpecs="nodeSpecs" 
+          :nodes="nodes" 
+          @newNode="createNode"
+          @nodeParamsUpdate="updateNodeParams"
+          @nodeSourceUpdate="updateNodeSource"/>
+      </div>
+      <div class="column is-4">
+        <PipeNodeList 
+          title="Aggregators" 
+          type="aggregator"
+          :nodeSpecs="nodeSpecs" 
+          :nodes="nodes" 
+          @newNode="createNode"
+          @nodeParamsUpdate="updateNodeParams"
+          @nodeSourceUpdate="updateNodeSource"/>
+      </div>
     </div>
   </div>
 
-  <LayeredGraphChart/>
+  <LayeredGraphChart :nodes="graphNodes" :edges="graphEdges"/>
 </div>
 </template>
 
@@ -94,7 +100,9 @@ export default {
           type: 'aggregator',
           params: []
         },
-      ]
+      ],
+      graphNodes: [],
+      graphEdges: []
     }
   },
   computed: {
@@ -117,6 +125,8 @@ export default {
           ...options,
         })
       }
+      this.buildDirectedGraph()
+
     },
     updateNodeParams(event) {
       let nodeIndex = this.nodes.findIndex(elem => elem.id === event.id)
@@ -128,8 +138,34 @@ export default {
         this.nodes.splice(nodeIndex, 1, nodeCopy)
       }
     },
-    updateNodeInputs(event) {
-      //nothing
+    updateNodeSource(event) {
+      let nodeIndex = this.nodes.findIndex(elem => elem.id === event.id)
+      if (nodeIndex != -1) {
+        let nodeCopy = { ...this.nodes[nodeIndex]}
+        nodeCopy.sourceNodes = event.sourceNodes
+        this.nodes.splice(nodeIndex, 1, nodeCopy)
+      } 
+      this.buildDirectedGraph()
+    },
+    buildDirectedGraph() {
+      this.graphNodes = this.nodes.map(elem => ({id: elem.id, label: elem.title + ' (' + elem.id + ')'}))
+      this.graphNodes.push({id: 'start', label: "Input data"})
+
+      let edges = []
+      this.nodes.forEach(elem => {
+        if ((!elem.sourceNodes || elem.sourceNodes.length == 0) 
+        && (elem.type === 'transformer' || elem.type === 'detector' )){
+          edges.push({ source: 'start', target: elem.id})
+        } else {
+          if (elem.sourceNodes) {
+            elem.sourceNodes.forEach(source => {
+              edges.push({source: source.id, target: elem.id})
+            })
+          }         
+        }
+      })
+      this.graphEdges = edges
+
     }
   }
 
@@ -137,6 +173,10 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
+
+.column {
+  border: 2px solid;
+}
 
 </style>

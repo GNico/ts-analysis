@@ -6,9 +6,15 @@
   :open="false">
   <template #trigger="props">
     <div class="card-header">
-      <p class="card-header-title">{{title}}</p>
+      <div class="card-header-title">
+        <p> {{title}} </p>        
+      </div>
       <a class="card-header-icon">
-        <b-icon :icon="props.open ? 'menu-up' : 'menu-down'"/>
+        <div class="tags has-addons">
+          <a class="tag is-info" size="is-small">ID</a>
+          <a class="tag is-dark" size="is-small" style="font-family: monospace">{{id}}</a>
+          <b-icon :icon="props.open ? 'menu-up' : 'menu-down'"/>
+        </div>
       </a>
     </div>
   </template>
@@ -19,21 +25,21 @@
       <div class="field is-horizontal">
         <div class="field-label">
           <b-dropdown
-            :value="inputNodesSelected"
-            @change="inputNodesChange"
-            multiple
+            :value="sourceNodes"
+            @change="sourceNodesChange"
+            :multiple="allowMultiple"
             aria-role="list">
             <template #trigger>
               <b-tag
-                  type="is-info"     
-                  size="is-small"             
-                  icon-right="menu-down">
-                  Node input
+                class="button is-outlined"
+                size="is-small"             
+                icon-right="menu-down">
+                Source node
               </b-tag>
             </template>
 
-            <b-dropdown-item v-for="item in inputNodes" :value="item" aria-role="listitem">
-                <span>{{item}}</span>
+            <b-dropdown-item v-for="item in sourceNodesList" :key="item.id" :value="item" aria-role="listitem">
+                <span>{{item.title}} (ID: {{item.id}})</span>
             </b-dropdown-item>
           </b-dropdown>
         </div>
@@ -41,10 +47,10 @@
         <!--Display selected edges -->
         <div class="field-body">
           <div class="field is-grouped is-grouped-multiline">
-            <div class="control" v-for="node in inputNodesSelected">
+            <div class="control" v-for="node in sourceNodes">
               <div class="tags has-addons">
                 <a class="tag is-info" size="is-small">ID</a>
-                <a class="tag is-dark" size="is-small">{{node}}</a>
+                <a class="tag is-dark" size="is-small" style="font-family: monospace">{{node.id}}</a>
               </div>
             </div>      
           </div> 
@@ -93,22 +99,21 @@ export default {
       type: Array,
       default: () => []
     },
-    inputNodes: {
-      type: Array,
-      default: () => []
-    },
     paramsData: {
       type: Object,
       default: () => {return {}} 
     },
-    inputNodesSelected: {
+    nodes: {
+      type: Array,
+      default: () => []
+    },
+    sourceNodes: {
       type: Array,
       default: () => []
     }
   },
   data() {
     return {
-
     }
   },
   computed: {
@@ -122,6 +127,17 @@ export default {
       })
       return components
     },
+    sourceNodesList() {
+      let id = this.id
+      if (this.type === 'detector' ||  this.type === 'transformer')
+        return this.nodes.filter(elem => elem.id !== this.id && elem.type === 'transformer')
+      if (this.type === 'aggregator') {
+        return this.nodes.filter(elem => elem.id !== this.id && (elem.type === 'detector' || elem.type === 'aggregator'))
+      }
+    },
+    allowMultiple() {
+      return this.type === 'aggregator'
+    }
 
   },
   methods: {
@@ -155,8 +171,12 @@ export default {
     paramsDataChange(name, event) {
       this.$emit('nodeParamsChange', {id: this.id, [name]: event})
     },
-    inputNodesChange(event) {
-      this.$emit('nodeInputChange', {id: this.id, inputNodes: event} )
+    sourceNodesChange(event) {
+      let sourceNodes = event
+      if (!this.allowMultiple) {
+        sourceNodes = [ event ]
+      }
+      this.$emit('nodeSourceChange', {id: this.id, sourceNodes: sourceNodes} )
     }
   }
 }

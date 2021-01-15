@@ -27,7 +27,6 @@ def index_series_data(self, client_name, filenames):
         client.task_id = ''
         client.status = 'Ready'
         client.save()
-        _update_client_state(client_name, indexer.get_index_name(client_name), 'Ready')
     except series_indexer.IndexingError:
         client = Client.objects.get(name=client_name)
         client.index_name = indexer.get_index_name(client_name)

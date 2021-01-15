@@ -1,30 +1,33 @@
 <template>
 <div>
-  <span class="title"> {{ title }} </span>
-  <b-dropdown aria-role="list">
-    <template #trigger="{ active }">
-      <b-button 
-        label="Add node" 
-        type="is-primary" 
-        size="is-small"/>
-    </template>
+  <div class="list-header">
+    <span class="subtitle has-text-white"> {{ title }} </span>
+    <b-dropdown aria-role="list">
+      <template #trigger="{ active }">
+        <b-button 
+          label="Add node" 
+          type="is-primary" 
+          size="is-small"/>
+      </template>
 
-    <b-dropdown-item 
-      v-for="item in filteredNodeSpecs" 
-      :key="item.title"
-      @click="addNode(item.title)"
-      aria-role="listitem">
-      {{item.title}}
-    </b-dropdown-item>
-  </b-dropdown>
+      <b-dropdown-item 
+        v-for="item in filteredNodeSpecs" 
+        :key="item.title"
+        @click="addNode(item.title)"
+        aria-role="listitem">
+        {{item.title}}
+      </b-dropdown-item>
+    </b-dropdown>
+  </div>
 
   
   <PipeNode 
     v-for="item in filteredPipenodes" 
     :key="item.id" 
     v-bind="item"
+    :nodes="nodes"
     @nodeParamsChange="$emit('nodeParamsUpdate', $event)"
-    @nodeInputChange="$emit('nodeInputUpdate', $event)"/>
+    @nodeSourceChange="$emit('nodeSourceUpdate', $event)"/>
 
 
 </div>
@@ -78,3 +81,12 @@ export default {
 }
 
 </script>
+
+<style scoped>
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+</style>
