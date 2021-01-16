@@ -1,5 +1,4 @@
 <template>
-
 <b-collapse
   class="card"
   animation="slide"
@@ -21,7 +20,7 @@
   <div class="card-content">
     <div class="content">
 
-      <!--Edge selection-->
+      <!--Source node selection-->
       <div class="field is-horizontal">
         <div class="field-label">
           <b-dropdown
@@ -35,19 +34,24 @@
                 size="is-small"             
                 icon-right="menu-down">
                 Source node
+                <b-icon size="is-small" icon="menu-down"/>
               </b-tag>
             </template>
 
+            <b-dropdown-item value='none' v-if="!allowMultiple">
+              <span> None </span>
+            </b-dropdown-item>
             <b-dropdown-item v-for="item in sourceNodesList" :key="item.id" :value="item" aria-role="listitem">
-                <span>{{item.title}} (ID: {{item.id}})</span>
+              <span>{{item.title}} (ID: {{item.id}})</span>
             </b-dropdown-item>
           </b-dropdown>
         </div>
 
-        <!--Display selected edges -->
+        <!--Display selected source nodes -->
         <div class="field-body">
           <div class="field is-grouped is-grouped-multiline">
-            <div class="control" v-for="node in sourceNodes">
+            <div v-if="!sourceNodes.length"><i>None</i></div>
+            <div v-else class="control" v-for="node in sourceNodes">
               <div class="tags has-addons">
                 <a class="tag is-info" size="is-small">ID</a>
                 <a class="tag is-dark" size="is-small" style="font-family: monospace">{{node.id}}</a>
@@ -65,18 +69,13 @@
           :value="paramsData[item.name]"
           @input="paramsDataChange(item.name, $event)"/>
       </b-field>
-
-
     </div>
   </div>
 </b-collapse>
-
-
 </template>
 
 
 <script>
-
 export default {
   props: {
     id: {
@@ -173,14 +172,16 @@ export default {
     },
     sourceNodesChange(event) {
       let sourceNodes = event
-      if (!this.allowMultiple) {
+      if (sourceNodes === 'none') {
+        sourceNodes = []
+      }
+      else if (!this.allowMultiple) {
         sourceNodes = [ event ]
       }
       this.$emit('nodeSourceChange', {id: this.id, sourceNodes: sourceNodes} )
     }
   }
 }
-
 </script>
 
 <style>

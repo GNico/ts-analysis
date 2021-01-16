@@ -13,7 +13,7 @@
           @nodeParamsUpdate="updateNodeParams"
           @nodeSourceUpdate="updateNodeSource"/>
       </div>
-      <div class="column  is-4">
+      <div class="column is-4">
         <PipeNodeList 
           title="Detectors" 
           type="detector"
@@ -34,20 +34,32 @@
           @nodeSourceUpdate="updateNodeSource"/>
       </div>
     </div>
+
+    <div v-for="msg in validationMessages">  
+      <span v-if="msg.type=='warning'" class="has-text-link">
+        <b-icon icon="alert-circle" size="is-small"></b-icon>
+         {{msg.message}} ({{msg.id}})
+      </span>
+      <span v-if="msg.type=='invalid'" class="has-text-warning">
+        <b-icon icon="close-octagon" size="is-small"></b-icon>
+        {{msg.message}}
+      </span>
+    </div>
   </div>
 
-  <LayeredGraphChart :nodes="graphNodes" :edges="graphEdges"/>
+  <GraphBuilder :nodes="nodes" @validation="validationMessages = $event"/>
 </div>
 </template>
 
 <script>
-import LayeredGraphChart from "../components/LayeredGraphChart"
-import PipeNodeList from "../components/PipeNodeList"
+import GraphBuilder from "../components/detectionModel/GraphBuilder"
+import PipeNodeList from "../components/detectionModel/PipeNodeList"
 
 import {nanoid} from 'nanoid'
 
+
 export default {
-  components: { LayeredGraphChart, PipeNodeList },
+  components: { GraphBuilder, PipeNodeList },
   data() {
     return {
       nodes: [],
@@ -102,10 +114,12 @@ export default {
         },
       ],
       graphNodes: [],
-      graphEdges: []
+      graphEdges: [],
+      validationMessages: [],
     }
   },
   computed: {
+
 
   },
   methods: {
@@ -122,11 +136,10 @@ export default {
       if (options) {
         this.nodes.push({
           id: newid,
+          sourceNodes: [],
           ...options,
         })
       }
-      this.buildDirectedGraph()
-
     },
     updateNodeParams(event) {
       let nodeIndex = this.nodes.findIndex(elem => elem.id === event.id)
@@ -145,30 +158,8 @@ export default {
         nodeCopy.sourceNodes = event.sourceNodes
         this.nodes.splice(nodeIndex, 1, nodeCopy)
       } 
-      this.buildDirectedGraph()
-    },
-    buildDirectedGraph() {
-      this.graphNodes = this.nodes.map(elem => ({id: elem.id, label: elem.title + ' (' + elem.id + ')'}))
-      this.graphNodes.push({id: 'start', label: "Input data"})
-
-      let edges = []
-      this.nodes.forEach(elem => {
-        if ((!elem.sourceNodes || elem.sourceNodes.length == 0) 
-        && (elem.type === 'transformer' || elem.type === 'detector' )){
-          edges.push({ source: 'start', target: elem.id})
-        } else {
-          if (elem.sourceNodes) {
-            elem.sourceNodes.forEach(source => {
-              edges.push({source: source.id, target: elem.id})
-            })
-          }         
-        }
-      })
-      this.graphEdges = edges
-
-    }
+    },    
   }
-
 };
 </script>
 

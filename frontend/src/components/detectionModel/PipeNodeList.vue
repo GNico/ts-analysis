@@ -20,7 +20,6 @@
     </b-dropdown>
   </div>
 
-  
   <PipeNode 
     v-for="item in filteredPipenodes" 
     :key="item.id" 
@@ -28,12 +27,8 @@
     :nodes="nodes"
     @nodeParamsChange="$emit('nodeParamsUpdate', $event)"
     @nodeSourceChange="$emit('nodeSourceUpdate', $event)"/>
-
-
 </div>
-
 </template>
-
 
 
 <script>
