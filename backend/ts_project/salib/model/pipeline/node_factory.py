@@ -74,6 +74,10 @@ class NodeFactory:
             params = obj['params']
             for param in params:
                 builder.set_param_value(param['id'], param['value'])
+        if 'sources' in obj.keys():
+            sources = obj['sources']
+            for source in sources:
+                builder.add_source(source)
         return builder.build()
 
     def __init__(self, id, klass, type):
@@ -81,6 +85,10 @@ class NodeFactory:
 
     def set_param_value(self, id, value):
         self.node.set_param_value(id, value)
+        return self
+
+    def add_source(self, source):
+        self.node.add_source(source)
         return self
 
     def build(self):

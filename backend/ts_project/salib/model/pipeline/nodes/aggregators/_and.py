@@ -14,8 +14,8 @@ class And(Node):
             all_anomalies.extend(i.anomalies)
         return NodeResult(self, anomalies=or_anomalies)
 
-    def id(self):
-        return "AND"
+    def __str__(self):
+        return 'AND(' + ','.join([s.id for s in self.sources]) + ')'
 
     def desc(self):
-        return "Combine overlapping anomalies from sources"
+        return 'Combine overlapping anomalies from sources'

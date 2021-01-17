@@ -22,7 +22,7 @@ class EMA(NodeDetector):
         return self.get_param('decay').value
 
     def threshold(self):
-        return self.get_param('decay').value
+        return self.get_param('threshold').value
 
     def do(self, series):
         anomalies = []

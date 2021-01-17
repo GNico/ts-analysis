@@ -53,6 +53,7 @@ class TestNodeFactory(unittest.TestCase):
         builder.set_param_value('decay', 0.95)
         builder.set_param_value('threshold', 1)
         ema = builder.build()
+        self.assertEqual(str(ema), 'EMA(0.95,1)[test_id]')
 
         obj = {
             'id': 'test_id',
@@ -70,5 +71,4 @@ class TestNodeFactory(unittest.TestCase):
             ]
         }
         ema_from_json = NodeFactory.from_json(obj)
-
         self.assertEqual(str(ema), str(ema_from_json))

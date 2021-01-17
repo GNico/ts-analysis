@@ -12,8 +12,8 @@ class Or(Node):
             or_anomalies.extend(i.anomalies)
         return NodeResult(self, anomalies=or_anomalies)
 
-    def id(self):
-        return "OR"
+    def __str__(self):
+        return 'OR(' + ','.join([s.id for s in self.sources]) + ')'
 
     def desc(self):
-        return "Combine all anomalies from sources"
+        return 'Combine all anomalies from sources'
