@@ -2,13 +2,11 @@ import copy
 
 class Node:
 
-    def __init__(self):
+    def __init__(self, id):
+        self.id = id
         self.params = {}
         self.required_params = {}
         self.sources = []
-
-    def id(self):
-        raise Exception('Undefined id')
 
     def desc(self):
         raise Exception('Undefined desc')

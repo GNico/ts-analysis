@@ -16,7 +16,7 @@ class TestEMA(unittest.TestCase):
     def test_ema(self):
         series = self.build_triangle()
         
-        factory = NodeFactory.detector('EMA')
+        factory = NodeFactory.detector('test', 'EMA')
         factory.set_param_value('decay', 0.95)
         factory.set_param_value('threshold', 1)
         ema = factory.build()
@@ -29,7 +29,7 @@ class TestEMA(unittest.TestCase):
         self.assertEqual(1, len(anomalies))
         self.assertEqual(1, len(analysis.anomalies_by_algo))
         algo_ids = list(analysis.anomalies_by_algo.keys())
-        algo_key = "EMA("+str(ema.decay())+","+str(ema.threshold())+")"
+        algo_key = "EMA("+str(ema.decay())+","+str(ema.threshold())+")[test]"
         self.assertEqual([algo_key], algo_ids)
         self.assertEqual(analysis.anomalies_by_algo[algo_key], anomalies)
 

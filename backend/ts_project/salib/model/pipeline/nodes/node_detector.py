@@ -3,8 +3,8 @@ from .node_result import NodeResult
 
 class NodeDetector(Node):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, id):
+        super().__init__(id)
 
     def execute(self, inputs):
         if len(inputs) != 1:
@@ -12,7 +12,7 @@ class NodeDetector(Node):
         series = inputs[0].series
         anomalies = self.anomalies(series)
         for anomaly in anomalies:
-            anomaly.tag_algo(self.id())
+            anomaly.tag_algo(str(self))
         return NodeResult(self, series=series, anomalies=anomalies)
 
     def anomalies(self, series):

@@ -3,8 +3,8 @@ from ..node_result import NodeResult
 
 class And(Node):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, id):
+        super().__init__(id)
 
     def execute(self, inputs):
         all_anomalies = []

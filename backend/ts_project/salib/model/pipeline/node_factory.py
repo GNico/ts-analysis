@@ -18,10 +18,10 @@ class NodeFactory:
     }
 
     @staticmethod
-    def base_node(klass, type):
+    def base_node(id, klass, type):
         if klass in NodeFactory.NODE_TYPES.keys():
             if type in NodeFactory.NODE_TYPES[klass].keys():
-                return NodeFactory.NODE_TYPES[klass][type]()
+                return NodeFactory.NODE_TYPES[klass][type](id)
             else:
                 raise Exception('Invalid node type ' + type)
         else:
@@ -31,7 +31,7 @@ class NodeFactory:
     def nodes_description(klass):
         output = []
         for type in NodeFactory.NODE_TYPES[klass]:
-            instance = NodeFactory.base_node(klass, type)
+            instance = NodeFactory.base_node(None, klass, type)
             entry = {}
             entry['class'] = klass
             entry['type'] = type
@@ -53,30 +53,31 @@ class NodeFactory:
         return NodeFactory.nodes_description('aggregator')
 
     @staticmethod
-    def detector(type):
-        return NodeFactory('detector', type)
+    def detector(id, type):
+        return NodeFactory(id, 'detector', type)
 
     @staticmethod
-    def transformer(type):
-        return NodeFactory('transformer', type)
+    def transformer(id, type):
+        return NodeFactory(id, 'transformer', type)
 
     @staticmethod
-    def aggregator(type):
-        return NodeFactory('aggregator', type)
+    def aggregator(id, type):
+        return NodeFactory(id, 'aggregator', type)
 
     @staticmethod
     def from_json(obj):
+        id = obj['id']
         klass = obj['class']
         type = obj['type']
-        builder = NodeFactory(klass, type)
+        builder = NodeFactory(id, klass, type)
         if 'params' in obj.keys():
             params = obj['params']
             for param in params:
                 builder.set_param_value(param['id'], param['value'])
         return builder.build()
 
-    def __init__(self, klass, type):
-        self.node = NodeFactory.base_node(klass, type)
+    def __init__(self, id, klass, type):
+        self.node = NodeFactory.base_node(id, klass, type)
 
     def set_param_value(self, id, value):
         self.node.set_param_value(id, value)

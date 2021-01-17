@@ -49,12 +49,13 @@ class TestNodeFactory(unittest.TestCase):
         self.assertEqual(expected, NodeFactory.detectors_description())
 
     def test_parsing(self):
-        builder = NodeFactory.detector('EMA')
+        builder = NodeFactory.detector('test_id', 'EMA')
         builder.set_param_value('decay', 0.95)
         builder.set_param_value('threshold', 1)
         ema = builder.build()
 
         obj = {
+            'id': 'test_id',
             'class': 'detector',
             'type': 'EMA',
             'params': [
@@ -70,4 +71,4 @@ class TestNodeFactory(unittest.TestCase):
         }
         ema_from_json = NodeFactory.from_json(obj)
 
-        self.assertEqual(ema.id(), ema_from_json.id())
+        self.assertEqual(str(ema), str(ema_from_json))
