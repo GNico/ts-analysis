@@ -21,7 +21,7 @@ class TestEMA(unittest.TestCase):
         factory.set_param_value('threshold', 1)
         ema = factory.build()
 
-        pipeline = Pipeline([ema])
+        pipeline = Pipeline(ema)
         analyzer = Analyzer(pipeline=pipeline)
         analysis = analyzer.analyze(series)
         anomalies = analysis.anomalies

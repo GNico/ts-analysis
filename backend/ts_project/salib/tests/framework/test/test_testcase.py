@@ -4,6 +4,7 @@ from model.test.testcase import TestCase
 from model.anomaly import Anomaly
 from model.analysis import Analysis
 from model.series import Series
+from model.pipeline.nodes.node_result import NodeResult
 from tests.framework.mock_analyzer import MockAnalyzer
 from model.test import metric_classifications_builder as mcb
 

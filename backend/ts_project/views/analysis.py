@@ -27,11 +27,22 @@ class AnalysisView(APIView):
 
         series = Series(ts)
 
-        ema_builder = NodeFactory.detector('EMA')
-        ema_builder.set_param_value('decay', 0.99)
-        ema_builder.set_param_value('threshold', 3)
-        ema = ema_builder.build()
-        pipeline = Pipeline([ema])
+        ema_obj = {
+            'class': 'detector',
+            'type': 'EMA',
+            'params': [
+                {
+                    'id': 'decay',
+                    'value': 0.95
+                },
+                {
+                    'id': 'threshold',
+                    'value': 1
+                }
+            ]
+        }
+        ema = NodeFactory.from_json(ema_obj)
+        pipeline = Pipeline(ema)
         analyzer = Analyzer(pipeline=pipeline, baseline_algo=ema)
         analysis = analyzer.analyze(series)
         response = analysis.output_format()

@@ -1,17 +1,23 @@
+from .nodes.node_result import NodeResult
+
 class Pipeline:
 
-    def __init__(self, algos):
-        self.algos = algos
+    def __init__(self, terminal_node):
+        self.terminal_node = terminal_node
+        self.series = None
 
     def execute(self, series):
-        all_anomalies = []
-        # ToDo improve with AND/OR logic
-        # Change to node graph connecting 
-        # Transformers -> detectors -> aggregators 
-        # For now it's all OR
-        for algo in self.algos:
-            anomalies = algo.anomalies(series)
-            for anomaly in anomalies:
-                anomaly.tag_algo(algo.id())
-            all_anomalies.extend(anomalies)
-        return all_anomalies
+        self.series = series
+        result = self.execute_node(self.terminal_node)
+        return result
+
+    def execute_node(self, node):
+        # If we have no sources we inject original series
+        if len(node.sources) == 0:
+            return node.execute([NodeResult(None, series=self.series)])
+        # Else we calculate recursively all inputs
+        else:
+            node_inputs = []
+            for node_source in node.sources:
+                node_inputs.append(self.execute_node(node_source))    
+        return node.execute(node_inputs)

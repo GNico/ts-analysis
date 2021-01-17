@@ -1,11 +1,11 @@
 import numpy as np
 
-from ..node import Node
+from ..node_detector import NodeDetector
 from ...params.float import Float, BoundedFloat
 from ....anomaly import Anomaly
 from ....baseline import Baseline
 
-class EMA(Node):
+class EMA(NodeDetector):
 
     def __init__(self):
         super().__init__()

@@ -1,16 +1,19 @@
+from .nodes.aggregators._and import And
+from .nodes.aggregators._or import Or
+
 from .nodes.detectors.ema import EMA
 
 class NodeFactory:
 
     NODE_TYPES = {
         'transformer': {
-
         },
         'detector': {
             'EMA': EMA
         },
         'aggregator': {
-
+            'OR': Or,
+            'AND': And
         }
     }
 
@@ -60,6 +63,17 @@ class NodeFactory:
     @staticmethod
     def aggregator(type):
         return NodeFactory('aggregator', type)
+
+    @staticmethod
+    def from_json(obj):
+        klass = obj['class']
+        type = obj['type']
+        builder = NodeFactory(klass, type)
+        if 'params' in obj.keys():
+            params = obj['params']
+            for param in params:
+                builder.set_param_value(param['id'], param['value'])
+        return builder.build()
 
     def __init__(self, klass, type):
         self.node = NodeFactory.base_node(klass, type)
