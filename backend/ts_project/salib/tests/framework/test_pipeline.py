@@ -7,7 +7,7 @@ class TestPipeline(unittest.TestCase):
 
     def test_parsing(self):
         obj = {
-            'nodes':[
+            'nodes': [
                 {
                     'id': '1',
                     'class': 'aggregator',

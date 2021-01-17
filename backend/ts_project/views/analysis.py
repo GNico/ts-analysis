@@ -27,22 +27,57 @@ class AnalysisView(APIView):
 
         series = Series(ts)
 
-        ema_obj = {
-            'class': 'detector',
-            'type': 'EMA',
-            'params': [
+        obj = {
+            'nodes': [
                 {
-                    'id': 'decay',
-                    'value': 0.95
+                    'id': '1',
+                    'class': 'aggregator',
+                    'type': 'OR',
+                    'params': [],
+                    'sources': ['2', '3']
                 },
                 {
-                    'id': 'threshold',
-                    'value': 1
+                    'id': '2',
+                    'class': 'detector',
+                    'type': 'EMA',
+                    'params': [
+                        {
+                            'id': 'decay',
+                            'value': 0.95
+                        },
+                        {
+                            'id': 'threshold',
+                            'value': 1
+                        }
+                    ],
+                    'sources': []
+                },
+                {
+                    'id': '3',
+                    'class': 'detector',
+                    'type': 'EMA',
+                    'params': [
+                        {
+                            'id': 'decay',
+                            'value': 0.9
+                        },
+                        {
+                            'id': 'threshold',
+                            'value': 2
+                        }
+                    ],
+                    'sources': []
                 }
             ]
         }
-        ema = NodeFactory.from_json(ema_obj)
-        pipeline = Pipeline(ema)
+
+        pipeline = Pipeline.from_json(obj)
+
+        builder = NodeFactory.detector('test_id', 'EMA')
+        builder.set_param_value('decay', 0.95)
+        builder.set_param_value('threshold', 1)
+        ema = builder.build()
+
         analyzer = Analyzer(pipeline=pipeline, baseline_algo=ema)
         analysis = analyzer.analyze(series)
         response = analysis.output_format()
