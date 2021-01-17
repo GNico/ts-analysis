@@ -1,10 +1,21 @@
 import copy
 
-class Component:
+class Node:
 
-    def __init__(self):
+    def __init__(self, id):
+        self.id = id
         self.params = {}
         self.required_params = {}
+        self.sources = []
+
+    def desc(self):
+        raise Exception('Undefined desc')
+
+    def execute(self, inputs):
+        raise Exception('Unimplemented execution')
+
+    def add_source(self, source):
+        self.sources.append(source)
 
     def add_required_param(self, param):
         self.required_params[param.id] = param
@@ -25,22 +36,18 @@ class Component:
         else:
             raise 'Invalid param ' + id
 
-
     def params_definition(self):
-        output = {}
+        output = []
         for id, param in self.required_params.items():
-            output[id] = param.definition()
+            output.append(param.definition())
         return output
 
     def validate(self):
         for required_param in self.required_params.values():
             if required_param.id not in self.params:
-                raise Exception('Missing required param ' + required_param)
+                raise Exception('Missing required param ' + required_param.id)
             if required_param.klass != self.params[required_param.id].klass:
                 raise Exception('Invalid type for ' + required_param.id + ', expected ' + required_param.klass + 
                                 ' but was ' + self.params[required_param.id].klass)
         for param in self.params.values():
             param.validate()
-
-    def id(self):
-        raise Exception('Undefined id')

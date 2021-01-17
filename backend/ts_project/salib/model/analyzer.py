@@ -1,5 +1,5 @@
 from .analysis import Analysis
-from .pipeline.components.mock import NoBaseline
+from .pipeline.nodes.mock import NoBaseline
 
 class Analyzer:
 
@@ -11,6 +11,7 @@ class Analyzer:
         self.config = config
 
     def analyze(self, series):
-        anomalies = self.anomaly_pipeline.execute(series)
+        result = self.anomaly_pipeline.execute(series)
+        anomalies = result.anomalies
         baseline = self.baseline_algo.baseline(series)
         return Analysis(series, anomalies, baseline)

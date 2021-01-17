@@ -8,6 +8,7 @@ import pandas as pd
 from ..salib.model.series import Series
 from ..salib.model.analyzer import Analyzer
 from ..salib.model.pipeline.pipeline import Pipeline
+from ..salib.model.pipeline.node_factory import NodeFactory
 
 class AnalysisView(APIView):
     def get(self, request):
@@ -26,12 +27,58 @@ class AnalysisView(APIView):
 
         series = Series(ts)
 
-        factory = ComponentFactory('EMA')
-        factory.set_param_value('decay', 0.99)
-        factory.set_param_value('threshold', 3)
-        ema = factory.build()
-        pipeline = Pipeline([ema])
-        analyzer = Analyzer(pipeline=[pipeline], baseline_algo=ema)
+        obj = {
+            'nodes': [
+                {
+                    'id': '1',
+                    'class': 'aggregator',
+                    'type': 'OR',
+                    'params': [],
+                    'sources': ['2', '3']
+                },
+                {
+                    'id': '2',
+                    'class': 'detector',
+                    'type': 'EMA',
+                    'params': [
+                        {
+                            'id': 'decay',
+                            'value': 0.95
+                        },
+                        {
+                            'id': 'threshold',
+                            'value': 1
+                        }
+                    ],
+                    'sources': []
+                },
+                {
+                    'id': '3',
+                    'class': 'detector',
+                    'type': 'EMA',
+                    'params': [
+                        {
+                            'id': 'decay',
+                            'value': 0.9
+                        },
+                        {
+                            'id': 'threshold',
+                            'value': 2
+                        }
+                    ],
+                    'sources': []
+                }
+            ]
+        }
+
+        pipeline = Pipeline.from_json(obj)
+
+        builder = NodeFactory.detector('test_id', 'EMA')
+        builder.set_param_value('decay', 0.95)
+        builder.set_param_value('threshold', 1)
+        ema = builder.build()
+
+        analyzer = Analyzer(pipeline=pipeline, baseline_algo=ema)
         analysis = analyzer.analyze(series)
         response = analysis.output_format()
         return Response(response)

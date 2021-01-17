@@ -1,13 +1,14 @@
 import numpy as np
-from ..component import Component
-from ..params.float import Float, BoundedFloat
-from ...anomaly import Anomaly
-from ...baseline import Baseline
 
-class EMA(Component):
+from ..node_detector import NodeDetector
+from ...params.float import Float, BoundedFloat
+from ....anomaly import Anomaly
+from ....baseline import Baseline
 
-    def __init__(self):
-        super().__init__()
+class EMA(NodeDetector):
+
+    def __init__(self, id):
+        super().__init__(id)
         self.add_required_param(BoundedFloat('decay', 0, 1, 0.9))
         self.add_required_param(Float('threshold', 2))
 
@@ -21,7 +22,7 @@ class EMA(Component):
         return self.get_param('decay').value
 
     def threshold(self):
-        return self.get_param('decay').value
+        return self.get_param('threshold').value
 
     def do(self, series):
         anomalies = []
@@ -64,5 +65,8 @@ class EMA(Component):
                 start = None
         return (anomalies, baseline)
 
-    def id(self):
-        return "EMA(" + str(self.decay()) + "," + str(self.threshold()) + ")"
+    def __str__(self):
+        return "EMA(" + str(self.decay()) + "," + str(self.threshold()) + ")[" + self.id + "]"
+
+    def desc(self):
+        return "Exponential moving average"
