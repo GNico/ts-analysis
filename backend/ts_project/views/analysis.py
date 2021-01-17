@@ -8,6 +8,7 @@ import pandas as pd
 from ..salib.model.series import Series
 from ..salib.model.analyzer import Analyzer
 from ..salib.model.pipeline.pipeline import Pipeline
+from ..salib.model.pipeline.node_factory import NodeFactory
 
 class AnalysisView(APIView):
     def get(self, request):
@@ -26,12 +27,12 @@ class AnalysisView(APIView):
 
         series = Series(ts)
 
-        factory = ComponentFactory('EMA')
-        factory.set_param_value('decay', 0.99)
-        factory.set_param_value('threshold', 3)
-        ema = factory.build()
+        ema_builder = NodeFactory.detector('EMA')
+        ema_builder.set_param_value('decay', 0.99)
+        ema_builder.set_param_value('threshold', 3)
+        ema = ema_builder.build()
         pipeline = Pipeline([ema])
-        analyzer = Analyzer(pipeline=[pipeline], baseline_algo=ema)
+        analyzer = Analyzer(pipeline=pipeline, baseline_algo=ema)
         analysis = analyzer.analyze(series)
         response = analysis.output_format()
         return Response(response)
