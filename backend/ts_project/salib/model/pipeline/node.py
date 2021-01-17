@@ -1,6 +1,6 @@
 import copy
 
-class Component:
+class Node:
 
     def __init__(self):
         self.params = {}
@@ -25,11 +25,10 @@ class Component:
         else:
             raise 'Invalid param ' + id
 
-
     def params_definition(self):
-        output = {}
+        output = []
         for id, param in self.required_params.items():
-            output[id] = param.definition()
+            output.append(param.definition())
         return output
 
     def validate(self):
@@ -44,3 +43,6 @@ class Component:
 
     def id(self):
         raise Exception('Undefined id')
+
+    def desc(self):
+        raise Exception('Undefined desc')

@@ -1,5 +1,5 @@
 from .analysis import Analysis
-from .pipeline.components.mock import NoBaseline
+from .pipeline.nodes.mock import NoBaseline
 
 class Analyzer:
 

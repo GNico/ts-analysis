@@ -1,10 +1,11 @@
 import numpy as np
-from ..component import Component
-from ..params.float import Float, BoundedFloat
-from ...anomaly import Anomaly
-from ...baseline import Baseline
 
-class EMA(Component):
+from ...node import Node
+from ...params.float import Float, BoundedFloat
+from ....anomaly import Anomaly
+from ....baseline import Baseline
+
+class EMA(Node):
 
     def __init__(self):
         super().__init__()
@@ -66,3 +67,6 @@ class EMA(Component):
 
     def id(self):
         return "EMA(" + str(self.decay()) + "," + str(self.threshold()) + ")"
+
+    def desc(self):
+        return "Exponential moving average"
