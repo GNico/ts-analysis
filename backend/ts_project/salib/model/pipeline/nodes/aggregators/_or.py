@@ -17,3 +17,6 @@ class Or(Node):
 
     def desc(self):
         return 'Combine all anomalies from sources'
+
+    def display(self):
+        return 'Or'

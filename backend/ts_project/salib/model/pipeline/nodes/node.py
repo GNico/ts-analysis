@@ -8,11 +8,14 @@ class Node:
         self.required_params = {}
         self.sources = []
 
+    def display(self):
+        raise Exception('Undefined display name: ' + type(self).__name__)
+
     def desc(self):
-        raise Exception('Undefined desc')
+        raise Exception('Undefined description: ' + type(self).__name__)
 
     def execute(self, inputs):
-        raise Exception('Unimplemented execution')
+        raise Exception('Unimplemented execution: ' + type(self).__name__)
 
     def add_source(self, source):
         self.sources.append(source)
@@ -46,8 +49,8 @@ class Node:
         for required_param in self.required_params.values():
             if required_param.id not in self.params:
                 raise Exception('Missing required param ' + required_param.id)
-            if required_param.klass != self.params[required_param.id].klass:
-                raise Exception('Invalid type for ' + required_param.id + ', expected ' + required_param.klass + 
-                                ' but was ' + self.params[required_param.id].klass)
+            if required_param.type != self.params[required_param.id].type:
+                raise Exception('Invalid type for ' + required_param.id + ', expected ' + required_param.type + 
+                                ' but was ' + self.params[required_param.id].type)
         for param in self.params.values():
             param.validate()

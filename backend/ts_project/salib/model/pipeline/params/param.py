@@ -1,15 +1,19 @@
 class Param:
 
-    def __init__(self, id, klass, value):
+    def __init__(self, id, klass, display, desc, value=None):
         self.id = id
         self.type = klass
+        self.desc = desc
+        self.display = display
         self.value = value
 
     def definition(self):
         output = {
             'id': self.id,
-            'type': self.klass,
-            'value': self.value,
+            'type': self.type,
+            'display': self.display,
+            'desc': self.desc,
+            'value': self.value
         }
         return output
 

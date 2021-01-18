@@ -35,6 +35,7 @@ class NodeFactory:
             entry = {}
             entry['class'] = klass
             entry['type'] = type
+            entry['display'] = instance.display()
             entry['desc'] = instance.desc()
             entry['params'] = instance.params_definition()
             output.append(entry)

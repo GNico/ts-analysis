@@ -9,8 +9,8 @@ class EMA(NodeDetector):
 
     def __init__(self, id):
         super().__init__(id)
-        self.add_required_param(BoundedFloat('decay', 0, 1, 0.9))
-        self.add_required_param(Float('threshold', 2))
+        self.add_required_param(BoundedFloat('decay', 'Decay', 'Decay rate', 0, 1, 0.9))
+        self.add_required_param(Float('threshold', 'Deviations threshold', 'Min required deviations threshold', 2))
 
     def anomalies(self, series):
         return self.do(series)[0]
@@ -68,5 +68,8 @@ class EMA(NodeDetector):
     def __str__(self):
         return "EMA(" + str(self.decay()) + "," + str(self.threshold()) + ")[" + self.id + "]"
 
+    def display(self):
+        return 'Exponential moving average'
+
     def desc(self):
-        return "Exponential moving average"
+        return 'Exponential moving average with decay rate and minimum required threshold'

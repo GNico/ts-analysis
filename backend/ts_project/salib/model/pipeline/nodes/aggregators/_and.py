@@ -19,3 +19,6 @@ class And(Node):
 
     def desc(self):
         return 'Combine overlapping anomalies from sources'
+
+    def display(self):
+        return 'And'
