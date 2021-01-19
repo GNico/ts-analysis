@@ -18,22 +18,22 @@ class NodeFactory:
     }
 
     @staticmethod
-    def base_node(id, klass, type):
-        if klass in NodeFactory.NODE_TYPES.keys():
-            if type in NodeFactory.NODE_TYPES[klass].keys():
-                return NodeFactory.NODE_TYPES[klass][type](id)
+    def base_node(id, group, type):
+        if group in NodeFactory.NODE_TYPES.keys():
+            if type in NodeFactory.NODE_TYPES[group].keys():
+                return NodeFactory.NODE_TYPES[group][type](id)
             else:
                 raise Exception('Invalid node type ' + type)
         else:
-            raise Exception('Invalid node class ' + type)
+            raise Exception('Invalid node group ' + type)
 
     @staticmethod
-    def nodes_description(klass):
+    def nodes_description(group):
         output = []
-        for type in NodeFactory.NODE_TYPES[klass]:
-            instance = NodeFactory.base_node(None, klass, type)
+        for type in NodeFactory.NODE_TYPES[group]:
+            instance = NodeFactory.base_node(None, group, type)
             entry = {}
-            entry['class'] = klass
+            entry['group'] = group
             entry['type'] = type
             entry['display'] = instance.display()
             entry['desc'] = instance.desc()
@@ -68,9 +68,9 @@ class NodeFactory:
     @staticmethod
     def from_json(obj):
         id = obj['id']
-        klass = obj['class']
+        group = obj['group']
         type = obj['type']
-        builder = NodeFactory(id, klass, type)
+        builder = NodeFactory(id, group, type)
         if 'params' in obj.keys():
             params = obj['params']
             for param in params:
@@ -81,8 +81,8 @@ class NodeFactory:
                 builder.add_source(source)
         return builder.build()
 
-    def __init__(self, id, klass, type):
-        self.node = NodeFactory.base_node(id, klass, type)
+    def __init__(self, id, group, type):
+        self.node = NodeFactory.base_node(id, group, type)
 
     def set_param_value(self, id, value):
         self.node.set_param_value(id, value)
