@@ -9,14 +9,14 @@ class TestNodeFactory(unittest.TestCase):
         expected = [
             {
                 'type': 'OR',
-                'class': 'aggregator',
+                'group': 'aggregator',
                 'desc': 'Combine all anomalies from sources',
                 'display': 'Or',
                 'params': []
             },
             {
                 'type': 'AND',
-                'class': 'aggregator',
+                'group': 'aggregator',
                 'desc': 'Combine overlapping anomalies from sources',
                 'display': 'And',
                 'params': []
@@ -31,7 +31,7 @@ class TestNodeFactory(unittest.TestCase):
                 'type': 'EMA',
                 'display': 'Exponential moving average',
                 'desc': 'Exponential moving average with decay rate and minimum required threshold',
-                'class': 'detector',
+                'group': 'detector',
                 'params': [
                     {
                         'id': 'decay',
@@ -64,7 +64,7 @@ class TestNodeFactory(unittest.TestCase):
 
         obj = {
             'id': 'test_id',
-            'class': 'detector',
+            'group': 'detector',
             'type': 'EMA',
             'params': [
                 {
