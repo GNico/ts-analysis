@@ -2,15 +2,16 @@
 <div>
   <div class="list-header">
     <span class="subtitle has-text-white"> {{ title }} </span>
-    <b-dropdown aria-role="list">
+    <b-dropdown scrollable :max-height="200" aria-role="list">
       <template #trigger="{ active }">
-        <b-button 
+        <b-button
           label="Add node" 
           type="is-primary" 
           size="is-small"/>
       </template>
 
       <b-dropdown-item 
+        data-tooltip="test tooltip"
         v-for="item in filteredNodeSpecs" 
         :key="item.title"
         @click="addNode(item.title)"
@@ -26,7 +27,9 @@
     v-bind="item"
     :nodes="nodes"
     @nodeParamsChange="$emit('nodeParamsUpdate', $event)"
-    @nodeSourceChange="$emit('nodeSourceUpdate', $event)"/>
+    @nodeSourceChange="$emit('nodeSourceUpdate', $event)"
+    @nodeDelete="$emit('nodeDelete', $event)"/>
+
 </div>
 </template>
 

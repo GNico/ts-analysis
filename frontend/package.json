@@ -3,6 +3,7 @@
   "description": "Frontend para TSA",
   "version": "1.0.0",
   "author": "GNico <nico.787@hotmail.com>",
+  "private": true,
   "license": "MIT",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack serve --progress --host 0.0.0.0",

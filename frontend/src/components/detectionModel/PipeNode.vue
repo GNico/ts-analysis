@@ -1,77 +1,86 @@
 <template>
-<b-collapse
-  class="card"
-  animation="slide"
-  :open="false">
-  <template #trigger="props">
-    <div class="card-header">
-      <div class="card-header-title">
-        <p> {{title}} </p>        
+  <b-collapse
+    class="card"
+    animation="slide"
+    :open="false">
+    <template #trigger="props">
+      <div class="card-header" @mouseover="showDelete = true" @mouseleave="showDelete = false">
+        <div class="card-header-title">
+          <b-tag 
+            size="is-medium"
+            :closable="showDelete"
+            closeType='is-warning'
+            aria-close-label="Close tag"
+            @close="deleteNode">
+            {{title}}
+          </b-tag>         
+        </div>
+        <a class="card-header-icon">
+          <div class="tags has-addons">
+            <a class="tag is-info" size="is-small">ID</a>
+            <a class="tag is-dark" size="is-small" style="font-family: monospace">{{id}}</a>
+            <b-icon :icon="props.open ? 'menu-up' : 'menu-down'"/>
+          </div>
+        </a>
       </div>
-      <a class="card-header-icon">
-        <div class="tags has-addons">
-          <a class="tag is-info" size="is-small">ID</a>
-          <a class="tag is-dark" size="is-small" style="font-family: monospace">{{id}}</a>
-          <b-icon :icon="props.open ? 'menu-up' : 'menu-down'"/>
-        </div>
-      </a>
-    </div>
-  </template>
-  <div class="card-content">
-    <div class="content">
+    </template>
+    <div class="card-content">
+      <div class="content">
 
-      <!--Source node selection-->
-      <div class="field is-horizontal">
-        <div class="field-label">
-          <b-dropdown
-            :value="sourceNodes"
-            @change="sourceNodesChange"
-            :multiple="allowMultiple"
-            aria-role="list">
-            <template #trigger>
-              <b-tag
-                class="button is-outlined"
-                size="is-small"             
-                icon-right="menu-down">
-                Source node
-                <b-icon size="is-small" icon="menu-down"/>
-              </b-tag>
-            </template>
+        <!--Source node selection-->
+        <div class="field is-horizontal">
+          <div class="field-label">
+            <b-dropdown
+              :value="sourceNodes"
+              @change="sourceNodesChange"
+              :multiple="allowMultiple"
+              aria-role="list">
+              <template #trigger>
+                <b-tag
+                  class="button is-outlined"
+                  size="is-small"             
+                  icon-right="menu-down">
+                  Input node
+                  <b-icon size="is-small" icon="menu-down"/>
+                </b-tag>
+              </template>
 
-            <b-dropdown-item value='none' v-if="!allowMultiple">
-              <span> None </span>
-            </b-dropdown-item>
-            <b-dropdown-item v-for="item in sourceNodesList" :key="item.id" :value="item" aria-role="listitem">
-              <span>{{item.title}} (ID: {{item.id}})</span>
-            </b-dropdown-item>
-          </b-dropdown>
+              <b-dropdown-item value='none' v-if="!allowMultiple">
+                <span> None </span>
+              </b-dropdown-item>
+              <b-dropdown-item v-for="item in sourceNodesList" :key="item.id" :value="item" aria-role="listitem">
+                <span>{{item.title}} (ID: {{item.id}})</span>
+              </b-dropdown-item>
+            </b-dropdown>
+          </div>
+
+          <!--Display selected source nodes -->
+          <div class="field-body">
+            <div class="field is-grouped is-grouped-multiline">
+              <div v-if="!sourceNodes.length"><i>None</i></div>
+              <div v-else class="control" v-for="node in sourceNodes">
+                <div class="tags has-addons">
+                  <span class="tag is-info" size="is-small">ID</span>
+                  <span class="tag is-dark" size="is-small" style="font-family: monospace">{{node.id}}</span>
+                </div>
+              </div>      
+            </div> 
+          </div>
         </div>
 
-        <!--Display selected source nodes -->
-        <div class="field-body">
-          <div class="field is-grouped is-grouped-multiline">
-            <div v-if="!sourceNodes.length"><i>None</i></div>
-            <div v-else class="control" v-for="node in sourceNodes">
-              <div class="tags has-addons">
-                <a class="tag is-info" size="is-small">ID</a>
-                <a class="tag is-dark" size="is-small" style="font-family: monospace">{{node.id}}</a>
-              </div>
-            </div>      
-          </div> 
-        </div>
+        <!--Parameters list -->
+        <b-field v-for="item in paramsComponents" :key="item.name" horizontal :label="item.name">
+          <component
+            :is="item.component.name"
+            v-bind="item.component.props"
+            :value="paramsData[item.name]"
+            @input="paramsDataChange(item.name, $event)"/>
+        </b-field>
       </div>
-
-      <!--Parameters list -->
-      <b-field v-for="item in paramsComponents" :key="item.name" horizontal :label="item.name">
-        <component
-          :is="item.component.name"
-          v-bind="item.component.props"
-          :value="paramsData[item.name]"
-          @input="paramsDataChange(item.name, $event)"/>
-      </b-field>
     </div>
-  </div>
-</b-collapse>
+  </b-collapse>
+
+
 </template>
 
 
@@ -113,6 +122,7 @@ export default {
   },
   data() {
     return {
+      showDelete: false,
     }
   },
   computed: {
@@ -179,11 +189,15 @@ export default {
         sourceNodes = [ event ]
       }
       this.$emit('nodeSourceChange', {id: this.id, sourceNodes: sourceNodes} )
+    },
+    deleteNode() {
+      this.$emit('nodeDelete', this.id)
     }
   }
 }
 </script>
 
 <style>
+
 
 </style>

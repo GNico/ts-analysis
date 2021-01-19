@@ -3,35 +3,16 @@
 <div>
   <div class="container section">
     <div class="columns has-background-grey-dark">    
-      <div class="column is-4">
-        <PipeNodeList 
-          title="Transformers" 
-          type="transformer"
+      <div class="column is-4" v-for="type in classTypes" :key="type">
+        <PipeNodeList          
+          :title="getPipenodeListTitle(type)" 
+          :type="type"
           :nodeSpecs="nodeSpecs" 
           :nodes="nodes" 
           @newNode="createNode"
           @nodeParamsUpdate="updateNodeParams"
-          @nodeSourceUpdate="updateNodeSource"/>
-      </div>
-      <div class="column is-4">
-        <PipeNodeList 
-          title="Detectors" 
-          type="detector"
-          :nodeSpecs="nodeSpecs" 
-          :nodes="nodes" 
-          @newNode="createNode"
-          @nodeParamsUpdate="updateNodeParams"
-          @nodeSourceUpdate="updateNodeSource"/>
-      </div>
-      <div class="column is-4">
-        <PipeNodeList 
-          title="Aggregators" 
-          type="aggregator"
-          :nodeSpecs="nodeSpecs" 
-          :nodes="nodes" 
-          @newNode="createNode"
-          @nodeParamsUpdate="updateNodeParams"
-          @nodeSourceUpdate="updateNodeSource"/>
+          @nodeSourceUpdate="updateNodeSource"
+          @nodeDelete="deleteNode"/>
       </div>
     </div>
 
@@ -63,7 +44,32 @@ export default {
   data() {
     return {
       nodes: [],
+      classTypes: [ "transformer", "detector", "aggregator"],
       nodeSpecs: [
+       /*   {
+            class: "detector",
+            type: "EMA",
+            display: "Exponential moving average",
+            desc: "Exponential moving average with decay rate and minimum required threshold",
+            params: [
+              {
+                id: "decay",
+                type: "BoundedFloat",
+                display: "Decay",
+                desc: "Decay rate",
+                value: 0.9,
+                min: 0,
+                max: 1
+              },
+              {
+                id: "threshold",
+                type: "Float",
+                display: "Deviations threshold",
+                desc: "Min required deviations threshold",
+                value: 2
+              }
+            ]
+        }, */
         {
           title: 'Rolling window',
           desc: 'Some description',
@@ -81,12 +87,6 @@ export default {
             name: 'boolfield',
             type: 'boolean',        
           }]
-        },
-        {
-          title: 'Double rolling window',
-          desc: 'Some description',
-          type: 'transformer',
-          params: []
         },
         {
           title: 'Level shift detector',
@@ -113,16 +113,15 @@ export default {
           params: []
         },
       ],
-      graphNodes: [],
-      graphEdges: [],
       validationMessages: [],
     }
   },
-  computed: {
-
-
-  },
   methods: {
+    getPipenodeListTitle(value) {
+      if (!value) return ''
+      return value.charAt(0).toUpperCase() + value.slice(1) + 's'
+    },
+
     createNode(name) {
       let newid = nanoid(3)
       let found = true
@@ -158,7 +157,20 @@ export default {
         nodeCopy.sourceNodes = event.sourceNodes
         this.nodes.splice(nodeIndex, 1, nodeCopy)
       } 
-    },    
+    },
+    deleteNode(id) {
+      for (var i = this.nodes.length - 1; i >= 0; i--) {
+        if (this.nodes[i].id === id) {
+          this.nodes.splice(i, 1)
+        } else {
+          for (var j = this.nodes[i].sourceNodes.length - 1; j >= 0; j--) {
+            if (this.nodes[i].sourceNodes[j].id === id) {
+              this.nodes[i].sourceNodes.splice(j, 1)
+            }
+          }
+        }
+      }     
+    }    
   }
 };
 </script>
