@@ -31,14 +31,14 @@ class AnalysisView(APIView):
             'nodes': [
                 {
                     'id': '1',
-                    'class': 'aggregator',
+                    'group': 'aggregator',
                     'type': 'OR',
                     'params': [],
                     'sources': ['2', '3']
                 },
                 {
                     'id': '2',
-                    'class': 'detector',
+                    'group': 'detector',
                     'type': 'EMA',
                     'params': [
                         {
@@ -54,7 +54,7 @@ class AnalysisView(APIView):
                 },
                 {
                     'id': '3',
-                    'class': 'detector',
+                    'group': 'detector',
                     'type': 'EMA',
                     'params': [
                         {
