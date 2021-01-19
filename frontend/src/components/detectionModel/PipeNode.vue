@@ -12,7 +12,7 @@
             closeType='is-warning'
             aria-close-label="Close tag"
             @close="deleteNode">
-            {{title}}
+            {{type}}
           </b-tag>         
         </div>
         <a class="card-header-icon">
@@ -28,7 +28,7 @@
       <div class="content">
 
         <!--Source node selection-->
-        <div class="field is-horizontal">
+        <div class="field is-horizontal node-fields">
           <div class="field-label">
             <b-dropdown
               :value="sourceNodes"
@@ -49,7 +49,7 @@
                 <span> None </span>
               </b-dropdown-item>
               <b-dropdown-item v-for="item in sourceNodesList" :key="item.id" :value="item" aria-role="listitem">
-                <span>{{item.title}} (ID: {{item.id}})</span>
+                <span>{{item.type}} (ID: {{item.id}})</span>
               </b-dropdown-item>
             </b-dropdown>
           </div>
@@ -69,12 +69,12 @@
         </div>
 
         <!--Parameters list -->
-        <b-field v-for="item in paramsComponents" :key="item.name" horizontal :label="item.name">
+        <b-field v-for="item in paramsComponents" :key="item.id" horizontal :label="item.id" class="node-fields">
           <component
             :is="item.component.name"
             v-bind="item.component.props"
-            :value="paramsData[item.name]"
-            @input="paramsDataChange(item.name, $event)"/>
+            :value="paramsData[item.id]"
+            @input="paramsDataChange(item.id, $event)"/>
         </b-field>
       </div>
     </div>
@@ -91,7 +91,7 @@ export default {
       type: String,
       default: ''
     },
-    title: {
+    type: {
       type: String,
       default: 'Unknown'
     },
@@ -99,7 +99,7 @@ export default {
       type: String,
       default: 'Unknown'
     },
-    type: {
+    group: {
       type: String,
       default: 'Unknown'
     },
@@ -130,7 +130,7 @@ export default {
       let components = []
       this.params.forEach(elem => {
         components.push({
-          name: elem.name,
+          id: elem.id,
           component: this.getFieldComponent(elem.type),
         })
       })
@@ -138,26 +138,37 @@ export default {
     },
     sourceNodesList() {
       let id = this.id
-      if (this.type === 'detector' ||  this.type === 'transformer')
-        return this.nodes.filter(elem => elem.id !== this.id && elem.type === 'transformer')
-      if (this.type === 'aggregator') {
-        return this.nodes.filter(elem => elem.id !== this.id && (elem.type === 'detector' || elem.type === 'aggregator'))
+      if (this.group === 'detector' ||  this.group === 'transformer')
+        return this.nodes.filter(elem => elem.id !== this.id && elem.group === 'transformer')
+      if (this.group === 'aggregator') {
+        return this.nodes.filter(elem => elem.id !== this.id && (elem.group === 'detector' || elem.group === 'aggregator'))
       }
     },
     allowMultiple() {
-      return this.type === 'aggregator'
+      return this.group === 'aggregator'
     }
 
   },
   methods: {
     getFieldComponent(type) {
       switch (type) {
-        case 'number': 
+        case 'Float': 
           return {
             name: 'b-input',
             props: {
               type: 'number',
-              step: 0.1,
+              step: 0.01,
+              size: 'is-small',
+            }
+          }
+        case 'BoundedFloat': 
+          return {
+            name: 'b-input',
+            props: {
+              type: 'number',
+              step: 0.01,
+              max: 1,
+              min: 0,
               size: 'is-small',
             }
           }
@@ -197,7 +208,12 @@ export default {
 }
 </script>
 
+
+
 <style>
 
+.node-fields .field-label {
+    flex-grow: 5;
+}
 
 </style>

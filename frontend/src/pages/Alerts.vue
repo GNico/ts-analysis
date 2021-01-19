@@ -1,12 +1,10 @@
 <template>
-
 <div>
   <div class="container section">
     <div class="columns has-background-grey-dark">    
-      <div class="column is-4" v-for="type in classTypes" :key="type">
+      <div class="column is-4" v-for="group in groups" :key="group">
         <PipeNodeList          
-          :title="getPipenodeListTitle(type)" 
-          :type="type"
+          :group="group"
           :nodeSpecs="nodeSpecs" 
           :nodes="nodes" 
           @newNode="createNode"
@@ -32,22 +30,21 @@
 </div>
 </template>
 
+
 <script>
 import GraphBuilder from "../components/detectionModel/GraphBuilder"
 import PipeNodeList from "../components/detectionModel/PipeNodeList"
-
 import {nanoid} from 'nanoid'
-
 
 export default {
   components: { GraphBuilder, PipeNodeList },
   data() {
     return {
       nodes: [],
-      classTypes: [ "transformer", "detector", "aggregator"],
+      groups: [ "transformer", "detector", "aggregator"],
       nodeSpecs: [
        /*   {
-            class: "detector",
+            group: "detector",
             type: "EMA",
             display: "Exponential moving average",
             desc: "Exponential moving average with decay rate and minimum required threshold",
@@ -71,45 +68,51 @@ export default {
             ]
         }, */
         {
-          title: 'Rolling window',
+          type: 'Rolling window',
           desc: 'Some description',
-          type: 'transformer',
+          group: 'transformer',
           params: [
           {
-            name: 'window',
-            type: 'number',
+            id: 'window',
+            type: 'Float',
+            display: 'Window',
           },
           {
-            name: 'agg',
-            type: 'string',        
+            id: 'decay',
+            type: "BoundedFloat",
+            display: "Decay",
+            desc: "Decay rate",
+            value: 0.9,
+            min: 0,
+            max: 1
           },
           {
-            name: 'boolfield',
+            id: 'another field',
             type: 'boolean',        
           }]
         },
         {
-          title: 'Level shift detector',
+          type: 'Level shift detector',
           desc: 'Some description',
-          type: 'detector',
+          group: 'detector',
           params: []
         },
         {
-          title: 'Outlier detector',
+          type: 'Outlier detector',
           desc: 'Some description',
-          type: 'detector',
+          group: 'detector',
           params: []
         },
         {
-          title: 'OR Aggregator',
+          type: 'OR Aggregator',
           desc: 'Some description',
-          type: 'aggregator',
+          group: 'aggregator',
           params: []
         },
         {
-          title: 'AND aggregator',
+          type: 'AND aggregator',
           desc: 'Some description',
-          type: 'aggregator',
+          group: 'aggregator',
           params: []
         },
       ],
@@ -117,11 +120,6 @@ export default {
     }
   },
   methods: {
-    getPipenodeListTitle(value) {
-      if (!value) return ''
-      return value.charAt(0).toUpperCase() + value.slice(1) + 's'
-    },
-
     createNode(name) {
       let newid = nanoid(3)
       let found = true
@@ -131,7 +129,7 @@ export default {
           newid = nanoid(3)
         }
       }
-      let options = this.nodeSpecs.find(elem => elem.title === name)
+      let options = this.nodeSpecs.find(elem => elem.type === name)
       if (options) {
         this.nodes.push({
           id: newid,

@@ -20,14 +20,13 @@ export default {
   },
   data() {
     return {
-     // validationMessages: [],
     }
   },
   computed: {
     bidirectionalNodes() {
       let graphNodes = {}
       this.nodes.forEach(elem => {
-        graphNodes[elem.id] = {id: elem.id, type: elem.type, title: elem.title, source: elem.sourceNodes, target: []}
+        graphNodes[elem.id] = {id: elem.id, group: elem.group, type: elem.type, source: elem.sourceNodes, target: []}
       })
       //add in and out edges to each node
       Object.keys(graphNodes).forEach(id => {
@@ -46,7 +45,7 @@ export default {
         let elem = this.bidirectionalNodes[elemId]
         nodes.push({
           id: elem.id,
-          label: elem.title + ' (' + elem.id + ')'
+          label: elem.type + ' (' + elem.id + ')'
         })
       })
       //start and end nodes
@@ -59,11 +58,11 @@ export default {
       Object.keys(this.bidirectionalNodes).forEach(elemId => {     
         let elem = this.bidirectionalNodes[elemId] 
         if (!elem.target || elem.target.length == 0) {
-          if (elem.type == 'detector' || elem.type == 'aggregator') 
+          if (elem.group == 'detector' || elem.group == 'aggregator') 
             edges.push({source: elem.id, target: 'end'})          
         }
         if (!elem.source || elem.source.length == 0) {
-          if (elem.type == 'transformer' || elem.type == 'detector') 
+          if (elem.group == 'transformer' || elem.group == 'detector') 
             edges.push({source: 'start', target: elem.id})
         } else {
           elem.source.forEach(sourceId => {

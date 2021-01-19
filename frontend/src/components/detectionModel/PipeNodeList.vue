@@ -13,10 +13,10 @@
       <b-dropdown-item 
         data-tooltip="test tooltip"
         v-for="item in filteredNodeSpecs" 
-        :key="item.title"
-        @click="addNode(item.title)"
+        :key="item.type"
+        @click="addNode(item.type)"
         aria-role="listitem">
-        {{item.title}}
+        {{item.type}}
       </b-dropdown-item>
     </b-dropdown>
   </div>
@@ -40,11 +40,7 @@ import PipeNode from "./PipeNode"
 export default {
   components: { PipeNode },
   props: {
-    title: {
-      type: String,
-      default: ''
-    },
-    type: {
+    group: {
       type: String,
       default: ''
     },
@@ -63,11 +59,15 @@ export default {
     }
   },
   computed: {
+    title() {
+      if (!this.group) return ''
+      return this.group.charAt(0).toUpperCase() + this.group.slice(1) + 's'
+    },
     filteredNodeSpecs() {
-      return this.nodeSpecs.filter(elem => elem.type === this.type)
+      return this.nodeSpecs.filter(elem => elem.group === this.group)
     },
     filteredPipenodes() {
-      return this.nodes.filter(elem => elem.type === this.type)
+      return this.nodes.filter(elem => elem.group === this.group)
     },
   },
   methods: {
