@@ -76,6 +76,7 @@ export default {
             id: 'window',
             type: 'Float',
             display: 'Window',
+            value: 2,
           },
           {
             id: 'decay',
@@ -131,11 +132,22 @@ export default {
       }
       let options = this.nodeSpecs.find(elem => elem.type === name)
       if (options) {
-        this.nodes.push({
+        let newNode = {
           id: newid,
           sourceNodes: [],
           ...options,
-        })
+        }
+        //fill default param values
+        let paramsData = {}
+        if (options.params && options.params.length > 0) {
+          options.params.forEach(param => {
+            if (param.hasOwnProperty('value')) {
+              paramsData[param.id] = param.value
+            }
+          })
+        }
+        newNode['paramsData'] = paramsData
+        this.nodes.push(newNode)
       }
     },
     updateNodeParams(event) {

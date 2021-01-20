@@ -11,7 +11,6 @@
       </template>
 
       <b-dropdown-item 
-        data-tooltip="test tooltip"
         v-for="item in filteredNodeSpecs" 
         :key="item.type"
         @click="addNode(item.type)"
@@ -86,5 +85,6 @@ export default {
   display: flex;
   justify-content: space-between;
 }
+
 
 </style>

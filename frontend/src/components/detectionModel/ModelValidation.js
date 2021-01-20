@@ -13,7 +13,7 @@ function validate(bidirectionalNodes) {
     //buscar nodos sin conectar correctamente
     Object.keys(bidirectionalNodes).forEach(elemId => {
         const elem = bidirectionalNodes[elemId]
-        if (elem.type == 'transformer') {
+        if (elem.group == 'transformer') {
             if (!elem.target || elem.target.length == 0) {
                 validationMessages.push({
                     message: 'Transformer output should be connected to a detector or another transformer',
@@ -22,7 +22,7 @@ function validate(bidirectionalNodes) {
                 })
             }
         }
-        if (elem.type == 'aggregator') {
+        if (elem.group == 'aggregator') {
             if (!elem.source || elem.source.length == 0) {                
                 validationMessages.push({
                     message: 'Aggregator input should be a detector or another aggregator',
