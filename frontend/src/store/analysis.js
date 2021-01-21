@@ -120,8 +120,6 @@ const actions = {
                     name: settings.client,
                     tags: settings.tags,
                     contexts: settings.contexts,
-                    //start: seriesOpts.start,
-                    //end: seriesOpts.end,
                     interval: settings.interval,
                     //config: seriesOpts.config
                 })

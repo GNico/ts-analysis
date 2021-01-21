@@ -2,7 +2,7 @@
 <div>
   <div class="list-header">
     <span class="subtitle has-text-white"> {{ title }} </span>
-    <b-dropdown scrollable :max-height="200" aria-role="list">
+    <b-dropdown scrollable :max-height="200" aria-role="list" position="is-bottom-left">
       <template #trigger="{ active }">
         <b-button
           label="Add node" 
@@ -15,7 +15,7 @@
         :key="item.type"
         @click="addNode(item.type)"
         aria-role="listitem">
-        {{item.type}}
+        {{item.display}}
       </b-dropdown-item>
     </b-dropdown>
   </div>

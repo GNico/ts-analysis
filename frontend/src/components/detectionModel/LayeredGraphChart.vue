@@ -38,25 +38,19 @@ export default {
       this.g = new dagreD3.graphlib.Graph().setGraph({})
       this.g.graph().rankDir = 'LR';
 
-      // add node
+      // Add node
       this.nodes.forEach((item, index) => {
-        item.rx = item.ry = 5;//Rounded corners
+        item.rx = item.ry = 5;
         this.g.setNode(item.id, item);
-        // node color fill refers to the background color of the node, stroke refers to the stroke color of the node
         this.g.node(item.id).style = 'fill:' + '#005aff' + ';stroke: white;'
-        // node label style
         this.g.node(item.id).labelStyle = 'fill:  white;'
       });
       // Link relationship
       this.edges.forEach(item => {
         this.g.setEdge(item.source, item.target, {
-          // Condition word on the connection
           label: item.label,
-          // The color of the connection 0fb2cc
           style: "stroke: lightblue; fill: none; stroke-width: 1px",
-          // Arrow color
           arrowheadStyle: "fill: lightblue; stroke: lightblue;",
-          // Arrow shape (vee means that the arrow is pointed, the default is flat)
           arrowhead: 'vee',
         });
       });
@@ -66,21 +60,17 @@ export default {
       //Draw graphics
       var svg = d3.select("#" + this.id).select("svg")
       var inner = svg.select("g");
-
-      var maxWidth = window.innerWidth
+      var thediv = document.getElementById(this.id)
+      var maxWidth = thediv.clientWidth
       svg.attr("width", maxWidth)
-
       // Set up zoom support
       var zoom = d3.zoom().on("zoom", function () {
           inner.attr("transform", d3.event.transform);
       });
       svg.call(zoom);
-
-      // Create the renderer
+      
       var render = new dagreD3.render();
-      // Run the renderer. This is what draws the final graph.
       render(inner, this.g);
-
 
 /*      //Events
       inner.selectAll("g.node")
@@ -94,13 +84,11 @@ export default {
           console.log(curNode, 'curNode')
       }, 200, {leading:false, trailing:true})); */
 
-
       // Initialize zoom ratio
       var initialScale = (svg.attr("width") - 100) / this.g.graph().width;
       if (initialScale > 1)
         initialScale = 1
-
-      // set width and height
+      // Set width and height
       svg.call(
           zoom.transform,
           d3.zoomIdentity
@@ -111,7 +99,6 @@ export default {
               .scale(initialScale)
       );
       svg.attr("height", this.g.graph().height * initialScale  + 40); 
-
       // Disable user zoom
       svg.on("wheel.zoom", null);
       svg.on("dblclick.zoom", null);

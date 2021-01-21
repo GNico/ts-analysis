@@ -20,12 +20,15 @@
   </div>  
   <!-- content -->  
   <div v-show="activeAnalysisId != ''" class="wide-container main-section">
-    <b-tabs type="is-toggle"  :animated="false" v-model="activeTab" >
+    <b-tabs type=""  :animated="false" v-model="activeTab">
       <b-tab-item label="Settings" icon="cog" value="Settings" >
-        <div class="colums">
+        <div class="columns">
           <div class="column is-3">
             <AnalysisSettings @run="activeTab='Results'"/>
-          </div>          
+          </div> 
+          <div class="column is-9 right-section">
+            <ModelBuilder/>
+          </div>         
         </div>
       </b-tab-item>
       <b-tab-item label="Results" icon="file-chart" value="Results" :disabled="!hasResults">
@@ -42,9 +45,10 @@
 import BarItemButton from '../components/inputs/BarItemButton';
 import AnalysisSettings from '../components/AnalysisSettings';
 import AnalysisResultsTab from "../components/AnalysisResultsTab";
+import ModelBuilder from "../components/detectionModel/ModelBuilder";
 
 export default {
-  components: {  BarItemButton, AnalysisSettings, AnalysisResultsTab},
+  components: {  BarItemButton, AnalysisSettings, AnalysisResultsTab, ModelBuilder},
   data () {
     return {        
       activeTab: "Settings",
@@ -80,7 +84,6 @@ export default {
 
 
 <style scoped>
-
 .fullh {
   height: calc(100vh - 3.5rem);
 }
@@ -90,8 +93,13 @@ export default {
 }
 
 .main-section {
-  border-top: 2px solid rgba(255,255,255,0.05);
+  border-top: 2px solid rgba(255,255,255,0.1);
 }
+
+.right-section {
+  border-left: 1px solid rgba(255,255,255,0.1);
+  margin: 0.75rem 0 0 0.75rem;
+} 
   
 .bar-buttons {
   margin-bottom: 1.25rem;

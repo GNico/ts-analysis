@@ -38,12 +38,6 @@
     <b-input v-model="settings.interval" type="text" pattern="^[0-9]+[mhd]$" size="is-small" />
   </b-field>
 
-  <b-field horizontal label="Parameters">
-    <b-input 
-      type="textarea" 
-      v-model="settings.parameters"
-      placeholder="ej: {parametername: value, parametername2: value2}"/>
-  </b-field>
 
   <b-field class="has-text-right">
     <a class="button is-primary" @click="runAnalysis">
@@ -65,7 +59,6 @@ const defaultSettings = {
   contexts: [],
   tags: [],
   interval: '1h',
-  parameters: '',
 }
 
 export default {

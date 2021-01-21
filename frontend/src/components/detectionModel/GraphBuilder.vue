@@ -49,8 +49,10 @@ export default {
         })
       })
       //start and end nodes
-      nodes.push({id: 'start', label: 'Input data'})
-      nodes.push({id: 'end', label: 'Result'})
+      if (nodes.length > 0) {
+        nodes.push({id: 'start', label: 'Input data'})
+        nodes.push({id: 'end', label: 'Result'})
+      }
       return nodes
     },
     chartEdges() {

@@ -24,9 +24,12 @@
         {{msg.message}}
       </span>
     </div>
+
+
+    <GraphBuilder :nodes="nodes" @validation="validationMessages = $event"/>
+
   </div>
 
-  <GraphBuilder :nodes="nodes" @validation="validationMessages = $event"/>
 </div>
 </template>
 

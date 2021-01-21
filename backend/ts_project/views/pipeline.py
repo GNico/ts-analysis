@@ -8,5 +8,8 @@ from ..salib.model.pipeline.node_factory import NodeFactory
 
 class PipelineView(APIView):
 
-    def get(self, request, type):
-        return Response(NodeFactory.nodes_description(type))
+    def get(self, request):
+        transformers = NodeFactory.nodes_description('transformer')
+        detectors = NodeFactory.nodes_description('detector')
+        aggregators = NodeFactory.nodes_description('aggregator')
+        return Response([*transformers, *detectors, *aggregators])

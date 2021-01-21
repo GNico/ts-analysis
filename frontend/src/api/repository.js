@@ -66,6 +66,9 @@ export default {
     getAnomalies(payload) {
         return repository.get("/analysis/", {params: payload, paramsSerializer: params => transformArrayParams(params)})
     },
+    getPipelineTypes() {
+        return repository.get("/pipeline/types/")
+    },
     testAlgo(testSource) {
         return repository.get("/testalgo?source=" + testSource)
     }
