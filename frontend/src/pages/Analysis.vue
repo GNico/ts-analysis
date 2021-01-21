@@ -88,11 +88,6 @@ export default {
   border-top: 2px solid rgba(255,255,255,0.1);
 }
 
-.right-section {
-  border-left: 1px solid rgba(255,255,255,0.1);
-  margin: 0.75rem 0 0 0.75rem;
-} 
-  
 .bar-buttons {
   margin-bottom: 1.25rem;
   margin-right: 1rem;

@@ -48,7 +48,7 @@
 
   <!--Model building -->
   <div class="column is-9 right-section">
-    <ModelBuilder :model="settings.model" @modelChange="settings.model = $event" />
+    <ModelBuilder :nodes="settings.model"  />
   </div>
 </div>
 </template>
@@ -58,6 +58,7 @@
 import TreeSelect from './inputs/TreeSelect.vue';
 import ModelBuilder from "./detectionModel/ModelBuilder";
 import { tagsAndContexts } from '../mixins/TagsAndContextsOptions.js';
+import cloneDeep from "lodash/cloneDeep";
 
 const defaultSettings = {
   name: '',
@@ -74,7 +75,7 @@ export default {
   components:  { TreeSelect, ModelBuilder },
   data () {
     return {
-      settings: { ...defaultSettings }
+      settings: cloneDeep(defaultSettings)
     }
   },
   computed: {
@@ -87,14 +88,14 @@ export default {
   },
   methods: {
     resetFields() {
-      this.settings = { ...defaultSettings }
+      this.settings = cloneDeep(defaultSettings)
     },
     runAnalysis() {
       this.$emit('run')
       this.$store.dispatch('analysis/runAnalysis', this.id)
     },
     clearTagsContexts(selectevent) {
-      if (selectevent[0]) {
+      if (selectevent) {
         this.settings.tags = []
         this.settings.contexts = []
       }
@@ -104,7 +105,7 @@ export default {
     settings: {
       deep: true,
       handler(newVal) {
-        this.$store.dispatch('analysis/updateSettings', {id: this.id, ...this.settings})
+        this.$store.dispatch('analysis/updateSettings', {id: this.id, ...this.settings })
       }
     },
     'settings.client': {
@@ -136,4 +137,10 @@ export default {
   max-height: 15rem;
   overflow-y: auto;
 }
+
+.right-section {
+  border-left: 1px solid rgba(255,255,255,0.1);
+  margin: 0.75rem 0 0 0.75rem;
+} 
+  
 </style>

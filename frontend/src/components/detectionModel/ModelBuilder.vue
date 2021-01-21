@@ -40,14 +40,14 @@ import {nanoid} from 'nanoid'
 export default {
   components: { GraphBuilder, PipeNodeList },
   props: {
-    model: {
+    nodes: {
       type: Array,
       default: () => []
     }
   },
   data() {
     return {
-      nodes: [],
+     // nodes: [],
       groups: [ "transformer", "detector", "aggregator"],
       validationMessages: [],
     }
@@ -120,7 +120,7 @@ export default {
     }    
   },
   watch: {
-    model: {
+  /*  model: {
       immediate: true,
       handler(newVal) {
         this.nodes = newVal 
@@ -128,8 +128,8 @@ export default {
     },
     nodes(newVal) {
       this.$emit('modelChange', newVal)
-    }
-  },
+    } */
+  }, 
   created() {
     this.$store.dispatch('models/fetchNodeTypes')          
   }
