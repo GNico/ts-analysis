@@ -71,10 +71,10 @@
         <!--Parameters list -->
         <b-field v-for="item in paramsComponents" :key="item.id" horizontal class="node-fields">
           <template #label>
-               {{item.display}}
-                <b-tooltip type="is-info" :label="item.desc">
-                  <b-icon size="is-small" icon="help-circle-outline"></b-icon>
-                </b-tooltip>
+            {{item.display}}
+            <b-tooltip type="is-info" :label="item.desc">
+              <b-icon size="is-small" icon="help-circle-outline"></b-icon>
+            </b-tooltip>
           </template>
           <component
             :is="item.component.name"

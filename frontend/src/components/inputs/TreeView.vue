@@ -181,6 +181,9 @@ export default {
         }
       }      
     },
+    forceClose() {
+      this.isOpen = false
+    }
   },
   watch: {
     allChildLeavesSelected(newVal) {

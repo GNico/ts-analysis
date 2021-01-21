@@ -81,7 +81,8 @@ export default {
   },
   watch: {
     saved(newval) {
-      this.setSelected(newval)
+      //this.setSelected(newval)
+      this.inputValue = newval
     },
   }
 }

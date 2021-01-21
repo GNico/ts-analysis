@@ -30,14 +30,16 @@
         <div class="field-body">
           <div class="field is-narrow short-field">
             <div class="control">
-              <SearchSelect 
-                :saved="seriesOptions.client"
-                :data="clients"
-                @selected="updateSelectOptions"  
-                size="is-small"
-                placeholder="" 
-                ref=clientselect
-              />
+               <b-autocomplete
+                  v-model="seriesOptions.client"
+                  open-on-focus
+                  :data="clients"
+                  size="is-small"
+                  ref=autocomplete 
+                  @select="clearTagsContexts"
+                  @keydown.native.enter="$event.target.blur()"> 
+                    <template slot="empty">No results</template>
+                </b-autocomplete>
             </div>
           </div>
         </div>
@@ -146,7 +148,6 @@
 <script>
 import ModalCard from './ModalCard';
 import ColorSelect from './inputs/ColorSelect';  
-import SearchSelect from './inputs/SearchSelect.vue';
 import TreeSelect from './inputs/TreeSelect.vue';
 
 import { tagsAndContexts } from '../mixins/TagsAndContextsOptions.js';
@@ -154,7 +155,7 @@ import { tagsAndContexts } from '../mixins/TagsAndContextsOptions.js';
 export default {
   name: "VisualizeCardSeries",
   mixins: [tagsAndContexts],
-  components: { ModalCard, SearchSelect, TreeSelect, ColorSelect },
+  components: { ModalCard, TreeSelect, ColorSelect },
   props: {
     id: {
       type: String,
@@ -203,11 +204,6 @@ export default {
     changeColor(value) {
       this.seriesOptions.color = value  
     },
-    updateSelectOptions(value) {
-      this.seriesOptions.client = value  
-      this.updateContexts(value)
-      this.updateTags(value)
-    },
     addSeries() {
       this.seriesOptions.color = this.selectedColor
       this.$store.dispatch('visualize/addSeries', this.seriesOptions)
@@ -232,6 +228,12 @@ export default {
                 this.seriesOptions[key] = requested[key]
             }
         }
+    },
+    clearTagsContexts(selectevent) {
+      if (selectevent[0]) {
+        this.seriesOptions.tags = []
+        this.seriesOptions.contexts = []
+      }
     }
   },
   watch: {
@@ -242,7 +244,13 @@ export default {
           this.copySeriesOptions(newVal)
         }
       }
-    } 
+    },
+    'seriesOptions.client': {
+      handler(newVal) {
+        this.updateTags(newVal)
+        this.updateContexts(newVal)
+      }
+    }, 
   }
 }
 

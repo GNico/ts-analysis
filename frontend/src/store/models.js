@@ -28,7 +28,6 @@ const actions = {
     fetchNodeTypes(store) {
         return  api.getPipelineTypes()
                 .then(response => {       
-                  console.log(response.data)
                   store.commit('set_node_types', response.data) 
                 })
                 .catch(error => { 

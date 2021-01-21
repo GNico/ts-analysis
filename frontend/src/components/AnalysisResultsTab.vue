@@ -11,44 +11,6 @@
       </div>
 
       <div v-if="showFiltersMenu">
-      <!--  <b-field horizontal label="Date range">
-          <b-datepicker             
-            :first-day-of-week="1"
-            placeholder="From"
-            size="is-small"
-            v-model="selectedRange.start">
-            <button class="button is-primary is-small"
-              @click="selectedRange.start = new Date()">
-              <b-icon  icon="calendar-today" size="is-small"></b-icon>
-              <span>Today</span>
-            </button>
-            <button class="button is-danger is-small"
-              @click="selectedRange.start = null">
-              <b-icon icon="close-thick" size="is-small"></b-icon>
-              <span>Clear</span>
-            </button>
-          </b-datepicker>
-
-          <b-datepicker             
-            :first-day-of-week="1"
-            placeholder="To"
-            size="is-small"
-            v-model="selectedRange.end">
-            <button class="button is-primary is-small"
-              @click="selectedRange.end = new Date()">
-              <b-icon  icon="calendar-today" size="is-small"></b-icon>
-              <span>Today</span>
-            </button>
-            <button class="button is-danger is-small"
-              @click="selectedRange.end = null">
-              <b-icon icon="close-thick" size="is-small"></b-icon>
-              <span>Clear</span>
-            </button>
-          </b-datepicker>
-        </b-field>  
-
-      -->
-
         <b-field horizontal label="Min Duration">
           <b-tooltip
             label="Input must be a number followed by a valid letter [ m = minutes, h = hour, d = day ]"
@@ -110,8 +72,6 @@
         :activeAnomaly="filteredActiveAnomaly"
         @changeActive="setActiveAnomaly"
         @updateRange="updateRange" />
-
-        <!--  :range="selectedRangeTimestamp" -->
     </div>
   </div>  
 </div>
@@ -161,23 +121,12 @@ export default {
       anomalies() {
         return !this.loading && this.results.hasOwnProperty("anomalies") ? this.results.anomalies : []
       },
-   /*   selectedRangeTimestamp() {
-        let start = undefined
-        let end = undefined
-        if (this.selectedRange.start) 
-          start = Math.round(this.selectedRange.start.getTime())
-        if (this.selectedRange.end) 
-          end = Math.round(this.selectedRange.end.getTime())      
-        return {start, end}
-      },  */
       filteredAnomalies() {
         return this.anomalies.filter(elem => 
           (elem.score > this.scoreThreshold 
           && (parseInt(elem.to) - parseInt(elem.from) >= this.minDurationTime)
           && (!this.selectedRange.start || parseInt(elem.from) > this.selectedRange.start)
           && (!this.selectedRange.end || parseInt(elem.from) < this.selectedRange.end)))
-         // && (!this.selectedRangeTimestamp.start || parseInt(elem.from) > this.selectedRangeTimestamp.start)
-         // && (!this.selectedRangeTimestamp.end || parseInt(elem.from) < this.selectedRangeTimestamp.end)))
       },
       filteredActiveAnomaly() {
         let filteredAnom = this.filteredAnomalies.find(elem => elem.id === this.activeAnomaly)
@@ -192,8 +141,6 @@ export default {
     },
     methods: {
       updateRange(event) {    
-        // this.selectedRange.start = new Date(event.start)
-        // this.selectedRange.end = new Date(event.end)
         this.selectedRange.start = event.start
         this.selectedRange.end = event.end
       },

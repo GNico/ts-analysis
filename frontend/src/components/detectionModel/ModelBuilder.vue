@@ -39,61 +39,16 @@ import {nanoid} from 'nanoid'
 
 export default {
   components: { GraphBuilder, PipeNodeList },
+  props: {
+    model: {
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
       nodes: [],
       groups: [ "transformer", "detector", "aggregator"],
-  /*    nodeSpecs: [
-        {
-          type: 'Rolling window',
-          desc: 'Some description',
-          group: 'transformer',
-          params: [
-          {
-            id: 'window',
-            type: 'Float',
-            display: 'Window',
-            value: 2,
-          },
-          {
-            id: 'decay',
-            type: "BoundedFloat",
-            display: "Decay",
-            desc: "Decay rate",
-            value: 0.9,
-            min: 0,
-            max: 1
-          },
-          {
-            id: 'another field',
-            type: 'boolean',        
-          }]
-        },
-        {
-          type: 'Level shift detector',
-          desc: 'Some description',
-          group: 'detector',
-          params: []
-        },
-        {
-          type: 'Outlier detector',
-          desc: 'Some description',
-          group: 'detector',
-          params: []
-        },
-        {
-          type: 'OR Aggregator',
-          desc: 'Some description',
-          group: 'aggregator',
-          params: []
-        },
-        {
-          type: 'AND aggregator',
-          desc: 'Some description',
-          group: 'aggregator',
-          params: []
-        },
-      ], */
       validationMessages: [],
     }
   },
@@ -163,6 +118,17 @@ export default {
         }
       }     
     }    
+  },
+  watch: {
+    model: {
+      immediate: true,
+      handler(newVal) {
+        this.nodes = newVal 
+      }
+    },
+    nodes(newVal) {
+      this.$emit('modelChange', newVal)
+    }
   },
   created() {
     this.$store.dispatch('models/fetchNodeTypes')          
