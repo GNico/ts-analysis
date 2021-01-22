@@ -40,7 +40,7 @@
     </b-field>
 
     <b-field class="has-text-right">
-      <a class="button is-primary" @click="runAnalysis">
+      <a class="button is-primary is-medium" @click="runAnalysis">
         Run analysis
       </a>
     </b-field>
@@ -109,9 +109,11 @@ export default {
       }
     },
     'settings.client': {
-      handler(newVal, oldVal) {
-        this.updateTags(newVal)
-        this.updateContexts(newVal)      
+      handler(newVal) {
+        if (!newVal || this.clients.includes(newVal)) {
+          this.updateTags(newVal)
+          this.updateContexts(newVal)  
+        }
       }
     },
     id: {
@@ -142,5 +144,5 @@ export default {
   border-left: 1px solid rgba(255,255,255,0.1);
   margin: 0.75rem 0 0 0.75rem;
 } 
-  
+
 </style>
