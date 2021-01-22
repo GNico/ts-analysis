@@ -1,5 +1,4 @@
 <template>
-
 <div>
   <div class="columns bordered-columns has-background-grey-dark">    
     <div class="column is-4 bordered-column" v-for="group in groups" :key="group">
@@ -26,8 +25,6 @@
   </div>
 
   <GraphBuilder :nodes="nodes" @validation="validationMessages = $event"/>
-
-
 </div>
 </template>
 

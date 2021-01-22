@@ -1,6 +1,6 @@
 <template>
 <div>
-  <LayeredGraphChart id="model" :nodes="chartNodes" :edges="chartEdges"/>
+  <LayeredGraphChart ref="chart" id="model" :nodes="chartNodes" :edges="chartEdges"/>
 </div>
 </template>
 
@@ -75,14 +75,19 @@ export default {
       return edges
     }
   },
-
   watch: {
     bidirectionalNodes(newVal) {
       let validationMessages = validate(newVal)
       this.$emit('validation', validationMessages)
     }
+  },
+  mounted() {
+    this.$nextTick(() => {
+      if (this.nodes.length > 0) {
+        this.$refs.chart.refresh()
+      }
+    })
   }
-
 
 }
 

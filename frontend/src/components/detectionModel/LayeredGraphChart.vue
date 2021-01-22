@@ -55,7 +55,6 @@ export default {
         });
       });
     },
-
     drawChart() {
       //Draw graphics
       var svg = d3.select("#" + this.id).select("svg")
@@ -71,7 +70,7 @@ export default {
       
       var render = new dagreD3.render();
       render(inner, this.g);
-
+      if (this.nodes.length == 0) return
 /*      //Events
       inner.selectAll("g.node")
       .on("click", debounce(e => {
@@ -83,7 +82,6 @@ export default {
           let curNode = g.node(e)
           console.log(curNode, 'curNode')
       }, 200, {leading:false, trailing:true})); */
-
       // Initialize zoom ratio
       var initialScale = (svg.attr("width") - 100) / this.g.graph().width;
       if (initialScale > 1)
@@ -102,8 +100,11 @@ export default {
       // Disable user zoom
       svg.on("wheel.zoom", null);
       svg.on("dblclick.zoom", null);
-
     },
+    refresh() {
+      this.createLayout()
+      this.drawChart()
+    }
   },
   created() {
     window.addEventListener("resize", this.resizeHandler)
@@ -117,9 +118,6 @@ export default {
       this.drawChart()
     }
   },
-  mounted() {
-
-  }
 };
 </script>
 

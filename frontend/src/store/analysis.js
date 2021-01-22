@@ -1,6 +1,26 @@
 import api from "../api/repository";
 import { nanoid } from 'nanoid'
 
+function formatModel(model) {
+    let formatted = []
+    model.forEach(node => {
+        let formattedNode = { 
+            id: node.id, 
+            group: node.group, 
+            type: node.type, 
+            sources: node.sourceNodes.map(sc => sc.id)
+        }
+        let params = []
+        Object.keys(node.paramsData).forEach(param => {
+            params.push({ id: param, value: node.paramsData[param]})
+        })
+        formattedNode['params'] = params
+        formatted.push(formattedNode)
+    })
+    console.log(formatted)
+    return formatted
+}
+
 
 
 const state = {
@@ -121,7 +141,7 @@ const actions = {
                     tags: settings.tags,
                     contexts: settings.contexts,
                     interval: settings.interval,
-                    //config: seriesOpts.config
+                    model: formatModel(settings.model)
                 })
                 .then(response => {       
                     commit('add_results', {id: id, loading: false, results: response.data}) 
