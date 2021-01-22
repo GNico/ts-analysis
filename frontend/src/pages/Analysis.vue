@@ -22,10 +22,10 @@
   <div v-show="activeAnalysisId != ''" class="wide-container main-section">
     <b-tabs type=""  :animated="false" v-model="activeTab">
       <b-tab-item label="Settings" icon="cog" value="Settings" >
-        <AnalysisSettingsTab @run="activeTab='Results'"/>    
+        <SettingsTab @run="activeTab='Results'"/>    
       </b-tab-item>
       <b-tab-item label="Results" icon="file-chart" value="Results" :disabled="!hasResults">
-        <AnalysisResultsTab v-if="hasResults"/>
+        <ResultsTab v-if="hasResults"/>
         <span v-else class="is-size-5"> No results yet. Run analysis first! </span>
       </b-tab-item>
     </b-tabs>
@@ -36,11 +36,11 @@
 
 <script>
 import BarItemButton from '../components/inputs/BarItemButton';
-import AnalysisSettingsTab from '../components/AnalysisSettingsTab';
-import AnalysisResultsTab from "../components/AnalysisResultsTab";
+import SettingsTab from '../components/analysis/SettingsTab';
+import ResultsTab from "../components/analysis/ResultsTab";
 
 export default {
-  components: {  BarItemButton, AnalysisSettingsTab, AnalysisResultsTab},
+  components: {  BarItemButton, SettingsTab, ResultsTab},
   data () {
     return {        
       activeTab: "Settings",

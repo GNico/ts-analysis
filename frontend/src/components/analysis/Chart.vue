@@ -13,8 +13,8 @@
 
 
 <script>
-import { DefaultChartSettings } from '../config/settings'
-import BaseChart from "./BaseChart";
+import { DefaultChartSettings } from '../../config/settings'
+import BaseChart from "../BaseChart";
 
 export default {
   components: { BaseChart },

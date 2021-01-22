@@ -108,13 +108,13 @@
 
 <script>
 
-import VisualizeCardSeries from './VisualizeCardSeries.vue';
-import VisualizeCardIndicators from './VisualizeCardIndicators.vue';
-import VisualizeCardSettings from './VisualizeCardSettings.vue';
-import ModalCard from './ModalCard.vue';
+import CardSeries from './CardSeries.vue';
+import CardIndicators from './CardIndicators.vue';
+import CardSettings from './CardSettings.vue';
+import ModalCard from '../ModalCard.vue';
 
 export default {
-  components: { VisualizeCardSeries, VisualizeCardIndicators, VisualizeCardSettings, ModalCard},
+  components: { CardSeries, CardIndicators, CardSettings, ModalCard},
   props: {
     zoomEnabled: {
       type: Boolean,
@@ -131,19 +131,19 @@ export default {
         {
           name: 'Add series',
           icon: 'chart-line',        
-          component: 'VisualizeCardSeries',
+          component: 'CardSeries',
           open: false,
         },
     /*    {
           name: 'Indicators',
           icon: 'finance',        
-          component: 'VisualizeCardIndicators',
+          component: 'CardIndicators',
           open: false,
         }, */
         {
           name: 'Settings',
           icon: 'cog',        
-          component: 'VisualizeCardSettings',
+          component: 'CardSettings',
           open: false,
         }
       ],

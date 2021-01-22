@@ -1,7 +1,7 @@
 <template>
 <div>
   <section class="section">
-    <VisualizeToolBar 
+    <ChartToolbar 
       class="char-bar" 
       :zoomEnabled="zoomEnabled"
       @zoomToggle="toggleZoom"
@@ -34,7 +34,7 @@
           </p>       
         </LegendSeriesTag>
       </div>
-      <VisualizeChart 
+      <Chart 
         :key="componentKey"
         class="is-fullheight"
         :settings="chartSettings"
@@ -50,7 +50,7 @@
     </div>
   </section>
  
-  <VisualizeCardSeries 
+  <CardSeries 
     :isActive="isOpenSeriesEdit" 
     :id="currentSeriesId"
     @close="isOpenSeriesEdit = false" />
@@ -60,16 +60,16 @@
 
 
 <script>
-import VisualizeChart from '../components/VisualizeChart.vue';
-import VisualizeToolBar from '../components/VisualizeToolBar.vue';
-import LegendSeriesTag from '../components/LegendSeriesTag.vue';
-import VisualizeCardSeries from '../components/VisualizeCardSeries.vue';
+import Chart from '../components/visualize/Chart.vue';
+import ChartToolbar from '../components/visualize/ChartToolbar.vue';
+import LegendSeriesTag from '../components/visualize/LegendSeriesTag.vue';
+import CardSeries from '../components/visualize/CardSeries.vue';
 
 import api from "../api/repository";
 import { nanoid } from 'nanoid'
 
 export default {
-  components: { VisualizeChart, VisualizeToolBar, LegendSeriesTag, VisualizeCardSeries },
+  components: { Chart, ChartToolbar, LegendSeriesTag, CardSeries },
   data () {
     return {
       //backgroundColor: '#073642',

@@ -10,16 +10,10 @@
         v-model="settings.name"/>
     </b-field>
     <b-field horizontal label="Client">
-      <b-autocomplete
+      <SearchSelect
         v-model="settings.client"
-        open-on-focus
         :data="clients"
-        size="is-small"
-        ref=autocomplete 
-        @select="clearTagsContexts"
-        @keydown.native.enter="$event.target.blur()"> 
-          <template slot="empty">No results</template>
-      </b-autocomplete>  
+        @select="clearTagsContexts"/>
     </b-field>
     <b-field horizontal label="Tags">
       <TreeSelect 
@@ -55,9 +49,10 @@
 
 
 <script>
-import TreeSelect from './inputs/TreeSelect.vue';
-import ModelBuilder from "./detectionModel/ModelBuilder";
-import { tagsAndContexts } from '../mixins/TagsAndContextsOptions.js';
+import TreeSelect from '../inputs/TreeSelect.vue';
+import SearchSelect from '../inputs/SearchSelect.vue';
+import ModelBuilder from "../detectionModel/ModelBuilder";
+import { tagsAndContexts } from '../../mixins/TagsAndContextsOptions.js';
 import cloneDeep from "lodash/cloneDeep";
 
 const defaultSettings = {
@@ -72,7 +67,7 @@ const defaultSettings = {
 export default {
   name: "AnalysisSettings",
   mixins: [tagsAndContexts],
-  components:  { TreeSelect, ModelBuilder },
+  components:  { TreeSelect, ModelBuilder, SearchSelect },
   data () {
     return {
       settings: cloneDeep(defaultSettings)

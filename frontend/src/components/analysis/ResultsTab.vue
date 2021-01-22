@@ -55,7 +55,7 @@
         </b-field>
       </div>
 
-      <AnalysisAnomaliesTable 
+      <AnomaliesTable
         v-else
         id="anom-table"
         :anomalies="filteredAnomalies"
@@ -64,7 +64,7 @@
     </div>
 
     <div class="column main-content">
-      <AnalysisChart       
+      <Chart       
         :seriesData="seriesData"
         :baseline="baseline"
         :anomalies="filteredAnomalies"
@@ -79,11 +79,11 @@
 
 
 <script>
-import AnalysisChart from '../components/AnalysisChart.vue';
-import AnalysisAnomaliesTable from '../components/AnalysisAnomaliesTable.vue';
+import Chart from './Chart.vue';
+import AnomaliesTable from './AnomaliesTable.vue';
 
 export default {
-    components: { AnalysisChart, AnalysisAnomaliesTable },
+    components: { Chart, AnomaliesTable },
     data() {
       return {
         showFiltersMenu: false,

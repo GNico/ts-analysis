@@ -21,7 +21,7 @@
 
 
 <script>
-import BaseChart from "./BaseChart";
+import BaseChart from "../BaseChart";
 
 export default {
   components: { BaseChart },

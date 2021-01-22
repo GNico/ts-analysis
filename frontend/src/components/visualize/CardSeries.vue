@@ -7,7 +7,7 @@
   @close="close"
   @accept="isEdit ? updateSeries() : addSeries()">
 
-  <div class="columns is-multiline is-marginless is-gapless is-paddingless">
+  <div class="columns is-multiline ">
     <!--first column-->
     <div class="column is-6"> 
       <div class="field is-horizontal">
@@ -15,36 +15,28 @@
           <label class="label">Name</label>
         </div>
         <div class="field-body">
-          <div class="field is-narrow short-field">
+          <div class="field is-narrow">
             <div class="control">
               <input class="input is-small" type="text" v-model="seriesOptions.name">
             </div>
           </div>
         </div>
       </div>
-
       <div class="field is-horizontal">
         <div class="field-label is-small has-text-left">
           <label class="label">Client</label>
         </div>
         <div class="field-body">
-          <div class="field is-narrow short-field">
+          <div class="field is-narrow">
             <div class="control">
-               <b-autocomplete
-                  v-model="seriesOptions.client"
-                  open-on-focus
-                  :data="clients"
-                  size="is-small"
-                  ref=autocomplete 
-                  @select="clearTagsContexts"
-                  @keydown.native.enter="$event.target.blur()"> 
-                    <template slot="empty">No results</template>
-                </b-autocomplete>
+             <SearchSelect
+                v-model="seriesOptions.client"
+                :data="clients"
+                @select="clearTagsContexts"/>               
             </div>
           </div>
         </div>
       </div>
-
       <div class="field is-horizontal" v-if="!isEdit">
         <div class="field-label is-small has-text-left">
           <label class="label">Panel</label>
@@ -58,7 +50,6 @@
           </div>
         </div>
       </div>
-
     </div>
 
     <!--second column-->
@@ -71,9 +62,6 @@
           <div class="field is-narrow short-field">
             <b-select size="is-small" v-model="seriesOptions.type">
               <option>line</option>
-              <option>areaspline</option>
-              <option>spline</option>
-              <option>scatter</option>
               <option>column</option>
               <option>area</option>
             </b-select>
@@ -105,7 +93,6 @@
           </div>
         </div>
       </b-field>
-
       <div class="field is-horizontal">
         <div class="field-label is-small has-text-left">
           <label class="label">Color</label>
@@ -118,27 +105,23 @@
           </div>
         </div>
       </div>
-
     </div>
-
-    <div class="column is-full">
-      <div class="label is-small filters-label">Filters</div>
+    <div class="column is-full ">
+      <div class="label is-small">Filters</div>
     </div>
-    <div class="column is-6">
+    <div class="column is-6 filters-column">
       <TreeSelect 
         class="filters-box"
         rootName="All tags"
         :itemsTree="allTags"
-        v-model="seriesOptions.tags" 
-      />
+        v-model="seriesOptions.tags" />
     </div>
-    <div class="column is-6">
+    <div class="column is-6 filters-column">
       <TreeSelect 
         class="filters-box"
         rootName="All contexts"
         :itemsTree="allContexts"
-        v-model="seriesOptions.contexts" 
-      />
+        v-model="seriesOptions.contexts" />
     </div>
   </div>
 </ModalCard>
@@ -146,16 +129,16 @@
 
 
 <script>
-import ModalCard from './ModalCard';
-import ColorSelect from './inputs/ColorSelect';  
-import TreeSelect from './inputs/TreeSelect.vue';
-
-import { tagsAndContexts } from '../mixins/TagsAndContextsOptions.js';
+import ModalCard from '../ModalCard';
+import ColorSelect from '../inputs/ColorSelect';  
+import TreeSelect from '../inputs/TreeSelect.vue';
+import SearchSelect from '../inputs/SearchSelect.vue';
+import { tagsAndContexts } from '../../mixins/TagsAndContextsOptions.js';
 
 export default {
-  name: "VisualizeCardSeries",
+  name: "CardSeries",
   mixins: [tagsAndContexts],
-  components: { ModalCard, TreeSelect, ColorSelect },
+  components: { ModalCard, TreeSelect, ColorSelect, SearchSelect },
   props: {
     id: {
       type: String,
@@ -247,8 +230,10 @@ export default {
     },
     'seriesOptions.client': {
       handler(newVal) {
-        this.updateTags(newVal)
-        this.updateContexts(newVal)
+        if (!newVal || this.clients.includes(newVal)) {
+          this.updateTags(newVal)
+          this.updateContexts(newVal)
+        }
       }
     }, 
   }
@@ -259,9 +244,8 @@ export default {
 
 <style scoped>
 
-.filters-label {
-  margin-top: 0.75rem;
-  margin-bottom: 0.75rem;
+.filters-column {
+  padding-top: 0;
 }
 
 .filters-box {

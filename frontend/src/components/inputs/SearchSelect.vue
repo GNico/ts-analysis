@@ -1,6 +1,7 @@
 <template>
   <b-autocomplete
-    v-model="inputValue"
+    :value="value"
+    @input="$emit('input', $event)"
     :placeholder="placeholder"
     open-on-focus
     :size="size"
@@ -16,10 +17,8 @@
 
 <script>
 export default {
-  name: "SearchSelect",
   props: {
-    saved: {
-      required: false,
+    value: {
       default: '',
     },
     data: {
@@ -27,7 +26,7 @@ export default {
     },
     size: {
       required: false,
-      default: "default"
+      default: "is-small"
     },
     maxOptionsDisplayed: {
       type: Number,
@@ -42,14 +41,12 @@ export default {
     }
   },
   data() {
-    return {
-      inputValue:  ''
-    }
+    return {}
   },
   computed: {
     filteredDataList() {
       return  this.data.filter(
-        (item) => {return item.toLowerCase().match(this.inputValue.toLowerCase())} )
+        (item) => {return item.toLowerCase().match(this.value.toLowerCase())} )
     },
     reducedDataList() {
       return this.filteredDataList.slice(0, this.maxOptionsDisplayed)
@@ -58,16 +55,8 @@ export default {
   methods: {
     onBlur() {
       if (this.clearOnBlur && this.filteredDataList.length === 0) {
-        this.inputValue = ''
+        this.$emit('input', '')
       } 
-    },
-    setSelected(selected) {
-      let idx = this.data.findIndex(item => item == selected)
-      if (idx != -1) {
-        this.$refs.autocomplete.setSelected(this.data[idx])
-      } else {
-        this.clear()
-      }
     },
     closeOptions() {            
       this.$refs.autocomplete.isActive = false
@@ -79,11 +68,5 @@ export default {
       this.inputValue = ''
     }
   },
-  watch: {
-    saved(newval) {
-      //this.setSelected(newval)
-      this.inputValue = newval
-    },
-  }
 }
 </script>

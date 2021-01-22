@@ -83,8 +83,8 @@
 
 
 <script>
-import ModalCard from './ModalCard';
-import ColorSelect from './inputs/ColorSelect';  
+import ModalCard from '../ModalCard';
+import ColorSelect from '../inputs/ColorSelect';  
 
 export default {
   components: { ModalCard, ColorSelect  },

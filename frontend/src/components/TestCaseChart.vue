@@ -41,7 +41,7 @@
     </b-field>
 
 
-    <AnalysisAnomaliesTable
+    <AnomaliesTable
       :anomalies="actualAnomalies"        
       :activeAnomaly="activeAnomaly"
       height=330                      
@@ -68,12 +68,12 @@
 
 
 <script>
-import AnalysisAnomaliesTable from '../components/AnalysisAnomaliesTable.vue';
+import AnomaliesTable from '../components/analysis/AnomaliesTable.vue';
 import TestMetricsChart from '../components/TestMetricsChart.vue';
 import { nanoid } from 'nanoid'
 
 export default {
-  components: { AnalysisAnomaliesTable, TestMetricsChart },
+  components: { AnomaliesTable, TestMetricsChart },
   props: {    
     chartData: {
       type: Object,
