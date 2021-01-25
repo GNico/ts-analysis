@@ -89,6 +89,9 @@ DATABASES = {
         'PASSWORD': os.environ.get('DB_PASSWORD'),
         'HOST': 'localhost',
         'PORT': '5432',
+        'TEST': {
+            'NAME': 'testdatabase',
+        },
     }
 }
 
@@ -140,3 +143,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 STATIC_URL = '/static/'
+
+
+# Test results with color
+TEST_RUNNER="redgreenunittest.django.runner.RedGreenDiscoverRunner"

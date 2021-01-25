@@ -20,7 +20,7 @@
   </div>  
   <!-- content -->  
   <div v-show="activeAnalysisId != ''" class="wide-container main-section">
-    <b-tabs type=""  :animated="false" v-model="activeTab">
+    <b-tabs type="is-medium is-boxed"  :animated="false" v-model="activeTab">
       <b-tab-item label="Settings" icon="cog" value="Settings" >
         <SettingsTab @run="activeTab='Results'"/>    
       </b-tab-item>

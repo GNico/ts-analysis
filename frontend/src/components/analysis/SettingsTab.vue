@@ -1,7 +1,18 @@
 <template>
 <div class="columns">
-  <!--Data options -->
   <div class="column is-3">
+    <!--General options -->
+    <div class="subtitle subtitle-with-buttons"> 
+      General 
+      <b-field grouped position="is-right">
+        <p class="control">
+          <b-button class="is-outlined" label="Load" size="is-small" type="is-primary" />
+        </p>
+        <p class="control">
+          <b-button class="is-outlined"  label="Save" size="is-small"  type="is-primary" />
+        </p>
+      </b-field>
+    </div>
     <b-field horizontal label="Name">
       <b-input 
         type="text" 
@@ -9,6 +20,20 @@
         placeholder="This field is optional"
         v-model="settings.name"/>
     </b-field>
+    <b-field horizontal label="Description">
+      <b-input 
+        type="textarea" 
+        size="is-small" 
+        placeholder="This field is optional"
+        />
+    </b-field>
+    <b-field class="has-text-right">
+      <a class="button is-primary is-medium" @click="runAnalysis">
+        Run analysis
+      </a>
+    </b-field>
+    <!--Data options -->
+    <div class="subtitle"> Data input </div>
     <b-field horizontal label="Client">
       <SearchSelect
         v-model="settings.client"
@@ -31,18 +56,23 @@
     </b-field>
     <b-field horizontal label="Interval">
       <b-input v-model="settings.interval" type="text" pattern="^[0-9]+[mhd]$" size="is-small" />
-    </b-field>
-
-    <b-field class="has-text-right">
-      <a class="button is-primary is-medium" @click="runAnalysis">
-        Run analysis
-      </a>
-    </b-field>
+    </b-field>    
   </div>
 
-  <!--Model building -->
   <div class="column is-9 right-section">
-    <ModelBuilder :nodes="settings.model"  />
+    <!--Model building -->
+    <div class="subtitle subtitle-with-buttons"> 
+      Detection model
+      <b-field grouped position="is-right">
+        <p class="control">
+          <b-button class="is-outlined" label="Load model" size="is-small" type="is-primary" />
+        </p>
+        <p class="control">
+          <b-button class="is-outlined"  label="Save model" size="is-small"  type="is-primary" />
+        </p>
+      </b-field>
+    </div>
+    <ModelBuilder class="model-box" :nodes="settings.model"  />
   </div>
 </div>
 </template>
@@ -128,16 +158,24 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 .filters-box {
   padding-top: 0.25rem;
   max-height: 15rem;
   overflow-y: auto;
 }
 
+.subtitle-with-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
 .right-section {
   border-left: 1px solid rgba(255,255,255,0.1);
-  margin: 0.75rem 0 0 0.75rem;
 } 
+
+.model-box {
+  padding-top: 0.5rem;
+}
 
 </style>

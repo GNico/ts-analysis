@@ -5,8 +5,9 @@
     <b-dropdown scrollable :max-height="200" aria-role="list" position="is-bottom-left">
       <template #trigger="{ active }">
         <b-button
-          label="Add node" 
-          type="is-primary" 
+          class="is-outlined"
+          label="Add Node" 
+          type="is-info" 
           size="is-small"/>
       </template>
 
