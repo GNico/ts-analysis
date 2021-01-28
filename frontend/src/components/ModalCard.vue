@@ -1,5 +1,5 @@
  <template>
-  <div class="modal" :class="isActive ? 'is-active' : ''"  >
+  <div class="modal custom-modal" :class="isActive ? 'is-active' : ''"  >
     <div class="modal-background" @click="close()"></div>
     <div class="modal-card" :style="{'min-height': minheight, 'min-width': minwidth}">
       <header class="modal-card-head">
@@ -40,7 +40,7 @@ export default {
     minwidth: {
       type: String,
       default: '',
-    }
+    },
   },
   methods: {
     accept() {
@@ -71,20 +71,19 @@ export default {
 </script>
 
 
-<style scoped>
+<style>
 
-.modal-card {
+.custom-modal .modal-card {
   border: 2px solid rgba(255,255,255, 0.05);
   border-radius: 10px;
 }
 
-.modal-card-foot {
+.custom-modal .modal-card-foot {
   justify-content: flex-end;
 }
 
-.modal-card-title {
+.custom-modal .modal-card-title {
   font-size: 1.25rem;
 }
-
 
 </style>

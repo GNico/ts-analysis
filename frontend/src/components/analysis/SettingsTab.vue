@@ -65,15 +65,59 @@
       Detection model
       <b-field grouped position="is-right">
         <p class="control">
-          <b-button class="is-outlined" label="Load model" size="is-small" type="is-primary" />
+          <b-dropdown scrollable :max-height="200" aria-role="list" position="is-bottom-left">
+            <template #trigger="{ active }">
+              <b-button :class="active ? 'is-primary' : 'is-outlined'" label="Load Model" size="is-small" type="is-primary" />
+            </template>
+            <b-dropdown-item 
+              v-for="item in models" 
+              :key="item.id"
+              @click="loadModel(item)"
+              aria-role="listitem">
+              {{item.name}}
+            </b-dropdown-item>
+          </b-dropdown>
         </p>
         <p class="control">
-          <b-button class="is-outlined"  label="Save model" size="is-small"  type="is-primary" />
+          <b-button 
+            :class="isSaveModelActive ? 'is-primary' : 'is-outlined'" 
+            label="Save Model" 
+            size="is-small" 
+            type="is-primary" 
+            @click="toggleSaveModel"/>      
         </p>
       </b-field>
     </div>
     <ModelBuilder class="model-box" :nodes="settings.model"  />
   </div>
+
+
+  <ModalCard 
+  :isActive="isSaveModelActive" 
+  title="Save model"
+  @close="toggleSaveModel"
+  @accept="saveModel">
+    <b-field horizontal label="Name">
+      <b-input 
+        type="text" 
+        size="is-small" 
+        v-model="modelData.name"
+      />
+    </b-field>
+    <b-field horizontal label="Description">
+      <b-input 
+        type="textarea" 
+        size="is-small" 
+        v-model="modelData.description"
+      />
+    </b-field>
+
+
+    <template v-slot:footer>
+      <button class="button is-small is-primary" @click="saveModel">Save</button>
+      <button class="button is-small is-danger" @click="toggleSaveModel">Cancel</button>
+    </template>
+  </ModalCard>
 </div>
 </template>
 
@@ -82,6 +126,9 @@
 import TreeSelect from '../inputs/TreeSelect.vue';
 import SearchSelect from '../inputs/SearchSelect.vue';
 import ModelBuilder from "../detectionModel/ModelBuilder";
+import ModalCard from "../ModalCard";
+
+
 import { tagsAndContexts } from '../../mixins/TagsAndContextsOptions.js';
 import cloneDeep from "lodash/cloneDeep";
 
@@ -97,10 +144,17 @@ const defaultSettings = {
 export default {
   name: "AnalysisSettings",
   mixins: [tagsAndContexts],
-  components:  { TreeSelect, ModelBuilder, SearchSelect },
+  components:  { TreeSelect, ModelBuilder, SearchSelect, ModalCard },
   data () {
     return {
-      settings: cloneDeep(defaultSettings)
+      settings: cloneDeep(defaultSettings),    
+      isSaveModelActive: false,  
+
+      modelData: {
+        id: '',
+        name: '',
+        description: '',
+      }
     }
   },
   computed: {
@@ -109,9 +163,29 @@ export default {
     },
     id() {
       return this.$store.state.analysis.activeAnalysisId
+    },
+    models() {
+      return this.$store.state.models.all
     }
   },
   methods: {
+    toggleSaveModel() {
+      this.isSaveModelActive = !this.isSaveModelActive
+    },
+    saveModel() {
+      this.isSaveModelActive = false
+      this.$store.dispatch('models/saveModel', {
+        name: this.modelData.name, 
+        description: this.modelData.description,
+        nodes: this.settings.model
+      })
+    },
+    loadModel(model) {
+      this.modelData.id = model.id
+      this.modelData.name = model.name
+      this.modelData.description = model.description
+      this.settings.model = cloneDeep(model.nodes)
+    },
     resetFields() {
       this.settings = cloneDeep(defaultSettings)
     },
@@ -153,6 +227,9 @@ export default {
         }        
       }
     }
+  },
+  created() {
+    this.$store.dispatch('models/fetchModels')
   }
 }
 </script>

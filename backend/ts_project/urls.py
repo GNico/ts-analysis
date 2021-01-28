@@ -10,6 +10,15 @@ urlpatterns = [
     path('clients/<slug:pk>/series/contexts/', views.ContextListView.as_view(), name='contexts'),
     path('clients/<slug:pk>/series/tags/', views.TagListView.as_view(), name='tags'),
     path('analysis/', views.AnalysisView.as_view(), name='analysis'),
+
+    path('pipelines/', views.PipelineListView.as_view(), name='pipelines'),
+    path('pipelines/<slug:pk>/', views.PipelineDetailView.as_view(), name='pipeline_detail'),
+    path('node-types/', views.PipelineNodesListView.as_view(), name='pipeline_types'),
+
+    path('analysis-settings/', views.AnalysisSettingsListView.as_view(), name='settings'),
+    path('analysis-settings/<slug:pk>/', views.AnalysisSettingsDetailView.as_view(), name='settings_detail'),
+
+
     path('testalgo/', views.AlgoTestView.as_view(), name='testalgo'),
-    path('pipeline/types/', views.PipelineView.as_view(), name='pipeline_type_describe'),
+
 ]

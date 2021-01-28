@@ -10,6 +10,7 @@ from ..salib.model.analyzer import Analyzer
 from ..salib.model.pipeline.pipeline import Pipeline
 from ..salib.model.pipeline.node_factory import NodeFactory
 
+
 class AnalysisView(APIView):
     def get(self, request):
         data_series = services.get_series( 
@@ -20,13 +21,10 @@ class AnalysisView(APIView):
             end=request.query_params.get('end', ''),  
             tags=request.query_params.getlist('tags', []),             
             interval=request.query_params.get('interval', '1h'))
-
         dates = [pd.to_datetime(item[0], unit="ms") for item in data_series]
         count  = [item[1] for item in data_series]
         ts = pd.Series(count, index=dates)
-
         series = Series(ts)
-
         obj = {
             'nodes': [
                 {
@@ -70,7 +68,6 @@ class AnalysisView(APIView):
                 }
             ]
         }
-
         pipeline = Pipeline.from_json(obj)
 
         builder = NodeFactory.detector('test_id', 'EMA')

@@ -67,8 +67,22 @@ export default {
         return repository.get("/analysis/", {params: payload, paramsSerializer: params => transformArrayParams(params)})
     },
     getPipelineTypes() {
-        return repository.get("/pipeline/types/")
+        return repository.get("/node-types/")
     },
+    getDetectionModels() {
+        return repository.get("/pipelines/")
+    },
+    addNewModel(model) {
+        return repository.post("/pipelines/", model)
+    },
+    
+    getAnalysis() {
+        return repository.get("/analysis-settings/")
+    },
+
+
+
+
     testAlgo(testSource) {
         return repository.get("/testalgo?source=" + testSource)
     }

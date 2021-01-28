@@ -18,23 +18,23 @@ class Client(models.Model):
 
 class Analysis(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50, blank=True)
+    name = models.CharField(max_length=50, unique=True)
     description = models.TextField(blank=True)
-    data_options = models.JSONField()
+    data_options = models.JSONField(default=dict)
+    model = models.JSONField(default=list)
     created = models.DateTimeField(auto_now_add=True) 
     modified = models.DateTimeField(auto_now=True)
-    model = models.JSONField()
 
     class Meta: 
         db_table = 'analysis'
 
 
-class DetectionModel(models.Model):
-    name = models.CharField(max_length=50, blank=True)
+class Pipeline(models.Model):
+    name = models.CharField(max_length=50, unique=True)
     description = models.TextField(blank=True)
-    pipeline = models.JSONField()
+    nodes = models.JSONField()
     created = models.DateTimeField(auto_now_add=True) 
     modified = models.DateTimeField(auto_now=True)
 
     class Meta: 
-        db_table = 'models'
+        db_table = 'pipelines'
