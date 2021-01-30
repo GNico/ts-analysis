@@ -14,11 +14,16 @@
           </b-input>
         </b-field>
         <b-field label="Folder name">
-          <b-input
-            v-model="form.folder_name"
-            placeholder="Data folder"
-            required>
-          </b-input>
+            <b-select placeholder="Select a name" v-model="form.folder_name">
+                <option
+                    v-for="option in dataSourceNames"
+                    :value="option"
+                    :key="option">
+                    {{ option}}
+                </option>
+            </b-select>
+
+         
         </b-field>
       </section>
       <footer class="modal-card-foot">
@@ -35,6 +40,12 @@ import api from "../api/repository"
 
 export default {
   name: 'FormNewClient',
+  props: {
+    dataSourceNames: {
+      type: Array,
+      default: () => []
+    }
+  },
 	data() {
     return {
       form: {

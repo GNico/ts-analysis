@@ -19,6 +19,8 @@ urlpatterns = [
     path('analysis-settings/<slug:pk>/', views.AnalysisSettingsDetailView.as_view(), name='settings_detail'),
 
 
+    path('source-files/', views.DataSourceFilesList.as_view(), name='source-files'),
+
     path('testalgo/', views.AlgoTestView.as_view(), name='testalgo'),
 
 ]

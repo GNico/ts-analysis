@@ -75,6 +75,9 @@ export default {
     addNewModel(model) {
         return repository.post("/pipelines/", model)
     },
+    getDataSourceNames() {
+        return repository.get("/source-files/")
+    },
     
     getAnalysis() {
         return repository.get("/analysis-settings/")

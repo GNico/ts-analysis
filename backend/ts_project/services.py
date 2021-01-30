@@ -12,13 +12,15 @@ class ClientNameAlreadyExists(Exception):
 
 
 def add_new_client(client_name, docs_path):
-    if not Client.objects.filter(name=client_name).exists():
-        filenames = utils.get_files_from_directory(docs_path)
-        task = tasks.index_series_data.delay(client_name, filenames)
-        client = Client.objects.create(name=client_name, index_name='', task_id=task.id, status='Pending')
-        return task.id
-    else:
+    if Client.objects.filter(name=client_name).exists():
         raise ClientNameAlreadyExists()
+    filenames = utils.get_files_from_directory(docs_path)
+    task = tasks.index_series_data.delay(client_name, filenames)
+    client = Client.objects.create(name=client_name, index_name='', task_id=task.id, status='Pending')
+    return task.id
+   
+
+
 
 
 def delete_client(client_name):

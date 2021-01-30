@@ -14,7 +14,7 @@
         :focusable="false"
         custom
         paddingless>
-        <FormNewClient @submit="addClient"/>
+        <FormNewClient :dataSourceNames="dataSourceNames" @submit="addClient"/>
       </b-dropdown-item>
     </b-dropdown>
 
@@ -105,7 +105,8 @@
 <script>
 import FormNewClient from '../components/FormNewClient'
 import ClientDetails from '../components/ClientDetails'
-//import CientsTable from '../components/ClientsTable'
+import api from '../api/repository'
+
 
 export default {
     components: {  FormNewClient, ClientDetails },
@@ -113,6 +114,7 @@ export default {
       return {
         polling: null,
         openRows: [],
+        dataSourceNames: []
       }
     },
     computed: {
@@ -177,6 +179,7 @@ export default {
     },
     created () {
       this.pollClients()
+      api.getDataSourceNames().then(response => this.dataSourceNames = response.data)
     },
     beforeDestroy () {
       clearInterval(this.polling)
