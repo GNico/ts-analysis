@@ -51,8 +51,11 @@ const actions = {
                 console.log(error)
               })
     },
-    deleteModel(store, id) {
-
+    deleteModel({store, dispatch}, id) {
+      return  api.deleteModel(id)
+              .then(response => {
+                dispatch('fetchModels')
+              })
     }
 
 }

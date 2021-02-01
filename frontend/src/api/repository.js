@@ -32,8 +32,12 @@ const transformArrayParams = (params) => {
 }
 
 export default {
+    //Clients
     getClients() {
         return repository.get("/clients/")
+    },
+    getDataSourceNames() {
+        return repository.get("/source-files/")
     },
     addNewClient(form) {
         return repository.post("/clients/", form)
@@ -46,6 +50,8 @@ export default {
         let url = "/clients/" + clientName + "/"
         return repository.get(url)
     },
+
+    //Series
     getSeriesData(params) {
         let url = "/clients/" + params.name + "/series/"
         delete params.name
@@ -66,11 +72,13 @@ export default {
     getAnomalies(payload) {
         return repository.get("/analysis/", {params: payload, paramsSerializer: params => transformArrayParams(params)})
     },
-    getPipelineTypes() {
-        return repository.get("/node-types/")
-    },
+
+    //Models
     getDetectionModels() {
         return repository.get("/pipelines/")
+    },
+    getPipelineTypes() {
+        return repository.get("/node-types/")
     },
     addNewModel(model) {
         delete model.id
@@ -81,16 +89,16 @@ export default {
         delete model.id
         return repository.put("/pipelines/"+ id + "/", model)
     },
-    getDataSourceNames() {
-        return repository.get("/source-files/")
+    deleteModel(id) {
+        return repository.delete("/pipelines/" + id + "/")
     },
-    
+
+
     getAnalysis() {
         return repository.get("/analysis-settings/")
     },
 
-
-
+    //Misc
     testAlgo(testSource) {
         return repository.get("/testalgo?source=" + testSource)
     }
