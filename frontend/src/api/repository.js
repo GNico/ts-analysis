@@ -70,7 +70,7 @@ export default {
         return repository.get(url)
     },
     getAnomalies(payload) {
-        return repository.get("/analysis/", {params: payload, paramsSerializer: params => transformArrayParams(params)})
+        return repository.post("/analysis/", payload)
     },
 
     //Models

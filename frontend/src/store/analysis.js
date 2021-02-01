@@ -2,7 +2,8 @@ import api from "../api/repository";
 import { nanoid } from 'nanoid'
 
 function formatModel(model) {
-    let formatted = []
+    let formatted = {}
+    let nodes = [] 
     model.forEach(node => {
         let formattedNode = { 
             id: node.id, 
@@ -15,8 +16,9 @@ function formatModel(model) {
             params.push({ id: param, value: node.paramsData[param]})
         })
         formattedNode['params'] = params
-        formatted.push(formattedNode)
+        nodes.push(formattedNode)
     })
+    formatted['nodes'] = nodes
     console.log(formatted)
     return formatted
 }
