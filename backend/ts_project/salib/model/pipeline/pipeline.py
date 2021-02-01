@@ -1,5 +1,6 @@
 from .node_factory import NodeFactory
 from .nodes.node_result import NodeResult
+from .nodes.aggregators.root import Root
 
 class Pipeline:
 
@@ -26,17 +27,13 @@ class Pipeline:
     @staticmethod
     def from_json(obj):
         reference_table = {}
-        root_node = None
         nodes = obj['nodes']
+        all_source_references = set()
         for node in nodes:
             actual_node = NodeFactory.from_json(node)
             reference_table[actual_node.id] = actual_node
-            # First node is root node!
-            if root_node == None:
-                root_node = actual_node
-        if root_node is None:
-            raise Exception("Must have root node")
-
+            all_source_references.update(actual_node.sources)
+        root_node = Pipeline.build_root_node(reference_table.values(), all_source_references)
         Pipeline.replace_node_references(reference_table, root_node)
         return Pipeline(root_node)
 
@@ -45,3 +42,11 @@ class Pipeline:
         node.sources = [refs[source] for source in node.sources]
         for source in node.sources:
             Pipeline.replace_node_references(refs, source)
+
+    @staticmethod
+    def build_root_node(all_nodes, all_source_references):
+        root = Root()
+        for node in all_nodes:
+            if node.id not in all_source_references:
+                root.add_source(node.id)
+        return root
