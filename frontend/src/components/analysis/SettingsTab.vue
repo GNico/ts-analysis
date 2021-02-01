@@ -65,7 +65,7 @@
       Detection model
       <b-field grouped position="is-right">
         <p class="control">
-          <b-dropdown scrollable :max-height="200" aria-role="list" position="is-bottom-left">
+          <b-dropdown scrollable :max-height="300" aria-role="list" position="is-bottom-left">
             <template #trigger="{ active }">
               <b-button :class="active ? 'is-primary' : 'is-outlined'" label="Load Model" size="is-small" type="is-primary" />
             </template>
@@ -113,11 +113,18 @@
     </b-field>
 
 
-    <template v-slot:footer>
-      <button class="button is-small is-primary" @click="saveModel">Save</button>
-      <button class="button is-small is-danger" @click="toggleSaveModel">Cancel</button>
+    <template v-slot:footer-left>
+      <span class="is-size-7 has-text-warning"> {{footerMessage}} </span>
+    </template>
+    <template v-slot:footer-right>
+      <div>
+        <button class="button is-small is-primary" @click="saveModel">Save</button>
+        <button class="button is-small is-danger" @click="toggleSaveModel">Cancel</button>
+      </div>
     </template>
   </ModalCard>
+
+
 </div>
 </template>
 
@@ -127,7 +134,6 @@ import TreeSelect from '../inputs/TreeSelect.vue';
 import SearchSelect from '../inputs/SearchSelect.vue';
 import ModelBuilder from "../detectionModel/ModelBuilder";
 import ModalCard from "../ModalCard";
-
 
 import { tagsAndContexts } from '../../mixins/TagsAndContextsOptions.js';
 import cloneDeep from "lodash/cloneDeep";
@@ -148,10 +154,9 @@ export default {
   data () {
     return {
       settings: cloneDeep(defaultSettings),    
-      isSaveModelActive: false,  
 
+      isSaveModelActive: false,  
       modelData: {
-        id: '',
         name: '',
         description: '',
       }
@@ -166,6 +171,12 @@ export default {
     },
     models() {
       return this.$store.state.models.all
+    },
+    matchingModel() {
+      return this.models.find(elem => elem.name == this.modelData.name)
+    },
+    footerMessage() {
+      return this.matchingModel ? 'Model name already exists. Saving will overwrite existing model' : ''
     }
   },
   methods: {
@@ -175,13 +186,13 @@ export default {
     saveModel() {
       this.isSaveModelActive = false
       this.$store.dispatch('models/saveModel', {
+        id: this.matchingModel ? this.matchingModel.id : null,
         name: this.modelData.name, 
         description: this.modelData.description,
         nodes: this.settings.model
       })
     },
     loadModel(model) {
-      this.modelData.id = model.id
       this.modelData.name = model.name
       this.modelData.description = model.description
       this.settings.model = cloneDeep(model.nodes)

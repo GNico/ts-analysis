@@ -11,9 +11,14 @@
         <slot :closeHandler="close"></slot>     
       </section>
       <footer class="modal-card-foot">
-        <slot name="footer">
-          <button class="button is-small is-primary" @click="accept">OK</button>
-          <button class="button is-small is-danger" @click="close">Cancel</button>
+        <slot name="footer-left">
+          <span></span>
+        </slot>
+        <slot name="footer-right">
+          <div>
+            <button class="button is-small is-primary" @click="accept">OK</button>
+            <button class="button is-small is-danger" @click="close">Cancel</button>
+          </div>
         </slot>
       </footer>
     </div>
@@ -79,7 +84,7 @@ export default {
 }
 
 .custom-modal .modal-card-foot {
-  justify-content: flex-end;
+  justify-content: space-between;
 }
 
 .custom-modal .modal-card-title {

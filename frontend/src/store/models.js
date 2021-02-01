@@ -40,10 +40,11 @@ const actions = {
                 console.log(error)
               }) 
     },
-    saveModel(store, model) {
-      return  api.addNewModel(model)
+    saveModel({store, dispatch},  model) {
+      const apiCall =  model.id ? api.updateModel : api.addNewModel
+      return  apiCall(model)
               .then(response => {
-                store.commit('add_model', response.data)
+                dispatch('fetchModels')
               })
               .catch(error => { 
                 console.log('error saving new model')

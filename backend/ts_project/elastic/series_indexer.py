@@ -105,7 +105,7 @@ class SeriesIndexer():
                     '_source': {
                       '@timestamp': event['source']['date'], 
                       'tag': event['source']['tags'],
-                      'context': event['source']['context']
+                      'context': event['source']['context'] if 'context' in event['source'].keys() else ''
                     }
             }
             yield(doc) 

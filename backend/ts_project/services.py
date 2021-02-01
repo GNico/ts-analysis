@@ -1,4 +1,3 @@
-from math import ceil
 from .models import Client
 from .elastic import series_search, series_indexer
 from . import tasks
@@ -20,9 +19,6 @@ def add_new_client(client_name, docs_path):
     return task.id
    
 
-
-
-
 def delete_client(client_name):
     client = Client.objects.filter(name=client_name).delete()
     indexer.delete(client_name)
@@ -39,7 +35,7 @@ def get_clients_info():
             indexing_clients.append({
                 'name': client.name,
                 'status': 'Indexing',
-                'progress': _calculate_progress(task)
+                'progress': task.info.get('progress', 0)
             })
         elif task.state == 'PENDING':
             indexing_clients.append({
@@ -47,16 +43,6 @@ def get_clients_info():
                 'status': 'Waiting',
                 'progress': 0
             })
-        elif task.state == 'SUCCESS':
-            client.status = 'Ready'
-            client.index_name = indexer.get_index_name(client.name)
-            client.task_id = ''
-            client.save()
-        elif task.state == 'FAILURE':
-            client.status = 'Failed'
-            client.index_name = indexer.get_index_name(client.name)
-            client.task_id = ''
-            client.save()
     indexed_clients = Client.objects.exclude(status='Pending').values('name', 'status', 'created', 'modified')
     return [ *indexing_clients, *indexed_clients ]
 
@@ -88,11 +74,5 @@ def get_tags(client_name):
 def get_contexts(client_name):
     client = Client.objects.get(name=client_name)
     return search.get_contexts(client.index_name)
-
-
-def _calculate_progress(task):
-    total = task.info.get('total_events', 1)
-    current = search.get_count(task.info.get('index_name'))
-    return ceil(current * 100 / total)
 
 

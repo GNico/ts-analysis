@@ -73,7 +73,13 @@ export default {
         return repository.get("/pipelines/")
     },
     addNewModel(model) {
+        delete model.id
         return repository.post("/pipelines/", model)
+    },
+    updateModel(model) {
+        const id = model.id
+        delete model.id
+        return repository.put("/pipelines/"+ id + "/", model)
     },
     getDataSourceNames() {
         return repository.get("/source-files/")
@@ -82,7 +88,6 @@ export default {
     getAnalysis() {
         return repository.get("/analysis-settings/")
     },
-
 
 
 
