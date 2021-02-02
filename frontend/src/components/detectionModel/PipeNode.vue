@@ -182,7 +182,7 @@ export default {
               size: 'is-small',
             }
           }
-        case 'boolean':
+        case 'Boolean':
           return {
             name: 'b-checkbox',
             props: {          
@@ -199,7 +199,8 @@ export default {
         }
     },
     paramsDataChange(name, event) {
-      this.$emit('nodeParamsChange', {id: this.id, [name]: event})
+      let num = parseFloat(event)
+      this.$emit('nodeParamsChange', {id: this.id, [name]: num ? num : event})
     },
     sourceNodesChange(event) {
       let sourceNodes = event
