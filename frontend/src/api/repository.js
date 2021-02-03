@@ -104,7 +104,7 @@ export default {
         return repository.post("/analysis-settings/", analysis)
     },
     updateAnalysis(analysis, id) {
-        return repository.put("/analysis-settings/"+ id + "/", analysis)
+        return repository.put("/analysis-settings/" + id + "/", analysis)
     },
     deleteAnalysis(id) {
         return repository.delete("/analysis-settings/" + id + "/")

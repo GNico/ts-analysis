@@ -129,16 +129,20 @@ const actions = {
     loadAnalysis(store, saveId) {
         return  api.getAnalysisDetails(saveId)
                 .then(response => {
-                    let settings = response.data
-                    settings.savedId = settings.id
+                    let loaded = response.data
+                    let settings = {}
+                    settings.savedId = loaded.id
                     settings.id = nanoid(5)
-                    settings.client = settings.data_options.client
-                    settings.tags = settings.data_options.tags
-                    settings.contexts = settings.data_options.contexts
-                    settings.interval = settings.data_options.interval
-                    console.log(settings)
+                    settings.name = loaded.name
+                    settings.description = loaded.description
+                    settings.client = loaded.data_options.client
+                    settings.tags = loaded.data_options.tags
+                    settings.contexts = loaded.data_options.contexts
+                    settings.interval = loaded.data_options.interval
+                    settings.model = loaded.model
                     store.commit('add_analysis', settings)
                 })
+                .catch(error => console.log())
     }, 
     saveAnalysis({store, getters}, id) {
         const settings = getters.getAnalysisById(id)
@@ -154,12 +158,30 @@ const actions = {
             },
             model: settings.model 
         }
-        if (settings.saveId) {
-            api.updateAnalysis(objectToSave, savedId).then(response => console.log(response)).catch(error => console.log(error))
-        } else {
-            api.addNewAnalysis(objectToSave).then(response => console.log(response)).catch(error => console.log(error))
-        }
+        console.log("save")
+        api.addNewAnalysis(objectToSave).then(response => console.log(response)).catch(error => console.log(error))
         
+        
+    },
+    updateAnalysis({store, getters, dispatch}, id) {
+        const settings = getters.getAnalysisById(id)
+        const objectToSave = { 
+            client: settings.client,
+            name: settings.name,
+            description: settings.description,
+            data_options: { 
+                client: settings.client, 
+                tags: settings.tags, 
+                contexts: settings.contexts, 
+                interval: settings.interval
+            },
+            model: settings.model 
+        }
+        console.log("update")
+        return  api.updateAnalysis(objectToSave, settings.savedId)
+                .then(response => console.log(response))
+                .catch(error => console.log(error))
+
     },
 
 
@@ -167,13 +189,10 @@ const actions = {
     createLocalAnalysis(store) {
         store.commit('add_analysis', { id: nanoid(5), saveId: undefined })
     },
-    setActiveAnalysis(store, id) {
-        store.commit('set_active', id)
-    },
     closeLocalAnalysis(store, id) {
         store.commit('remove_analysis', id)
     },
-    updateSettings(store, settings) {
+    updateLocalSettings(store, settings) {
         store.commit('update_analysis', settings)
     },
 	runAnalysis({commit, getters}, id) {
@@ -193,6 +212,9 @@ const actions = {
                 .catch(error => { 
                     console.log('error retrieving analysis')
                 })         
+    },
+    setActiveAnalysis(store, id) {
+        store.commit('set_active', id)
     },
     setActiveAnomaly(store, id) {
         store.commit('set_active_anomaly', id)
