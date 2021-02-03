@@ -18,15 +18,11 @@ class TestPipeline(unittest.TestCase):
                 {
                     'id': '2',
                     'group': 'detector',
-                    'type': 'EMA',
+                    'type': 'SimpleThreshold',
                     'params': [
                         {
-                            'id': 'decay',
-                            'value': 0.95
-                        },
-                        {
-                            'id': 'threshold',
-                            'value': 1
+                            'id': 'inside',
+                            'value': False
                         }
                     ],
                     'sources': []
@@ -35,14 +31,11 @@ class TestPipeline(unittest.TestCase):
                     'id': '3',
                     'group': 'detector',
                     'type': 'EMA',
+                    'type': 'SimpleThreshold',
                     'params': [
                         {
-                            'id': 'decay',
-                            'value': 0.9
-                        },
-                        {
-                            'id': 'threshold',
-                            'value': 2
+                            'id': 'inside',
+                            'value': True
                         }
                     ],
                     'sources': []
@@ -56,8 +49,8 @@ class TestPipeline(unittest.TestCase):
         orNode = pipeline.root_node.sources[0]
         self.assertEqual('OR(2,3)', str(orNode))
         self.assertEqual(2, len(orNode.sources))
-        self.assertEqual('EMA(0.95,1)[2]', str(orNode.sources[0]))
-        self.assertEqual('EMA(0.9,2)[3]', str(orNode.sources[1]))
+        self.assertEqual('SimpleThreshold(None,None,False)[2]', str(orNode.sources[0]))
+        self.assertEqual('SimpleThreshold(None,None,True)[3]', str(orNode.sources[1]))
 
     def test_parsing_implicit_aggregator(self):
         obj = {
@@ -65,15 +58,11 @@ class TestPipeline(unittest.TestCase):
                 {
                     'id': '2',
                     'group': 'detector',
-                    'type': 'EMA',
+                    'type': 'SimpleThreshold',
                     'params': [
                         {
-                            'id': 'decay',
-                            'value': 0.95
-                        },
-                        {
-                            'id': 'threshold',
-                            'value': 1
+                            'id': 'inside',
+                            'value': False
                         }
                     ],
                     'sources': []
@@ -82,14 +71,11 @@ class TestPipeline(unittest.TestCase):
                     'id': '3',
                     'group': 'detector',
                     'type': 'EMA',
+                    'type': 'SimpleThreshold',
                     'params': [
                         {
-                            'id': 'decay',
-                            'value': 0.9
-                        },
-                        {
-                            'id': 'threshold',
-                            'value': 2
+                            'id': 'inside',
+                            'value': True
                         }
                     ],
                     'sources': []
@@ -100,5 +86,5 @@ class TestPipeline(unittest.TestCase):
 
         self.assertEqual('_Root(2,3)', str(pipeline.root_node))
         self.assertEqual(2, len(pipeline.root_node.sources))
-        self.assertEqual('EMA(0.95,1)[2]', str(pipeline.root_node.sources[0]))
-        self.assertEqual('EMA(0.9,2)[3]', str(pipeline.root_node.sources[1]))
+        self.assertEqual('SimpleThreshold(None,None,False)[2]', str(pipeline.root_node.sources[0]))
+        self.assertEqual('SimpleThreshold(None,None,True)[3]', str(pipeline.root_node.sources[1]))

@@ -1,15 +1,20 @@
+from .nodes.transformers.ema import EMA
+from .nodes.transformers.std_normalize import StdNormalize
+
+from .nodes.detectors.simple_threshold import SimpleThreshold
+
 from .nodes.aggregators._and import And
 from .nodes.aggregators._or import Or
-
-from .nodes.detectors.ema import EMA
 
 class NodeFactory:
 
     NODE_TYPES = {
         'transformer': {
+            'StdNormalize': StdNormalize,
+            'EMA': EMA
         },
         'detector': {
-            'EMA': EMA
+            'SimpleThreshold': SimpleThreshold
         },
         'aggregator': {
             'OR': Or,
@@ -33,10 +38,10 @@ class NodeFactory:
         for type in NodeFactory.NODE_TYPES[group]:
             instance = NodeFactory.base_node(None, group, type)
             entry = {}
-            entry['group'] = group
             entry['type'] = type
-            entry['display'] = instance.display()
+            entry['group'] = group
             entry['desc'] = instance.desc()
+            entry['display'] = instance.display()
             entry['params'] = instance.params_definition()
             output.append(entry)
         return output
@@ -85,6 +90,8 @@ class NodeFactory:
         self.node = NodeFactory.base_node(id, group, type)
 
     def set_param_value(self, id, value):
+        if value == '':
+            value = None
         self.node.set_param_value(id, value)
         return self
 

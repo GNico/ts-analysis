@@ -12,10 +12,12 @@ from ..salib.model.pipeline.node_factory import NodeFactory
 
 
 class AnalysisView(APIView):
+
     def post(self, request):
         data = request.data
         # TODO: deberia pinchar con mas gracia si esta vacio
         pipeline_obj = data['model']
+        # TODO: cleanup
         print("PIPELINE OBJ:", data['model'])
         pipeline = Pipeline.from_json(pipeline_obj)
 
@@ -33,13 +35,9 @@ class AnalysisView(APIView):
         ts = pd.Series(count, index=dates)
         series = Series(ts)
 
-        builder = NodeFactory.detector('test_id', 'EMA')
-        builder.set_param_value('decay', 0.95)
-        builder.set_param_value('threshold', 1)
-        ema = builder.build()
-
-        analyzer = Analyzer(pipeline=pipeline, baseline_algo=ema)
+        analyzer = Analyzer(pipeline=pipeline)
         analysis = analyzer.analyze(series)
         response = analysis.output_format()
+        
         return Response(response)
 

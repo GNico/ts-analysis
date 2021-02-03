@@ -8,12 +8,12 @@ class NodeDetector(Node):
 
     def execute(self, inputs):
         if len(inputs) != 1:
-            raise Exception("Invalid pipeline setup, NodeDetector must have exactly 1 input")
-        series = inputs[0].series
-        anomalies = self.anomalies(series)
+            raise Exception("NodeDetector must have exactly 1 input")
+        input = inputs[0]
+        anomalies = self.anomalies(input)
         for anomaly in anomalies:
             anomaly.tag_algo(str(self))
-        return NodeResult(self, series=series, anomalies=anomalies)
+        return NodeResult(self, series=input, anomalies=anomalies)
 
     def anomalies(self, series):
-        raise Exception('Unimplemented method')
+        raise Exception('Unimplemented anomalies method for NodeDetector')

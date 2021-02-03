@@ -20,6 +20,9 @@ class Node:
     def add_source(self, source):
         self.sources.append(source)
 
+    def add_param(self, param):
+        self.params[param.id] = param
+
     def add_required_param(self, param):
         self.required_params[param.id] = param
 
@@ -37,11 +40,13 @@ class Node:
         elif id in self.required_params:
             return self.required_params[id]
         else:
-            raise 'Invalid param ' + id
+            raise Exception('Invalid param ' + id)
 
     def params_definition(self):
         output = []
         for id, param in self.required_params.items():
+            output.append(param.definition())
+        for id, param in self.params.items():
             output.append(param.definition())
         return output
 

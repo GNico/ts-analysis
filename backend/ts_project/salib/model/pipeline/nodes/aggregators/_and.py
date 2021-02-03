@@ -8,8 +8,8 @@ class And(Node):
 
     def execute(self, inputs):
         all_anomalies = []
-        # ToDo implement overalpping. 
-        # On overlap do what?
+        # ToDo implement combining overalpping. 
+        # On overlap combine
         for i in inputs:
             all_anomalies.extend(i.anomalies)
         return NodeResult(self, anomalies=or_anomalies)

@@ -5,6 +5,36 @@ from model.pipeline.node_factory import NodeFactory
 
 class TestNodeFactory(unittest.TestCase):
 
+    def test_transformers_description(self):
+        expected = [
+            {
+                'type': 'StdNormalize',
+                'group': 'transformer',
+                'display': 'Standard normalization',
+                'desc': 'Normalize data such that mean = 0 and std dev = 1',
+                'params': []
+            },
+            {
+                'type': 'EMA',
+                'display': 'Exponential moving average',
+                'desc': 'Exponential moving average with decay rate',
+                'group': 'transformer',
+                'params': [
+                    {
+                        'id': 'decay',
+                        'display': 'Decay',
+                        'desc': 'Decay rate',
+                        'max': 1,
+                        'min': 0,
+                        'type': 'BoundedFloat',
+                        'value': 0.9,
+                    }
+                ]
+            }
+        ]
+        self.maxDiff = None
+        self.assertEqual(expected, NodeFactory.transformers_description())
+
     def test_aggregators_description(self):
         expected = [
             {
@@ -28,26 +58,31 @@ class TestNodeFactory(unittest.TestCase):
     def test_detectors_description(self):
         expected = [
             {
-                'type': 'EMA',
-                'display': 'Exponential moving average',
-                'desc': 'Exponential moving average with decay rate and minimum required threshold',
+                'type': 'SimpleThreshold',
+                'display': 'Simple Threshold',
+                'desc': 'Detect values outside of bounds',
                 'group': 'detector',
                 'params': [
                     {
-                        'id': 'decay',
-                        'display': 'Decay',
-                        'desc': 'Decay rate',
-                        'max': 1,
-                        'min': 0,
-                        'type': 'BoundedFloat',
-                        'value': 0.9,
+                        'id': 'inside',
+                        'display': 'Inside',
+                        'desc': 'If true, value must be within bounds',
+                        'type': 'Boolean',
+                        'value': False,
                     },
                     {
-                        'id': 'threshold',
-                        'display': 'Deviations threshold',
-                        'desc': 'Min required deviations threshold',
+                        'id': 'below',
+                        'display': 'Below',
+                        'desc': 'Below threshold',
                         'type': 'Float',
-                        'value': 2,
+                        'value': None,
+                    },
+                    {
+                        'id': 'above',
+                        'display': 'Above',
+                        'desc': 'Above threshold',
+                        'type': 'Float',
+                        'value': None,
                     }
                 ]
             }
@@ -56,26 +91,27 @@ class TestNodeFactory(unittest.TestCase):
         self.assertEqual(expected, NodeFactory.detectors_description())
 
     def test_parsing(self):
-        builder = NodeFactory.detector('test_id', 'EMA')
-        builder.set_param_value('decay', 0.95)
-        builder.set_param_value('threshold', 1)
-        ema = builder.build()
-        self.assertEqual(str(ema), 'EMA(0.95,1)[test_id]')
+        builder = NodeFactory.detector('test_id', 'SimpleThreshold')
+        builder.set_param_value('inside', False)
+        builder.set_param_value('below', 1)
+        builder.set_param_value('above', None)
+        threshold = builder.build()
+        self.assertEqual(str(threshold), 'SimpleThreshold(1,None,False)[test_id]')
 
         obj = {
             'id': 'test_id',
             'group': 'detector',
-            'type': 'EMA',
+            'type': 'SimpleThreshold',
             'params': [
                 {
-                    'id': 'decay',
-                    'value': 0.95
+                    'id': 'below',
+                    'value': 1
                 },
                 {
-                    'id': 'threshold',
-                    'value': 1
+                    'id': 'inside',
+                    'value': False
                 }
             ]
         }
-        ema_from_json = NodeFactory.from_json(obj)
-        self.assertEqual(str(ema), str(ema_from_json))
+        th_from_json = NodeFactory.from_json(obj)
+        self.assertEqual(str(threshold), str(th_from_json))

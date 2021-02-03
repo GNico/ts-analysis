@@ -7,6 +7,9 @@ class Param:
         self.display = display
         self.value = value
 
+    def is_set(self):
+        return self.value is not None
+
     def definition(self):
         output = {
             'id': self.id,

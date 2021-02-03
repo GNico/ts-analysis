@@ -199,8 +199,10 @@ export default {
         }
     },
     paramsDataChange(name, event) {
-      let num = parseFloat(event)
-      this.$emit('nodeParamsChange', {id: this.id, [name]: num ? num : event})
+      console.log("event:" + event)
+      console.log("isNaN(event)" + isNaN(event))
+      console.log("parseFloat:" + parseFloat(event))
+      this.$emit('nodeParamsChange', {id: this.id, [name]: (isNaN(event) ? event : parseFloat(event))})
     },
     sourceNodesChange(event) {
       let sourceNodes = event

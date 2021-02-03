@@ -16,8 +16,11 @@ class Series:
             self.interval = interval
 
     def calculate_interval(self):
+        series = self.pdseries
+        if not (series.index.is_monotonic_increasing or series.index.is_monotonic_decreasing):
+            raise ValueError('Index must be monotonic')
         # ToDo validate equal spaced indices, taking first two points for now
-        return self.pdseries.index[1] - self.pdseries.index[0]
+        return series.index[1] - series.index[0]
 
     def span(self):
         return len(self.pdseries.index)
@@ -44,6 +47,9 @@ class Series:
 
     def step(self):
         return self.interval
+
+    def end_bound(self):
+        return self.end + self.step()
 
     def output_format(self):
         output = []

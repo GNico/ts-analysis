@@ -51,7 +51,7 @@ class TestAnomaly(unittest.TestCase):
         anomaly.tag_algo('test_algo')
         expected = {
             'from': 1000,
-            'to': 3000,
+            'to': 2000,
             'score': 1.0,
             'desc': 'awesome',
             'algo_id': 'test_algo'
