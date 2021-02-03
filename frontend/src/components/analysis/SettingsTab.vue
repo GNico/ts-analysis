@@ -9,7 +9,7 @@
           <b-button class="is-outlined" label="Load" size="is-small" type="is-primary" />
         </p>
         <p class="control">
-          <b-button class="is-outlined"  label="Save" size="is-small"  type="is-primary" />
+          <b-button class="is-outlined"  label="Save" size="is-small"  type="is-primary" @click="saveAnalysis"/>
         </p>
       </b-field>
     </div>
@@ -25,6 +25,7 @@
         type="textarea" 
         size="is-small" 
         placeholder="This field is optional"
+        v-model="settings.description"
         />
     </b-field>
     <b-field class="has-text-right">
@@ -140,6 +141,7 @@ import cloneDeep from "lodash/cloneDeep";
 
 const defaultSettings = {
   name: '',
+  description: '',
   client: '',
   contexts: [],
   tags: [],
@@ -209,6 +211,10 @@ export default {
         this.settings.tags = []
         this.settings.contexts = []
       }
+    },
+    saveAnalysis() {
+      this.$store.dispatch('analysis/saveAnalysis', this.id)
+
     }
   },
   watch: {

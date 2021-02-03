@@ -3,12 +3,24 @@
   <!-- top bar -->
   <div class="wide-container is-flex"> 
     <div class="bar-buttons">
+      <b-dropdown scrollable :max-height="300" aria-role="list" position="is-bottom-right">
+        <template #trigger="{ active }">
+          <b-button label="Load Analysis" size="is-small" type="is-primary" />
+        </template>
+        <b-dropdown-item 
+          v-for="item in savedAnalysis" 
+          :key="item.id"
+          @click="loadAnalysis(item.id)"
+          aria-role="listitem">
+          {{item.name}}
+        </b-dropdown-item>
+      </b-dropdown>
       <a class="button is-primary is-small" @click="addItem"> 
         New Analysis
       </a>   
     </div>
     <div class="scroll-container">
-      <div class="control" v-for="(item, index) in analysisList" :key="item.id" >
+      <div class="control" v-for="(item, index) in localAnalysis" :key="item.id" >
         <BarItemButton  
           :id="item.id"
           :name="item.name ? item.name : 'Unnamed analysis'" 
@@ -47,8 +59,11 @@ export default {
     }
   },
   computed: {
-    analysisList() {
+    savedAnalysis() {
       return this.$store.state.analysis.all
+    },
+    localAnalysis() {
+      return this.$store.state.analysis.local
     },
     activeAnalysisId() {
       //this.activeTab = "Settings"
@@ -62,15 +77,21 @@ export default {
   methods: {
     addItem() {
       this.activeTab="Settings"
-      this.$store.dispatch("analysis/createAnalysis")
+      this.$store.dispatch("analysis/createLocalAnalysis")
+    },
+    loadAnalysis(id) {
+      this.$store.dispatch("analysis/loadAnalysis", id)
     },
     removeItem(id) {
-      this.$store.dispatch("analysis/removeAnalysis", id)
+      this.$store.dispatch("analysis/closeLocalAnalysis", id)
     },
     toggleActive(id) {
       this.$store.dispatch("analysis/setActiveAnalysis", id)
     },
   },
+  created() {
+    this.$store.dispatch("analysis/fetchAllAnalysis")
+  }
 }
 </script>
 
