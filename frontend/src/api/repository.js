@@ -106,8 +106,8 @@ export default {
     updateAnalysis(analysis, id) {
         return repository.put("/analysis-settings/" + id + "/", analysis)
     },
-    deleteAnalysis(id) {
-        return repository.delete("/analysis-settings/" + id + "/")
+    deleteAnalysis(ids) {
+        return repository.delete("/analysis-settings/", { data: { ids: ids } })
     },
 
 

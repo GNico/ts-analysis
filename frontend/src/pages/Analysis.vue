@@ -4,7 +4,8 @@
   <ModalAnalysisList 
     :isActive="loadModalActive" 
     @close="loadModalActive = false"
-    @load="loadAnalysis"/>
+    @load="loadAnalysis"
+    @delete="deleteAnalysis"/>
 
 
   <!-- top bar -->
@@ -33,7 +34,7 @@
         </b-dropdown-item>
       </b-dropdown> 
     </div>
-    
+
     <div class="scroll-container">
       <div class="control" v-for="(item, index) in localAnalysis" :key="item.id" >
         <BarItemButton  
@@ -100,6 +101,14 @@ export default {
     },
     loadAnalysis(id) {
       this.$store.dispatch("analysis/loadAnalysis", id)
+    },
+    deleteAnalysis(itemsToDelete) {
+      console.log(itemsToDelete)
+      if (itemsToDelete.length) {
+        const ids = itemsToDelete.map(item => item.id)
+        console.log(ids)
+        this.$store.dispatch("analysis/deleteAnalysis", ids)
+      }
     },
     removeItem(id) {
       this.$store.dispatch("analysis/closeLocalAnalysis", id)

@@ -91,7 +91,7 @@ export default {
   data() {
     return {
       checked: [],
-      showFilters: true,
+      showFilters: false,
     }
   },
   computed: {
@@ -104,7 +104,7 @@ export default {
       this.$emit('close')
     },
     deleteSelected() {
-      this.$emit('deleteSelected', this.checked)
+      this.$emit('delete', this.checked)
     },
     load(event) {
       this.close()

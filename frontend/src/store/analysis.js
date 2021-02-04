@@ -145,7 +145,7 @@ const actions = {
                 })
                 .catch(error => console.log())
     }, 
-    saveAnalysis({store, getters}, id) {
+    saveAnalysis({store, getters, dispatch}, id) {
         const settings = getters.getAnalysisById(id)
         const objectToSave = { 
             client: settings.client,
@@ -159,8 +159,9 @@ const actions = {
             },
             model: settings.model 
         }
-        console.log("save")
-        api.addNewAnalysis(objectToSave).then(response => console.log(response)).catch(error => console.log(error))
+        return  api.addNewAnalysis(objectToSave)
+                .then(response => dispatch("fetchAllAnalysis"))
+                .catch(error => console.log(error))
         
         
     },
@@ -178,11 +179,15 @@ const actions = {
             },
             model: settings.model 
         }
-        console.log("update")
         return  api.updateAnalysis(objectToSave, settings.savedId)
-                .then(response => console.log(response))
+                .then(response => dispatch("fetchAllAnalysis"))
                 .catch(error => console.log(error))
 
+    },
+    deleteAnalysis({store, dispatch}, idList) {
+        return  api.deleteAnalysis(idList)
+                .then(response => dispatch("fetchAllAnalysis"))
+                .catch(error => console.log(error))
     },
 
 
