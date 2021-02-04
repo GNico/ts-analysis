@@ -6,10 +6,7 @@
       General 
       <b-field grouped position="is-right">
         <p class="control">
-          <b-button class="is-outlined" label="Load" size="is-small" type="is-primary" />
-        </p>
-        <p class="control">
-          <b-button class="is-outlined"  label="Save" size="is-small"  type="is-primary" />
+          <b-button class="is-outlined"  label="Save" size="is-small"  type="is-primary" @click="saveAnalysis"/>
         </p>
       </b-field>
     </div>
@@ -25,6 +22,7 @@
         type="textarea" 
         size="is-small" 
         placeholder="This field is optional"
+        v-model="settings.description"
         />
     </b-field>
     <b-field class="has-text-right">
@@ -140,11 +138,13 @@ import cloneDeep from "lodash/cloneDeep";
 
 const defaultSettings = {
   name: '',
+  description: '',
   client: '',
   contexts: [],
   tags: [],
   interval: '1h',
-  model: []
+  model: [],
+  savedId: '',
 }
 
 export default {
@@ -154,7 +154,6 @@ export default {
   data () {
     return {
       settings: cloneDeep(defaultSettings),    
-
       isSaveModelActive: false,  
       modelData: {
         name: '',
@@ -209,13 +208,20 @@ export default {
         this.settings.tags = []
         this.settings.contexts = []
       }
+    },
+    saveAnalysis() {
+      if (this.settings.savedId) {
+        this.$store.dispatch('analysis/updateAnalysis', this.id)
+      } else {
+        this.$store.dispatch('analysis/saveAnalysis', this.id)
+      }
     }
   },
   watch: {
     settings: {
       deep: true,
       handler(newVal) {
-        this.$store.dispatch('analysis/updateSettings', {id: this.id, ...this.settings })
+        this.$store.dispatch('analysis/updateLocalSettings', {id: this.id, ...this.settings })
       }
     },
     'settings.client': {

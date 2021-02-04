@@ -17,7 +17,7 @@ class Client(models.Model):
 
 
 class Analysis(models.Model):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, to_field='name', on_delete=models.CASCADE)
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(blank=True)
     data_options = models.JSONField(default=dict)

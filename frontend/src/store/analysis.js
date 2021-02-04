@@ -26,6 +26,7 @@ function formatModel(model) {
 
 const state = {
   all: [],
+  local: [],
   activeAnalysisId: '',
   results: [],
   activeAnomalyId: '',
@@ -33,15 +34,14 @@ const state = {
 
 const getters = {
     getAnalysisById: (state) => (id) => {
-        let item = state.all.find(elem => elem.id == id)
+        let item = state.local.find(elem => elem.id == id)
         return item ? item : {}
     },
     getResultsById: (state) => (id) => {
         let item = state.results.find(elem => elem.id == id)
         return item ? item : {}
     },
-
- /*   getAnomalies: (state) => {
+ /* getAnomalies: (state) => {
         if ((state.results.hasOwnProperty('anomalies') 
         && Array.isArray(state.results.anomalies) 
         && state.results.anomalies.length)) {
@@ -57,35 +57,37 @@ const getters = {
             return state.results.anomalies.find(item => item.id === id)
         }
     } */
-
 }
 
 const mutations = {
+    set_all_analysis(state, payload) {
+        state.all = payload
+    },
     add_analysis(state, payload) {
-        state.all.push(payload)
+        state.local.push(payload)
         state.activeAnalysisId = payload.id
     },
     set_active(state, id) {
-        if (state.all.find(elem => elem.id == id)) {
+        if (state.local.find(elem => elem.id == id)) {
             state.activeAnalysisId = id
         } else {
             state.activeAnalysisId = ''
         }
     },
     remove_analysis(state, id) {
-        let index = state.all.findIndex(elem => elem.id == id)
+        let index = state.local.findIndex(elem => elem.id == id)
         if (index > -1) {
-            if (state.all[index].id == state.activeAnalysisId)
+            if (state.local[index].id == state.activeAnalysisId)
                 state.activeAnalysisId = ''
-            state.all.splice(index, 1)
+            state.local.splice(index, 1)
         }
     },
     update_analysis(state, settings) {
         if (settings.hasOwnProperty('id')) {
-            let index = state.all.findIndex(elem => elem.id == settings.id)
+            let index = state.local.findIndex(elem => elem.id == settings.id)
             if (index > -1) {
-                let updated = { ...state.all[index] , ...settings}
-                state.all.splice(index, 1, updated)
+                let updated = { ...state.local[index] , ...settings}
+                state.local.splice(index, 1, updated)
             }
         }
     },
@@ -112,25 +114,86 @@ const mutations = {
             state.results.push(results)
         } 
     },
-
-
-
     set_active_anomaly(state, anomalyId) {
         state.activeAnomalyId = anomalyId
     }
 }
 
-const actions = {
-    createAnalysis(store) {
-        store.commit('add_analysis', { id: nanoid(5) })
+const actions = {    
+    fetchAllAnalysis(store) {
+        return  api.getAllAnalysis()
+                .then(response => 
+                    store.commit('set_all_analysis', response.data))
+                .catch(error =>
+                    console.log('error fetching analysis list'))
     },
-    setActiveAnalysis(store, id) {
-        store.commit('set_active', id)
+    loadAnalysis(store, saveId) {
+        return  api.getAnalysisDetails(saveId)
+                .then(response => {
+                    let loaded = response.data
+                    let settings = {}
+                    settings.savedId = loaded.id
+                    settings.id = nanoid(5)
+                    settings.name = loaded.name
+                    settings.description = loaded.description
+                    settings.client = loaded.data_options.client
+                    settings.tags = loaded.data_options.tags
+                    settings.contexts = loaded.data_options.contexts
+                    settings.interval = loaded.data_options.interval
+                    settings.model = loaded.model
+                    store.commit('add_analysis', settings)
+                })
+                .catch(error => console.log())
+    }, 
+    saveAnalysis({store, getters}, id) {
+        const settings = getters.getAnalysisById(id)
+        const objectToSave = { 
+            client: settings.client,
+            name: settings.name,
+            description: settings.description,
+            data_options: { 
+                client: settings.client, 
+                tags: settings.tags, 
+                contexts: settings.contexts, 
+                interval: settings.interval
+            },
+            model: settings.model 
+        }
+        console.log("save")
+        api.addNewAnalysis(objectToSave).then(response => console.log(response)).catch(error => console.log(error))
+        
+        
     },
-    removeAnalysis(store, id) {
+    updateAnalysis({store, getters, dispatch}, id) {
+        const settings = getters.getAnalysisById(id)
+        const objectToSave = { 
+            client: settings.client,
+            name: settings.name,
+            description: settings.description,
+            data_options: { 
+                client: settings.client, 
+                tags: settings.tags, 
+                contexts: settings.contexts, 
+                interval: settings.interval
+            },
+            model: settings.model 
+        }
+        console.log("update")
+        return  api.updateAnalysis(objectToSave, settings.savedId)
+                .then(response => console.log(response))
+                .catch(error => console.log(error))
+
+    },
+
+
+
+    createLocalAnalysis(store) {
+        store.commit('add_analysis', { id: nanoid(5), saveId: undefined })
+    },
+    closeLocalAnalysis(store, id) {
         store.commit('remove_analysis', id)
     },
-    updateSettings(store, settings) {
+    updateLocalSettings(store, settings) {
         store.commit('update_analysis', settings)
     },
 	runAnalysis({commit, getters}, id) {
@@ -151,8 +214,9 @@ const actions = {
                     console.log('error retrieving analysis')
                 })         
     },
-
-
+    setActiveAnalysis(store, id) {
+        store.commit('set_active', id)
+    },
     setActiveAnomaly(store, id) {
         store.commit('set_active_anomaly', id)
     },
