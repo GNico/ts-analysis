@@ -6,6 +6,12 @@
   minheight="50%"
   @close="close">
 
+  <b-field class="has-text-right">
+    <b-checkbox v-model="showFilters" class="has-text-white">
+    Enable filters
+  </b-checkbox>
+  </b-field>
+
   <b-table 
     :data="allAnalysis" 
     sticky-header
@@ -14,16 +20,40 @@
     selectable
     :checked-rows.sync="checked">
     <template slot-scope="props">
-      <b-table-column field="client" label="Client" sortable  >
+      <b-table-column field="client" label="Client" sortable :searchable="showFilters" >
         {{ props.row.client }}
+        <template #searchable="props" >
+            <b-input
+              v-if="showFilters"
+              v-model="props.filters[props.column.field]"
+              placeholder="Search..."
+              icon="magnify"
+              size="is-small" />
+        </template>
       </b-table-column>
 
-      <b-table-column field="name" label="Name" sortable >
+      <b-table-column field="name" label="Name" sortable :searchable="showFilters">
         {{ props.row.name }}
+        <template #searchable="props">
+            <b-input
+              v-if="showFilters"
+              v-model="props.filters[props.column.field]"
+              placeholder="Search..."
+              icon="magnify"
+              size="is-small" />
+        </template>
       </b-table-column>
 
-      <b-table-column field="description" label="Description">
+      <b-table-column field="description" label="Description" :searchable="showFilters">
         {{ props.row.description }}
+        <template #searchable="props">
+            <b-input
+              v-if="showFilters"
+              v-model="props.filters[props.column.field]"
+              placeholder="Search..."
+              icon="magnify"
+              size="is-small" />
+        </template>
       </b-table-column>
 
       <b-table-column field="load" label="Load">
@@ -61,6 +91,7 @@ export default {
   data() {
     return {
       checked: [],
+      showFilters: true,
     }
   },
   computed: {
