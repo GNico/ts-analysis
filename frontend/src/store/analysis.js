@@ -19,7 +19,6 @@ function formatModel(model) {
         nodes.push(formattedNode)
     })
     formatted['nodes'] = nodes
-    console.log(formatted)
     return formatted
 }
 
