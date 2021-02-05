@@ -93,10 +93,24 @@ export default {
         return repository.delete("/pipelines/" + id + "/")
     },
 
-
-    getAnalysis() {
+    //Analysis
+    getAllAnalysis() {
         return repository.get("/analysis-settings/")
     },
+    getAnalysisDetails(id) {
+        return repository.get("/analysis-settings/"+ id + "/")
+    },
+    addNewAnalysis(analysis) {
+        return repository.post("/analysis-settings/", analysis)
+    },
+    updateAnalysis(analysis, id) {
+        return repository.put("/analysis-settings/" + id + "/", analysis)
+    },
+    deleteAnalysis(ids) {
+        return repository.delete("/analysis-settings/", { data: { ids: ids } })
+    },
+
+
 
     //Misc
     testAlgo(testSource) {
