@@ -10,7 +10,6 @@ class Anomaly:
     def __init__(self, series, start, end, score, desc=None):
         self.series = series
         self.start = start
-        # inclusive
         self.end = end
         self.score = score
         self.algo_tag = None

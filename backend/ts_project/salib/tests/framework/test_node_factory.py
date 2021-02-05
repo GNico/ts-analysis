@@ -71,16 +71,23 @@ class TestNodeFactory(unittest.TestCase):
                         'value': False,
                     },
                     {
-                        'id': 'below',
-                        'display': 'Below',
-                        'desc': 'Below threshold',
+                        'id': 'strict',
+                        'display': 'Strict',
+                        'desc': 'Strict comparison on bounds',
+                        'type': 'Boolean',
+                        'value': False,
+                    },
+                    {
+                        'id': 'lower',
+                        'display': 'Lower',
+                        'desc': 'Lower bound',
                         'type': 'Float',
                         'value': None,
                     },
                     {
-                        'id': 'above',
-                        'display': 'Above',
-                        'desc': 'Above threshold',
+                        'id': 'upper',
+                        'display': 'Upper',
+                        'desc': 'Upper bound',
                         'type': 'Float',
                         'value': None,
                     }
@@ -93,10 +100,11 @@ class TestNodeFactory(unittest.TestCase):
     def test_parsing(self):
         builder = NodeFactory.detector('test_id', 'SimpleThreshold')
         builder.set_param_value('inside', False)
-        builder.set_param_value('below', 1)
-        builder.set_param_value('above', None)
+        builder.set_param_value('strict', False)
+        builder.set_param_value('lower', 1)
+        builder.set_param_value('upper', None)
         threshold = builder.build()
-        self.assertEqual(str(threshold), 'SimpleThreshold(1,None,False)[test_id]')
+        self.assertEqual(str(threshold), 'SimpleThreshold(1,None,False,False)[test_id]')
 
         obj = {
             'id': 'test_id',
@@ -104,11 +112,15 @@ class TestNodeFactory(unittest.TestCase):
             'type': 'SimpleThreshold',
             'params': [
                 {
-                    'id': 'below',
+                    'id': 'lower',
                     'value': 1
                 },
                 {
                     'id': 'inside',
+                    'value': False
+                },
+                {
+                    'id': 'strict',
                     'value': False
                 }
             ]

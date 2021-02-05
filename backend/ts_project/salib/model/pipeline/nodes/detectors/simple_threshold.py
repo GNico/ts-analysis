@@ -1,61 +1,42 @@
 from ..node_detector import NodeDetector
 from ...params.float import Float
 from ...params.boolean import Boolean
-from ....anomaly import Anomaly
 
 class SimpleThreshold(NodeDetector):
 
     def __init__(self, id):
         super().__init__(id)
         self.add_required_param(Boolean('inside', 'Inside', 'If true, value must be within bounds', False))
-        self.add_param(Float('below', 'Below', 'Below threshold'))
-        self.add_param(Float('above', 'Above', 'Above threshold'))
+        self.add_required_param(Boolean('strict', 'Strict', 'Strict comparison on bounds', False))
+        self.add_param(Float('lower', 'Lower', 'Lower bound'))
+        self.add_param(Float('upper', 'Upper', 'Upper bound'))
 
     def anomalies(self, input):
-        print("Running",str(self))
-        series = input.series
-        pdseries = series.pdseries
-        anomalies = []
-
-        current_start = None
-        for elem in pdseries.items():
-            if self.valid_threshold(elem[1]):
-                if current_start is None:
-                    current_start = elem[0]
-            else:
-                if current_start is not None:
-                    # TODO: calculate score
-                    anomaly = Anomaly(series, current_start, elem[0], 1.0)
-                    anomalies.append(anomaly)
-                    current_start = None
-
-        if current_start is not None:
-            # TODO: calculate score
-            anomaly = Anomaly(series, current_start, series.end_bound(), 1.0)
-            anomalies.append(anomaly)
-
-        return anomalies
+        return NodeDetector.pointwise_consecutive(self.valid_threshold, input.series)
 
     def valid_threshold(self, val):
-        below, above, inside = self.all_params()
-        if not inside.value:
-            req_above = above.is_set() and val >= above.value
-            req_below = below.is_set() and val <= below.value
-            return req_above or req_below
+        lower, upper, inside, strict = self.all_params()
+        if not strict.value and ((upper.is_set() and upper.value == val) or (lower.is_set() and lower.value == val)):
+            return True
+        if inside.value:
+            req_upper = not upper.is_set() or val < upper.value
+            req_lower = not lower.is_set() or val > lower.value
+            return req_upper and req_lower
         else:
-            req_above = not above.is_set() or val <= above.value
-            req_below = not below.is_set() or val >= below.value
-            return req_above and req_below
+            req_upper = not upper.is_set() or val > upper.value
+            req_lower = not lower.is_set() or val < lower.value
+            return req_upper or req_lower
 
     def all_params(self):
-        below = self.get_param('below')
-        above = self.get_param('above')
+        lower = self.get_param('lower')
+        upper = self.get_param('upper')
         inside = self.get_param('inside')
-        return (below, above, inside)
+        strict = self.get_param('strict')
+        return (lower, upper, inside, strict)
 
     def __str__(self):
         all_params = [str(x.value) for x in self.all_params()] + [self.id]
-        return "SimpleThreshold(%s,%s,%s)[%s]" % tuple(all_params)
+        return "SimpleThreshold(%s,%s,%s,%s)[%s]" % tuple(all_params)
 
     def display(self):
         return 'Simple Threshold'
