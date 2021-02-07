@@ -72,23 +72,25 @@ export default {
   }
 
 }
-
 </script>
 
 
 <style>
-
 .custom-modal .modal-card {
   border: 2px solid rgba(255,255,255, 0.05);
   border-radius: 10px;
+}
+
+.custom-modal .modal-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .custom-modal .modal-card-foot {
   justify-content: space-between;
 }
 
-.custom-modal .modal-card-title {
-  font-size: 1.25rem;
+.custom-modal .modal-card-foot .button {
+  font-weight: 600;
 }
-
 </style>

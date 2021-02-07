@@ -41,8 +41,7 @@ const actions = {
               }) 
     },
     saveModel({store, dispatch},  model) {
-      const apiCall =  model.id ? api.updateModel : api.addNewModel
-      return  apiCall(model)
+      return  api.addNewModel(model)
               .then(response => {
                 dispatch('fetchModels')
               })
@@ -51,6 +50,16 @@ const actions = {
                 console.log(error)
               })
     },
+    updateModel({store, dispatch},  model) {
+      return  api.updateModel(model)
+              .then(response => {
+                dispatch('fetchModels')
+              })
+              .catch(error => { 
+                console.log('error updating model')
+                console.log(error)
+              })
+    },    
     deleteModel({store, dispatch}, id) {
       return  api.deleteModel(id)
               .then(response => {

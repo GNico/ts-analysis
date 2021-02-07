@@ -122,8 +122,9 @@ const mutations = {
 const actions = {    
     fetchAllAnalysis(store) {
         return  api.getAllAnalysis()
-                .then(response => 
-                    store.commit('set_all_analysis', response.data))
+                .then(response => {
+                    store.commit('set_all_analysis', response.data)
+                })
                 .catch(error =>
                     console.log('error fetching analysis list'))
     },
@@ -160,9 +161,10 @@ const actions = {
             model: settings.model 
         }
         return  api.addNewAnalysis(objectToSave)
-                .then(response => dispatch("fetchAllAnalysis"))
+                .then(response => {
+                    return response.data.id                 
+                })
                 .catch(error => console.log(error))
-        
         
     },
     updateAnalysis({store, getters, dispatch}, id) {

@@ -85,7 +85,7 @@
       <div>
         <a class="button is-primary is-small" @click="update">
           <b-icon icon="refresh"/>
-          <span>Update</span>
+          <span class="has-text-weight-semibold">Update</span>
         </a> 
       </div>  
 

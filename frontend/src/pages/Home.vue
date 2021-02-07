@@ -7,7 +7,7 @@
         slot="trigger"
         role="button">
         <b-icon  icon="playlist-plus"></b-icon>
-        <span>New Entry</span>
+        <span class="has-text-weight-semibold">New Entry</span>
       </a>
       <b-dropdown-item
         aria-role="menu-item"

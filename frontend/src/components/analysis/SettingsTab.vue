@@ -1,12 +1,32 @@
 <template>
 <div class="columns">
+  <ModalSaveAnalysis 
+    :isActive="saveModalActive" 
+    @close="saveModalActive = !saveModalActive"
+    @update="saveAnalysisOverwrite"
+    @save="saveAnalysisAsNew"
+  />
+
+  <ModalSaveModel
+    :isActive="isSaveModelActive"
+    :allModels="models"
+    @close="toggleSaveModel"
+    @update="updateModel"
+    @save="saveModel"
+  />
+
   <div class="column is-3">
     <!--General options -->
     <div class="subtitle subtitle-with-buttons"> 
       General 
       <b-field grouped position="is-right">
         <p class="control">
-          <b-button class="is-outlined"  label="Save" size="is-small"  type="is-primary" @click="saveAnalysis"/>
+          <b-button 
+            class="is-outlined has-text-weight-semibold" 
+            label="Save" 
+            size="is-small" 
+            type="is-primary" 
+            @click="saveAnalysis"/>
         </p>
       </b-field>
     </div>
@@ -26,7 +46,7 @@
         />
     </b-field>
     <b-field class="has-text-right">
-      <a class="button is-primary is-medium" @click="runAnalysis">
+      <a class="button is-primary is-medium has-text-weight-semibold" @click="runAnalysis">
         Run analysis
       </a>
     </b-field>
@@ -65,7 +85,7 @@
         <p class="control">
           <b-dropdown scrollable :max-height="300" aria-role="list" position="is-bottom-left">
             <template #trigger="{ active }">
-              <b-button :class="active ? 'is-primary' : 'is-outlined'" label="Load Model" size="is-small" type="is-primary" />
+              <b-button :class="active ? 'is-primary' : 'is-outlined'" label="Import template" size="is-small" type="is-primary" class="has-text-weight-semibold"/>
             </template>
             <b-dropdown-item 
               v-for="item in models" 
@@ -78,8 +98,9 @@
         </p>
         <p class="control">
           <b-button 
+            class="has-text-weight-semibold"
             :class="isSaveModelActive ? 'is-primary' : 'is-outlined'" 
-            label="Save Model" 
+            label="Save model" 
             size="is-small" 
             type="is-primary" 
             @click="toggleSaveModel"/>      
@@ -89,40 +110,6 @@
     <ModelBuilder class="model-box" :nodes="settings.model"  />
   </div>
 
-
-  <ModalCard 
-  :isActive="isSaveModelActive" 
-  title="Save model"
-  @close="toggleSaveModel"
-  @accept="saveModel">
-    <b-field horizontal label="Name">
-      <b-input 
-        type="text" 
-        size="is-small" 
-        v-model="modelData.name"
-      />
-    </b-field>
-    <b-field horizontal label="Description">
-      <b-input 
-        type="textarea" 
-        size="is-small" 
-        v-model="modelData.description"
-      />
-    </b-field>
-
-
-    <template v-slot:footer-left>
-      <span class="is-size-7 has-text-warning"> {{footerMessage}} </span>
-    </template>
-    <template v-slot:footer-right>
-      <div>
-        <button class="button is-small is-primary" @click="saveModel">Save</button>
-        <button class="button is-small is-danger" @click="toggleSaveModel">Cancel</button>
-      </div>
-    </template>
-  </ModalCard>
-
-
 </div>
 </template>
 
@@ -131,7 +118,11 @@
 import TreeSelect from '../inputs/TreeSelect.vue';
 import SearchSelect from '../inputs/SearchSelect.vue';
 import ModelBuilder from "../detectionModel/ModelBuilder";
-import ModalCard from "../ModalCard";
+//import ModalCard from "../ModalCard";
+import ModalSaveAnalysis from "./ModalSaveAnalysis"
+import ModalSaveModel from "./ModalSaveModel"
+
+
 
 import { tagsAndContexts } from '../../mixins/TagsAndContextsOptions.js';
 import cloneDeep from "lodash/cloneDeep";
@@ -150,15 +141,16 @@ const defaultSettings = {
 export default {
   name: "AnalysisSettings",
   mixins: [tagsAndContexts],
-  components:  { TreeSelect, ModelBuilder, SearchSelect, ModalCard },
+  components:  { TreeSelect, ModelBuilder, SearchSelect, ModalSaveAnalysis,ModalSaveModel },
   data () {
     return {
       settings: cloneDeep(defaultSettings),    
       isSaveModelActive: false,  
-      modelData: {
+   /*   modelData: {
         name: '',
         description: '',
-      }
+      }, */
+      saveModalActive: false,
     }
   },
   computed: {
@@ -171,29 +163,26 @@ export default {
     models() {
       return this.$store.state.models.all
     },
-    matchingModel() {
-      return this.models.find(elem => elem.name == this.modelData.name)
-    },
-    footerMessage() {
-      return this.matchingModel ? 'Model name already exists. Saving will overwrite existing model' : ''
-    }
   },
   methods: {
     toggleSaveModel() {
       this.isSaveModelActive = !this.isSaveModelActive
     },
-    saveModel() {
+    saveModel(modalForm) {
       this.isSaveModelActive = false
       this.$store.dispatch('models/saveModel', {
-        id: this.matchingModel ? this.matchingModel.id : null,
-        name: this.modelData.name, 
-        description: this.modelData.description,
+        ...modalForm,
+        nodes: this.settings.model
+      })
+    },
+    updateModel(modalForm) {
+      this.isSaveModelActive = false
+      this.$store.dispatch('models/updateModel', {
+        ...modalForm,
         nodes: this.settings.model
       })
     },
     loadModel(model) {
-      this.modelData.name = model.name
-      this.modelData.description = model.description
       this.settings.model = cloneDeep(model.nodes)
     },
     resetFields() {
@@ -211,11 +200,21 @@ export default {
     },
     saveAnalysis() {
       if (this.settings.savedId) {
-        this.$store.dispatch('analysis/updateAnalysis', this.id)
+        this.saveModalActive = true
       } else {
-        this.$store.dispatch('analysis/saveAnalysis', this.id)
-      }
-    }
+        this.saveAnalysisAsNew()
+      }        
+    },
+    saveAnalysisAsNew() {
+      this.$store.dispatch('analysis/saveAnalysis', this.id)
+      .then(savedId => {
+        console.log(savedId)
+        this.settings.savedId = savedId
+      })
+    },
+    saveAnalysisOverwrite() {
+      this.$store.dispatch('analysis/updateAnalysis', this.id)     
+    },
   },
   watch: {
     settings: {

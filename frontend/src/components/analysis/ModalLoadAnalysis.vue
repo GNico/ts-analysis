@@ -83,6 +83,10 @@ import ModalCard from "../ModalCard"
 export default {
   components: { ModalCard },
   props: { 
+    allAnalysis: {
+      type: Array,
+      default: () => []
+    },
     isActive: {
       type: Boolean,
       default: false,
@@ -92,11 +96,6 @@ export default {
     return {
       checked: [],
       showFilters: false,
-    }
-  },
-  computed: {
-    allAnalysis() {
-      return this.$store.state.analysis.all
     }
   },
   methods: {

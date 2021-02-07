@@ -1,34 +1,33 @@
 <template>
 <div class="fullh">
   <!--Analysis load modal -->
-  <ModalAnalysisList 
+  <ModalLoadAnalysis 
+    :allAnalysis="savedAnalysis"
     :isActive="loadModalActive" 
     @close="loadModalActive = false"
     @load="loadAnalysis"
     @delete="deleteAnalysis"/>
 
-
   <!-- top bar -->
   <div class="wide-container is-flex"> 
-
     <div class="bar-buttons">
       <b-dropdown position="is-bottom-right">
         <template #trigger="{ active }">
-          <b-button label="Open" icon-left="folder-open" size="is-small" type="is-primary" />
+          <b-button label="Open" icon-left="folder-open" size="is-small" type="is-primary" class="has-text-weight-semibold"/>
         </template>
         <b-dropdown-item @click="addItem">
           <div class="media">
             <b-icon class="media-left" icon="text-box-plus-outline"></b-icon>
             <div class="media-content">
-                <h3>New analysis</h3>
+              <h3 class="has-text-weight-semibold">New analysis</h3>
             </div>
           </div>  
         </b-dropdown-item>
         <b-dropdown-item @click="loadModalActive = !loadModalActive">
           <div class="media">
-            <b-icon class="media-left" icon="download"></b-icon>
+            <b-icon class="media-left has-text-weight-semibold" icon="download"></b-icon>
             <div class="media-content">
-                <h3>Load analysis</h3>
+              <h3 class="has-text-weight-semibold">Load analysis</h3>
             </div>
           </div> 
         </b-dropdown-item>
@@ -38,6 +37,7 @@
     <div class="scroll-container">
       <div class="control" v-for="(item, index) in localAnalysis" :key="item.id" >
         <BarItemButton  
+          class="has-text-weight-semibold"
           :id="item.id"
           :name="item.name ? item.name : 'Unnamed analysis'" 
           :isActive="(activeAnalysisId == item.id)"  
@@ -67,11 +67,11 @@ import BarItemButton from '../components/inputs/BarItemButton';
 import SettingsTab from '../components/analysis/SettingsTab';
 import ResultsTab from "../components/analysis/ResultsTab";
 
-import ModalAnalysisList from "../components/analysis/ModalAnalysisList"
+import ModalLoadAnalysis from "../components/analysis/ModalLoadAnalysis"
 
 
 export default {
-  components: {  BarItemButton, SettingsTab, ResultsTab, ModalAnalysisList },
+  components: {  BarItemButton, SettingsTab, ResultsTab, ModalLoadAnalysis },
   data () {
     return {        
       activeTab: "Settings",
