@@ -56,6 +56,7 @@ export default {
       });
     },
     drawChart() {
+      if (!this.nodes.length) return
       //Draw graphics
       var svg = d3.select("#" + this.id).select("svg")
       var inner = svg.select("g");
@@ -70,7 +71,6 @@ export default {
       
       var render = new dagreD3.render();
       render(inner, this.g);
-      if (this.nodes.length == 0) return
 /*      //Events
       inner.selectAll("g.node")
       .on("click", debounce(e => {
