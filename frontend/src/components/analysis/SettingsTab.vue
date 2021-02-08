@@ -100,7 +100,7 @@
           <b-button 
             class="has-text-weight-semibold"
             :class="isSaveModelActive ? 'is-primary' : 'is-outlined'" 
-            label="Save model" 
+            label="Save as template" 
             size="is-small" 
             type="is-primary" 
             @click="toggleSaveModel"/>      
