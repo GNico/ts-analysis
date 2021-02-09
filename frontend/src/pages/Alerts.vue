@@ -1,66 +1,107 @@
 <template>
-<div class="container section">
+<div class="container"> 
+  <b-field class="has-text-right">
+    <b-checkbox v-model="showFilters" class="has-text-white">
+    Enable filters
+  </b-checkbox>
+  </b-field>
 
-  <div class="columns">
-    <!-- Analysis table -->
-    <div class="column is-6">
-      <b-table 
-        :data="analysisSettings" 
-        narrowed
-        sticky-header
-        detailed
-        detail-key="id"
-        :show-detail-icon="false"
-        >
-
-        <template slot-scope="props">
-          <b-table-column field="name" label="Name" sortable numeric >
-             <span>{{ props.row.name }}</span>
-          </b-table-column>
-
-          <b-table-column field="description" label="Description" sortable centered>
-            <span>{{ props.row.description }}</span>
-          </b-table-column>
-          
-  
-
+  <b-table 
+    :data="allAnalysis" 
+    sticky-header
+    checkbox-position="right"
+    checkable
+    selectable
+    :checked-rows.sync="checked">
+    <template slot-scope="props">    
+      <b-table-column field="name" label="Name" sortable :searchable="showFilters">
+        {{ props.row.name }}
+        <template #searchable="props">
+            <b-input
+              v-if="showFilters"
+              v-model="props.filters[props.column.field]"
+              placeholder="Search..."
+              icon="magnify"
+              size="is-small" />
         </template>
+      </b-table-column>
 
-        
-      </b-table>
-    </div>
+      <b-table-column field="client" label="Client" sortable :searchable="showFilters" >
+        {{ props.row.client }}
+        <template #searchable="props" >
+            <b-input
+              v-if="showFilters"
+              v-model="props.filters[props.column.field]"
+              placeholder="Search..."
+              icon="magnify"
+              size="is-small" />
+        </template>
+      </b-table-column>
 
-    <!-- Models table -->
+      <b-table-column field="description" label="Description" :searchable="showFilters">
+        {{ props.row.description }}
+        <template #searchable="props">
+            <b-input
+              v-if="showFilters"
+              v-model="props.filters[props.column.field]"
+              placeholder="Search..."
+              icon="magnify"
+              size="is-small" />
+        </template>
+      </b-table-column>
 
-    <div class="column">
-    </div>
-  </div>
-</div>
+      <b-table-column field="load" label="Load">
+        <button class="transparent-button" @click="load(props.row.id)">
+          <b-icon icon="folder-download" type="is-primary"></b-icon>
+        </button>
+      </b-table-column>
+    </template>
+  </b-table>
+
 
   
+    <button class="button is-small is-danger" :disabled="!checked.length" @click="deleteSelected">Delete selected</button>
+    <button class="button is-small" @click="close">Cancel</button>
+
+</div>
 </template>
 
 <script>
 export default {
+  props: { 
+   /* allAnalysis: {
+      type: Array,
+      default: () => []
+    }, */
+    isActive: {
+      type: Boolean,
+      default: false,
+    }
+  },
   data() {
     return {
-      analysisSettings: [
-        {
-          id: 12,
-          name: 'Some config',
-          description: 'asd',
-          data_options: {
-            client_name: 'test client',
-            tags: [],
-            contexts: []
-          }
-        },
-
-
-      ]
+      checked: [],
+      showFilters: false,
+    }
+  },
+  computed: {
+    allAnalysis() {
+      return this.$store.state.analysis.all
+    }
+  },
+  methods: {
+    close() {
+      this.$emit('close')
+    },
+    deleteSelected() {
+      this.$emit('delete', this.checked)
+    },
+    load(event) {
+      this.close()
+      this.$emit('load', event)
     }
   }
-};
+}
 </script>
 
 

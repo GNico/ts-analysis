@@ -7,12 +7,20 @@
     @save="saveAnalysisAsNew"
   />
 
-  <ModalSaveModel
-    :isActive="isSaveModelActive"
+  <ModalSaveTemplate
+    :isActive="saveTemplateModalActive"
     :allModels="models"
-    @close="toggleSaveModel"
+    @close="saveTemplateModalActive = false"
     @update="updateModel"
     @save="saveModel"
+  />
+
+  <ModalLoadTemplate
+    :isActive="loadTemplateModalActive"
+    :allModels="models"
+    @close="loadTemplateModalActive = false"
+    @load="loadModel"
+    @delete="deleteModel"
   />
 
   <div class="column is-3">
@@ -83,27 +91,22 @@
       Detection model
       <b-field grouped position="is-right">
         <p class="control">
-          <b-dropdown scrollable :max-height="300" aria-role="list" position="is-bottom-left">
-            <template #trigger="{ active }">
-              <b-button :class="active ? 'is-primary' : 'is-outlined'" label="Import template" size="is-small" type="is-primary" class="has-text-weight-semibold"/>
-            </template>
-            <b-dropdown-item 
-              v-for="item in models" 
-              :key="item.id"
-              @click="loadModel(item)"
-              aria-role="listitem">
-              {{item.name}}
-            </b-dropdown-item>
-          </b-dropdown>
+          <b-button 
+            class="has-text-weight-semibold"
+            :class="loadTemplateModalActive ? 'is-primary' : 'is-outlined'" 
+            label="Import template" 
+            size="is-small" 
+            type="is-primary" 
+            @click="loadTemplateModalActive = !loadTemplateModalActive"/>      
         </p>
         <p class="control">
           <b-button 
             class="has-text-weight-semibold"
-            :class="isSaveModelActive ? 'is-primary' : 'is-outlined'" 
-            label="Save model" 
+            :class="saveTemplateModalActive ? 'is-primary' : 'is-outlined'" 
+            label="Save template" 
             size="is-small" 
             type="is-primary" 
-            @click="toggleSaveModel"/>      
+            @click="saveTemplateModalActive = !saveTemplateModalActive"/>      
         </p>
       </b-field>
     </div>
@@ -118,11 +121,10 @@
 import TreeSelect from '../inputs/TreeSelect.vue';
 import SearchSelect from '../inputs/SearchSelect.vue';
 import ModelBuilder from "../detectionModel/ModelBuilder";
-//import ModalCard from "../ModalCard";
 import ModalSaveAnalysis from "./ModalSaveAnalysis"
-import ModalSaveModel from "./ModalSaveModel"
 
-
+import ModalSaveTemplate from "./ModalSaveTemplate"
+import ModalLoadTemplate from "./ModalLoadTemplate"
 
 import { tagsAndContexts } from '../../mixins/TagsAndContextsOptions.js';
 import cloneDeep from "lodash/cloneDeep";
@@ -141,16 +143,13 @@ const defaultSettings = {
 export default {
   name: "AnalysisSettings",
   mixins: [tagsAndContexts],
-  components:  { TreeSelect, ModelBuilder, SearchSelect, ModalSaveAnalysis,ModalSaveModel },
+  components:  { TreeSelect, ModelBuilder, SearchSelect, ModalSaveAnalysis, ModalSaveTemplate, ModalLoadTemplate },
   data () {
     return {
       settings: cloneDeep(defaultSettings),    
-      isSaveModelActive: false,  
-   /*   modelData: {
-        name: '',
-        description: '',
-      }, */
+      saveTemplateModalActive: false,  
       saveModalActive: false,
+      loadTemplateModalActive: false,
     }
   },
   computed: {
@@ -165,25 +164,27 @@ export default {
     },
   },
   methods: {
-    toggleSaveModel() {
-      this.isSaveModelActive = !this.isSaveModelActive
-    },
     saveModel(modalForm) {
-      this.isSaveModelActive = false
+      this.saveTemplateModalActive = false
       this.$store.dispatch('models/saveModel', {
         ...modalForm,
         nodes: this.settings.model
       })
     },
     updateModel(modalForm) {
-      this.isSaveModelActive = false
+      this.saveTemplateModalActive = false
       this.$store.dispatch('models/updateModel', {
         ...modalForm,
         nodes: this.settings.model
       })
     },
     loadModel(model) {
+      this.loadTemplateModalActive = false
       this.settings.model = cloneDeep(model.nodes)
+    },
+    deleteModel(id) {
+      this.loadTemplateModalActive = false
+      this.$store.dispatch('models/deleteModel', id)
     },
     resetFields() {
       this.settings = cloneDeep(defaultSettings)

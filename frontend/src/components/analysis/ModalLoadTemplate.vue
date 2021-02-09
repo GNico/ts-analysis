@@ -1,12 +1,12 @@
 <template>
 <ModalCard 
   :isActive="isActive" 
-  title="Load Analysis"
+  title="Import template"
   minheight="50%"
   @close="close">
 
   <b-table 
-    :data="allAnalysis" 
+    :data="allModels" 
     sticky-header
     narrowed
     hoverable
@@ -25,17 +25,6 @@
         </template>
       </b-table-column>
 
-      <b-table-column field="client" label="Client" sortable searchable >
-        {{ props.row.client }}
-        <template #searchable="props" >
-            <b-input
-              v-model="props.filters[props.column.field]"
-              placeholder="Search..."
-              icon="magnify"
-              size="is-small" />
-        </template>
-      </b-table-column>
-
       <b-table-column field="description" label="Description" searchable>
         {{ props.row.description }}
         <template #searchable="props">
@@ -45,6 +34,12 @@
               icon="magnify"
               size="is-small" />
         </template>
+      </b-table-column>
+
+      <b-table-column field="delete" label="Delete">
+        <button class="transparent-button" @click="confirmDelete(props.row.id)">
+          <b-icon icon="trash-can-outline" type="is-warning"></b-icon>
+        </button>
       </b-table-column>
     </template>
   </b-table>
@@ -65,7 +60,7 @@ import ModalCard from "../ModalCard"
 export default {
   components: { ModalCard },
   props: { 
-    allAnalysis: {
+    allModels: {
       type: Array,
       default: () => []
     },
@@ -85,13 +80,24 @@ export default {
     },
     load() {
       this.close()
-      this.$emit('load', this.selected.id)
+      this.$emit('load', this.selected)
     },    
+    remove(id) {
+      this.$emit('delete',  id)
+    },
+    confirmDelete(id) {
+      this.$buefy.dialog.confirm({
+        title: 'Deleting template',
+        message: 'Are you sure you want to <b>delete</b> this item? This action cannot be undone.',
+        confirmText: 'Delete Template',
+        type: 'is-danger',
+        scroll: 'keep',
+        hasIcon: true,
+        onConfirm: () => this.remove(id)
+      })
+    },
   }
 }
 
 
 </script>
-
-
-
