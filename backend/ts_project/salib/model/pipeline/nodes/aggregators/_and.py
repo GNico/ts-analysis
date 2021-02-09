@@ -12,7 +12,7 @@ class And(Node):
         # On overlap combine
         for i in inputs:
             all_anomalies.extend(i.anomalies)
-        return NodeResult(self, anomalies=or_anomalies)
+        return NodeResult(self, inputs=inputs, anomalies=or_anomalies)
 
     def __str__(self):
         return 'AND(' + ','.join([s.id for s in self.sources]) + ')'

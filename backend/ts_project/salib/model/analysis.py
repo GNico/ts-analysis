@@ -1,13 +1,17 @@
 class Analysis:
 
-    def __init__(self, series, anomalies, baseline):
+    def __init__(self, series, result, anomalies, baseline):
         self.series = series
+        self.result = result
         self.anomalies = anomalies
         self.build_anomalies_map()
         self.baseline = baseline
 
     def anomalies_by_algo(self):
         return self.anomalies_by_algo
+
+    def result_for_node(self, id):
+        return self.result.find_node(id)
 
     def build_anomalies_map(self):
         self.anomalies_by_algo = {}

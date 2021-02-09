@@ -14,7 +14,7 @@ class NodeDetector(Node):
         anomalies = self.anomalies(input)
         for anomaly in anomalies:
             anomaly.tag_algo(str(self))
-        return NodeResult(self, series=input, anomalies=anomalies)
+        return NodeResult(self, inputs=inputs, series=input, anomalies=anomalies)
 
     def anomalies(self, series):
         raise Exception('Unimplemented anomalies method for NodeDetector')

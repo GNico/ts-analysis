@@ -103,7 +103,7 @@
           <b-button 
             class="has-text-weight-semibold"
             :class="saveTemplateModalActive ? 'is-primary' : 'is-outlined'" 
-            label="Save template" 
+            label="Save as template" 
             size="is-small" 
             type="is-primary" 
             @click="saveTemplateModalActive = !saveTemplateModalActive"/>      

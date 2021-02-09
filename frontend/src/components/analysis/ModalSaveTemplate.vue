@@ -3,26 +3,26 @@
 
 <ModalCard 
   :isActive="isActive" 
-  title="Save model"
+  title="Save template model"
   @close="close">
 
-    <b-field horizontal label="Save action">
+    <b-field horizontal label="Save options">
       <div class="radio-block">
         <b-radio v-model="saveMode"
             name="saveMode"
             native-value="save">
-            Save a new model
+            Save as new template
         </b-radio>
         <b-radio v-model="saveMode"
             name="saveMode"
             native-value="update">
-            Overwrite an existing model
+            Update existing template 
         </b-radio>
        </div>
     </b-field>
 
-    <b-field horizontal label="Target" v-if="saveMode == 'update'">
-      <b-select size="is-small" placeholder="Select a model" v-model="modelToUpdate" required @input="populateFields">
+    <b-field horizontal label="Template to update" v-if="saveMode == 'update'">
+      <b-select size="is-small" placeholder="Select existing template" v-model="modelToUpdate" required @input="populateFields">
         <option
           v-for="option in allModels"
           :value="option"
@@ -31,7 +31,6 @@
         </option>
       </b-select>
     </b-field>
-
 
     <b-field horizontal label="Name">
       <b-input 
@@ -48,8 +47,6 @@
         v-model="description"
       />
     </b-field>
-
-  
 
     <template v-slot:footer-left>
       <span class="is-size-7 has-text-warning"> {{validationError}} </span>
