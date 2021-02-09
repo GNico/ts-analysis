@@ -12,7 +12,7 @@ class NodeTransformer(Node):
             raise Exception("NodeTransformer must have exactly 1 input")
         input = inputs[0]
         new_series = Series(self.transform(input.series))
-        return NodeResult(self, series=new_series)
+        return NodeResult(self, inputs=inputs, series=new_series)
 
     def transform(self, series):
         raise Exception('Unimplemented transform() method for NodeTransformer')

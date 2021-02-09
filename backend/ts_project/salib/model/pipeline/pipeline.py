@@ -16,7 +16,7 @@ class Pipeline:
     def execute_node(self, node):
         # If we have no sources we inject original series
         if len(node.sources) == 0:
-            return node.execute([NodeResult(None, series=self.series)])
+            return node.execute([NodeResult(None, [], series=self.series)])
         # Else we calculate recursively all inputs
         else:
             node_inputs = []

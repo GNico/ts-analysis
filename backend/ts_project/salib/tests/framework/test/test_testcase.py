@@ -35,6 +35,7 @@ class TestTestCase(unittest.TestCase):
 
         expected_analysis = Analysis(
             test_series,
+            None,
             expected_anomalies,
             None
         )

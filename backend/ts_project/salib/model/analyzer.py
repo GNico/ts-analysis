@@ -14,4 +14,4 @@ class Analyzer:
         result = self.anomaly_pipeline.execute(series)
         anomalies = result.anomalies
         baseline = self.baseline_algo.baseline(series)
-        return Analysis(series, anomalies, baseline)
+        return Analysis(series, result, anomalies, baseline)

@@ -10,7 +10,7 @@ class Or(Node):
         or_anomalies = []
         for i in inputs:
             or_anomalies.extend(i.anomalies)
-        return NodeResult(self, anomalies=or_anomalies)
+        return NodeResult(self, inputs=inputs, anomalies=or_anomalies)
 
     def __str__(self):
         return 'OR(' + ','.join([s.id for s in self.sources]) + ')'

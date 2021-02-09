@@ -30,6 +30,38 @@ class TestNodeFactory(unittest.TestCase):
                         'value': 0.9,
                     }
                 ]
+            },
+            {
+                'type': 'RollingAggregateMean',
+                'display': 'Rolling Aggregate Mean',
+                'desc': 'Rolling aggregate using mean',
+                'group': 'transformer',
+                'params': [
+                    {
+                        'id': 'window',
+                        'type': 'String',
+                        'display': 'Window',
+                        'desc': 'Window size in time interval (eg: 1h)',
+                        'value': '30m'
+                    },
+                    {
+                        'id': 'center',
+                        'type': 'Boolean',
+                        'display': 'Center',
+                        'desc': 'Center aggregation window around value',
+                        'value': False
+                    },
+                    {
+                        'id': 'min_periods',
+                        'type': 'BoundedInt',
+                        'display': 'Min. periods',
+                        'desc': 'Min number of periods',
+                        'value': None,
+                        'min': 0,
+                        'max': None,
+                    }
+                ]
+
             }
         ]
         self.maxDiff = None
