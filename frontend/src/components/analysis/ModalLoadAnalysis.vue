@@ -52,6 +52,7 @@
   <template v-slot:footer-right>
     <div>
       <button :disabled="!selected" class="button is-small is-primary" @click="load">Load</button>
+      <button :disabled="!selected" class="button is-small is-danger" @click="confirmDelete">Delete</button>
       <button class="button is-small" @click="close">Cancel</button>
     </div>
   </template>
@@ -86,7 +87,21 @@ export default {
     load() {
       this.close()
       this.$emit('load', this.selected.id)
-    },    
+    }, 
+    remove() {
+      this.$emit('delete',  this.selected.id)
+    },
+    confirmDelete() {
+      this.$buefy.dialog.confirm({
+        title: 'Deleting analysis',
+        message: 'Are you sure you want to <b>delete</b> this item? This action cannot be undone.',
+        confirmText: 'Delete Analysis',
+        type: 'is-danger',
+        scroll: 'keep',
+        hasIcon: true,
+        onConfirm: () => this.remove()
+      })
+    },   
   }
 }
 

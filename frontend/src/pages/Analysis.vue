@@ -6,6 +6,7 @@
     :isActive="loadModalActive" 
     @close="loadModalActive = false"
     @load="loadAnalysis"
+    @delete="deleteAnalysis"
   />
 
   <ModalSaveAnalysis
@@ -104,10 +105,6 @@ export default {
     localAnalysis() {
       return this.$store.state.analysis.local
     },
- /*   activeAnalysisId() {
-      //this.activeTab = "Settings"
-      return this.$store.state.analysis.activeAnalysisId
-    }, */
     activeAnalysis() {
       return this.$store.state.analysis.activeAnalysis
     },
@@ -130,14 +127,9 @@ export default {
     updateAnalysis(event) {
       this.$store.dispatch("analysis/updateAnalysis", {id: this.activeAnalysis.id, ...event} )
     },
-  /*  deleteAnalysis(itemsToDelete) {
-      console.log(itemsToDelete)
-      if (itemsToDelete.length) {
-        const ids = itemsToDelete.map(item => item.id)
-        console.log(ids)
-        this.$store.dispatch("analysis/deleteAnalysis", ids)
-      }
-    }, */
+    deleteAnalysis(id) {
+      this.$store.dispatch("analysis/deleteAnalysis", id)
+    }, 
     removeItem(id) {
       this.$store.dispatch("analysis/closeLocalAnalysis", id)
     },
