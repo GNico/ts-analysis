@@ -36,17 +36,14 @@
         </template>
       </b-table-column>
 
-      <b-table-column field="delete" label="Delete">
-        <button class="transparent-button" @click="confirmDelete(props.row.id)">
-          <b-icon icon="trash-can-outline" type="is-warning"></b-icon>
-        </button>
-      </b-table-column>
+  
     </template>
   </b-table>
 
   <template v-slot:footer-right>
     <div>
       <button :disabled="!selected" class="button is-small is-primary" @click="load">Load</button>
+      <button :disabled="!selected" class="button is-small is-danger" @click="confirmDelete">Delete</button>
       <button class="button is-small" @click="close">Cancel</button>
     </div>
   </template>
@@ -76,16 +73,17 @@ export default {
   },
   methods: {
     close() {
+      this.selected = undefined,
       this.$emit('close')
     },
     load() {
-      this.close()
       this.$emit('load', this.selected)
+      this.close()
     },    
-    remove(id) {
-      this.$emit('delete',  id)
+    remove() {
+      this.$emit('delete',  this.selected.id)
     },
-    confirmDelete(id) {
+    confirmDelete() {
       this.$buefy.dialog.confirm({
         title: 'Deleting template',
         message: 'Are you sure you want to <b>delete</b> this item? This action cannot be undone.',
@@ -93,7 +91,7 @@ export default {
         type: 'is-danger',
         scroll: 'keep',
         hasIcon: true,
-        onConfirm: () => this.remove(id)
+        onConfirm: () => this.remove()
       })
     },
   }

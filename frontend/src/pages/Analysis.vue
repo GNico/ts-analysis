@@ -6,7 +6,15 @@
     :isActive="loadModalActive" 
     @close="loadModalActive = false"
     @load="loadAnalysis"
-    @delete="deleteAnalysis"/>
+  />
+
+  <ModalSaveAnalysis
+    :analysis="activeAnalysis"
+    :isActive="saveModalActive" 
+    @close="saveModalActive = false"
+    @save="saveAnalysis"
+    @update="updateAnalysis"
+  />
 
   <!-- top bar -->
   <div class="wide-container is-flex"> 
@@ -32,6 +40,15 @@
           </div> 
         </b-dropdown-item>
       </b-dropdown> 
+
+      <b-button 
+        icon-left="content-save"
+        class="has-text-weight-semibold is-primary"
+        label="Save" 
+        size="is-small" 
+        type="is-primary" 
+        @click="saveModalActive = !saveModalActive"
+        :disabled="!activeAnalysis.id"/>      
     </div>
 
     <div class="scroll-container">
@@ -40,14 +57,14 @@
           class="has-text-weight-semibold"
           :id="item.id"
           :name="item.name ? item.name : 'Unnamed analysis'" 
-          :isActive="(activeAnalysisId == item.id)"  
+          :isActive="(activeAnalysis.id == item.id)"  
           @deleted="removeItem"
           @click="toggleActive"/>
       </div>
     </div>
   </div>  
   <!-- content -->  
-  <div v-show="activeAnalysisId != ''" class="wide-container main-section">
+  <div v-show="!!activeAnalysis.id" class="wide-container main-section">
     <b-tabs type="is-medium is-boxed"  :animated="false" v-model="activeTab">
       <b-tab-item label="Settings" icon="cog" value="Settings" >
         <SettingsTab @run="activeTab='Results'"/>    
@@ -68,14 +85,16 @@ import SettingsTab from '../components/analysis/SettingsTab';
 import ResultsTab from "../components/analysis/ResultsTab";
 
 import ModalLoadAnalysis from "../components/analysis/ModalLoadAnalysis"
+import ModalSaveAnalysis from "../components/analysis/ModalSaveAnalysis"
 
 
 export default {
-  components: {  BarItemButton, SettingsTab, ResultsTab, ModalLoadAnalysis },
+  components: {  BarItemButton, SettingsTab, ResultsTab, ModalLoadAnalysis, ModalSaveAnalysis },
   data () {
     return {        
       activeTab: "Settings",
       loadModalActive: false,
+      saveModalActive: false
     }
   },
   computed: {
@@ -85,12 +104,15 @@ export default {
     localAnalysis() {
       return this.$store.state.analysis.local
     },
-    activeAnalysisId() {
+ /*   activeAnalysisId() {
       //this.activeTab = "Settings"
       return this.$store.state.analysis.activeAnalysisId
+    }, */
+    activeAnalysis() {
+      return this.$store.state.analysis.activeAnalysis
     },
     hasResults() {
-      let res = this.$store.getters['analysis/getResultsById'](this.activeAnalysisId) 
+      let res = this.$store.getters['analysis/getResultsById'](this.activeAnalysis.id)
       return Object.keys(res).length != 0
     }
   },
@@ -102,14 +124,20 @@ export default {
     loadAnalysis(id) {
       this.$store.dispatch("analysis/loadAnalysis", id)
     },
-    deleteAnalysis(itemsToDelete) {
+    saveAnalysis(event) {
+      this.$store.dispatch("analysis/saveAnalysis", {id: this.activeAnalysis.id, ...event} )
+    },
+    updateAnalysis(event) {
+      this.$store.dispatch("analysis/updateAnalysis", {id: this.activeAnalysis.id, ...event} )
+    },
+  /*  deleteAnalysis(itemsToDelete) {
       console.log(itemsToDelete)
       if (itemsToDelete.length) {
         const ids = itemsToDelete.map(item => item.id)
         console.log(ids)
         this.$store.dispatch("analysis/deleteAnalysis", ids)
       }
-    },
+    }, */
     removeItem(id) {
       this.$store.dispatch("analysis/closeLocalAnalysis", id)
     },

@@ -27,7 +27,7 @@ function formatModel(model) {
 const state = {
   all: [],
   local: [],
-  activeAnalysisId: '',
+  activeAnalysis: {},
   results: [],
   activeAnomalyId: '',
 }
@@ -65,20 +65,20 @@ const mutations = {
     },
     add_analysis(state, payload) {
         state.local.push(payload)
-        state.activeAnalysisId = payload.id
     },
     set_active(state, id) {
-        if (state.local.find(elem => elem.id == id)) {
-            state.activeAnalysisId = id
+        let found = state.local.find(elem => elem.id == id)
+        if (found) {
+            state.activeAnalysis = found
         } else {
-            state.activeAnalysisId = ''
+            state.activeAnalysis = {}
         }
     },
     remove_analysis(state, id) {
         let index = state.local.findIndex(elem => elem.id == id)
         if (index > -1) {
-            if (state.local[index].id == state.activeAnalysisId)
-                state.activeAnalysisId = ''
+            if (state.local[index].id == state.activeAnalysis.id)
+                state.activeAnalysis = {}
             state.local.splice(index, 1)
         }
     },
@@ -133,7 +133,7 @@ const actions = {
                 .then(response => {
                     let loaded = response.data
                     let settings = {}
-                    settings.savedId = loaded.id
+                    settings.saveId = loaded.id
                     settings.id = nanoid(5)
                     settings.name = loaded.name
                     settings.description = loaded.description
@@ -143,15 +143,16 @@ const actions = {
                     settings.interval = loaded.data_options.interval
                     settings.model = loaded.model
                     store.commit('add_analysis', settings)
+                    store.commit('set_active', settings.id)
                 })
                 .catch(error => console.log())
     }, 
-    saveAnalysis({store, getters, dispatch}, id) {
+    saveAnalysis({commit, getters, dispatch}, {id, name, description}) {
         const settings = getters.getAnalysisById(id)
         const objectToSave = { 
             client: settings.client,
-            name: settings.name,
-            description: settings.description,
+            name: name,
+            description: description,
             data_options: { 
                 client: settings.client, 
                 tags: settings.tags, 
@@ -162,17 +163,19 @@ const actions = {
         }
         return  api.addNewAnalysis(objectToSave)
                 .then(response => {
-                    return response.data.id                 
+                    const saveId = response.data.id
+                    commit('update_analysis', {id, name, description, saveId})
+                    commit('set_active', id)
+                    dispatch("fetchAllAnalysis")
                 })
-                .catch(error => console.log(error))
-        
+                .catch(error => console.log(error)) 
     },
-    updateAnalysis({store, getters, dispatch}, id) {
+    updateAnalysis({commit, getters, dispatch}, {id, name, description}) {
         const settings = getters.getAnalysisById(id)
         const objectToSave = { 
             client: settings.client,
-            name: settings.name,
-            description: settings.description,
+            name: name,
+            description: description,
             data_options: { 
                 client: settings.client, 
                 tags: settings.tags, 
@@ -181,21 +184,24 @@ const actions = {
             },
             model: settings.model 
         }
-        return  api.updateAnalysis(objectToSave, settings.savedId)
-                .then(response => dispatch("fetchAllAnalysis"))
+        return  api.updateAnalysis(objectToSave, settings.saveId)
+                .then(response => {
+                    commit('update_analysis', {id, name, description})
+                    commit('set_active', id)
+                    dispatch("fetchAllAnalysis")
+                })
                 .catch(error => console.log(error))
 
     },
-    deleteAnalysis({store, dispatch}, idList) {
+    deleteAnalysis({dispatch}, idList) {
         return  api.deleteAnalysis(idList)
                 .then(response => dispatch("fetchAllAnalysis"))
                 .catch(error => console.log(error))
     },
-
-
-
     createLocalAnalysis(store) {
-        store.commit('add_analysis', { id: nanoid(5), saveId: undefined })
+        const newId = nanoid(5)
+        store.commit('add_analysis', { id: newId, saveId: undefined })
+        store.commit('set_active', newId)
     },
     closeLocalAnalysis(store, id) {
         store.commit('remove_analysis', id)
