@@ -1,6 +1,6 @@
 from .nodes.transformers.ema import EMA
 from .nodes.transformers.std_normalize import StdNormalize
-from .nodes.transformers.rolling_aggregate_mean import RollingAggregateMean
+from .nodes.transformers.rolling_aggregate import RollingAggregate
 
 from .nodes.detectors.simple_threshold import SimpleThreshold
 
@@ -13,7 +13,7 @@ class NodeFactory:
         'transformer': {
             'StdNormalize': StdNormalize,
             'EMA': EMA,
-            'RollingAggregateMean': RollingAggregateMean
+            'RollingAggregate': RollingAggregate
         },
         'detector': {
             'SimpleThreshold': SimpleThreshold

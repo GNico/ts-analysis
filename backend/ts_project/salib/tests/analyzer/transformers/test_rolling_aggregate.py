@@ -18,10 +18,11 @@ class TestRollingAggregate(unittest.TestCase):
         series = self.build_triangle()
         self.assertEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0], series.as_list())
         
-        factory = NodeFactory.transformer('test', 'RollingAggregateMean')
+        factory = NodeFactory.transformer('test', 'RollingAggregate')
         factory.set_param_value('window', 2)
         factory.set_param_value('center', False)
         factory.set_param_value('min_periods', 0)
+        factory.set_param_value('agg_method', 'mean')
         ram = factory.build()
 
         self.case(series, ram, [0.0, 0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.0, 8.5, 7.5, 6.5, 5.5, 4.5, 3.5, 2.5, 1.5, 0.5])

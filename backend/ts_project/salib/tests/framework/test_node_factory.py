@@ -11,7 +11,7 @@ class TestNodeFactory(unittest.TestCase):
             'transformer': [
                 'StdNormalize',
                 'EMA',
-                'RollingAggregateMean'
+                'RollingAggregate'
             ],
             'detector': [
                 'SimpleThreshold'
@@ -47,16 +47,17 @@ class TestNodeFactory(unittest.TestCase):
                     'max': 1,
                     'min': 0,
                     'type': 'BoundedFloat',
-                    'value': 0.9,
+                    'conditions': [],
+                    'value': 0.9
                 }
             ]
         }
         self.assertEqual(expected, NodeFactory.node_description('transformer', 'EMA'))
         
         expected = {
-            'type': 'RollingAggregateMean',
-            'display': 'Rolling Aggregate Mean',
-            'desc': 'Rolling aggregate using mean',
+            'type': 'RollingAggregate',
+            'display': 'Rolling Aggregate',
+            'desc': 'Rolling aggregate',
             'group': 'transformer',
             'params': [
                 {
@@ -64,6 +65,7 @@ class TestNodeFactory(unittest.TestCase):
                     'type': 'String',
                     'display': 'Window',
                     'desc': 'Window size in time interval (eg: 1h)',
+                    'conditions': [],
                     'value': '30m'
                 },
                 {
@@ -71,6 +73,7 @@ class TestNodeFactory(unittest.TestCase):
                     'type': 'Boolean',
                     'display': 'Center',
                     'desc': 'Center aggregation window around value',
+                    'conditions': [],
                     'value': False
                 },
                 {
@@ -79,12 +82,38 @@ class TestNodeFactory(unittest.TestCase):
                     'display': 'Min. periods',
                     'desc': 'Min number of periods',
                     'value': None,
+                    'conditions': [],
                     'min': 0,
                     'max': None,
+                },
+                {
+                    'id': 'agg_method',
+                    'type': 'Select',
+                    'display': 'Aggregation',
+                    'desc': 'Aggregation method',
+                    'options': [
+                        {'code': 'mean', 'display': 'Mean'},
+                        {'code': 'median', 'display': 'Median'},
+                        {'code': 'sum', 'display': 'Sum'},
+                        {'code': 'min', 'display': 'Min'},
+                        {'code': 'max', 'display': 'Max'},
+                        {'code': 'quantile', 'display': 'Quantile'},
+                        {'code': 'iqr', 'display': 'Inter-quartile range'},
+                        {'code': 'idr', 'display': 'Inter-decile range'},
+                        {'code': 'count', 'display': 'Value count'},
+                        {'code': 'nnz', 'display': 'Non zero count'},
+                        {'code': 'nunique', 'display': 'Unique count'},
+                        {'code': 'std', 'display': 'Sample standard dev.'},
+                        {'code': 'var', 'display': 'Sample variance'},
+                        {'code': 'skew', 'display': 'Sample skewness'},
+                        {'code': 'kurt', 'display': 'Sample kurtosis'}
+                    ],
+                    'value': 'mean',
+                    'conditions': [],
                 }
             ]
         }
-        self.assertEqual(expected, NodeFactory.node_description('transformer', 'RollingAggregateMean'))
+        self.assertEqual(expected, NodeFactory.node_description('transformer', 'RollingAggregate'))
 
     def test_aggregators_description(self):
         self.maxDiff = None
@@ -120,6 +149,7 @@ class TestNodeFactory(unittest.TestCase):
                     'display': 'Inside',
                     'desc': 'If true, value must be within bounds',
                     'type': 'Boolean',
+                    'conditions': [],
                     'value': False,
                 },
                 {
@@ -127,6 +157,7 @@ class TestNodeFactory(unittest.TestCase):
                     'display': 'Strict',
                     'desc': 'Strict comparison on bounds',
                     'type': 'Boolean',
+                    'conditions': [],
                     'value': False,
                 },
                 {
@@ -134,6 +165,7 @@ class TestNodeFactory(unittest.TestCase):
                     'display': 'Lower',
                     'desc': 'Lower bound',
                     'type': 'Float',
+                    'conditions': [],
                     'value': None,
                 },
                 {
@@ -141,6 +173,7 @@ class TestNodeFactory(unittest.TestCase):
                     'display': 'Upper',
                     'desc': 'Upper bound',
                     'type': 'Float',
+                    'conditions': [],
                     'value': None,
                 }
             ]
