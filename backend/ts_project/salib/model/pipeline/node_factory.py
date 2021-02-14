@@ -35,30 +35,22 @@ class NodeFactory:
             raise Exception('Invalid node group ' + type)
 
     @staticmethod
-    def nodes_description(group):
-        output = []
-        for type in NodeFactory.NODE_TYPES[group]:
-            instance = NodeFactory.base_node(None, group, type)
-            entry = {}
-            entry['type'] = type
-            entry['group'] = group
-            entry['desc'] = instance.desc()
-            entry['display'] = instance.display()
-            entry['params'] = instance.params_definition()
-            output.append(entry)
+    def node_description(group, type):
+        instance = NodeFactory.base_node(None, group, type)
+        entry = {}
+        entry['type'] = type
+        entry['group'] = group
+        entry['desc'] = instance.desc()
+        entry['display'] = instance.display()
+        entry['params'] = instance.params_definition()
+        return entry
+
+    @staticmethod
+    def nodes_list():
+        output = {}
+        for group, types in NodeFactory.NODE_TYPES.items():
+            output[group] = list(types.keys())
         return output
-
-    @staticmethod
-    def detectors_description():
-        return NodeFactory.nodes_description('detector')
-
-    @staticmethod
-    def transformers_description():
-        return NodeFactory.nodes_description('transformer')
-
-    @staticmethod
-    def aggregators_description():
-        return NodeFactory.nodes_description('aggregator')
 
     @staticmethod
     def detector(id, type):

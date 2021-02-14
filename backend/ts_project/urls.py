@@ -13,7 +13,9 @@ urlpatterns = [
 
     path('pipelines/', views.PipelineListView.as_view(), name='pipelines'),
     path('pipelines/<slug:pk>/', views.PipelineDetailView.as_view(), name='pipeline_detail'),
+
     path('node-types/', views.PipelineNodesListView.as_view(), name='pipeline_types'),
+    path('node-types/<slug:group>/<slug:type>', views.PipelineNodesDetailView.as_view(), name='pipeline_types'),
 
     path('analysis-settings/', views.AnalysisSettingsListView.as_view(), name='settings'),
     path('analysis-settings/<slug:pk>/', views.AnalysisSettingsDetailView.as_view(), name='settings_detail'),
