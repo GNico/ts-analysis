@@ -1,5 +1,3 @@
-import pandas as pd
-
 from ..node_transformer import NodeTransformer
 
 from ...params.string import String
@@ -99,7 +97,5 @@ class RollingAggregate(NodeTransformer):
         else:
             raise ValueError('Invalid aggregation method: ' + agg)
 
-        if isinstance(s_rolling, pd.Series):
-            s_rolling.name = s.name
-
+        s_rolling.name = s.name
         return s_rolling
