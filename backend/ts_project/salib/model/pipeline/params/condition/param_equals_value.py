@@ -1,4 +1,4 @@
-from param_condition import ParamCondition
+from .param_condition import ParamCondition
 
 class ParamEqualsValue(ParamCondition):
 

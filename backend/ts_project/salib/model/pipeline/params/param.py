@@ -20,7 +20,7 @@ class Param:
             'type': self.type,
             'display': self.display,
             'desc': self.desc,
-            'conditions': list([c.to_json for c in self.conditions]),
+            'conditions': list([c.to_json() for c in self.conditions]),
             'value': self.value
         }
         return output
