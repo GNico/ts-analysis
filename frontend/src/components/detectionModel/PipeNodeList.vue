@@ -12,7 +12,7 @@
       </template>
 
       <b-dropdown-item 
-        v-for="item in filteredNodeSpecs" 
+        v-for="item in nodeTypes" 
         :key="item.type"
         @click="addNode(item.type)"
         aria-role="listitem">
@@ -44,7 +44,7 @@ export default {
       type: String,
       default: ''
     },
-    nodeSpecs: {
+    nodeTypes: {
       type: Array,
       default: () => []
     },
@@ -63,16 +63,13 @@ export default {
       if (!this.group) return ''
       return this.group.charAt(0).toUpperCase() + this.group.slice(1) + 's'
     },
-    filteredNodeSpecs() {
-      return this.nodeSpecs.filter(elem => elem.group === this.group)
-    },
     filteredPipenodes() {
       return this.nodes.filter(elem => elem.group === this.group)
     },
   },
   methods: {
-    addNode(name) {
-      this.$emit('newNode', name )
+    addNode(type) {
+      this.$emit('newNode', {type: type, group: this.group})
     }
   }
 

@@ -78,7 +78,7 @@ export default {
         return repository.get("/pipelines/")
     },
     getPipelineTypes() {
-        return repository.get("/node-types/")
+        return repository.get("/nodes/")
     },
     addNewModel(model) {
         delete model.id

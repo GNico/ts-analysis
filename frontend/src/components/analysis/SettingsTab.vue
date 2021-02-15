@@ -122,9 +122,6 @@ export default {
     clients() {
       return this.$store.getters['clients/readyClients']
     },
-   /* id() {
-      return this.$store.state.analysis.activeAnalysisId
-    }, */
     analysis() {
       return this.$store.state.analysis.activeAnalysis
     },

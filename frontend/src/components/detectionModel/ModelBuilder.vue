@@ -4,7 +4,7 @@
     <div class="column is-4 bordered-column" v-for="group in groups" :key="group">
       <PipeNodeList          
         :group="group"
-        :nodeSpecs="nodeSpecs" 
+        :nodeTypes="nodeTypes[group]" 
         :nodes="nodes" 
         @newNode="createNode"
         @nodeParamsUpdate="updateNodeParams"
@@ -45,17 +45,20 @@ export default {
   },
   data() {
     return {
-      groups: [ "transformer", "detector", "aggregator"],
+      //groups: [ "transformer", "detector", "aggregator"],
       validationMessages: [],
     }
   },
   computed: {
-    nodeSpecs() {
+    nodeTypes() {
       return this.$store.state.models.nodeTypes
+    },
+    groups() {
+      return Object.keys(this.nodeTypes)
     }
   },
   methods: {
-    createNode(name) {
+    createNode({type, group}) {
       let newid = nanoid(3)
       let found = true
       while (found) {
@@ -64,10 +67,11 @@ export default {
           newid = nanoid(3)
         }
       }
-      let options = this.nodeSpecs.find(elem => elem.type === name)
+      let options = this.nodeTypes[group].find(elem => elem.type === type)
       if (options) {
         let newNode = {
           id: newid,
+          group: group,
           sourceNodes: [],
           ...options,
         }

@@ -20,7 +20,7 @@
           @settings="openSeriesSettings">
           <b-dropdown  v-if="sortedSeries.length > 1" aria-role="list"">
             <p slot="trigger" role="button">
-              {{item.name}}
+              {{item.name ? item.name : 'Series'}}
             </p>
             <b-dropdown-item v-if="item.yAxis > 0" aria-role="listitem" @click="moveUp(item.id)">
               <span><b-icon icon="arrow-up-thick" size="is-small"/> Move up</span>
@@ -30,7 +30,7 @@
             </b-dropdown-item>
           </b-dropdown>
           <p v-else>
-            {{item.name}}
+            {{item.name ? item.name : 'Series'}}
           </p>       
         </LegendSeriesTag>
       </div>

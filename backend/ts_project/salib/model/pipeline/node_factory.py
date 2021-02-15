@@ -49,7 +49,16 @@ class NodeFactory:
     def nodes_list():
         output = {}
         for group, types in NodeFactory.NODE_TYPES.items():
-            output[group] = list(types.keys())
+            nodes = []
+            for type in types:
+                instance = NodeFactory.base_node(None, group, type)
+                entry = {}
+                entry['type'] = type
+                entry['desc'] = instance.desc()
+                entry['display'] = instance.display()
+                entry['params'] = instance.params_definition()
+                nodes.append(entry)
+            output[group] = nodes
         return output
 
     @staticmethod
