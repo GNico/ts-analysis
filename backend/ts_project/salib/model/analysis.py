@@ -1,17 +1,21 @@
 class Analysis:
 
-    def __init__(self, series, result, anomalies, baseline):
+    def __init__(self, series, result, anomalies):
         self.series = series
         self.result = result
         self.anomalies = anomalies
         self.build_anomalies_map()
-        self.baseline = baseline
 
     def anomalies_by_algo(self):
         return self.anomalies_by_algo
 
     def result_for_node(self, id):
         return self.result.find_node(id)
+
+    def result_debug_nodes(self):
+        debug_nodes = []
+        self.result.debug_nodes(debug_nodes)
+        return debug_nodes
 
     def build_anomalies_map(self):
         self.anomalies_by_algo = {}
@@ -24,9 +28,17 @@ class Analysis:
     def output_format(self):
         series = self.series.output_format()
         anomalies = list(map(lambda a: a.output_format(), self.anomalies))
-        baseline = self.baseline.output_format()
+        
+        debug_nodes = self.result_debug_nodes()
+        debug_nodes_output = {}
+        for debug_node in debug_nodes:
+            debug_nodes_output[debug_node.id] = {
+                "series": debug_node.series.output_format(),
+                "anomalies": list(map(lambda a: a.output_format(), debug_node.anomalies))
+            }
+
         return {
             "series": series,
             "anomalies": anomalies,
-            "baseline": baseline
+            "debug_nodes": debug_nodes_output,
         }

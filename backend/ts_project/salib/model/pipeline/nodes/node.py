@@ -7,6 +7,7 @@ class Node:
         self.params = {}
         self.required_params = {}
         self.sources = []
+        self.debug = False
 
     def display(self):
         raise Exception('Undefined display name: ' + type(self).__name__)
@@ -22,6 +23,12 @@ class Node:
 
     def add_param(self, param):
         self.params[param.id] = param
+
+    def set_debug(self, value):
+        self.debug = value
+
+    def is_debug(self):
+        return self.debug
 
     def add_required_param(self, param):
         self.required_params[param.id] = param

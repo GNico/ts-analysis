@@ -87,6 +87,8 @@ class NodeFactory:
             sources = obj['sources']
             for source in sources:
                 builder.add_source(source)
+        if obj.get('debug') is True:
+            builder.set_debug(True)
         return builder.build()
 
     def __init__(self, id, group, type):
@@ -97,6 +99,9 @@ class NodeFactory:
             value = None
         self.node.set_param_value(id, value)
         return self
+
+    def set_debug(self, value):
+        self.node.set_debug(value)
 
     def add_source(self, source):
         self.node.add_source(source)

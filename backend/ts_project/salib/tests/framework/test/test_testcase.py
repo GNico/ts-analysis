@@ -37,7 +37,6 @@ class TestTestCase(unittest.TestCase):
             test_series,
             None,
             expected_anomalies,
-            None
         )
 
         test = TestCase("testcase1", test_series, analyzer, expected_analysis)

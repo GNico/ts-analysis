@@ -5,7 +5,6 @@ from model.anomaly import Anomaly
 from model.analysis import Analysis
 from model.pipeline.pipeline import Pipeline
 from model.pipeline.node_factory import NodeFactory
-from model.pipeline.nodes.mock import NoBaseline
 from model.pipeline.params.float import Float, BoundedFloat
 from model.test.test_series_builder import TestSeriesBuilder
 from model.test.testcase import TestCase

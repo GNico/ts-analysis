@@ -16,6 +16,15 @@ class NodeResult:
     def add_anomalies(self, anomalies):
         self.anomalies.extend(anomalies)
 
+    def is_debug(self):
+        return self.node and self.node.is_debug()
+
+    def debug_nodes(self, accumulator):
+        if self.is_debug():
+            accumulator.append(self)
+        for input in self.inputs:
+            input.debug_nodes(accumulator)
+
     def find_node(self, id):
         if self.id == id:
             return self

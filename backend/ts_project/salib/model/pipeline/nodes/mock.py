@@ -14,9 +14,3 @@ class NoAnomalies:
 
     def id(self):
         return "NoAnomalies"
-
-
-class NoBaseline:
-
-    def baseline(self, series):
-        return MockOutputFormat([])
