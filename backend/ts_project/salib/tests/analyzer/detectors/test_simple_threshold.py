@@ -53,13 +53,35 @@ class TestSimpleThreshold(unittest.TestCase):
 
         self.case(series, st, [[6, 14]])
 
+    def test_simple_threshold_none_edges(self):
+        series = self.build_triangle()
+        
+        factory = NodeFactory.detector('test', 'SimpleThreshold')
+        factory.set_param_value('inside', False)
+        factory.set_param_value('strict', True)
+        factory.set_param_value('lower', None)
+        factory.set_param_value('upper', 5)
+        st = factory.build()
+
+        self.case(series, st, [[6, 14]])
+
+        series = self.build_triangle()
+        
+        factory = NodeFactory.detector('test', 'SimpleThreshold')
+        factory.set_param_value('inside', True)
+        factory.set_param_value('strict', True)
+        factory.set_param_value('lower', None)
+        factory.set_param_value('upper', 5)
+        st = factory.build()
+
+        self.case(series, st, [[0, 5], [15, 20]])
+
     def case(self, series, node, expected_anomalies):
         pipeline = Pipeline(node)
         analyzer = Analyzer(pipeline=pipeline)
         analysis = analyzer.analyze(series)
         anomalies = analysis.anomalies
 
-        self.assertEqual(len(expected_anomalies), len(anomalies))
         for i in range(len(expected_anomalies)):
             expected_anomaly = expected_anomalies[i]
             self.assertEqual({
@@ -69,6 +91,7 @@ class TestSimpleThreshold(unittest.TestCase):
                 'to': expected_anomaly[1]*1000,
                 'score': 1.0
             },anomalies[i].output_format())
+        self.assertEqual(len(expected_anomalies), len(anomalies))
 
     def build_triangle(self):
         sb_up = TestSeriesBuilder.linear(10, 0, 1)
