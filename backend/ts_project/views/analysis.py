@@ -38,6 +38,7 @@ class AnalysisView(APIView):
         analyzer = Analyzer(pipeline=pipeline)
         analysis = analyzer.analyze(series)
         response = analysis.output_format()
+        print("Response" + str(response))
         
         return Response(response)
 

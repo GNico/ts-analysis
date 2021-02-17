@@ -1,6 +1,6 @@
 from .result import Result
 from model.anomaly import Anomaly
-
+from model.pipeline.nodes.node import Node
 
 class TestCase:
 
@@ -35,5 +35,8 @@ class TestCase:
 
             if start is not None:
                 anomalies.append(Anomaly(series, start, series.end, 1.0))
+
+        for anomaly in anomalies:
+            anomaly.set_source_node(Node('mock_node'))
 
         return anomalies

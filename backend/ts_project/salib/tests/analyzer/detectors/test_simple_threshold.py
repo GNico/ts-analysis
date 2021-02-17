@@ -63,7 +63,7 @@ class TestSimpleThreshold(unittest.TestCase):
         for i in range(len(expected_anomalies)):
             expected_anomaly = expected_anomalies[i]
             self.assertEqual({
-                'algo_id': str(node),
+                'source_node': node.id,
                 'desc': None,
                 'from': expected_anomaly[0]*1000,
                 'to': expected_anomaly[1]*1000,

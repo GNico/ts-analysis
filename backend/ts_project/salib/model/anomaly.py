@@ -12,7 +12,7 @@ class Anomaly:
         self.start = start
         self.end = end
         self.score = score
-        self.algo_tag = None
+        self.source_node = None
         self.desc = desc
 
     def output_format(self):
@@ -23,11 +23,11 @@ class Anomaly:
             "to": to_timestamp,
             "score": self.score,
             "desc": self.desc,
-            "algo_id": self.algo_tag
+            "source_node": self.source_node.id
         }
 
-    def tag_algo(self, algo_id):
-        self.algo_tag = algo_id
+    def set_source_node(self, source_node):
+        self.source_node = source_node
 
     @staticmethod
     def from_epoch(series, start, end, score, desc=None):
