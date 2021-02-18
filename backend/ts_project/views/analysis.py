@@ -15,6 +15,8 @@ class AnalysisView(APIView):
 
     def post(self, request):
         data = request.data
+
+        print(data)
         # TODO: deberia pinchar con mas gracia si esta vacio
         pipeline_obj = data['model']
         # TODO: cleanup
@@ -39,5 +41,7 @@ class AnalysisView(APIView):
         analysis = analyzer.analyze(series)
         response = analysis.output_format()
         
+
+        #print(response)
         return Response(response)
 

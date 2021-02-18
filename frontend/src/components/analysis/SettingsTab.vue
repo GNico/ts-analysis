@@ -22,7 +22,8 @@
     <div class="subtitle"> Data input </div>
     <b-field horizontal label="Client">
       <SearchSelect
-        v-model="settings.client"
+        :value="analysis.client"
+        @input="updateAnalysis('client', $event)"
         :data="clients"
         @select="clearTagsContexts"/>
     </b-field>
@@ -31,17 +32,26 @@
         class="filters-box"
         rootName="All tags"
         :itemsTree="allTags"
-        v-model="settings.tags"/>
+        :value="analysis.tags"
+        @input="updateAnalysis('tags', $event)"
+    />
     </b-field>
     <b-field horizontal label="Contexts">
       <TreeSelect 
         class="filters-box"
         rootName="All contexts"
         :itemsTree="allContexts"
-        v-model="settings.contexts"/>
+        :value="analysis.contexts"
+        @input="updateAnalysis('contexts', $event)"
+    />
     </b-field>
     <b-field horizontal label="Interval">
-      <b-input v-model="settings.interval" type="text" pattern="^[0-9]+[mhd]$" size="is-small" />
+      <b-input 
+        :value="analysis.interval"
+        @input="updateAnalysis('interval', $event)"
+        type="text" 
+        pattern="^[0-9]+[mhd]$" 
+        size="is-small" />
     </b-field>       
     <b-field class="has-text-right sticky-container">
       <div class="box has-background-grey-darker">
@@ -77,7 +87,7 @@
         </p>
       </b-field>
     </div>
-    <ModelBuilder class="model-box" :nodes="settings.model"  />
+    <ModelBuilder class="model-box" :nodes="analysis.model" @input="updateAnalysis('model', $event)" />
   </div>
 
 </div>
@@ -96,16 +106,7 @@ import { tagsAndContexts } from '../../mixins/TagsAndContextsOptions.js';
 import cloneDeep from "lodash/cloneDeep";
 import isEmpty from "lodash/isEmpty";
 
-const defaultSettings = {
-  name: '',
-  description: '',
-  client: '',
-  contexts: [],
-  tags: [],
-  interval: '1h',
-  model: [],
-  //saveId: '',
-}
+
 
 export default {
   name: "AnalysisSettings",
@@ -113,7 +114,6 @@ export default {
   components:  { TreeSelect, ModelBuilder, SearchSelect, ModalSaveTemplate, ModalLoadTemplate },
   data () {
     return {
-      settings: cloneDeep(defaultSettings),    
       saveTemplateModalActive: false,  
       loadTemplateModalActive: false,
     }
@@ -123,9 +123,8 @@ export default {
       return this.$store.getters['clients/readyClients']
     },
     analysis() {
-      return this.$store.state.analysis.activeAnalysis
+      return this.$store.getters['analysis/activeAnalysis']
     },
-
     models() {
       return this.$store.state.models.all
     },
@@ -134,23 +133,23 @@ export default {
     saveModel(modalForm) {
       this.$store.dispatch('models/saveModel', {
         ...modalForm,
-        nodes: this.settings.model
+      //  nodes: this.settings.model
       })
     },
     updateModel(modalForm) {
       this.$store.dispatch('models/updateModel', {
         ...modalForm,
-        nodes: this.settings.model
+    //    nodes: this.settings.model
       })
     },
     loadModel(model) {
-      this.settings.model = cloneDeep(model.nodes)
+    //  this.settings.model = cloneDeep(model.nodes)
     },
     deleteModel(id) {
       this.$store.dispatch('models/deleteModel', id)
     },
     resetFields() {
-      this.settings = cloneDeep(defaultSettings)
+  //    this.settings = cloneDeep(defaultSettings)
     },
     runAnalysis() {
       this.$emit('run')
@@ -158,19 +157,22 @@ export default {
     },
     clearTagsContexts(selectevent) {
       if (selectevent) {
-        this.settings.tags = []
-        this.settings.contexts = []
+    //    this.settings.tags = []
+    //    this.settings.contexts = []
       }
     },
+    updateAnalysis(prop, value) {
+      console.log("updating prop settings")
+      let updatedSettings = {id: this.analysis.id, [prop]: value }
+      if (prop == 'client' && value != this.analysis.client) {
+        updatedSettings.tags = []
+        updatedSettings.contexts = []
+      }
+      this.$store.dispatch('analysis/updateLocalSettings', updatedSettings)
+    }
   },
   watch: {
-    settings: {
-      deep: true,
-      handler(newVal) {
-        this.$store.dispatch('analysis/updateLocalSettings', {id: this.analysis.id, ...this.settings })
-      }
-    },
-    'settings.client': {
+    'analysis.client': {
       handler(newVal) {
         if (!newVal || this.clients.includes(newVal)) {
           this.updateTags(newVal)
@@ -178,18 +180,6 @@ export default {
         }
       }
     },
-    analysis: {
-      immediate: true,
-      deep: true,
-      handler(newVal) {
-        this.resetFields()
-        for (const key of Object.keys(newVal)) {
-          if (this.settings.hasOwnProperty(key)) { 
-            this.settings[key] = newVal[key]
-          }
-        }        
-      }
-    }
   },
   created() {
     this.$store.dispatch('models/fetchModels')

@@ -33,6 +33,8 @@
 import GraphBuilder from "./GraphBuilder"
 import PipeNodeList from "./PipeNodeList"
 import {nanoid} from 'nanoid'
+import cloneDeep from "lodash/cloneDeep";
+
 
 export default {
   components: { GraphBuilder, PipeNodeList },
@@ -59,6 +61,8 @@ export default {
   },
   methods: {
     createNode({type, group}) {
+      let modelCopy = cloneDeep(this.nodes)
+
       let newid = nanoid(3)
       let found = true
       while (found) {
@@ -85,40 +89,59 @@ export default {
           })
         }
         newNode['paramsData'] = paramsData
-        this.nodes.push(newNode)
+
+        modelCopy.push(newNode)
+        this.updateModel(modelCopy)
       }
     },
     updateNodeParams(event) {
-      let nodeIndex = this.nodes.findIndex(elem => elem.id === event.id)
+      let modelCopy = cloneDeep(this.nodes)
+
+      let nodeIndex = modelCopy.findIndex(elem => elem.id === event.id)
       if (nodeIndex != -1) {
         let id, newParamsValues;
         ({ id, ...newParamsValues } = event )
-        let nodeCopy = { ...this.nodes[nodeIndex]}
+        let nodeCopy = { ...modelCopy[nodeIndex]}
         nodeCopy.paramsData = { ...nodeCopy.paramsData, ...newParamsValues }
-        this.nodes.splice(nodeIndex, 1, nodeCopy)
+        modelCopy.splice(nodeIndex, 1, nodeCopy)
       }
+
+      this.updateModel(modelCopy)
+
     },
     updateNodeSource(event) {
-      let nodeIndex = this.nodes.findIndex(elem => elem.id === event.id)
+      let modelCopy = cloneDeep(this.nodes)
+
+      let nodeIndex = modelCopy.findIndex(elem => elem.id === event.id)
       if (nodeIndex != -1) {
-        let nodeCopy = { ...this.nodes[nodeIndex]}
+        let nodeCopy = { ...modelCopy[nodeIndex]}
         nodeCopy.sourceNodes = event.sourceNodes
-        this.nodes.splice(nodeIndex, 1, nodeCopy)
+        modelCopy.splice(nodeIndex, 1, nodeCopy)
       } 
+
+      this.updateModel(modelCopy)
+
     },
     deleteNode(id) {
-      for (var i = this.nodes.length - 1; i >= 0; i--) {
-        if (this.nodes[i].id === id) {
-          this.nodes.splice(i, 1)
+      let modelCopy = cloneDeep(this.nodes)
+
+      for (var i = modelCopy.length - 1; i >= 0; i--) {
+        if (modelCopy[i].id === id) {
+          modelCopy.splice(i, 1)
         } else {
-          for (var j = this.nodes[i].sourceNodes.length - 1; j >= 0; j--) {
-            if (this.nodes[i].sourceNodes[j].id === id) {
-              this.nodes[i].sourceNodes.splice(j, 1)
+          for (var j = modelCopy[i].sourceNodes.length - 1; j >= 0; j--) {
+            if (modelCopy[i].sourceNodes[j].id === id) {
+              modelCopy[i].sourceNodes.splice(j, 1)
             }
           }
         }
-      }     
-    }    
+      }   
+
+      this.updateModel(modelCopy)
+    },
+    updateModel(newModel) {
+      this.$emit('input', newModel)
+    },   
   }, 
   created() {
     this.$store.dispatch('models/fetchNodeTypes')          

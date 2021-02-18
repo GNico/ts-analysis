@@ -22,12 +22,22 @@ function formatModel(model) {
     return formatted
 }
 
-
+const defaultSettings = {
+  name: '',
+  description: '',
+  client: '',
+  contexts: [],
+  tags: [],
+  interval: '1h',
+  model: [],
+  saveId: undefined,
+}
 
 const state = {
   all: [],
   local: [],
-  activeAnalysis: {},
+  //activeAnalysis: {},
+  activeAnalysisId: '',
   results: [],
   activeAnomalyId: '',
 }
@@ -40,6 +50,14 @@ const getters = {
     getResultsById: (state) => (id) => {
         let item = state.results.find(elem => elem.id == id)
         return item ? item : {}
+    },
+
+    activeAnalysis: (state) => {
+        console.log("getter triggers")
+        let found = state.local.find(elem => elem.id == state.activeAnalysisId)
+        console.log(found)
+
+        return found ? found : {}
     },
  /* getAnomalies: (state) => {
         if ((state.results.hasOwnProperty('anomalies') 
@@ -69,16 +87,16 @@ const mutations = {
     set_active(state, id) {
         let found = state.local.find(elem => elem.id == id)
         if (found) {
-            state.activeAnalysis = found
+            state.activeAnalysisId = id
         } else {
-            state.activeAnalysis = {}
+            state.activeAnalysis = ''
         }
     },
     remove_analysis(state, id) {
         let index = state.local.findIndex(elem => elem.id == id)
         if (index > -1) {
-            if (state.local[index].id == state.activeAnalysis.id)
-                state.activeAnalysis = {}
+            if (state.local[index].id == state.activeAnalysisId)
+                state.activeAnalysisId = ''
             state.local.splice(index, 1)
         }
     },
@@ -205,13 +223,14 @@ const actions = {
     }, */
     createLocalAnalysis(store) {
         const newId = nanoid(5)
-        store.commit('add_analysis', { id: newId, saveId: undefined })
+        store.commit('add_analysis', { id: newId, ...defaultSettings })
         store.commit('set_active', newId)
     },
     closeLocalAnalysis(store, id) {
         store.commit('remove_analysis', id)
     },
     updateLocalSettings(store, settings) {
+        console.log(settings)
         store.commit('update_analysis', settings)
     },
 	runAnalysis({commit, getters}, id) {

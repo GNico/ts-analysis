@@ -106,7 +106,7 @@ export default {
       return this.$store.state.analysis.local
     },
     activeAnalysis() {
-      return this.$store.state.analysis.activeAnalysis
+      return this.$store.getters['analysis/activeAnalysis']
     },
     hasResults() {
       let res = this.$store.getters['analysis/getResultsById'](this.activeAnalysis.id)
