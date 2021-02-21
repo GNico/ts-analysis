@@ -60,7 +60,24 @@ class TestNodeFactory(unittest.TestCase):
                         },
                     ],
                     "type": "SimpleThreshold",
-                }
+                },
+                {
+                    "desc": "Compare values with 1st and 3rd quartiles and identify "
+                    "anomalies beyond inter-quartile range adjusted by a "
+                    "scale factor",
+                    "display": "Inter-quartile range",
+                    "params": [
+                        {
+                            "conditions": [],
+                            "desc": "Factor used to determine the bound of normal range (betweeen Q1-c*IQR and Q3+c*IQR)",
+                            "display": "Range scale factor",
+                            "id": "scale",
+                            "type": "Float",
+                            "value": 0.3,
+                        }
+                    ],
+                    "type": "InterQuartileRange",
+                },
             ],
             "transformer": [
                 {
