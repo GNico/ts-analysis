@@ -17,7 +17,12 @@ class TestNodeFactory(unittest.TestCase):
                 {
                     "desc": "Combine overlapping anomalies from sources",
                     "display": "And",
-                    "params": [],
+                    'params': [{'conditions': [],
+                             'desc': 'If true anomalies must match exact bounds, otherwise, any overlap is considered valid',
+                             'display': 'Strict',
+                             'id': 'strict',
+                             'type': 'Boolean',
+                             'value': True}],
                     "type": "AND",
                 },
             ],
