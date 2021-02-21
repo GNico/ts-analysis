@@ -142,22 +142,182 @@ class TestNodeFactory(unittest.TestCase):
                             "value": "mean",
                         },
                         {
-                            'conditions': [
+                            "conditions": [
                                 {
-                                    'args': {'param': 'agg_method', 'value': 'quantile'},
-                                    'type': 'param_equals_value'
+                                    "args": {
+                                        "param": "agg_method",
+                                        "value": "quantile",
+                                    },
+                                    "type": "param_equals_value",
                                 }
                             ],
-                            'desc': 'Quantile range [q;1-q]',
-                            'display': 'Quantile range',
-                            'id': 'quantile_range',
-                            'max': 0.5,
-                            'min': 0,
-                            'type': 'BoundedFloat',
-                            'value': 0.25
-                        }
+                            "desc": "Quantile range [q;1-q]",
+                            "display": "Quantile range",
+                            "id": "quantile_range",
+                            "max": 0.5,
+                            "min": 0,
+                            "type": "BoundedFloat",
+                            "value": 0.25,
+                        },
                     ],
                     "type": "RollingAggregate",
+                },
+                {
+                    "desc": "Double rolling aggregate",
+                    "display": "Double Rolling Aggregate",
+                    "params": [
+                        {
+                            "conditions": [],
+                            "desc": "Left window size in time interval (eg: " "1h)",
+                            "display": "Left window",
+                            "id": "window_lhs",
+                            "type": "String",
+                            "value": "12h",
+                        },
+                        {
+                            "conditions": [],
+                            "desc": "Left window size in time interval (eg: " "1h)",
+                            "display": "Left window",
+                            "id": "window_rhs",
+                            "type": "String",
+                            "value": "6h",
+                        },
+                        {
+                            "conditions": [],
+                            "desc": "Center aggregation windows",
+                            "display": "Center",
+                            "id": "center",
+                            "type": "Boolean",
+                            "value": False,
+                        },
+                        {
+                            "conditions": [],
+                            "desc": "Min number of periods for left window",
+                            "display": "Left window min. periods",
+                            "id": "min_periods_lhs",
+                            "max": None,
+                            "min": 0,
+                            "type": "BoundedInt",
+                            "value": 0,
+                        },
+                        {
+                            "conditions": [],
+                            "desc": "Min number of periods for right window",
+                            "display": "Right window min. periods",
+                            "id": "min_periods_rhs",
+                            "max": None,
+                            "min": 0,
+                            "type": "BoundedInt",
+                            "value": 0,
+                        },
+                        {
+                            "conditions": [],
+                            "desc": "Aggregation method for left window",
+                            "display": "Left aggregation",
+                            "id": "agg_method_lhs",
+                            "options": [
+                                {"code": "mean", "display": "Mean"},
+                                {"code": "median", "display": "Median"},
+                                {"code": "sum", "display": "Sum"},
+                                {"code": "min", "display": "Min"},
+                                {"code": "max", "display": "Max"},
+                                {"code": "quantile", "display": "Quantile"},
+                                {"code": "iqr", "display": "Inter-quartile range"},
+                                {"code": "idr", "display": "Inter-decile range"},
+                                {"code": "count", "display": "Value count"},
+                                {"code": "nnz", "display": "Non zero count"},
+                                {"code": "nunique", "display": "Unique count"},
+                                {"code": "std", "display": "Sample standard dev."},
+                                {"code": "var", "display": "Sample variance"},
+                                {"code": "skew", "display": "Sample skewness"},
+                                {"code": "kurt", "display": "Sample kurtosis"},
+                            ],
+                            "type": "Select",
+                            "value": "mean",
+                        },
+                        {
+                            "conditions": [],
+                            "desc": "Aggregation method for right window",
+                            "display": "Right aggregation",
+                            "id": "agg_method_rhs",
+                            "options": [
+                                {"code": "mean", "display": "Mean"},
+                                {"code": "median", "display": "Median"},
+                                {"code": "sum", "display": "Sum"},
+                                {"code": "min", "display": "Min"},
+                                {"code": "max", "display": "Max"},
+                                {"code": "quantile", "display": "Quantile"},
+                                {"code": "iqr", "display": "Inter-quartile range"},
+                                {"code": "idr", "display": "Inter-decile range"},
+                                {"code": "count", "display": "Value count"},
+                                {"code": "nnz", "display": "Non zero count"},
+                                {"code": "nunique", "display": "Unique count"},
+                                {"code": "std", "display": "Sample standard dev."},
+                                {"code": "var", "display": "Sample variance"},
+                                {"code": "skew", "display": "Sample skewness"},
+                                {"code": "kurt", "display": "Sample kurtosis"},
+                            ],
+                            "type": "Select",
+                            "value": "mean",
+                        },
+                        {
+                            "conditions": [],
+                            "desc": "Difference metric between window values",
+                            "display": "Difference metric",
+                            "id": "diff",
+                            "options": [
+                                {"code": "diff", "display": "Difference"},
+                                {
+                                    "code": "l1",
+                                    "display": "L1 distance metric (mod " "sum)",
+                                },
+                                {"code": "rel_diff", "display": "Relative difference"},
+                                {
+                                    "code": "abs_rel_diff",
+                                    "display": "Absolute relative " "difference",
+                                },
+                            ],
+                            "type": "Select",
+                            "value": "diff",
+                        },
+                        {
+                            "conditions": [
+                                {
+                                    "args": {
+                                        "param": "agg_method_lhs",
+                                        "value": "quantile",
+                                    },
+                                    "type": "param_equals_value",
+                                }
+                            ],
+                            "desc": "Quantile range [q;1-q]",
+                            "display": "Quantile range",
+                            "id": "quantile_range_lhs",
+                            "max": 0.5,
+                            "min": 0,
+                            "type": "BoundedFloat",
+                            "value": 0.25,
+                        },
+                        {
+                            "conditions": [
+                                {
+                                    "args": {
+                                        "param": "agg_method_lhs",
+                                        "value": "quantile",
+                                    },
+                                    "type": "param_equals_value",
+                                }
+                            ],
+                            "desc": "Quantile range [q;1-q]",
+                            "display": "Quantile range",
+                            "id": "quantile_range_rhs",
+                            "max": 0.5,
+                            "min": 0,
+                            "type": "BoundedFloat",
+                            "value": 0.25,
+                        },
+                    ],
+                    "type": "DoubleRollingAggregate",
                 },
             ],
         }
@@ -205,7 +365,7 @@ class TestNodeFactory(unittest.TestCase):
                 {"id": "inside", "value": False},
                 {"id": "strict", "value": False},
             ],
-            "debug": True
+            "debug": True,
         }
         th_from_json = NodeFactory.from_json(obj)
         self.assertEqual(threshold.is_debug(), th_from_json.is_debug())
