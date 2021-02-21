@@ -26,7 +26,6 @@
     </template>
     <div class="card-content">
       <div class="content">
-
         <!--Source node selection-->
         <div class="field is-horizontal node-fields">
           <div class="field-label">
@@ -53,7 +52,6 @@
               </b-dropdown-item>
             </b-dropdown>
           </div>
-
           <!--Display selected source nodes -->
           <div class="field-body">
             <div class="field is-grouped is-grouped-multiline">
@@ -67,7 +65,6 @@
             </div> 
           </div>
         </div>
-
         <!--Parameters list -->
         <b-field v-for="item in paramsComponents" :key="item.id" horizontal class="node-fields">
           <template #label>
@@ -126,7 +123,7 @@ export default {
     sourceNodes: {
       type: Array,
       default: () => []
-    }
+    },
   },
   data() {
     return {

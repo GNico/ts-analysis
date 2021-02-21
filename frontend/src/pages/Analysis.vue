@@ -74,6 +74,9 @@
         <ResultsTab v-if="hasResults"/>
         <span v-else class="is-size-5"> No results yet. Run analysis first! </span>
       </b-tab-item>
+      <b-tab-item label="Debug" icon="bug" value="Debug" :disabled="!hasResults">
+        <DebugTab v-if="hasResults"/>
+      </b-tab-item>
     </b-tabs>
   </div>
 </div>
@@ -84,13 +87,14 @@
 import BarItemButton from '../components/inputs/BarItemButton';
 import SettingsTab from '../components/analysis/SettingsTab';
 import ResultsTab from "../components/analysis/ResultsTab";
+import DebugTab from "../components/analysis/DebugTab";
 
 import ModalLoadAnalysis from "../components/analysis/ModalLoadAnalysis"
 import ModalSaveAnalysis from "../components/analysis/ModalSaveAnalysis"
 
 
 export default {
-  components: {  BarItemButton, SettingsTab, ResultsTab, ModalLoadAnalysis, ModalSaveAnalysis },
+  components: {  BarItemButton, SettingsTab, ResultsTab, DebugTab, ModalLoadAnalysis, ModalSaveAnalysis },
   data () {
     return {        
       activeTab: "Settings",
@@ -109,8 +113,8 @@ export default {
       return this.$store.getters['analysis/activeAnalysis']
     },
     hasResults() {
-      let res = this.$store.getters['analysis/getResultsById'](this.activeAnalysis.id)
-      return Object.keys(res).length != 0
+      let res = this.$store.getters['analysis/activeResults']
+      return !!res
     }
   },
   methods: {

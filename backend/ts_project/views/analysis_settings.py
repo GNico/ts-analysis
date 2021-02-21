@@ -25,6 +25,7 @@ class AnalysisSettingsListView(APIView):
         Analysis.objects.filter(id__in=delete_ids).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class AnalysisSettingsDetailView(APIView):
     def get_object(self, pk):
         try:

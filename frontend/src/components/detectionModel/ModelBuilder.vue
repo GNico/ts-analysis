@@ -62,7 +62,6 @@ export default {
   methods: {
     createNode({type, group}) {
       let modelCopy = cloneDeep(this.nodes)
-
       let newid = nanoid(3)
       let found = true
       while (found) {
@@ -77,6 +76,7 @@ export default {
           id: newid,
           group: group,
           sourceNodes: [],
+          debug: false,
           ...options,
         }
         //fill default param values
@@ -89,14 +89,12 @@ export default {
           })
         }
         newNode['paramsData'] = paramsData
-
         modelCopy.push(newNode)
         this.updateModel(modelCopy)
       }
     },
     updateNodeParams(event) {
       let modelCopy = cloneDeep(this.nodes)
-
       let nodeIndex = modelCopy.findIndex(elem => elem.id === event.id)
       if (nodeIndex != -1) {
         let id, newParamsValues;
@@ -105,26 +103,20 @@ export default {
         nodeCopy.paramsData = { ...nodeCopy.paramsData, ...newParamsValues }
         modelCopy.splice(nodeIndex, 1, nodeCopy)
       }
-
       this.updateModel(modelCopy)
-
     },
     updateNodeSource(event) {
       let modelCopy = cloneDeep(this.nodes)
-
       let nodeIndex = modelCopy.findIndex(elem => elem.id === event.id)
       if (nodeIndex != -1) {
         let nodeCopy = { ...modelCopy[nodeIndex]}
         nodeCopy.sourceNodes = event.sourceNodes
         modelCopy.splice(nodeIndex, 1, nodeCopy)
       } 
-
       this.updateModel(modelCopy)
-
     },
     deleteNode(id) {
       let modelCopy = cloneDeep(this.nodes)
-
       for (var i = modelCopy.length - 1; i >= 0; i--) {
         if (modelCopy[i].id === id) {
           modelCopy.splice(i, 1)
@@ -136,7 +128,6 @@ export default {
           }
         }
       }   
-
       this.updateModel(modelCopy)
     },
     updateModel(newModel) {

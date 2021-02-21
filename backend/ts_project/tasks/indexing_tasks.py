@@ -3,8 +3,8 @@ from celery import Task
 import json
 from math import ceil
 import os
-from .elastic import series_indexer
-from .models import Client
+from ..elastic import series_indexer
+from ..models import Client
 
 
 class ClientIndexingTask(Task):
@@ -69,5 +69,4 @@ class ClientIndexingTask(Task):
 
 @shared_task(bind=True, base=ClientIndexingTask)
 def index_series_data(self, client_name, filenames):
-    print("do nothing")
-
+    print("Indexing " + client_name)

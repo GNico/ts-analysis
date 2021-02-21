@@ -97,29 +97,39 @@ export default {
           start: null,
           end: null
         },
+        polling: null,
+
       }       
     },
     computed: {
-      id() {
+    /*  id() {
         return this.$store.state.analysis.activeAnalysisId
-      },
+      },*/
       activeAnomaly() {
         return this.$store.state.analysis.activeAnomalyId
       },
-      results() {
-        return this.$store.getters['analysis/getResultsById'](this.id) 
+      activeResults() {
+        return this.$store.getters['analysis/activeResults']
       },
       loading() {
-        return this.results.loading
+        return this.activeResults.loading
       },
       seriesData() {
-        return !this.loading && this.results.hasOwnProperty("series") && this.showSeries ? this.results.series :  [] 
+        return !this.loading && 
+              this.activeResults.results && 
+              this.activeResults.results.hasOwnProperty("series") && 
+              this.showSeries ? this.activeResults.results.series :  [] 
       },
       baseline() {
-        return (!this.loading && this.results.hasOwnProperty("baseline") && this.showBaseline) ? this.results.baseline : []
+        return (!this.loading && 
+              this.activeResults.baseline &&
+              this.activeResults.results.hasOwnProperty("baseline") && 
+              this.showBaseline) ? this.activeResults.results.baseline : []
       },
       anomalies() {
-        return !this.loading && this.results.hasOwnProperty("anomalies") ? this.results.anomalies : []
+        return !this.loading &&
+              this.activeResults.anomalies &&      
+              this.activeResults.results.hasOwnProperty("anomalies") ? this.activeResults.results.anomalies : []
       },
       filteredAnomalies() {
         return this.anomalies.filter(elem => 
@@ -174,8 +184,33 @@ export default {
           }
           this.minDurationTime = parseInt(numbers[0]) *  ms 
         }
+      },
+      startPollingResults() {
+        this.polling = setInterval(() => {
+          console.log('polling results')
+          this.$store.dispatch('analysis/fetchResults')          
+        }, 6000)
+      },
+      stopPollingResults() {
+        console.log('stop polling results')
+        if (this.polling) {
+          clearInterval(this.polling)
+        }
+        this.polling = null
       }
-    },
+    },  
+    watch: {
+      loading: {
+        immediate: true,
+        handler(val) {
+          if (val) {
+            this.startPollingResults()
+          } else {
+            this.stopPollingResults()
+          }
+        }
+      }
+    }
 }
 </script>
 

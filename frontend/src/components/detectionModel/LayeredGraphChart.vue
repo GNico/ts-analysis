@@ -29,7 +29,7 @@ export default {
   },
   data() {
     return {
-      resizeHandler: debounce(this.drawChart, 300),
+      resizeHandler: debounce(this.redraw, 300),
       g: undefined,        
     }
   },
@@ -72,7 +72,6 @@ export default {
       render(inner, this.g);
 
       if (!this.nodes.length) return
-
 /*      //Events
       inner.selectAll("g.node")
       .on("click", debounce(e => {
@@ -102,6 +101,11 @@ export default {
       // Disable user zoom
       svg.on("wheel.zoom", null);
       svg.on("dblclick.zoom", null);
+    },
+    redraw() {
+      if (this.g) {
+        this.drawChart()
+      }
     },
     refresh() {
       this.createLayout()

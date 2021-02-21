@@ -24,8 +24,7 @@
       <SearchSelect
         :value="analysis.client"
         @input="updateAnalysis('client', $event)"
-        :data="clients"
-        @select="clearTagsContexts"/>
+        :data="clients"/>
     </b-field>
     <b-field horizontal label="Tags">
       <TreeSelect 
@@ -87,9 +86,12 @@
         </p>
       </b-field>
     </div>
-    <ModelBuilder class="model-box" :nodes="analysis.model" @input="updateAnalysis('model', $event)" />
+    <ModelBuilder 
+      class="model-box" 
+      :nodes="analysis.model"
+      @input="updateAnalysis('model', $event)"
+    />
   </div>
-
 </div>
 </template>
 
@@ -98,15 +100,9 @@
 import TreeSelect from '../inputs/TreeSelect.vue';
 import SearchSelect from '../inputs/SearchSelect.vue';
 import ModelBuilder from "../detectionModel/ModelBuilder";
-
 import ModalSaveTemplate from "./ModalSaveTemplate"
 import ModalLoadTemplate from "./ModalLoadTemplate"
-
 import { tagsAndContexts } from '../../mixins/TagsAndContextsOptions.js';
-import cloneDeep from "lodash/cloneDeep";
-import isEmpty from "lodash/isEmpty";
-
-
 
 export default {
   name: "AnalysisSettings",
@@ -133,36 +129,26 @@ export default {
     saveModel(modalForm) {
       this.$store.dispatch('models/saveModel', {
         ...modalForm,
-      //  nodes: this.settings.model
+        nodes: this.analysis.model
       })
     },
     updateModel(modalForm) {
       this.$store.dispatch('models/updateModel', {
         ...modalForm,
-    //    nodes: this.settings.model
+        nodes: this.analysis.model
       })
     },
     loadModel(model) {
-    //  this.settings.model = cloneDeep(model.nodes)
+      this.updateAnalysis('model', model.nodes)
     },
     deleteModel(id) {
       this.$store.dispatch('models/deleteModel', id)
-    },
-    resetFields() {
-  //    this.settings = cloneDeep(defaultSettings)
     },
     runAnalysis() {
       this.$emit('run')
       this.$store.dispatch('analysis/runAnalysis', this.analysis.id)
     },
-    clearTagsContexts(selectevent) {
-      if (selectevent) {
-    //    this.settings.tags = []
-    //    this.settings.contexts = []
-      }
-    },
     updateAnalysis(prop, value) {
-      console.log("updating prop settings")
       let updatedSettings = {id: this.analysis.id, [prop]: value }
       if (prop == 'client' && value != this.analysis.client) {
         updatedSettings.tags = []
@@ -221,5 +207,4 @@ export default {
 .column {
   padding-bottom: 0;
 }
-
 </style>

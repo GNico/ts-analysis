@@ -22,6 +22,19 @@ function formatModel(model) {
     return formatted
 }
 
+function formatAnomalies(anomalies) {
+    var anoms = []
+    for (var item of anomalies) {
+        anoms.push({
+            id: nanoid(8),
+            from: item.from,
+            to: item.to,
+            score: item.score,
+        })
+    }
+    return anoms
+}
+
 const defaultSettings = {
   name: '',
   description: '',
@@ -36,9 +49,9 @@ const defaultSettings = {
 const state = {
   all: [],
   local: [],
-  //activeAnalysis: {},
   activeAnalysisId: '',
-  results: [],
+
+  results: {},
   activeAnomalyId: '',
 }
 
@@ -47,34 +60,18 @@ const getters = {
         let item = state.local.find(elem => elem.id == id)
         return item ? item : {}
     },
-    getResultsById: (state) => (id) => {
+ /*   getResultsById: (state) => (id) => {
         let item = state.results.find(elem => elem.id == id)
         return item ? item : {}
-    },
-
+    }, */
     activeAnalysis: (state) => {
-        console.log("getter triggers")
         let found = state.local.find(elem => elem.id == state.activeAnalysisId)
-        console.log(found)
-
         return found ? found : {}
     },
- /* getAnomalies: (state) => {
-        if ((state.results.hasOwnProperty('anomalies') 
-        && Array.isArray(state.results.anomalies) 
-        && state.results.anomalies.length)) {
-            return state.results.anomalies
-        } else {
-            return []
-        }
-    },
-    getAnomalyById: (state) => (id) => {
-        if ((state.results.hasOwnProperty('anomalies') 
-        && Array.isArray(state.results.anomalies) 
-        && state.results.anomalies.length)) {
-            return state.results.anomalies.find(item => item.id === id)
-        }
-    } */
+    activeResults: (state) => {
+        console.log("triggers getter")
+        return state.activeAnalysisId ? state.results[state.activeAnalysisId] : {}
+    }
 }
 
 const mutations = {
@@ -109,28 +106,21 @@ const mutations = {
             }
         }
     },
-    add_results(state,  {id, loading, results}) {
-        results.id = id
-        results.loading = loading
+    add_results(state,  {id, taskId, loading, results}) {
+
+
         if (results.hasOwnProperty('anomalies') && results.anomalies.length > 0) {
-            var anoms = []
-            for (var item of results.anomalies) {
-                anoms.push({
-                        id: nanoid(6),
-                        from: item.from,
-                        to: item.to,
-                       // color: getColorByvalue(item.score/100),
-                        score: item.score,
-                })
-            }
-            results.anomalies = anoms
+            results.anomalies = formatAnomalies(results.anomalies)
         }
-        let index = state.results.findIndex(elem => elem.id == id)
-        if (index > -1) {
-            state.results.splice(index, 1, results)
-        } else {
-            state.results.push(results)
-        } 
+        let newResults = {id, taskId, loading, results }
+    //    if (state.results.hasOwnProperty(id)) {
+     //       state.results.id =  { ...newResults } 
+     //   } else {
+            state.results = { ...state.results, [id]: newResults }
+     //   }    
+
+        console.log("calling add results")
+        console.log(newResults)
     },
     set_active_anomaly(state, anomalyId) {
         state.activeAnomalyId = anomalyId
@@ -230,26 +220,46 @@ const actions = {
         store.commit('remove_analysis', id)
     },
     updateLocalSettings(store, settings) {
-        console.log(settings)
         store.commit('update_analysis', settings)
     },
-	runAnalysis({commit, getters}, id) {
-        let settings = getters.getAnalysisById(id)
+	runAnalysis({commit, getters}, analysisId) {
+        let settings = getters.getAnalysisById(analysisId)
         if (Object.keys(settings).length == 0) return
-        commit('add_results', {id: id, loading: true, results: {} })
+        commit('add_results', {id: analysisId, loading: true, taskId: undefined, results: {} })
         return  api.getAnomalies({
-                    name: settings.client,
+                    client: settings.client,
                     tags: settings.tags,
                     contexts: settings.contexts,
                     interval: settings.interval,
                     model: formatModel(settings.model)
                 })
-                .then(response => {       
-                    commit('add_results', {id: id, loading: false, results: response.data}) 
+                .then(response => {    
+                    commit('add_results', {id: analysisId, loading: true, taskId: response.data.task_id, results: {} }) 
                 })
                 .catch(error => { 
-                    console.log('error retrieving analysis')
+                    console.log('error performing analysis')
+                    console.log(error)
+
                 })         
+    },
+    fetchResults({commit, getters}) {
+        console.log('fetch results')
+        console.log(getters.activeResults)
+        let results = getters.activeResults
+
+        if (results.loading && results.hasOwnProperty('taskId') && results.taskId) {
+            api.getResults(results.taskId)
+            .then(response => {
+                console.log(response)
+                if (response.data.state == 'success' || response.data.state == 'failed')
+                    commit('add_results', {id: results.id, loading: false, taskId: undefined, results: response.data.result })
+            })
+            .catch(error => { 
+                console.log('error fetching results')
+                console.log(error)
+
+            }) 
+        }
     },
     setActiveAnalysis(store, id) {
         store.commit('set_active', id)

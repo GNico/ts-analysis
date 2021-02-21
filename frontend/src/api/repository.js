@@ -69,9 +69,6 @@ export default {
         let url = "/clients/" + clientName + "/series/tags/"
         return repository.get(url)
     },
-    getAnomalies(payload) {
-        return repository.post("/analysis/", payload)
-    },
 
     //Models
     getDetectionModels() {
@@ -93,7 +90,17 @@ export default {
         return repository.delete("/pipelines/" + id + "/")
     },
 
-    //Analysis
+    //Running analysis & getting results
+    getAnomalies(payload) {
+        return repository.post("/analysis/", payload)
+    },
+    getResults(id) {
+        return repository.get("/analysis/" + id + "/")
+    },
+
+
+
+    //Analysis settings
     getAllAnalysis() {
         return repository.get("/analysis-settings/")
     },
