@@ -113,7 +113,7 @@ export default {
       return this.$store.getters['analysis/activeAnalysis']
     },
     hasResults() {
-      let res = this.$store.getters['analysis/activeResults']
+      let res = this.$store.getters['results/activeResults']
       return !!res
     }
   },

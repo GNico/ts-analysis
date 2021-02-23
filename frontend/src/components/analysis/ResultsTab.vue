@@ -98,7 +98,6 @@ export default {
           end: null
         },
         polling: null,
-
       }       
     },
     computed: {
@@ -106,10 +105,10 @@ export default {
         return this.$store.state.analysis.activeAnalysisId
       },*/
       activeAnomaly() {
-        return this.$store.state.analysis.activeAnomalyId
+        return this.$store.state.results.activeAnomalyId
       },
       activeResults() {
-        return this.$store.getters['analysis/activeResults']
+        return this.$store.getters['results/activeResults']
       },
       loading() {
         return this.activeResults.loading
@@ -143,7 +142,7 @@ export default {
         return filteredAnom ? filteredAnom.id : ''
       },
       activeAnomaly() {
-        return this.$store.state.analysis.activeAnomalyId
+        return this.$store.state.results.activeAnomalyId
       },
       sidebarTitle() {
         return this.showFiltersMenu ? 'Filter Options' : 'Anomalies'
@@ -155,7 +154,7 @@ export default {
         this.selectedRange.end = event.end
       },
       setActiveAnomaly(id) {
-        this.$store.dispatch('analysis/setActiveAnomaly', id)
+        this.$store.dispatch('results/setActiveAnomaly', id)
       },
       toggleFilters() {
         this.showFiltersMenu = !this.showFiltersMenu
@@ -188,12 +187,12 @@ export default {
       startPollingResults() {
         this.polling = setInterval(() => {
           console.log('polling results')
-          this.$store.dispatch('analysis/fetchResults')          
+          this.$store.dispatch('results/fetchResults')          
         }, 6000)
       },
       stopPollingResults() {
-        console.log('stop polling results')
         if (this.polling) {
+          console.log('stop polling results')
           clearInterval(this.polling)
         }
         this.polling = null

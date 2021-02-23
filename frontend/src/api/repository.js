@@ -98,14 +98,28 @@ export default {
         return repository.get("/analysis/" + id + "/")
     },
 
-
-
     //Analysis settings
     getAllAnalysis() {
         return repository.get("/analysis-settings/")
     },
     getAnalysisDetails(id) {
-        return repository.get("/analysis-settings/"+ id + "/")
+        return repository.get("/analysis-settings/"+ id + "/", {
+            transformResponse: [
+                ...axios.defaults.transformResponse, 
+                (data) => {
+                    let formatted = {}
+                    formatted.saveId = data.id
+                    formatted.client = data.data_options.client
+                    formatted.tags = data.data_options.tags
+                    formatted.contexts = data.data_options.contexts
+                    formatted.interval = data.data_options.interval
+                    formatted.name = data.name
+                    formatted.description = data.description
+                    formatted.model = data.model
+                    return formatted
+                },
+            ]
+        })
     },
     addNewAnalysis(analysis) {
         return repository.post("/analysis-settings/", analysis)
@@ -121,10 +135,8 @@ export default {
     },
 
 
-
     //Misc
     testAlgo(testSource) {
         return repository.get("/testalgo?source=" + testSource)
     }
-
 }

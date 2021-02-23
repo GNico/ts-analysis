@@ -79,6 +79,10 @@ export default {
     bidirectionalNodes(newVal) {
       let validationMessages = validate(newVal)
       this.$emit('validation', validationMessages)
+    },
+    nodes(val) {
+      console.log("newnodes")
+      console.log(val)
     }
   },
   mounted() {
