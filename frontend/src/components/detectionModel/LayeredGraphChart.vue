@@ -67,7 +67,7 @@ export default {
           inner.attr("transform", d3.event.transform);
       });
       svg.call(zoom);
-      
+
       var render = new dagreD3.render();
       render(inner, this.g);
 
@@ -97,6 +97,7 @@ export default {
               )
               .scale(initialScale)
       );
+
       svg.attr("height", this.g.graph().height * initialScale  + 40); 
       // Disable user zoom
       svg.on("wheel.zoom", null);

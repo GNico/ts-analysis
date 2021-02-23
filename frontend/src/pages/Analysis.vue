@@ -66,11 +66,11 @@
   </div>  
   <!-- content -->  
   <div v-show="!!activeAnalysis.id" class="wide-container main-section">
-    <b-tabs type="is-medium is-boxed"  :animated="false" v-model="activeTab">
+    <b-tabs type="is-medium is-boxed"  :animated="false" v-model="activeTab" destroy-on-hide>
       <b-tab-item label="Settings" icon="cog" value="Settings" >
         <SettingsTab @run="activeTab='Results'"/>    
       </b-tab-item>
-      <b-tab-item label="Results" icon="file-chart" value="Results" :disabled="!hasResults">
+      <b-tab-item label="Results" icon="file-chart" value="Results" >
         <ResultsTab v-if="hasResults"/>
         <span v-else class="is-size-5"> No results yet. Run analysis first! </span>
       </b-tab-item>

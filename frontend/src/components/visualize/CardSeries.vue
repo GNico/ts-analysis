@@ -133,11 +133,9 @@ import ModalCard from '../ModalCard';
 import ColorSelect from '../inputs/ColorSelect';  
 import TreeSelect from '../inputs/TreeSelect.vue';
 import SearchSelect from '../inputs/SearchSelect.vue';
-import { tagsAndContexts } from '../../mixins/TagsAndContextsOptions.js';
 
 export default {
   name: "CardSeries",
-  mixins: [tagsAndContexts],
   components: { ModalCard, TreeSelect, ColorSelect, SearchSelect },
   props: {
     id: {
@@ -178,7 +176,13 @@ export default {
     },
     isEdit() {
       return this.id ? true : false
-    }
+    },
+    allTags() {
+      return this.$store.state.clients.tags[this.seriesOptions.client] 
+    },
+    allContexts() {
+      return this.$store.state.clients.contexts[this.seriesOptions.client] 
+    },
   },
   methods: {
     close() {
@@ -231,8 +235,8 @@ export default {
     'seriesOptions.client': {
       handler(newVal) {
         if (!newVal || this.clients.includes(newVal)) {
-          this.updateTags(newVal)
-          this.updateContexts(newVal)
+          this.$store.dispatch('clients/fetchTags', (newVal))
+          this.$store.dispatch('clients/fetchContexts', (newVal))
         }
       }
     }, 

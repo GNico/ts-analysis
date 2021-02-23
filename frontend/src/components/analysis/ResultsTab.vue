@@ -101,9 +101,6 @@ export default {
       }       
     },
     computed: {
-    /*  id() {
-        return this.$store.state.analysis.activeAnalysisId
-      },*/
       activeAnomaly() {
         return this.$store.state.results.activeAnomalyId
       },
@@ -113,22 +110,25 @@ export default {
       loading() {
         return this.activeResults.loading
       },
+      resultsData() {
+        return this.activeResults.results
+      },
       seriesData() {
         return !this.loading && 
-              this.activeResults.results && 
-              this.activeResults.results.hasOwnProperty("series") && 
-              this.showSeries ? this.activeResults.results.series :  [] 
+              this.resultsData && 
+              this.resultsData.hasOwnProperty("series") && 
+              this.showSeries ? this.resultsData.series :  [] 
       },
       baseline() {
         return (!this.loading && 
-              this.activeResults.baseline &&
-              this.activeResults.results.hasOwnProperty("baseline") && 
-              this.showBaseline) ? this.activeResults.results.baseline : []
+              this.resultsData &&
+              this.resultsData.hasOwnProperty("baseline") && 
+              this.showBaseline) ? this.resultsData.baseline : []
       },
       anomalies() {
         return !this.loading &&
-              this.activeResults.anomalies &&      
-              this.activeResults.results.hasOwnProperty("anomalies") ? this.activeResults.results.anomalies : []
+              this.resultsData &&      
+              this.resultsData.hasOwnProperty("anomalies") ? this.resultsData.anomalies : []
       },
       filteredAnomalies() {
         return this.anomalies.filter(elem => 

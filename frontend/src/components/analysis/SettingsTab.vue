@@ -102,11 +102,8 @@ import SearchSelect from '../inputs/SearchSelect.vue';
 import ModelBuilder from "../detectionModel/ModelBuilder";
 import ModalSaveTemplate from "./ModalSaveTemplate"
 import ModalLoadTemplate from "./ModalLoadTemplate"
-import { tagsAndContexts } from '../../mixins/TagsAndContextsOptions.js';
 
 export default {
-  name: "AnalysisSettings",
-  mixins: [tagsAndContexts],
   components:  { TreeSelect, ModelBuilder, SearchSelect, ModalSaveTemplate, ModalLoadTemplate },
   data () {
     return {
@@ -123,6 +120,12 @@ export default {
     },
     models() {
       return this.$store.state.models.all
+    },
+    allTags() {
+      return this.$store.state.clients.tags[this.analysis.client] 
+    },
+    allContexts() {
+      return this.$store.state.clients.contexts[this.analysis.client] 
     },
   },
   methods: {
@@ -161,8 +164,8 @@ export default {
     'analysis.client': {
       handler(newVal) {
         if (!newVal || this.clients.includes(newVal)) {
-          this.updateTags(newVal)
-          this.updateContexts(newVal)  
+          this.$store.dispatch('clients/fetchTags', (newVal))
+          this.$store.dispatch('clients/fetchContexts', (newVal))
         }
       }
     },

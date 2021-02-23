@@ -21,7 +21,7 @@ export default {
     },
     itemsTree: {
       type: Array, 
-      default: []
+      default: () => []
     },
     value: {
       type: Array,
