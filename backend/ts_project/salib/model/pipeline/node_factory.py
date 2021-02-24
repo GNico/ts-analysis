@@ -5,6 +5,7 @@ from .nodes.transformers.double_rolling_aggregate import DoubleRollingAggregate
 
 from .nodes.detectors.simple_threshold import SimpleThreshold
 from .nodes.detectors.interquartile_range import InterQuartileRange
+from .nodes.detectors.quantile import Quantile
 
 from .nodes.aggregators._and import And
 from .nodes.aggregators._or import Or
@@ -20,6 +21,7 @@ class NodeFactory:
         },
         'detector': {
             'SimpleThreshold': SimpleThreshold,
+            'Quantile': Quantile,
             'InterQuartileRange': InterQuartileRange
         },
         'aggregator': {

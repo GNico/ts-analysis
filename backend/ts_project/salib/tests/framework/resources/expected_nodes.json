@@ -1,0 +1,519 @@
+{
+  "transformer": [
+    {
+      "type": "StdNormalize",
+      "desc": "Normalize data such that mean = 0 and std dev = 1",
+      "display": "Standard normalization",
+      "params": []
+    },
+    {
+      "type": "EMA",
+      "desc": "Exponential moving average with decay rate",
+      "display": "Exponential moving average",
+      "params": [
+        {
+          "id": "decay",
+          "type": "BoundedFloat",
+          "display": "Decay",
+          "desc": "Decay rate",
+          "conditions": [],
+          "value": 0.9,
+          "min": 0,
+          "max": 1,
+          "strict_min": false,
+          "strict_max": false
+        }
+      ]
+    },
+    {
+      "type": "RollingAggregate",
+      "desc": "Rolling aggregate",
+      "display": "Rolling Aggregate",
+      "params": [
+        {
+          "id": "window",
+          "type": "String",
+          "display": "Window",
+          "desc": "Window size in time interval (eg: 1h)",
+          "conditions": [],
+          "value": "30m"
+        },
+        {
+          "id": "center",
+          "type": "Boolean",
+          "display": "Center",
+          "desc": "Center aggregation window around value",
+          "conditions": [],
+          "value": false
+        },
+        {
+          "id": "min_periods",
+          "type": "BoundedInt",
+          "display": "Min. periods",
+          "desc": "Min number of periods",
+          "conditions": [],
+          "value": 0,
+          "min": 0,
+          "max": null
+        },
+        {
+          "id": "agg_method",
+          "type": "Select",
+          "display": "Aggregation",
+          "desc": "Aggregation method",
+          "conditions": [],
+          "value": "mean",
+          "options": [
+            {
+              "code": "mean",
+              "display": "Mean"
+            },
+            {
+              "code": "median",
+              "display": "Median"
+            },
+            {
+              "code": "sum",
+              "display": "Sum"
+            },
+            {
+              "code": "min",
+              "display": "Min"
+            },
+            {
+              "code": "max",
+              "display": "Max"
+            },
+            {
+              "code": "quantile",
+              "display": "Quantile"
+            },
+            {
+              "code": "iqr",
+              "display": "Inter-quartile range"
+            },
+            {
+              "code": "idr",
+              "display": "Inter-decile range"
+            },
+            {
+              "code": "count",
+              "display": "Value count"
+            },
+            {
+              "code": "nnz",
+              "display": "Non zero count"
+            },
+            {
+              "code": "nunique",
+              "display": "Unique count"
+            },
+            {
+              "code": "std",
+              "display": "Sample standard dev."
+            },
+            {
+              "code": "var",
+              "display": "Sample variance"
+            },
+            {
+              "code": "skew",
+              "display": "Sample skewness"
+            },
+            {
+              "code": "kurt",
+              "display": "Sample kurtosis"
+            }
+          ]
+        },
+        {
+          "id": "quantile_range",
+          "type": "BoundedFloat",
+          "display": "Quantile range",
+          "desc": "Quantile range [q;1-q]",
+          "conditions": [
+            {
+              "type": "param_equals_value",
+              "args": {
+                "param": "agg_method",
+                "value": "quantile"
+              }
+            }
+          ],
+          "value": 0.25,
+          "min": 0,
+          "max": 0.5,
+          "strict_min": false,
+          "strict_max": false
+        }
+      ]
+    },
+    {
+      "type": "DoubleRollingAggregate",
+      "desc": "Double rolling aggregate",
+      "display": "Double Rolling Aggregate",
+      "params": [
+        {
+          "id": "window_lhs",
+          "type": "String",
+          "display": "Left window",
+          "desc": "Left window size in time interval (eg: 1h)",
+          "conditions": [],
+          "value": "12h"
+        },
+        {
+          "id": "window_rhs",
+          "type": "String",
+          "display": "Left window",
+          "desc": "Left window size in time interval (eg: 1h)",
+          "conditions": [],
+          "value": "6h"
+        },
+        {
+          "id": "center",
+          "type": "Boolean",
+          "display": "Center",
+          "desc": "Center aggregation windows",
+          "conditions": [],
+          "value": false
+        },
+        {
+          "id": "min_periods_lhs",
+          "type": "BoundedInt",
+          "display": "Left window min. periods",
+          "desc": "Min number of periods for left window",
+          "conditions": [],
+          "value": 0,
+          "min": 0,
+          "max": null
+        },
+        {
+          "id": "min_periods_rhs",
+          "type": "BoundedInt",
+          "display": "Right window min. periods",
+          "desc": "Min number of periods for right window",
+          "conditions": [],
+          "value": 0,
+          "min": 0,
+          "max": null
+        },
+        {
+          "id": "agg_method_lhs",
+          "type": "Select",
+          "display": "Left aggregation",
+          "desc": "Aggregation method for left window",
+          "conditions": [],
+          "value": "mean",
+          "options": [
+            {
+              "code": "mean",
+              "display": "Mean"
+            },
+            {
+              "code": "median",
+              "display": "Median"
+            },
+            {
+              "code": "sum",
+              "display": "Sum"
+            },
+            {
+              "code": "min",
+              "display": "Min"
+            },
+            {
+              "code": "max",
+              "display": "Max"
+            },
+            {
+              "code": "quantile",
+              "display": "Quantile"
+            },
+            {
+              "code": "iqr",
+              "display": "Inter-quartile range"
+            },
+            {
+              "code": "idr",
+              "display": "Inter-decile range"
+            },
+            {
+              "code": "count",
+              "display": "Value count"
+            },
+            {
+              "code": "nnz",
+              "display": "Non zero count"
+            },
+            {
+              "code": "nunique",
+              "display": "Unique count"
+            },
+            {
+              "code": "std",
+              "display": "Sample standard dev."
+            },
+            {
+              "code": "var",
+              "display": "Sample variance"
+            },
+            {
+              "code": "skew",
+              "display": "Sample skewness"
+            },
+            {
+              "code": "kurt",
+              "display": "Sample kurtosis"
+            }
+          ]
+        },
+        {
+          "id": "agg_method_rhs",
+          "type": "Select",
+          "display": "Right aggregation",
+          "desc": "Aggregation method for right window",
+          "conditions": [],
+          "value": "mean",
+          "options": [
+            {
+              "code": "mean",
+              "display": "Mean"
+            },
+            {
+              "code": "median",
+              "display": "Median"
+            },
+            {
+              "code": "sum",
+              "display": "Sum"
+            },
+            {
+              "code": "min",
+              "display": "Min"
+            },
+            {
+              "code": "max",
+              "display": "Max"
+            },
+            {
+              "code": "quantile",
+              "display": "Quantile"
+            },
+            {
+              "code": "iqr",
+              "display": "Inter-quartile range"
+            },
+            {
+              "code": "idr",
+              "display": "Inter-decile range"
+            },
+            {
+              "code": "count",
+              "display": "Value count"
+            },
+            {
+              "code": "nnz",
+              "display": "Non zero count"
+            },
+            {
+              "code": "nunique",
+              "display": "Unique count"
+            },
+            {
+              "code": "std",
+              "display": "Sample standard dev."
+            },
+            {
+              "code": "var",
+              "display": "Sample variance"
+            },
+            {
+              "code": "skew",
+              "display": "Sample skewness"
+            },
+            {
+              "code": "kurt",
+              "display": "Sample kurtosis"
+            }
+          ]
+        },
+        {
+          "id": "diff",
+          "type": "Select",
+          "display": "Difference metric",
+          "desc": "Difference metric between window values",
+          "conditions": [],
+          "value": "diff",
+          "options": [
+            {
+              "code": "diff",
+              "display": "Difference"
+            },
+            {
+              "code": "l1",
+              "display": "L1 distance metric (mod sum)"
+            },
+            {
+              "code": "rel_diff",
+              "display": "Relative difference"
+            },
+            {
+              "code": "abs_rel_diff",
+              "display": "Absolute relative difference"
+            }
+          ]
+        },
+        {
+          "id": "quantile_range_lhs",
+          "type": "BoundedFloat",
+          "display": "Quantile range",
+          "desc": "Quantile range [q;1-q]",
+          "conditions": [
+            {
+              "type": "param_equals_value",
+              "args": {
+                "param": "agg_method_lhs",
+                "value": "quantile"
+              }
+            }
+          ],
+          "value": 0.25,
+          "min": 0,
+          "max": 0.5,
+          "strict_min": false,
+          "strict_max": false
+        },
+        {
+          "id": "quantile_range_rhs",
+          "type": "BoundedFloat",
+          "display": "Quantile range",
+          "desc": "Quantile range [q;1-q]",
+          "conditions": [
+            {
+              "type": "param_equals_value",
+              "args": {
+                "param": "agg_method_lhs",
+                "value": "quantile"
+              }
+            }
+          ],
+          "value": 0.25,
+          "min": 0,
+          "max": 0.5,
+          "strict_min": false,
+          "strict_max": false
+        }
+      ]
+    }
+  ],
+  "detector": [
+    {
+      "type": "SimpleThreshold",
+      "desc": "Detect values outside of bounds",
+      "display": "Simple Threshold",
+      "params": [
+        {
+          "id": "inside",
+          "type": "Boolean",
+          "display": "Inside",
+          "desc": "If true, value must be within bounds",
+          "conditions": [],
+          "value": false
+        },
+        {
+          "id": "strict",
+          "type": "Boolean",
+          "display": "Strict",
+          "desc": "Strict comparison on bounds",
+          "conditions": [],
+          "value": false
+        },
+        {
+          "id": "lower",
+          "type": "Float",
+          "display": "Lower",
+          "desc": "Lower bound",
+          "conditions": [],
+          "value": null
+        },
+        {
+          "id": "upper",
+          "type": "Float",
+          "display": "Upper",
+          "desc": "Upper bound",
+          "conditions": [],
+          "value": null
+        }
+      ]
+    },
+    {
+      "type": "Quantile",
+      "desc": "Compare values with given quantiles and identify anomalies beyond inter-quantile range",
+      "display": "Inter-quantile range",
+      "params": [
+        {
+          "id": "high",
+          "type": "BoundedFloat",
+          "display": "Quantile upper",
+          "desc": "Quantile above which we consider anomaly (0-1) - leave empty for no limit",
+          "conditions": [],
+          "value": 0.9,
+          "min": 0,
+          "max": 1,
+          "strict_min": false,
+          "strict_max": false
+        },
+        {
+          "id": "low",
+          "type": "BoundedFloat",
+          "display": "Quantile lower",
+          "desc": "Quantile below which we consider anomaly (0-1) - leave empty for no limit",
+          "conditions": [],
+          "value": 0.1,
+          "min": 0,
+          "max": 1,
+          "strict_min": false,
+          "strict_max": false
+        }
+      ]
+    },
+    {
+      "type": "InterQuartileRange",
+      "desc": "Compare values with 1st and 3rd quartiles and identify anomalies beyond inter-quartile range adjusted by a scale factor",
+      "display": "Inter-quartile range",
+      "params": [
+        {
+          "id": "scale",
+          "type": "Float",
+          "display": "Range scale factor",
+          "desc": "Factor used to determine the bound of normal range (betweeen Q1-c*IQR and Q3+c*IQR)",
+          "conditions": [],
+          "value": 0.3
+        }
+      ]
+    }
+  ],
+  "aggregator": [
+    {
+      "type": "OR",
+      "desc": "Combine all anomalies from sources",
+      "display": "Or",
+      "params": []
+    },
+    {
+      "type": "AND",
+      "desc": "Combine overlapping anomalies from sources",
+      "display": "And",
+      "params": [
+        {
+          "id": "strict",
+          "type": "Boolean",
+          "display": "Strict",
+          "desc": "If true anomalies must match exact bounds, otherwise, any overlap is considered valid",
+          "conditions": [],
+          "value": true
+        }
+      ]
+    }
+  ]
+}

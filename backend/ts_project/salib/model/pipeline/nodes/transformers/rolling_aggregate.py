@@ -12,7 +12,7 @@ class RollingAggregate(NodeTransformer):
     def __init__(self, id):
         super().__init__(id)
         self.add_common_params()
-        quantile_range = BoundedFloat('quantile_range', 'Quantile range', 'Quantile range [q;1-q]', 0, 0.5, 0.25)
+        quantile_range = BoundedFloat('quantile_range', 'Quantile range', 'Quantile range [q;1-q]', 0, 0.5, False, 0.25)
         quantile_range.add_condition(ParamEqualsValue('agg_method', 'quantile'))
         self.add_param(quantile_range)
         self._closed = None

@@ -14,10 +14,10 @@ class DoubleRollingAggregate(NodeTransformer):
     def __init__(self, id):
         super().__init__(id)
         self.add_common_params()
-        quantile_range_lhs = BoundedFloat('quantile_range_lhs', 'Quantile range', 'Quantile range [q;1-q]', 0, 0.5, 0.25)
+        quantile_range_lhs = BoundedFloat('quantile_range_lhs', 'Quantile range', 'Quantile range [q;1-q]', 0, 0.5, False, 0.25)
         quantile_range_lhs.add_condition(ParamEqualsValue('agg_method_lhs', 'quantile'))
         self.add_param(quantile_range_lhs)
-        quantile_range_rhs = BoundedFloat('quantile_range_rhs', 'Quantile range', 'Quantile range [q;1-q]', 0, 0.5, 0.25)
+        quantile_range_rhs = BoundedFloat('quantile_range_rhs', 'Quantile range', 'Quantile range [q;1-q]', 0, 0.5, False, 0.25)
         quantile_range_rhs.add_condition(ParamEqualsValue('agg_method_lhs', 'quantile'))
         self.add_param(quantile_range_rhs)
 

@@ -1,6 +1,5 @@
 from ..node_detector import NodeDetector
 from ...params.float import Float
-from ...params.boolean import Boolean
 
 class InterQuartileRange(NodeDetector):
 
