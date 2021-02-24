@@ -30,7 +30,6 @@ function addAnomaliesId(anomalies) {
             ...item
         })
     }
-    console.log(anoms)
     return anoms
 }
 

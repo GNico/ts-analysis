@@ -12,6 +12,9 @@
 
 <script>
 import { DefaultChartSettings } from '../config/settings.js'
+import { nanoid } from 'nanoid'
+
+import Highcharts from 'highcharts'
 
 function sum(arr) {
   var sum =  arr.reduce(function (s, res) {
@@ -67,6 +70,9 @@ export default {
       updateArgs: [true, true, false],
       arrows: undefined,
       cursorPosition: 0,
+
+
+      eventUnbinder: null,
     }
   },
   computed: {
@@ -98,6 +104,7 @@ export default {
       return this.seriesData.length == 0
     },
     interactiveBands() {
+      console.log("gets called")
       var vm = this
       var bands = []
       for (var item of this.bands) {
@@ -110,7 +117,7 @@ export default {
           borderColor:  (item.id == this.activeBand) ? this.normalizedSettings.highlightedBorderColor : '',
           zIndex: 0,
           events: {
-            click: function(e) {
+            click: function(e) {              
               if (vm.activeBand == this.options.id) {
                 vm.setActiveBand('')
               } else {
@@ -132,11 +139,7 @@ export default {
       }
       return bands
     },
-    chartOptions() {
-      //  var functionId = nanoid()
-      //  internalFunctionId = functionId
-      //  workaround for multiple callbacks highcharts issue"
-      //  https://github.com/highcharts/highcharts/issues/6943
+    chartOptions() {      
       var vm = this
       return {      
         boost: {
@@ -198,15 +201,6 @@ export default {
           type: 'datetime',
           showEmpty: false,
           plotBands: this.interactiveBands,
-          events: {
-            afterSetExtremes: function(event) {
-             // if (functionId != internalFunctionId) return    //workaround for multiple callbacks highcharts issue 
-              vm.drawArrows()
-              if (this.zoomEnabled && event.trigger !== 'sync') {
-                vm.$emit("changedExtremes", event);
-              }             
-            }     
-          },   
         },
         yAxis: {
           crosshair: {
@@ -371,6 +365,29 @@ export default {
     }  
   },
   watch: {
+    //adding event dynamically as a workaround for multiple callbacks highcharts issue
+    //https://github.com/highcharts/highcharts/issues/6943
+    chartOptions: {
+      immediate: true,
+      handler() {
+        console.log("chartOptions watcher")
+        var vm = this
+        if (this.eventUnbinder && typeof this.eventUnbinder === 'function')
+          this.eventUnbinder()
+
+        this.$nextTick(() => {
+          this.eventUnbinder = Highcharts.addEvent(this.$refs.chart.chart.xAxis[0], 'afterSetExtremes',
+            function(event) {
+              console.log("callback")
+              vm.drawArrows()
+              if (this.zoomEnabled && event.trigger !== 'sync') {
+                vm.$emit("changedExtremes", event);
+              }             
+            }     
+          )
+        })   
+      }
+    },
     activeBand(newId) {
       this.drawArrows() 
     },
