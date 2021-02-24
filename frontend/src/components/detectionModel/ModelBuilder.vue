@@ -39,7 +39,6 @@ import cloneDeep from "lodash/cloneDeep";
 export default {
   components: { GraphBuilder, PipeNodeList },
   props: {
-    //warning: nodes array content will be modified by this component
     nodes: {
       type: Array,
       default: () => []
@@ -47,7 +46,6 @@ export default {
   },
   data() {
     return {
-      //groups: [ "transformer", "detector", "aggregator"],
       validationMessages: [],
     }
   },

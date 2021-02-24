@@ -22,23 +22,38 @@ function formatModel(model) {
     return formatted
 }
 
-function formatAnomalies(anomalies) {
+function addAnomaliesId(anomalies) {
     var anoms = []
     for (var item of anomalies) {
         anoms.push({
             id: nanoid(8),
-            from: item.from,
-            to: item.to,
-            score: item.score,
+            ...item
         })
     }
+    console.log(anoms)
     return anoms
 }
 
+const defaultOptions = {
+    activeAnomalyId: '',
+    showBaseline: true,
+    showSeries: true,
+    showTrend: false,
+    scoreThreshold: 0,
+    minDuration: '',
+    minDurationTime: 0,
+    selectedRange: {
+      start: null,
+      end: null
+    }
+}
+
 const state = {
-  all: {},
-  activeResultsId: '',
-  activeAnomalyId: '',
+    all: {},
+    activeResultsId: '',
+  //  activeAnomalyId: '',
+
+    options: {},
 }
 
 const getters = {
@@ -46,23 +61,29 @@ const getters = {
         let item = state.results.find(elem => elem.id == id)
         return item ? item : {}
     }, 
-    activeResults: (state, getters) => {
+    activeResults: (state) => {
         return state.all[state.activeResultsId]
     },
-
-
+    activeOptions: (state) => {
+        return state.options[state.activeResultsId]
+    }
 }
 
 const mutations = {    
     set_active_results(state, id) {
         state.activeResultsId = id
     },
-    add_results(state, payload) {
-
+    set_options(state,  options) {
+        console.log(options)
+        if (options.hasOwnProperty('id')) {
+            let id = options.id
+            let newOptions = { ...state.options[id], ...options }
+            state.options = { ...state.options, [id]: newOptions }
+        }
     },
     remove_results(state, id) {
         if (state.all.hasOwnProperty(id)) {
-            let { id, ...newResults } = state.all
+            let { [id]: _, ...newResults } = state.all
             state.all = newResults
         }
     },
@@ -71,7 +92,7 @@ const mutations = {
     },
     add_results(state,  {id, taskId, loading, results}) {
         if (results.hasOwnProperty('anomalies') && results.anomalies.length > 0) {
-            results.anomalies = formatAnomalies(results.anomalies)
+            results.anomalies = addAnomaliesId(results.anomalies)
         }
         let newResults = {id, taskId, loading, results }
         state.all = { ...state.all, [id]: newResults }
@@ -85,6 +106,7 @@ const actions = {
     startAnalysis({commit, getters}, settings) {
         if (!settings) return
         commit('add_results', {id: settings.id, loading: true, taskId: undefined, results: {} })
+        commit('set_options', {id: settings.id, ...defaultOptions})
         return  api.getAnomalies({
                     client: settings.client,
                     tags: settings.tags,
@@ -106,7 +128,7 @@ const actions = {
             api.getResults(results.taskId)
             .then(response => {
                 if (response.data.state == 'success' || response.data.state == 'failed')
-                    commit('add_results', {id: results.id, loading: false, taskId: undefined, results: response.data.result })
+                    commit('add_results', {id: results.id, loading: false, taskId: response.data.task_id, results: response.data.result })
             })
             .catch(error => { 
                 console.log('error fetching results')
@@ -115,7 +137,9 @@ const actions = {
             }) 
         }
     },
-    
+    updateOptions(store, payload) {
+        store.commit('set_options',  payload)
+    }
 }
 
 

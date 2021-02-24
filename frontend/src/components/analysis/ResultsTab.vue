@@ -11,7 +11,7 @@
       </div>
 
       <div v-if="showFiltersMenu">
-        <b-field horizontal label="Min Duration">
+     <!--   <b-field horizontal label="Min Duration">
           <b-tooltip
             label="Input must be a number followed by a valid letter [ m = minutes, h = hour, d = day ]"
             size="is-large"
@@ -29,27 +29,27 @@
               icon-right-clickable
               @icon-right-click="minDuration = ''"/>
           </b-tooltip> 
-        </b-field>
+        </b-field> -->
 
         <b-field horizontal label="Score threshold" >
-          <b-slider v-model="scoreThreshold" lazy indicator></b-slider>
+          <b-slider :value="activeOptions.scoreThreshold" @input="updateOptions('scoreThreshold', $event)" lazy indicator></b-slider>
         </b-field>
 
 
         <b-field horizontal label="">
-          <b-checkbox v-model="showSeries">
+          <b-checkbox :value="activeOptions.showSeries" @input="updateOptions('showSeries', $event)">
             <strong class="has-text-white">Show series</strong>
           </b-checkbox>        
         </b-field>
             
         <b-field horizontal label="">
-          <b-checkbox v-model="showBaseline">
+          <b-checkbox :value="activeOptions.showBaseline" @input="updateOptions('showBaseline', $event)">
             <strong class="has-text-white">Show baseline</strong>
           </b-checkbox>        
         </b-field>
 
         <b-field horizontal label="">
-          <b-checkbox v-model="showTrend">
+          <b-checkbox :value="activeOptions.showTrend" @input="updateOptions('showTrend', $event)">
             <strong class="has-text-white">Show trend</strong>
           </b-checkbox>        
         </b-field>
@@ -60,7 +60,8 @@
         id="anom-table"
         :anomalies="filteredAnomalies"
         :activeAnomaly="filteredActiveAnomaly"
-        @changeActive="setActiveAnomaly"/> 
+        @changeActive="updateOptions('activeAnomalyId', $event)"
+        /> 
     </div>
 
     <div class="column main-content">
@@ -70,8 +71,8 @@
         :anomalies="filteredAnomalies"
         :loading="loading"
         :activeAnomaly="filteredActiveAnomaly"
-        @changeActive="setActiveAnomaly"
-        @updateRange="updateRange" />
+        @changeActive="updateOptions('activeAnomalyId', $event)"
+        @updateRange="updateOptions('selectedRange', $event)" />
     </div>
   </div>  
 </div>
@@ -87,37 +88,30 @@ export default {
     data() {
       return {
         showFiltersMenu: false,
-        showBaseline: true,
-        showSeries: true,
-        showTrend: false,
-        scoreThreshold: 0,
-        minDuration: '',
-        minDurationTime: 0,
-        selectedRange: {
-          start: null,
-          end: null
-        },
         polling: null,
       }       
     },
     computed: {
-      activeAnomaly() {
-        return this.$store.state.results.activeAnomalyId
-      },
       activeResults() {
         return this.$store.getters['results/activeResults']
+      },
+      activeOptions() {
+        return this.$store.getters['results/activeOptions']
+      },
+      activeAnomaly() {
+        return this.activeOptions.activeAnomalyId
       },
       loading() {
         return this.activeResults.loading
       },
       resultsData() {
         return this.activeResults.results
-      },
+      },      
       seriesData() {
         return !this.loading && 
               this.resultsData && 
               this.resultsData.hasOwnProperty("series") && 
-              this.showSeries ? this.resultsData.series :  [] 
+              this.activeOptions.showSeries ? this.resultsData.series :  [] 
       },
       baseline() {
         return (!this.loading && 
@@ -132,35 +126,28 @@ export default {
       },
       filteredAnomalies() {
         return this.anomalies.filter(elem => 
-          (elem.score > this.scoreThreshold 
-          && (parseInt(elem.to) - parseInt(elem.from) >= this.minDurationTime)
-          && (!this.selectedRange.start || parseInt(elem.from) > this.selectedRange.start)
-          && (!this.selectedRange.end || parseInt(elem.from) < this.selectedRange.end)))
+          (elem.score > this.activeOptions.scoreThreshold 
+          && (parseInt(elem.to) - parseInt(elem.from) >= this.activeOptions.minDurationTime)
+          && (!this.activeOptions.selectedRange.start || parseInt(elem.from) > this.activeOptions.selectedRange.start)
+          && (!this.activeOptions.selectedRange.end || parseInt(elem.from) < this.activeOptions.selectedRange.end)))
       },
       filteredActiveAnomaly() {
         let filteredAnom = this.filteredAnomalies.find(elem => elem.id === this.activeAnomaly)
         return filteredAnom ? filteredAnom.id : ''
-      },
-      activeAnomaly() {
-        return this.$store.state.results.activeAnomalyId
       },
       sidebarTitle() {
         return this.showFiltersMenu ? 'Filter Options' : 'Anomalies'
       }
     },
     methods: {
-      updateRange(event) {    
-        this.selectedRange.start = event.start
-        this.selectedRange.end = event.end
-      },
-      setActiveAnomaly(id) {
-        this.$store.dispatch('results/setActiveAnomaly', id)
+      updateOptions(prop, value) {
+        this.$store.dispatch('results/updateOptions', {id: this.activeResults.id, [prop]: value })
       },
       toggleFilters() {
         this.showFiltersMenu = !this.showFiltersMenu
       },
       checkValid() {
-        if (!this.minDuration) {
+      /*  if (!this.minDuration) {
           this.minDurationTime = 0
           return
         }
@@ -182,13 +169,13 @@ export default {
               break
           }
           this.minDurationTime = parseInt(numbers[0]) *  ms 
-        }
+        } */
       },
       startPollingResults() {
         this.polling = setInterval(() => {
           console.log('polling results')
           this.$store.dispatch('results/fetchResults')          
-        }, 6000)
+        }, 3000)
       },
       stopPollingResults() {
         if (this.polling) {

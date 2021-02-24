@@ -76,9 +76,12 @@ export default {
     }
   },
   watch: {
-    bidirectionalNodes(newVal) {
-      let validationMessages = validate(newVal)
-      this.$emit('validation', validationMessages)
+    bidirectionalNodes: {
+      immediate: true,
+      handler(newVal) {
+        let validationMessages = validate(newVal)
+        this.$emit('validation', validationMessages)
+      }      
     },
   },
   mounted() {

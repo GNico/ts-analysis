@@ -17,9 +17,6 @@ const state = {
   all: [],
   local: [],
   activeAnalysisId: '',
-
-  results: {},
-  activeAnomalyId: '',
 }
 
 const getters = {
@@ -27,17 +24,10 @@ const getters = {
         let item = state.local.find(elem => elem.id == id)
         return item ? item : {}
     },
- /*   getResultsById: (state) => (id) => {
-        let item = state.results.find(elem => elem.id == id)
-        return item ? item : {}
-    }, */
     activeAnalysis: (state) => {
         let found = state.local.find(elem => elem.id == state.activeAnalysisId)
         return found ? found : {}
     },
-    activeResults: (state) => {
-        return state.activeAnalysisId ? state.results[state.activeAnalysisId] : {}
-    }
 }
 
 const mutations = {
@@ -49,13 +39,6 @@ const mutations = {
     },
     set_active(state, id) {
         state.activeAnalysisId = id
-    /*    
-        let found = state.local.find(elem => elem.id == id)
-        if (found) {
-            state.activeAnalysisId = id
-        } else {
-            state.activeAnalysis = ''
-        } */
     },
     remove_analysis(state, id) {
         let index = state.local.findIndex(elem => elem.id == id)
@@ -73,17 +56,7 @@ const mutations = {
                 state.local.splice(index, 1, updated)
             }
         }
-    },
-  /*  add_results(state,  {id, taskId, loading, results}) {
-        if (results.hasOwnProperty('anomalies') && results.anomalies.length > 0) {
-            results.anomalies = formatAnomalies(results.anomalies)
-        }
-        let newResults = {id, taskId, loading, results }
-        state.results = { ...state.results, [id]: newResults }
-    }, */
- /*   set_active_anomaly(state, anomalyId) {
-        state.activeAnomalyId = anomalyId
-    } */
+    }
 }
 
 const actions = {    
@@ -178,27 +151,7 @@ const actions = {
     runAnalysis(store, analysisId) {
         let settings = store.getters.getAnalysisById(analysisId)
         store.dispatch("results/startAnalysis", settings, {root: true})
-    },
-   /* fetchResults({commit, getters}) {
-        console.log(getters.activeResults)
-        let results = getters.activeResults
-
-        if (results.loading && results.hasOwnProperty('taskId') && results.taskId) {
-            api.getResults(results.taskId)
-            .then(response => {
-                if (response.data.state == 'success' || response.data.state == 'failed')
-                    commit('add_results', {id: results.id, loading: false, taskId: undefined, results: response.data.result })
-            })
-            .catch(error => { 
-                console.log('error fetching results')
-                console.log(error)
-
-            }) 
-        }
-    }, */
-  /*  setActiveAnomaly(store, id) {
-        store.commit('set_active_anomaly', id)
-    }, */
+    }
 }
 
 
