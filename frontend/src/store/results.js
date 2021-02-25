@@ -50,8 +50,6 @@ const defaultOptions = {
 const state = {
     all: {},
     activeResultsId: '',
-  //  activeAnomalyId: '',
-
     options: {},
 }
 
@@ -73,7 +71,6 @@ const mutations = {
         state.activeResultsId = id
     },
     set_options(state,  options) {
-        console.log(options)
         if (options.hasOwnProperty('id')) {
             let id = options.id
             let newOptions = { ...state.options[id], ...options }
@@ -84,6 +81,12 @@ const mutations = {
         if (state.all.hasOwnProperty(id)) {
             let { [id]: _, ...newResults } = state.all
             state.all = newResults
+        }
+    },
+    remove_options(state, id) {
+        if (state.options.hasOwnProperty(id)) {
+            let { [id]: _, ...newOptions } = state.options
+            state.options= newOptions
         }
     },
     set_active_anomaly(state, anomalyId) {
@@ -138,6 +141,10 @@ const actions = {
     },
     updateOptions(store, payload) {
         store.commit('set_options',  payload)
+    },
+    deleteResults(store, id) {
+        store.commit('remove_results', id)
+        store.commit('remove_options', id)
     }
 }
 

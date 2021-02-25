@@ -104,7 +104,6 @@ export default {
       return this.seriesData.length == 0
     },
     interactiveBands() {
-      console.log("gets called")
       var vm = this
       var bands = []
       for (var item of this.bands) {
@@ -237,6 +236,8 @@ export default {
           arearange: {
             dataGrouping: {
               enabled: true,
+              groupPixelWidth: 4,
+              smoothed: true,
               approximation: function (low, high) {
                 return [sum(low), sum(high)];
               },
@@ -245,6 +246,8 @@ export default {
           series: {
             dataGrouping: {
               enabled: true,
+              groupPixelWidth: 4,
+              smoothed: true,
               approximation: 'sum'
             },
             animation: false,
@@ -370,15 +373,12 @@ export default {
     chartOptions: {
       immediate: true,
       handler() {
-        console.log("chartOptions watcher")
         var vm = this
         if (this.eventUnbinder && typeof this.eventUnbinder === 'function')
           this.eventUnbinder()
-
         this.$nextTick(() => {
           this.eventUnbinder = Highcharts.addEvent(this.$refs.chart.chart.xAxis[0], 'afterSetExtremes',
             function(event) {
-              console.log("callback")
               vm.drawArrows()
               if (this.zoomEnabled && event.trigger !== 'sync') {
                 vm.$emit("changedExtremes", event);

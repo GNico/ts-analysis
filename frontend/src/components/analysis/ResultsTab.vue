@@ -5,62 +5,15 @@
     <div class="column is-4 side-menu is-hidden-mobile">        
       <div class="table-header has-text-white">
         <div> <strong class="has-text-grey-light" > <i> {{ sidebarTitle }} </i></strong></div>
-        <a class="button is-info is-small" @click="toggleFilters" :class="{ 'is-outlined': !showFiltersMenu }">
-        <span class="icon"><i :class="showFiltersMenu ? 'mdi mdi-close' : 'mdi mdi-filter-variant'"></i></span>
-        <span>Filters</span></a>
+        
+        <AnomaliesFilters v-bind="activeOptions" @update="updateOptions"/> 
       </div>
 
-      <div v-if="showFiltersMenu">
-     <!--   <b-field horizontal label="Min Duration">
-          <b-tooltip
-            label="Input must be a number followed by a valid letter [ m = minutes, h = hour, d = day ]"
-            size="is-large"
-            position="is-bottom"
-            multilined>
-            <b-input 
-              v-model="minDuration" 
-              @input="checkValid" 
-              ref="regexinput" 
-              type="text" 
-              pattern="^[0-9]+[mhd]$" 
-              size="is-small" 
-              expanded
-              icon-right="close-circle"
-              icon-right-clickable
-              @icon-right-click="minDuration = ''"/>
-          </b-tooltip> 
-        </b-field> -->
-
-        <b-field horizontal label="Score threshold" >
-          <b-slider :value="activeOptions.scoreThreshold" @input="updateOptions('scoreThreshold', $event)" lazy indicator></b-slider>
-        </b-field>
-
-
-        <b-field horizontal label="">
-          <b-checkbox :value="activeOptions.showSeries" @input="updateOptions('showSeries', $event)">
-            <strong class="has-text-white">Show series</strong>
-          </b-checkbox>        
-        </b-field>
-            
-        <b-field horizontal label="">
-          <b-checkbox :value="activeOptions.showBaseline" @input="updateOptions('showBaseline', $event)">
-            <strong class="has-text-white">Show baseline</strong>
-          </b-checkbox>        
-        </b-field>
-
-        <b-field horizontal label="">
-          <b-checkbox :value="activeOptions.showTrend" @input="updateOptions('showTrend', $event)">
-            <strong class="has-text-white">Show trend</strong>
-          </b-checkbox>        
-        </b-field>
-      </div>
-
-      <AnomaliesTable
-        v-else
+      <AnomaliesTable        
         id="anom-table"
         :anomalies="filteredAnomalies"
         :activeAnomaly="filteredActiveAnomaly"
-        @changeActive="updateOptions('activeAnomalyId', $event)"
+        @changeActive="updateOptions({activeAnomalyId: $event})"
         /> 
     </div>
 
@@ -71,8 +24,8 @@
         :anomalies="filteredAnomalies"
         :loading="loading"
         :activeAnomaly="filteredActiveAnomaly"
-        @changeActive="updateOptions('activeAnomalyId', $event)"
-        @updateRange="updateOptions('selectedRange', $event)" />
+        @changeActive="updateOptions({activeAnomalyId: $event})"
+        @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" />
     </div>
   </div>  
 </div>
@@ -82,9 +35,10 @@
 <script>
 import Chart from './Chart.vue';
 import AnomaliesTable from './AnomaliesTable.vue';
+import AnomaliesFilters from './AnomaliesFilters.vue'
 
 export default {
-    components: { Chart, AnomaliesTable },
+    components: { Chart, AnomaliesTable, AnomaliesFilters },
     data() {
       return {
         showFiltersMenu: false,
@@ -140,20 +94,17 @@ export default {
       }
     },
     methods: {
-      updateOptions(prop, value) {
-        this.$store.dispatch('results/updateOptions', {id: this.activeResults.id, [prop]: value })
+      updateOptions(options) {
+        this.$store.dispatch('results/updateOptions', {id: this.activeResults.id, ...options })
       },
       toggleFilters() {
         this.showFiltersMenu = !this.showFiltersMenu
       },
-      checkValid() {
-      /*  if (!this.minDuration) {
-          this.minDurationTime = 0
-          return
-        }
-        if (this.$refs.regexinput.checkHtml5Validity()) {
-          let numbers = this.minDuration.match(/\d+/g)
-          let letter = this.minDuration.match(/[mhd]/g)
+  /*    updateMinDuration(value) {
+        let minDurationTime = 0
+        if (value && this.$refs.regexinput.checkHtml5Validity()) {
+          let numbers = value.match(/\d+/g)
+          let letter = value.match(/[mhd]/g)
           let ms = 0
           switch (letter[0]) {
             case "m":
@@ -167,10 +118,11 @@ export default {
               break
             default:
               break
-          }
-          this.minDurationTime = parseInt(numbers[0]) *  ms 
-        } */
-      },
+            }
+          minDurationTime = parseInt(numbers[0]) *  ms 
+        }
+        this.$store.dispatch('results/updateOptions', {id: this.activeResults.id, minDuration: value, minDurationTime: minDurationTime})
+      },    */
       startPollingResults() {
         this.polling = setInterval(() => {
           console.log('polling results')
@@ -196,7 +148,7 @@ export default {
           }
         }
       }
-    }
+    },    
 }
 </script>
 

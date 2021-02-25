@@ -139,7 +139,7 @@ const actions = {
     },
     closeLocalAnalysis(store, id) {
         store.commit('remove_analysis', id)
-        store.commit('results/remove_results', id, {root: true})
+        store.dispatch('results/deleteResults', id,  {root: true}) 
     },
     updateLocalSettings(store, settings) {
         store.commit('update_analysis', settings)
