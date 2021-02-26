@@ -9,7 +9,8 @@ function formatModel(model) {
             id: node.id, 
             group: node.group, 
             type: node.type, 
-            sources: node.sourceNodes.map(sc => sc.id)
+            sources: node.sourceNodes.map(sc => sc.id),
+            debug: true
         }
         let params = []
         Object.keys(node.paramsData).forEach(param => {
@@ -121,14 +122,18 @@ const actions = {
             api.getResults(results.taskId)
             .then(response => {
                 if (response.data.state == 'success')
-                    commit('add_results', {id: results.id, loading: false, taskId: response.data.task_id, results: response.data.result })
+                    commit('add_results', {id: results.id, loading: false, taskId: response.data.task_id, results: response.data.result, error: '' })
                 if (response.data.state == 'failed')
-                    commit('add_results', {id: results.id, loading: false, taskId: response.data.task_id, results: response.data.error })
+                    commit('add_results', {id: results.id, loading: false, taskId: response.data.task_id, results: {}, error: response.data.error })
             })
             .catch(error => { 
-                console.log('error fetching results')
-                console.log(error)
-
+                if (error.response) {
+                    commit('add_results', {id: results.id, loading: false, results: {}, error: "An error occurred while performing the analysis"})
+                } else if (error.request) {
+                    commit('add_results', {id: results.id, loading: false, results: {}, error: "The server could not be reached"})
+                } else {
+                    commit('add_results', {id: results.id, loading: false, results: {}, error: error.message})
+                }
             }) 
         }
     },

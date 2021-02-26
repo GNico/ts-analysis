@@ -1,32 +1,36 @@
 <template>
 <div>
-  <div v-if="loading" class="is-size-5 has-text-centered"><i :class="loading ?  'mdi mdi-loading icn-spinner' : ''"></i> Performing analysis</div>
-  <div v-else class="columns is-fullheight">
-    <div class="column is-4 side-menu is-hidden-mobile">        
-      <div class="table-header has-text-white">
-        <div> <strong class="has-text-grey-light" > <i> Anomalies </i></strong></div>
-        <AnomaliesFilters v-bind="activeOptions" @update="updateOptions"/> 
+  <div v-if="loading" class="is-size-5 has-text-centered"><i class="mdi mdi-loading icn-spinner"></i> Performing analysis</div>
+
+  <template v-else>
+    <div v-if="error" class="is-size-5 has-text-centered"><b-icon type="is-danger" icon="alert" size="is-small"/> {{error}}</div>
+    <div v-else class="columns is-fullheight">
+      <div class="column is-4 side-menu is-hidden-mobile">        
+        <div class="table-header has-text-white">
+          <div> <strong class="has-text-grey-light" > <i> Anomalies </i></strong></div>
+          <AnomaliesFilters v-bind="activeOptions" @update="updateOptions"/> 
+        </div>
+
+        <AnomaliesTable        
+          id="anom-table"
+          :anomalies="filteredAnomalies"
+          :activeAnomaly="filteredActiveAnomaly"
+          @changeActive="updateOptions({activeAnomalyId: $event})"
+          /> 
       </div>
 
-      <AnomaliesTable        
-        id="anom-table"
-        :anomalies="filteredAnomalies"
-        :activeAnomaly="filteredActiveAnomaly"
-        @changeActive="updateOptions({activeAnomalyId: $event})"
-        /> 
-    </div>
-
-    <div class="column main-content">
-      <Chart       
-        :seriesData="seriesData"
-        :baseline="baseline"
-        :anomalies="filteredAnomalies"
-        :loading="loading"
-        :activeAnomaly="filteredActiveAnomaly"
-        @changeActive="updateOptions({activeAnomalyId: $event})"
-        @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" />
-    </div>
-  </div>  
+      <div class="column main-content">
+        <Chart       
+          :seriesData="seriesData"
+          :baseline="baseline"
+          :anomalies="filteredAnomalies"
+          :loading="loading"
+          :activeAnomaly="filteredActiveAnomaly"
+          @changeActive="updateOptions({activeAnomalyId: $event})"
+          @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" />
+      </div>
+    </div>  
+  </template>
 </div>
 </template>
 
@@ -55,6 +59,9 @@ export default {
       },
       loading() {
         return this.activeResults.loading
+      },
+      error() {
+        return this.activeResults.error
       },
       resultsData() {
         return this.activeResults.results

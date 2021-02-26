@@ -22,7 +22,7 @@
 
 
   <b-taglist>
-    <b-tag type="is-info" v-for="node in selectedNodes">  {{node.type}} Id:{{node.id}}</b-tag>
+    <b-tag type="is-info" v-for="node in selectedNodes" :key="node.id">  {{node.type}} Id:{{node.id}}</b-tag>
   </b-taglist>
 
   <b-button @click="getNodesResults">
@@ -53,7 +53,7 @@ export default {
     return {
       selectedNodes: [],
       results: undefined,
-      error: undefined,
+      error: '',
     }
   },
   computed: {
@@ -74,8 +74,19 @@ export default {
   methods: {
     getNodesResults() {
       api.getResults(this.activeResults.taskId, {nodes: this.selectedNodesIds})
-      .then(response => this.results = response.data)
-      .catch(error => this.error = error)
+      .then(response => {
+        this.results = response.data
+        this.error = ''
+      })
+      .catch(error => {
+        if (error.response) {
+          this.error = "There was an error fetching the results"
+        } else if (error.request) {
+          this.error = "The server could not be reached"
+        } else {
+          this.error = "Internal application error"
+        }
+      })
     }
   },
   created() {
