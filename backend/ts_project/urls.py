@@ -11,7 +11,7 @@ urlpatterns = [
     path('clients/<slug:pk>/series/tags/', views.TagListView.as_view(), name='tags'),
 
     path('analysis/', views.AnalysisView.as_view(), name='analysis'),
-    path('analysis/<slug:id>/', views.AnalysisInstanceView.as_view(), name='analysis_instance'),
+    path('analysis/<slug:id>/', views.AnalysisResultView.as_view(), name='analysis_result'),
 
 
     path('pipelines/', views.PipelineListView.as_view(), name='pipelines'),

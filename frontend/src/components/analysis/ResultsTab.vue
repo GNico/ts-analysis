@@ -4,8 +4,7 @@
   <div v-else class="columns is-fullheight">
     <div class="column is-4 side-menu is-hidden-mobile">        
       <div class="table-header has-text-white">
-        <div> <strong class="has-text-grey-light" > <i> {{ sidebarTitle }} </i></strong></div>
-        
+        <div> <strong class="has-text-grey-light" > <i> Anomalies </i></strong></div>
         <AnomaliesFilters v-bind="activeOptions" @update="updateOptions"/> 
       </div>
 
@@ -41,7 +40,6 @@ export default {
     components: { Chart, AnomaliesTable, AnomaliesFilters },
     data() {
       return {
-        showFiltersMenu: false,
         polling: null,
       }       
     },
@@ -71,7 +69,7 @@ export default {
         return (!this.loading && 
               this.resultsData &&
               this.resultsData.hasOwnProperty("baseline") && 
-              this.showBaseline) ? this.resultsData.baseline : []
+              this.activeOptions.showBaseline) ? this.resultsData.baseline : []
       },
       anomalies() {
         return !this.loading &&
@@ -89,45 +87,16 @@ export default {
         let filteredAnom = this.filteredAnomalies.find(elem => elem.id === this.activeAnomaly)
         return filteredAnom ? filteredAnom.id : ''
       },
-      sidebarTitle() {
-        return this.showFiltersMenu ? 'Filter Options' : 'Anomalies'
-      }
     },
     methods: {
       updateOptions(options) {
         this.$store.dispatch('results/updateOptions', {id: this.activeResults.id, ...options })
       },
-      toggleFilters() {
-        this.showFiltersMenu = !this.showFiltersMenu
-      },
-  /*    updateMinDuration(value) {
-        let minDurationTime = 0
-        if (value && this.$refs.regexinput.checkHtml5Validity()) {
-          let numbers = value.match(/\d+/g)
-          let letter = value.match(/[mhd]/g)
-          let ms = 0
-          switch (letter[0]) {
-            case "m":
-              ms = 60000
-              break
-            case "h":
-              ms = 3600000
-              break
-            case "d": 
-              ms = 86400000
-              break
-            default:
-              break
-            }
-          minDurationTime = parseInt(numbers[0]) *  ms 
-        }
-        this.$store.dispatch('results/updateOptions', {id: this.activeResults.id, minDuration: value, minDurationTime: minDurationTime})
-      },    */
       startPollingResults() {
         this.polling = setInterval(() => {
           console.log('polling results')
-          this.$store.dispatch('results/fetchResults')          
-        }, 3000)
+          this.$store.dispatch('results/fetchResults', this.activeResults.id)          
+        }, 2000)
       },
       stopPollingResults() {
         if (this.polling) {
@@ -148,7 +117,10 @@ export default {
           }
         }
       }
-    },    
+    }, 
+    beforeDestroy() {
+      this.stopPollingResults()
+    },  
 }
 </script>
 

@@ -59,7 +59,7 @@
               <div v-else class="control" v-for="node in sourceNodes">
                 <div class="tags has-addons">
                   <span class="tag is-info" size="is-small">ID</span>
-                  <span class="tag is-dark" size="is-small" style="font-family: monospace">{{node.id}}</span>
+                  <span class="tag is-dark" size="is-small" style="font-family: monospace">{{node.id}} : {{node.type}}</span>
                 </div>
               </div>      
             </div> 

@@ -22,17 +22,6 @@ function formatModel(model) {
     return formatted
 }
 
-function addAnomaliesId(anomalies) {
-    var anoms = []
-    for (var item of anomalies) {
-        anoms.push({
-            id: nanoid(8),
-            ...item
-        })
-    }
-    return anoms
-}
-
 const defaultOptions = {
     activeAnomalyId: '',
     showBaseline: true,
@@ -55,7 +44,7 @@ const state = {
 
 const getters = {
     getResultsById: (state) => (id) => {
-        let item = state.results.find(elem => elem.id == id)
+        let item = state.all[id]
         return item ? item : {}
     }, 
     activeResults: (state) => {
@@ -69,6 +58,13 @@ const getters = {
 const mutations = {    
     set_active_results(state, id) {
         state.activeResultsId = id
+    },
+    add_results(state, result) {
+        if (result.hasOwnProperty('id')) {
+            let id = result.id
+            let newResult = { ...state.all[id], ...result }
+            state.all = { ...state.all, [id]: newResult }
+        }
     },
     set_options(state,  options) {
         if (options.hasOwnProperty('id')) {
@@ -92,13 +88,7 @@ const mutations = {
     set_active_anomaly(state, anomalyId) {
         state.activeAnomalyId = anomalyId
     },
-    add_results(state,  {id, taskId, loading, results}) {
-        if (results.hasOwnProperty('anomalies') && results.anomalies.length > 0) {
-            results.anomalies = addAnomaliesId(results.anomalies)
-        }
-        let newResults = {id, taskId, loading, results }
-        state.all = { ...state.all, [id]: newResults }
-    },
+
 }
 
 const actions = {    
@@ -107,17 +97,18 @@ const actions = {
     },
     startAnalysis({commit, getters}, settings) {
         if (!settings) return
-        commit('add_results', {id: settings.id, loading: true, taskId: undefined, results: {} })
+        commit('add_results', {id: settings.id, loading: true, taskId: undefined })
         commit('set_options', {id: settings.id, ...defaultOptions})
+        const model = formatModel(settings.model)
         return  api.getAnomalies({
                     client: settings.client,
                     tags: settings.tags,
                     contexts: settings.contexts,
                     interval: settings.interval,
-                    model: formatModel(settings.model)
+                    model: model
                 })
                 .then(response => {    
-                    commit('add_results', {id: settings.id, loading: true, taskId: response.data.task_id, results: {} }) 
+                    commit('add_results', {id: settings.id, loading: true, taskId: response.data.task_id, model: model }) 
                 })
                 .catch(error => { 
                     console.log('error performing analysis')
@@ -125,12 +116,14 @@ const actions = {
                 })         
     },
     fetchResults({commit, getters}, id) {
-        let results = getters.activeResults
+        let results = getters.getResultsById(id)
         if (results.loading && results.hasOwnProperty('taskId') && results.taskId) {
             api.getResults(results.taskId)
             .then(response => {
-                if (response.data.state == 'success' || response.data.state == 'failed')
+                if (response.data.state == 'success')
                     commit('add_results', {id: results.id, loading: false, taskId: response.data.task_id, results: response.data.result })
+                if (response.data.state == 'failed')
+                    commit('add_results', {id: results.id, loading: false, taskId: response.data.task_id, results: response.data.error })
             })
             .catch(error => { 
                 console.log('error fetching results')

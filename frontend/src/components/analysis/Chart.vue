@@ -121,21 +121,7 @@ export default {
       this.$emit('updateRange', { start: Math.round(event.min), end: Math.round(event.max) })
     } 
   },
-  watch: {
-    activeAnomaly(newId) {
-      /*let axis = this.$refs.chart.chart.axes[0]
-      for (var i = 0; i < axis.plotLinesAndBands.length; i++) {
-        var band = axis.plotLinesAndBands[i]
-        if (band.id === newId) {
-          band.svgElem.attr('fill', 'rgba(173,216,230,0.3)')
-        } else {
-          band.svgElem.attr('fill', 'transparent')
-        }
-      } */
-    }
-  },
   created() {
-   
   },
 }
 </script>

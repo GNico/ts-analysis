@@ -1,4 +1,5 @@
 import axios from "axios";
+import { nanoid } from 'nanoid';
 
 const baseDomain = "http://localhost:8000";
 const baseURL = baseDomain + "/ts_project";
@@ -94,8 +95,29 @@ export default {
     getAnomalies(payload) {
         return repository.post("/analysis/", payload)
     },
-    getResults(id) {
-        return repository.get("/analysis/" + id + "/")
+    getResults(id, params) {
+        if (!params) params = {}
+        return repository.get("/analysis/" + id + "/", {
+            params: removeEmpty(params),
+            paramsSerializer: params => transformArrayParams(params),
+            transformResponse: [
+                ...axios.defaults.transformResponse,
+                (data) => {      
+                    if (!data.hasOwnProperty('result')) return data
+                    var anoms = []
+                    if (data.result.hasOwnProperty('anomalies')) {
+                        for (var item of data.result.anomalies) {
+                            anoms.push({
+                                id: nanoid(8),
+                                ...item
+                            })
+                        }
+                    }
+                    data.result.anomalies = anoms
+                    return data                    
+                }
+            ]
+        })
     },
 
     //Analysis settings
