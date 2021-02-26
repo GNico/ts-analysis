@@ -34,8 +34,10 @@ class Analysis:
         debug_nodes = self.result_debug_nodes()
         debug_nodes_output = {}
         for debug_node in debug_nodes:
+            # TODO: hack
+            out_series = debug_node.series if debug_node.series is not None else self.series
             debug_nodes_output[debug_node.id] = {
-                "series": debug_node.series.output_format(),
+                "series": out_series.output_format(),
                 "anomalies": list(map(lambda a: a.output_format(), debug_node.anomalies))
             }
 

@@ -19,6 +19,7 @@ class And(Node):
         return NodeResult(self, inputs=inputs, anomalies=all_anomalies)
 
     def join(self, lhss, rhss):
+        # TODO: should return new anomalies as intersections (as parameter probably, "merge") 
         strict = self.get_param('strict').value
         result = []
         for lhs in lhss:
