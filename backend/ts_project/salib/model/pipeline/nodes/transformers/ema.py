@@ -5,7 +5,7 @@ class EMA(NodeTransformer):
 
     def __init__(self, id):
         super().__init__(id)
-        self.add_required_param(BoundedFloat('decay', 'Decay', 'Decay rate', 0, 1, 0.9))
+        self.add_required_param(BoundedFloat('decay', 'Decay', 'Decay rate', 0, 1, False, 0.9))
 
     def transform(self, series):
         pdseries = series.pdseries

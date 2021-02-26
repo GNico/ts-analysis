@@ -22,7 +22,6 @@ class TestAnalysis(unittest.TestCase):
         factory.set_param_value('center', False)
         factory.set_param_value('min_periods', 0)
         factory.set_param_value('agg_method', 'max')
-        factory.set_debug(True)
         node = factory.build()
 
         pipeline = Pipeline(node)
@@ -93,6 +92,7 @@ class TestAnalysis(unittest.TestCase):
         factory.set_param_value('center', False)
         factory.set_param_value('min_periods', 0)
         factory.set_param_value('agg_method', 'max')
+        factory.set_debug(False)
         node = factory.build()
 
         pipeline = Pipeline(node)

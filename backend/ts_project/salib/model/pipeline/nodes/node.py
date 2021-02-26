@@ -7,7 +7,7 @@ class Node:
         self.params = {}
         self.required_params = {}
         self.sources = []
-        self.debug = False
+        self.debug = True
 
     def display(self):
         raise Exception('Undefined display name: ' + type(self).__name__)

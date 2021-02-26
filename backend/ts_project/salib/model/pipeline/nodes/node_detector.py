@@ -13,7 +13,7 @@ class NodeDetector(Node):
         input = inputs[0]
         anomalies = self.anomalies(input)
         for anomaly in anomalies:
-            anomaly.tag_algo(str(self))
+            anomaly.set_source_node(self)
         return NodeResult(self, inputs=inputs, series=input, anomalies=anomalies)
 
     def anomalies(self, series):

@@ -12,9 +12,10 @@ class RollingAggregate(NodeTransformer):
     def __init__(self, id):
         super().__init__(id)
         self.add_common_params()
-        quantile_range = BoundedFloat('quantile_range', 'Quantile range', 'Quantile range [q;1-q]', 0, 0.5, 0.25)
+        quantile_range = BoundedFloat('quantile_range', 'Quantile range', 'Quantile range [q;1-q]', 0, 0.5, False, 0.25)
         quantile_range.add_condition(ParamEqualsValue('agg_method', 'quantile'))
         self.add_param(quantile_range)
+        self._closed = None
 
     def add_common_params(self):
         self.add_required_param(String('window', 'Window', 'Window size in time interval (eg: 1h)', '30m'))
@@ -59,15 +60,16 @@ class RollingAggregate(NodeTransformer):
         return 'Rolling aggregate'
 
     def transform(self, series):
-        s = series.pdseries
+        return self.transform_pdseries(series.pdseries)
+
+    def transform_pdseries(self, s):
         window, center, min_periods, agg = self.get_common_params()
-        closed = None
 
         rolling = s.rolling(
             window=window,
             center=center,
             min_periods=min_periods,
-            closed=closed,
+            closed=self._closed,
         )
 
         if agg in [

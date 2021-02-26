@@ -23,8 +23,8 @@ class SimpleThreshold(NodeDetector):
             req_lower = not lower.is_set() or val > lower.value
             return req_upper and req_lower
         else:
-            req_upper = not upper.is_set() or val > upper.value
-            req_lower = not lower.is_set() or val < lower.value
+            req_upper = upper.is_set() and val > upper.value
+            req_lower = lower.is_set() and val < lower.value
             return req_upper or req_lower
 
     def all_params(self):
