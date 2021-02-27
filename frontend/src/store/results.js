@@ -1,6 +1,8 @@
 import api from "../api/repository";
 import { nanoid } from 'nanoid'
 
+import Vue from 'vue'
+
 function formatModel(model) {
     let formatted = {}
     let nodes = [] 
@@ -67,11 +69,17 @@ const mutations = {
             state.all = { ...state.all, [id]: newResult }
         }
     },
-    set_options(state,  options) {
-        if (options.hasOwnProperty('id')) {
-            let id = options.id
-            let newOptions = { ...state.options[id], ...options }
-            state.options = { ...state.options, [id]: newOptions }
+    set_options(state,  {id, options}) {
+        if (state.options.hasOwnProperty(id)) {
+            Object.keys(options).forEach(optkey => {
+                if (state.options[id].hasOwnProperty(optkey)) {
+                    state.options[id][optkey] = options[optkey]
+                } else {
+                    Vue.set(state.options[id], optkey, options[optkey])
+                }
+            })
+        } else {
+            state.options = { ...state.options, [id]: options }
         }
     },
     remove_results(state, id) {
@@ -96,10 +104,11 @@ const actions = {
     setActiveAnomaly(store, id) {
         store.commit('set_active_anomaly', id)
     },
-    startAnalysis({commit, getters}, settings) {
+    startAnalysis({commit, getters, dispatch}, settings) {
         if (!settings) return
         commit('add_results', {id: settings.id, loading: true, taskId: undefined })
-        commit('set_options', {id: settings.id, ...defaultOptions})
+        dispatch('updateOptions', {id: settings.id, ...defaultOptions})
+        //commit('set_options', {id: settings.id, options: {id: settings.id, ...defaultOptions})
         const model = formatModel(settings.model)
         return  api.getAnomalies({
                     client: settings.client,
@@ -112,8 +121,13 @@ const actions = {
                     commit('add_results', {id: settings.id, loading: true, taskId: response.data.task_id, model: model }) 
                 })
                 .catch(error => { 
-                    console.log('error performing analysis')
-                    console.log(error)
+                    if (error.response) {
+                        commit('add_results', {id: settings.id, loading: false, results: {}, error: "An error occurred while processing the request"})
+                    } else if (error.request) {
+                        commit('add_results', {id: settings.id, loading: false, results: {}, error: "The server could not be reached"})
+                    } else {
+                        commit('add_results', {id: settings.id, loading: false, results: {}, error: error.message})
+                    }
                 })         
     },
     fetchResults({commit, getters}, id) {
@@ -138,7 +152,9 @@ const actions = {
         }
     },
     updateOptions(store, payload) {
-        store.commit('set_options',  payload)
+        const { id, ...options } = payload
+        options['id'] = id
+        store.commit('set_options',  {id, options})
     },
     deleteResults(store, id) {
         store.commit('remove_results', id)

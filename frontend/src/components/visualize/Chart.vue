@@ -14,7 +14,6 @@
     :crosshair="crosshair"
     :syncCrosshairEnabled="true"
     @selection="getTagsCount(panel.id, $event)"
-
   />
 </div>
 </template>

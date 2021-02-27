@@ -70,8 +70,6 @@ export default {
       updateArgs: [true, true, false],
       arrows: undefined,
       cursorPosition: 0,
-
-
       eventUnbinder: null,
     }
   },

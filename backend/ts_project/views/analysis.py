@@ -22,7 +22,8 @@ class AnalysisResultView(APIView):
             res = task.result
             nodes = request.query_params.getlist('nodes', [])           
             if (nodes):
-                node_results = { k:getattr(res['debug_nodes'], k, {}) for k in nodes}
+                print(nodes)
+                node_results = { k: res['debug_nodes'].get(k, {}) for k in nodes}
                 return Response({"task_id": id, "state": "success", "node_results": node_results}) 
             else:
                 #final_result = { 'series': res['series'], 'anomalies': res['anomalies'] }

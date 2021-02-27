@@ -29,30 +29,31 @@
     Inspect selected
   </b-button>
 
-
-  <div>
-    {{results}}
-  </div>
-
-  <div>
+  <div v-if="error">
     {{error}}
   </div>
 
+  <div v-else>
+    <div v-for="item in Object.keys(results)">
+      <DebugNodeResult :series="results[item]['series']" :anomalies="addIdToAnomalies(results[item]['anomalies'])"/>
+    </div>
+  </div>
 </div>
-
 </template>
 
 
-
 <script>
+
 import api from "../../api/repository";
+import DebugNodeResult from "./DebugNodeResult"
+import {nanoid} from "nanoid"
 
 export default {
-
+  components: { DebugNodeResult },
   data() {
     return {
       selectedNodes: [],
-      results: undefined,
+      results: {},
       error: '',
     }
   },
@@ -69,13 +70,12 @@ export default {
     selectedNodesIds() {
       return this.selectedNodes.map(item => item.id)
     }
-    
   },
   methods: {
     getNodesResults() {
       api.getResults(this.activeResults.taskId, {nodes: this.selectedNodesIds})
       .then(response => {
-        this.results = response.data
+        this.results = response.data.node_results
         this.error = ''
       })
       .catch(error => {
@@ -87,7 +87,17 @@ export default {
           this.error = "Internal application error"
         }
       })
-    }
+    },
+    addIdToAnomalies(anomalies) {
+      var anoms = []
+      for (var item of anomalies) {
+        anoms.push({
+          id: nanoid(8),
+          ...item
+        })
+      }
+      return anoms                    
+    },
   },
   created() {
   },

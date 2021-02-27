@@ -13,7 +13,7 @@
 
         <AnomaliesTable        
           id="anom-table"
-          :anomalies="filteredAnomalies"
+          :anomalies="tableFilteredAnomalies"
           :activeAnomaly="filteredActiveAnomaly"
           @changeActive="updateOptions({activeAnomalyId: $event})"
           /> 
@@ -23,7 +23,7 @@
         <Chart       
           :seriesData="seriesData"
           :baseline="baseline"
-          :anomalies="filteredAnomalies"
+          :anomalies="chartFilteredAnomalies"
           :loading="loading"
           :activeAnomaly="filteredActiveAnomaly"
           @changeActive="updateOptions({activeAnomalyId: $event})"
@@ -45,6 +45,7 @@ export default {
     data() {
       return {
         polling: null,
+
       }       
     },
     computed: {
@@ -83,15 +84,18 @@ export default {
               this.resultsData &&      
               this.resultsData.hasOwnProperty("anomalies") ? this.resultsData.anomalies : []
       },
-      filteredAnomalies() {
+      chartFilteredAnomalies() {
         return this.anomalies.filter(elem => 
           (elem.score > this.activeOptions.scoreThreshold 
-          && (parseInt(elem.to) - parseInt(elem.from) >= this.activeOptions.minDurationTime)
-          && (!this.activeOptions.selectedRange.start || parseInt(elem.from) > this.activeOptions.selectedRange.start)
-          && (!this.activeOptions.selectedRange.end || parseInt(elem.from) < this.activeOptions.selectedRange.end)))
+          && (parseInt(elem.to) - parseInt(elem.from) >= this.activeOptions.minDurationTime)))         
+      },
+      tableFilteredAnomalies() {
+        return this.chartFilteredAnomalies.filter(elem =>           
+          (!this.activeOptions.selectedRange.start || parseInt(elem.from) > this.activeOptions.selectedRange.start)
+          && (!this.activeOptions.selectedRange.end || parseInt(elem.from) < this.activeOptions.selectedRange.end))
       },
       filteredActiveAnomaly() {
-        let filteredAnom = this.filteredAnomalies.find(elem => elem.id === this.activeAnomaly)
+        let filteredAnom = this.tableFilteredAnomalies.find(elem => elem.id === this.activeAnomaly)
         return filteredAnom ? filteredAnom.id : ''
       },
     },
