@@ -14,7 +14,7 @@
         <AnomaliesTable        
           id="anom-table"
           :anomalies="tableFilteredAnomalies"
-          :activeAnomaly="filteredActiveAnomaly"
+          :activeAnomaly="activeAnomaly"
           @changeActive="updateOptions({activeAnomalyId: $event})"
           /> 
       </div>
@@ -23,9 +23,9 @@
         <Chart       
           :seriesData="seriesData"
           :baseline="baseline"
-          :anomalies="chartFilteredAnomalies"
+          :anomalies="anomalies"
           :loading="loading"
-          :activeAnomaly="filteredActiveAnomaly"
+          :activeAnomaly="activeAnomaly"
           @changeActive="updateOptions({activeAnomalyId: $event})"
           @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" />
       </div>
@@ -39,6 +39,8 @@
 import Chart from './Chart.vue';
 import AnomaliesTable from './AnomaliesTable.vue';
 import AnomaliesFilters from './AnomaliesFilters.vue'
+import debounce from "lodash/debounce";
+
 
 export default {
     components: { Chart, AnomaliesTable, AnomaliesFilters },
@@ -85,22 +87,24 @@ export default {
               this.resultsData.hasOwnProperty("anomalies") ? this.resultsData.anomalies : []
       },
       chartFilteredAnomalies() {
+        console.log("recompute chart filter")
         return this.anomalies.filter(elem => 
           (elem.score > this.activeOptions.scoreThreshold 
           && (parseInt(elem.to) - parseInt(elem.from) >= this.activeOptions.minDurationTime)))         
       },
       tableFilteredAnomalies() {
+                console.log("recompute table filter")
+
         return this.chartFilteredAnomalies.filter(elem =>           
           (!this.activeOptions.selectedRange.start || parseInt(elem.from) > this.activeOptions.selectedRange.start)
           && (!this.activeOptions.selectedRange.end || parseInt(elem.from) < this.activeOptions.selectedRange.end))
-      },
-      filteredActiveAnomaly() {
-        let filteredAnom = this.tableFilteredAnomalies.find(elem => elem.id === this.activeAnomaly)
-        return filteredAnom ? filteredAnom.id : ''
-      },
+      },  
     },
     methods: {
       updateOptions(options) {
+        this.triggerUpdate(options)
+      },      
+      triggerUpdate(options) {
         this.$store.dispatch('results/updateOptions', {id: this.activeResults.id, ...options })
       },
       startPollingResults() {
@@ -129,9 +133,13 @@ export default {
         }
       }
     }, 
+    created() {
+      this.triggerUpdate = debounce(this.triggerUpdate, 400, {'leading': false, 'trailing': true})
+    },
     beforeDestroy() {
       this.stopPollingResults()
     },  
+
 }
 </script>
 
