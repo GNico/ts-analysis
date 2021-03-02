@@ -339,6 +339,7 @@ export default {
       this.arrows = undefined
     },
     wheelZoom(event) {
+      event.preventDefault()
       if (!this.zoomEnabled) return
       var sensitivity = 0.7
       var zoomAmount = (event.deltaY > 0) ?  (1 / sensitivity) : sensitivity

@@ -26,11 +26,20 @@ export default {
       type: Array,
       default: () => []
     },
+    selectable: {
+      type: Boolean,
+      default: false,
+    },
+    centered: {
+      type: Boolean,
+      default: true,
+    }
   },
   data() {
     return {
       resizeHandler: debounce(this.redraw, 300),
-      g: undefined,        
+      g: undefined,   
+      selectedNodes: [],    
     }
   },
   methods: {
@@ -55,6 +64,21 @@ export default {
         });
       });
     },
+    toggleSelected(nodeId) {
+      let index = this.selectedNodes.findIndex(elem => elem == nodeId)
+      if (index === -1) {
+        this.selectedNodes.push(nodeId)
+       // d3.select("#" + nodeId ).attr('style', 'fill: green;stroke: yellow')
+        d3.select("#" + nodeId + ' .label').attr('style', 'stroke: yellow')
+        d3.select("#" + nodeId + ' rect').attr('style', 'fill: green; stroke: yellow')
+      } else {
+        this.selectedNodes.splice(index, 1)
+      //  d3.select("#" + nodeId).attr('style', 'fill: #005aff;stroke: white')
+        d3.select("#" + nodeId + ' .label').attr('style', '')
+
+        d3.select("#" + nodeId + ' rect').attr('style', 'fill: #005aff; stroke: white')
+      }
+    },
     drawChart() {
       //Draw graphics
       var svg = d3.select("#" + this.id).select("svg")
@@ -72,36 +96,41 @@ export default {
       render(inner, this.g);
 
       if (!this.nodes.length) return
-/*      //Events
-      inner.selectAll("g.node")
-      .on("click", debounce(e => {
-          this.list.nodeInfos.filter(item => {
-              return item.id == e;
-          });
-      }, 200, {leading:false, trailing:true}))
-      .on('mouseover', debounce( e => {
+      
+      //Events    
+      if (this.selectable) {
+        inner.selectAll("g.node")
+        .on("click", e => {
+            this.toggleSelected(e)
+        })
+      }
+/*   .on('mouseover', debounce( e => {
           let curNode = g.node(e)
           console.log(curNode, 'curNode')
       }, 200, {leading:false, trailing:true})); */
+
       // Initialize zoom ratio
       var initialScale = (svg.attr("width") - 100) / this.g.graph().width;
       if (initialScale > 1)
         initialScale = 1
-      // Set width and height
+
+      // Set width and height and position
       svg.call(
           zoom.transform,
           d3.zoomIdentity
               .translate(
-                  (svg.attr("width") - this.g.graph().width * initialScale )  / 2 ,
+                  this.centered ? (svg.attr("width") - this.g.graph().width * initialScale )  / 2  : 20,
                   20
               )
               .scale(initialScale)
       );
-
-      svg.attr("height", this.g.graph().height * initialScale  + 40); 
+      svg.attr("height", this.g.graph().height * initialScale  + 40)
       // Disable user zoom
-      svg.on("wheel.zoom", null);
-      svg.on("dblclick.zoom", null);
+      svg.on("wheel.zoom", null)
+      svg.on("dblclick.zoom", null)
+      // Disable drag
+      svg.on("mousedown.zoom", null)
+     
     },
     redraw() {
       if (this.g) {
@@ -116,6 +145,11 @@ export default {
   created() {
     window.addEventListener("resize", this.resizeHandler)
   },
+  mounted() {
+    if (this.nodes.length) {
+      this.refresh()
+    }
+  },
   destroyed() {
     window.removeEventListener("resize", this.resizeHandler);
   },
@@ -123,6 +157,9 @@ export default {
     nodes() {
       this.createLayout()
       this.drawChart()
+    },
+    selectedNodes() {
+      this.$emit('selected', this.selectedNodes)
     }
   },
 };

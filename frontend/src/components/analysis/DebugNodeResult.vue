@@ -1,7 +1,11 @@
 <template>
 
-<div v-else class="columns">
+<div v-else class="columns" :style="{height: height + 50 + 'px'}">
   <div class="column main-content" :style="{height: height + 'px'}">
+    <div class="section-header has-text-white">
+      <div> <strong class="has-text-grey-light" > <i> {{node}} </i></strong></div>
+    </div>
+
     <Chart     
       class="thechart"
       :seriesData="series"
@@ -13,14 +17,13 @@
       @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" />
   </div>
 
-  <div v-if="anomalies.length" class="column is-4">        
-    <div class="table-header has-text-white">
+  <div v-if="anomalies.length" class="column is-4" :style="{height: height + 'px'}">        
+    <div class="section-header has-text-white">
       <div> <strong class="has-text-grey-light" > <i> Anomalies </i></strong></div>
       <AnomaliesFilters v-bind="filters" @update="updateOptions"/> 
     </div>
 
     <AnomaliesTable   
-      :style="{'max-height': (height - 62) + 'px'}"
       id="anom-table"
       :anomalies="filteredAnomalies"
       :activeAnomaly="filteredActiveAnomaly"
@@ -55,7 +58,11 @@ export default {
     height: {
       type: Number,
       default: 400,
-    }
+    },
+    node: {
+      type: String,
+      default: '',
+    },
   },
   data () {
     return {
@@ -89,8 +96,8 @@ export default {
     },
   },
   methods: {
+
     updateOptions(event) {
-      console.log(event)
     }
   }
 }
@@ -99,22 +106,23 @@ export default {
 
 
 <style scoped>
-.main-content {
+/*.main-content {
   display: flex;
   flex-direction: column;
   overflow-y: overlay;
   overflow-x: hidden;
-}
+} */
 
 .thechart {
   height: inherit;
 }
 
-.table-header {
+.section-header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 0.5rem;
   align-items: center;
+  height: 30px;
 }
 
 </style>

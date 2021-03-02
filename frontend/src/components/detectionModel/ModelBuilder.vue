@@ -24,20 +24,25 @@
     </span>
   </div>
 
-  <GraphBuilder :nodes="nodes" @validation="validationMessages = $event"/>
+  <GraphDataProvider :nodes="nodes" @validation="validationMessages = $event" >
+    <LayeredGraphChart slot-scope="{chartNodes, chartEdges}" :nodes="chartNodes" :edges="chartEdges" id="model"/>
+  </GraphDataProvider>
 </div>
 </template>
 
 
 <script>
-import GraphBuilder from "./GraphBuilder"
 import PipeNodeList from "./PipeNodeList"
 import {nanoid} from 'nanoid'
 import cloneDeep from "lodash/cloneDeep";
 
 
+import GraphDataProvider from "./GraphDataProvider"
+import LayeredGraphChart from "./LayeredGraphChart"
+
+
 export default {
-  components: { GraphBuilder, PipeNodeList },
+  components: { GraphDataProvider, PipeNodeList, LayeredGraphChart },
   props: {
     nodes: {
       type: Array,

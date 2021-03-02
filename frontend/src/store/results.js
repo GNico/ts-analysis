@@ -118,7 +118,7 @@ const actions = {
                     model: model
                 })
                 .then(response => {    
-                    commit('add_results', {id: settings.id, loading: true, taskId: response.data.task_id, model: model }) 
+                    commit('add_results', {id: settings.id, loading: true, taskId: response.data.task_id, model: settings.model }) 
                 })
                 .catch(error => { 
                     if (error.response) {

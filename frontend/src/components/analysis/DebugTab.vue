@@ -1,41 +1,32 @@
 <template>
-
 <div>
-  <b-dropdown
-    v-model="selectedNodes"
-    multiple
-    aria-role="list">
-    <template #trigger>
-      <b-tag
-        class="button is-outlined"
-        size="is-small"             
-        icon-right="menu-down">
-        Select nodes
-        <b-icon size="is-small" icon="menu-down"/>
-      </b-tag>
-    </template>
-
-    <b-dropdown-item v-for="item in model.nodes" :key="item.id" :value="item" aria-role="listitem">
-      <span>{{item.type}} (ID: {{item.id}})</span>
-    </b-dropdown-item>
-  </b-dropdown>
+  <div>
+    Click to select the nodes you wish to inspect
+    <GraphDataProvider :nodes="model">
+      <LayeredGraphChart 
+        slot-scope="{chartNodes, chartEdges}" 
+        :nodes="chartNodes" 
+        :edges="chartEdges" 
+        id="model" 
+        :selectable="true" 
+        :centered="false" 
+        @selected="selectedNodes = $event"/>
+    </GraphDataProvider>
+    <b-button type="is-primary" label="Inspect selected" @click="getNodesResults"> </b-button>
+  </div>
 
 
-  <b-taglist>
-    <b-tag type="is-info" v-for="node in selectedNodes" :key="node.id">  {{node.type}} Id:{{node.id}}</b-tag>
-  </b-taglist>
-
-  <b-button @click="getNodesResults">
-    Inspect selected
-  </b-button>
-
-  <div v-if="error">
+  <div v-if="error" class="item-section">
     {{error}}
   </div>
 
   <div v-else>
     <div v-for="item in Object.keys(results)">
-      <DebugNodeResult :series="results[item]['series']" :anomalies="addIdToAnomalies(results[item]['anomalies'])"/>
+      <DebugNodeResult 
+        class="item-section" 
+        :series="results[item]['series']" 
+        :anomalies="addIdToAnomalies(results[item]['anomalies'])" 
+        :node="item"/>
     </div>
   </div>
 </div>
@@ -46,10 +37,12 @@
 
 import api from "../../api/repository";
 import DebugNodeResult from "./DebugNodeResult"
+import GraphDataProvider from "../detectionModel/GraphDataProvider"
+import LayeredGraphChart from "../detectionModel/LayeredGraphChart"
 import {nanoid} from "nanoid"
 
 export default {
-  components: { DebugNodeResult },
+  components: { DebugNodeResult, GraphDataProvider, LayeredGraphChart },
   data() {
     return {
       selectedNodes: [],
@@ -62,18 +55,27 @@ export default {
       return this.$store.getters['results/activeResults']
     },    
     model() {
+      console.log("model changes somehow")
       return this.activeResults.model
     },
     loadingResults() {
       return this.activeResults.loading
+    },   
+    formattedSelectedNodes() {
+      let filtered = this.selectedNodes.filter(item => { return (item !== 'start' && item !== 'end')})
+      if (filtered.length != this.selectedNodes.length) {
+        filtered.push("_Root")
+      }
+      return filtered
     },
-    selectedNodesIds() {
-      return this.selectedNodes.map(item => item.id)
-    }
   },
   methods: {
     getNodesResults() {
-      api.getResults(this.activeResults.taskId, {nodes: this.selectedNodesIds})
+      if (!this.formattedSelectedNodes.length) {
+        this.results = {}
+        return
+      }
+      api.getResults(this.activeResults.taskId, {nodes: this.formattedSelectedNodes})
       .then(response => {
         this.results = response.data.node_results
         this.error = ''
@@ -87,6 +89,9 @@ export default {
           this.error = "Internal application error"
         }
       })
+    },
+    getNode(id) {
+      return this.model.find(item => item.id = id)
     },
     addIdToAnomalies(anomalies) {
       var anoms = []
@@ -107,5 +112,12 @@ export default {
 
 </script>
 
+<style>
+.item-section {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
 
+</style>
 

@@ -1,22 +1,12 @@
-<template>
-<div>
-  <LayeredGraphChart ref="chart" id="model" :nodes="chartNodes" :edges="chartEdges"/>
-</div>
-</template>
-
-
 <script>
-
-import LayeredGraphChart from './LayeredGraphChart'
 import { validate } from './ModelValidation'
   
 export default {
-  components: { LayeredGraphChart },
   props: { 
     nodes: {
       type: Array,
       default: () => []
-    }
+    },
   },
   data() {
     return {
@@ -84,14 +74,12 @@ export default {
       }      
     },
   },
-  mounted() {
-    this.$nextTick(() => {
-      if (this.nodes.length > 0) {
-        this.$refs.chart.refresh()
-      }
+  render() {
+    return this.$scopedSlots.default({
+      chartNodes: this.chartNodes,
+      chartEdges: this.chartEdges
     })
   }
-
 }
 
 </script>

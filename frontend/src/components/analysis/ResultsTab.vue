@@ -41,7 +41,6 @@ import AnomaliesTable from './AnomaliesTable.vue';
 import AnomaliesFilters from './AnomaliesFilters.vue'
 import debounce from "lodash/debounce";
 
-
 export default {
     components: { Chart, AnomaliesTable, AnomaliesFilters },
     data() {
@@ -87,14 +86,11 @@ export default {
               this.resultsData.hasOwnProperty("anomalies") ? this.resultsData.anomalies : []
       },
       chartFilteredAnomalies() {
-        console.log("recompute chart filter")
         return this.anomalies.filter(elem => 
           (elem.score > this.activeOptions.scoreThreshold 
           && (parseInt(elem.to) - parseInt(elem.from) >= this.activeOptions.minDurationTime)))         
       },
       tableFilteredAnomalies() {
-                console.log("recompute table filter")
-
         return this.chartFilteredAnomalies.filter(elem =>           
           (!this.activeOptions.selectedRange.start || parseInt(elem.from) > this.activeOptions.selectedRange.start)
           && (!this.activeOptions.selectedRange.end || parseInt(elem.from) < this.activeOptions.selectedRange.end))

@@ -96,6 +96,7 @@ export default {
         return repository.post("/analysis/", payload)
     },
     getResults(id, params) {
+        console.log(params)
         if (!params) params = {}
         return repository.get("/analysis/" + id + "/", {
             params: removeEmpty(params),
