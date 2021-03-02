@@ -3,7 +3,7 @@
 <div v-else class="columns" :style="{height: height + 50 + 'px'}">
   <div class="column main-content" :style="{height: height + 'px'}">
     <div class="section-header has-text-white">
-      <div> <strong class="has-text-grey-light" > <i> {{node}} </i></strong></div>
+      <slot> </slot>
     </div>
 
     <Chart     
@@ -17,18 +17,20 @@
       @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" />
   </div>
 
-  <div v-if="anomalies.length" class="column is-4" :style="{height: height + 'px'}">        
-    <div class="section-header has-text-white">
-      <div> <strong class="has-text-grey-light" > <i> Anomalies </i></strong></div>
-      <AnomaliesFilters v-bind="filters" @update="updateOptions"/> 
-    </div>
+  <div class="column is-4" :style="{height: height + 'px'}">     
+    <template v-if="anomalies.length">
+      <div class="section-header has-text-white">
+        <div> <strong class="has-text-grey-light" > <i> Anomalies </i></strong></div>
+        <AnomaliesFilters v-bind="filters" @update="updateOptions"/> 
+      </div>
 
-    <AnomaliesTable   
-      id="anom-table"
-      :anomalies="filteredAnomalies"
-      :activeAnomaly="filteredActiveAnomaly"
-      @changeActive="activeAnomalyId = $event"
-      /> 
+      <AnomaliesTable   
+        id="anom-table"
+        :anomalies="filteredAnomalies"
+        :activeAnomaly="filteredActiveAnomaly"
+        @changeActive="activeAnomalyId = $event"
+        /> 
+    </template>
   </div>
 </div> 
   
@@ -58,10 +60,6 @@ export default {
     height: {
       type: Number,
       default: 400,
-    },
-    node: {
-      type: String,
-      default: '',
     },
   },
   data () {

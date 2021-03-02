@@ -102,6 +102,7 @@ export default {
       return this.seriesData.length == 0
     },
     interactiveBands() {
+      console.log("trigger computed bands")
       var vm = this
       var bands = []
       for (var item of this.bands) {
@@ -351,7 +352,7 @@ export default {
       var diff = max - min 
       var newZoomedDiff = Math.round(diff * zoomAmount)
       if (newZoomedDiff > (dataMax - dataMin)) {
-        chart.xAxis[0].setExtremes(undefined, undefined, undefined, false, {trigger: 'zoom'})
+        chart.xAxis[0].setExtremes(undefined, undefined, undefined, false, {trigger: 'mwheelzoom'})
         return
       }
       if (this.cursorPosition < min || this.cursorPosition > max) { 
@@ -363,7 +364,7 @@ export default {
       var newCursorDistanceToMax = newZoomedDiff - newCursorDistanceToMin
       var newMin = Math.round(this.cursorPosition - newCursorDistanceToMin)
       var newMax = Math.round(this.cursorPosition + newCursorDistanceToMax)
-      chart.xAxis[0].setExtremes(newMin, newMax, undefined, false, {trigger: 'zoom'})
+      chart.xAxis[0].setExtremes(newMin, newMax, undefined, false, {trigger: 'mwheelzoom'})
     }  
   },
   watch: {

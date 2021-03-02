@@ -1,7 +1,8 @@
 <template>
 <div>
   <div>
-    Click to select the nodes you wish to inspect
+    <div>Click to select the nodes you wish to inspect</div>
+    <div><b-icon icon="information-outline" size="is-small"/> Order of results correspond to the order of selection</div>
     <GraphDataProvider :nodes="model">
       <LayeredGraphChart 
         slot-scope="{chartNodes, chartEdges}" 
@@ -21,12 +22,13 @@
   </div>
 
   <div v-else>
-    <div v-for="item in Object.keys(results)">
-      <DebugNodeResult 
+    <div v-for="item in Object.keys(formattedResults)">
+       <DebugNodeResult 
         class="item-section" 
-        :series="results[item]['series']" 
-        :anomalies="addIdToAnomalies(results[item]['anomalies'])" 
-        :node="item"/>
+        :series="formattedResults[item]['series']" 
+        :anomalies="formattedResults[item]['anomalies']">
+        <strong class="has-text-grey-light"> <i> {{item}} </i></strong>
+      </DebugNodeResult>
     </div>
   </div>
 </div>
@@ -40,12 +42,14 @@ import DebugNodeResult from "./DebugNodeResult"
 import GraphDataProvider from "../detectionModel/GraphDataProvider"
 import LayeredGraphChart from "../detectionModel/LayeredGraphChart"
 import {nanoid} from "nanoid"
+import isEmpty from "lodash/isEmpty"
 
 export default {
   components: { DebugNodeResult, GraphDataProvider, LayeredGraphChart },
   data() {
     return {
       selectedNodes: [],
+      selectedNodesOrder: [],
       results: {},
       error: '',
     }
@@ -55,7 +59,6 @@ export default {
       return this.$store.getters['results/activeResults']
     },    
     model() {
-      console.log("model changes somehow")
       return this.activeResults.model
     },
     loadingResults() {
@@ -68,9 +71,29 @@ export default {
       }
       return filtered
     },
+    formattedResults() {
+      let formatted = {}
+      this.selectedNodesOrder.forEach(nodeId => {
+        if (nodeId === 'start') {
+          if (this.results.hasOwnProperty("_Root")) {
+            let startNode = { series: this.results["_Root"].series }
+            formatted[nodeId] = startNode
+          }
+        } else if (nodeId === 'end') {
+          if (this.results.hasOwnProperty("_Root")) {
+            formatted[nodeId] = this.results["_Root"]
+          }
+        } else if (this.results.hasOwnProperty(nodeId)) {
+          formatted[nodeId] = this.results[nodeId]
+        }
+      })
+      return formatted
+    }
+
   },
   methods: {
     getNodesResults() {
+      this.selectedNodesOrder = [ ...this.selectedNodes ]
       if (!this.formattedSelectedNodes.length) {
         this.results = {}
         return
@@ -79,6 +102,12 @@ export default {
       .then(response => {
         this.results = response.data.node_results
         this.error = ''
+
+        Object.keys(this.results).forEach(elem => {
+          if (this.results[elem].hasOwnProperty('anomalies')) {
+            this.results[elem].anomalies = this.addIdToAnomalies(this.results[elem].anomalies)
+          }
+        })
       })
       .catch(error => {
         if (error.response) {

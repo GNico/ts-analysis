@@ -37,7 +37,7 @@ export default {
   },
   data() {
     return {
-      resizeHandler: debounce(this.redraw, 300),
+      resizeHandler: debounce(this.refresh, 300),
       g: undefined,   
       selectedNodes: [],    
     }
@@ -46,13 +46,17 @@ export default {
     createLayout() {
       this.g = new dagreD3.graphlib.Graph().setGraph({})
       this.g.graph().rankDir = 'LR';
-
-      // Add node
+      // Add nodes
       this.nodes.forEach((item, index) => {
         item.rx = item.ry = 5;
         this.g.setNode(item.id, item);
-        this.g.node(item.id).style = 'fill:' + '#005aff' + ';stroke: white;'
-        this.g.node(item.id).labelStyle = 'fill:  white;'
+        if (this.selectedNodes.includes(item.id)) {
+          this.g.node(item.id).style = 'fill: green; stroke: yellow;'
+          this.g.node(item.id).labelStyle = 'fill:  yellow;'
+        } else {
+          this.g.node(item.id).style = 'fill:#005aff; stroke: white;'
+          this.g.node(item.id).labelStyle = 'fill:  white;'
+        }        
       });
       // Link relationship
       this.edges.forEach(item => {
@@ -68,15 +72,12 @@ export default {
       let index = this.selectedNodes.findIndex(elem => elem == nodeId)
       if (index === -1) {
         this.selectedNodes.push(nodeId)
-       // d3.select("#" + nodeId ).attr('style', 'fill: green;stroke: yellow')
-        d3.select("#" + nodeId + ' .label').attr('style', 'stroke: yellow')
         d3.select("#" + nodeId + ' rect').attr('style', 'fill: green; stroke: yellow')
+        d3.select("#" + nodeId + ' text').attr('style', 'fill: yellow;')
       } else {
         this.selectedNodes.splice(index, 1)
-      //  d3.select("#" + nodeId).attr('style', 'fill: #005aff;stroke: white')
-        d3.select("#" + nodeId + ' .label').attr('style', '')
-
         d3.select("#" + nodeId + ' rect').attr('style', 'fill: #005aff; stroke: white')
+        d3.select("#" + nodeId + ' text').attr('style', 'fill:  white;')
       }
     },
     drawChart() {
@@ -131,11 +132,6 @@ export default {
       // Disable drag
       svg.on("mousedown.zoom", null)
      
-    },
-    redraw() {
-      if (this.g) {
-        this.drawChart()
-      }
     },
     refresh() {
       this.createLayout()
