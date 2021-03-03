@@ -23,13 +23,13 @@
 
   <div v-else>
     <div v-for="item in Object.keys(formattedResults)">
-       <DebugNodeResult 
+      <DebugNodeResult 
         class="item-section" 
         :series="formattedResults[item]['series']" 
         :anomalies="formattedResults[item]['anomalies']"
         @updateRange="updateRange"
-        :extremes="extremes">
-        <strong class="has-text-grey-light"> <i> {{item}} </i></strong>
+        :extremes="extremes"
+        :node="getNode(item)">       
       </DebugNodeResult>
     </div>
   </div>
@@ -122,7 +122,9 @@ export default {
       })
     },
     getNode(id) {
-      return this.model.find(item => item.id = id)
+      if (id === 'start') return { display: 'Input data'}
+      if (id === 'end') return {display: 'Result'}
+      return this.model.find(item => item.id == id)
     },
     addIdToAnomalies(anomalies) {
       var anoms = []

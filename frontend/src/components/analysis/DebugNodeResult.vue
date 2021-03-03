@@ -2,8 +2,34 @@
 
 <div v-else class="columns" :style="{height: height + 50 + 'px'}">
   <div class="column main-content" :style="{height: height + 'px'}">
-    <div class="section-header has-text-white">
-      <slot> </slot>
+    <div class="section-header ">
+      <b-dropdown
+        trap-focus>
+        <template #trigger>            
+          <a class="node-title has-text-white">
+            <span><strong>{{node.display}}</strong></span>
+            <b-icon v-if="node.paramsData" icon="menu-down"></b-icon>
+          </a>
+        </template>
+
+        <b-dropdown-item
+          v-if="node.paramsData"
+          aria-role="menu-item"
+          :focusable="false"
+          custom
+          paddingless>
+            <div class="modal-card" style="max-width:300px;">
+                <section class="modal-card-body">
+                  <div> {{node.desc}} </div>
+                  <hr class="param-separator">
+                  <div> Parameters: </div>
+                  <div v-for="entry in Object.entries(node.paramsData)" :label="entry[0]" class="param-list">
+                    <span> {{entry[0]}}: {{entry[1]}} </span>
+                  </div>
+                </section>                            
+            </div>
+        </b-dropdown-item>
+      </b-dropdown>
     </div>
 
     <Chart     
@@ -21,7 +47,7 @@
   <div class="column is-4" :style="{height: height + 'px'}">     
     <template v-if="anomalies.length">
       <div class="section-header has-text-white">
-        <div> <strong class="has-text-grey-light" > <i> Anomalies </i></strong></div>
+        <div> <strong class="has-text-grey-light"> Anomalies</strong></div>
      <!--   <AnomaliesFilters v-bind="filters" @update="updateOptions"/>  -->
       </div>
 
@@ -65,6 +91,10 @@ export default {
     extremes: {
       type: Object,
       default: () => {return {}}
+    },
+    node: {
+      type: Object,
+      default: () => {return {}}
     }
   },
   data () {
@@ -95,7 +125,6 @@ export default {
   methods: {
     updateRange(event) {
       this.$emit('updateRange', event)
-      console.log(event)
     },
   /*  updateOptions(event) {
       this.filters = { ...this.filters, ...event }
@@ -113,6 +142,20 @@ export default {
   overflow-y: overlay;
   overflow-x: hidden;
 } */
+.node-title {
+  display: flex;
+  align-items: center;
+}
+
+.param-separator {
+  background-color: rgba(255,255,255,0.1);
+  height: 1px;
+  margin: 1rem 0 1rem 0;
+}
+
+.param-list {
+  margin-left: 1rem;
+}
 
 .thechart {
   height: inherit;
