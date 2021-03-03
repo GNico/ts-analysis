@@ -4,6 +4,7 @@
     :constructor-type="'stockChart'" 
     :options="chartOptions" 
     :updateArgs="updateArgs" 
+    :deepCopyOnUpdate="false"
     ref="chart"
     @wheel.native="wheelZoom"
   />
@@ -102,7 +103,6 @@ export default {
       return this.seriesData.length == 0
     },
     interactiveBands() {
-      console.log("trigger computed bands")
       var vm = this
       var bands = []
       for (var item of this.bands) {
@@ -235,7 +235,7 @@ export default {
           arearange: {
             dataGrouping: {
               enabled: true,
-              groupPixelWidth: 4,
+              groupPixelWidth: 6,
               smoothed: true,
               approximation: function (low, high) {
                 return [sum(low), sum(high)];
@@ -245,7 +245,7 @@ export default {
           series: {
             dataGrouping: {
               enabled: true,
-              groupPixelWidth: 4,
+              groupPixelWidth: 6,
               smoothed: true,
               approximation: 'sum'
             },
@@ -340,8 +340,8 @@ export default {
       this.arrows = undefined
     },
     wheelZoom(event) {
-      event.preventDefault()
       if (!this.zoomEnabled) return
+      event.preventDefault()
       var sensitivity = 0.7
       var zoomAmount = (event.deltaY > 0) ?  (1 / sensitivity) : sensitivity
       var chart = this.$refs.chart.chart
@@ -365,7 +365,7 @@ export default {
       var newMin = Math.round(this.cursorPosition - newCursorDistanceToMin)
       var newMax = Math.round(this.cursorPosition + newCursorDistanceToMax)
       chart.xAxis[0].setExtremes(newMin, newMax, undefined, false, {trigger: 'mwheelzoom'})
-    }  
+    },    
   },
   watch: {
     //adding event dynamically as a workaround for multiple callbacks highcharts issue

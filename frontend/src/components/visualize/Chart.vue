@@ -21,6 +21,8 @@
 
 <script>
 import BaseChart from "../BaseChart";
+import debounce from "lodash/debounce";
+
 
 export default {
   components: { BaseChart },
@@ -123,7 +125,7 @@ export default {
       if (this.tagsCount[panelId]) {
         this.tagsCount[panelId].forEach((series, index) => {
           text += '<table class="table is-narrow is-bordered is-fullwidth has-text-grey has-background-black">'
-          text += '<thead><tr><th colspan="2" ><strong class="has-text-grey-light">' + series.name + '</strong> </th> </thead>'
+          text += '<thead><tr><th colspan="2" ><strong class="has-text-grey-light">' + (series.name ? series.name : 'Series') + '</strong> </th> </thead>'
           series.tags.forEach(elem => {
             text += '<tr><td class="has-text-right has-text-grey-light">' + ((elem.count * 100) / series.total).toFixed(1) + '%</td>' 
             text += '<td> ' +  elem.tag + '</td>'
@@ -134,8 +136,15 @@ export default {
       return text
     },
     syncExtremes(event) {
-      this.extremes = event
+      if (event.trigger == 'zoom') {
+        this.extremes = event
+      } else {
+        this.triggerMwheelzoomUpdate(event)
+      }
     },  
+    triggerMwheelzoomUpdate(event) {
+      this.extremes = event
+    },
     syncCrosshairs(event) {
       this.crosshair = event
     },
@@ -156,6 +165,9 @@ export default {
         this.extremes = { }
       }
     }
+  },
+  created() {
+    this.triggerMwheelzoomUpdate = debounce(this.triggerMwheelzoomUpdate, 1000, {'leading': false, 'trailing': true})
   } 
 }
 
