@@ -10,9 +10,9 @@
       class="thechart"
       :seriesData="series"
       :baseline="baseline"
-      :anomalies="filteredAnomalies"
+      :anomalies="anomalies"
       :loading="loading"
-      :activeAnomaly="filteredActiveAnomaly"
+      :activeAnomaly="activeAnomalyId"
       :range="extremes"
       @changeActive="activeAnomalyId = $event"
       @updateRange="updateRange" />
@@ -22,13 +22,13 @@
     <template v-if="anomalies.length">
       <div class="section-header has-text-white">
         <div> <strong class="has-text-grey-light" > <i> Anomalies </i></strong></div>
-        <AnomaliesFilters v-bind="filters" @update="updateOptions"/> 
+     <!--   <AnomaliesFilters v-bind="filters" @update="updateOptions"/>  -->
       </div>
 
       <AnomaliesTable   
         id="anom-table"
-        :anomalies="filteredAnomalies"
-        :activeAnomaly="filteredActiveAnomaly"
+        :anomalies="anomalies"
+        :activeAnomaly="activeAnomalyId"
         @changeActive="activeAnomalyId = $event"
         /> 
     </template>
@@ -40,11 +40,11 @@
 
 <script>
 import AnomaliesTable from './AnomaliesTable'
-import AnomaliesFilters from './AnomaliesFilters'
+//import AnomaliesFilters from './AnomaliesFilters'
 import Chart from './Chart'
 
 export default {
-  components: { AnomaliesTable, AnomaliesFilters, Chart },
+  components: { AnomaliesTable, Chart },
   props: {
     series: {
       type: Array,
@@ -71,41 +71,35 @@ export default {
     return {
       loading: false,
       activeAnomalyId: '',
-      filters: {
+  /*    filters: {
         showBaseline: true,
         showSeries: true,
         showTrend: false,
         scoreThreshold: 0,
         minDuration: '',
-        minDurationTime: 0,
-        selectedRange: {
-          start: null,
-          end: null
-        }
-      }    
+        minDurationTime: 0,        
+      }    */
     }
   },
   computed: {
-    filteredAnomalies() {
-      return this.anomalies.filter(elem => 
-        (elem.score > this.filters.scoreThreshold 
-        && (parseInt(elem.to) - parseInt(elem.from) >= this.filters.minDurationTime)
-        && (!this.filters.selectedRange.start || parseInt(elem.from) > this.filters.selectedRange.start)
-        && (!this.filters.selectedRange.end || parseInt(elem.from) < this.filters.selectedRange.end)))
-    },
-    filteredActiveAnomaly() {
+  /*  filteredAnomalies() {
+      return this.anomalies.filter(elem =>         
+        (!this.extremes.start || parseInt(elem.from) > this.extremes.start)
+        && (!this.extremes.end || parseInt(elem.from) < this.extremes.end))
+    },  */
+/*    filteredActiveAnomaly() {
       let filteredAnom = this.filteredAnomalies.find(elem => elem.id === this.activeAnomalyId)
       return filteredAnom ? filteredAnom.id : ''
-    },
+    }, */
   },
   methods: {
     updateRange(event) {
       this.$emit('updateRange', event)
       console.log(event)
     },
-    updateOptions() {
-      
-    }
+  /*  updateOptions(event) {
+      this.filters = { ...this.filters, ...event }
+    } */
   }
 }
 </script>
