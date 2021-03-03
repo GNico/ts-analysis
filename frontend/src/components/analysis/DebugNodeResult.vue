@@ -13,8 +13,9 @@
       :anomalies="filteredAnomalies"
       :loading="loading"
       :activeAnomaly="filteredActiveAnomaly"
+      :range="extremes"
       @changeActive="activeAnomalyId = $event"
-      @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" />
+      @updateRange="updateRange" />
   </div>
 
   <div class="column is-4" :style="{height: height + 'px'}">     
@@ -61,6 +62,10 @@ export default {
       type: Number,
       default: 400,
     },
+    extremes: {
+      type: Object,
+      default: () => {return {}}
+    }
   },
   data () {
     return {
@@ -94,8 +99,12 @@ export default {
     },
   },
   methods: {
-
-    updateOptions(event) {
+    updateRange(event) {
+      this.$emit('updateRange', event)
+      console.log(event)
+    },
+    updateOptions() {
+      
     }
   }
 }

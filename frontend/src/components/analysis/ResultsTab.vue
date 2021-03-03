@@ -98,11 +98,8 @@ export default {
     },
     methods: {
       updateOptions(options) {
-        this.triggerUpdate(options)
-      },      
-      triggerUpdate(options) {
         this.$store.dispatch('results/updateOptions', {id: this.activeResults.id, ...options })
-      },
+      },      
       startPollingResults() {
         this.polling = setInterval(() => {
           console.log('polling results')
@@ -129,9 +126,6 @@ export default {
         }
       }
     }, 
-    created() {
-      this.triggerUpdate = debounce(this.triggerUpdate, 400, {'leading': false, 'trailing': true})
-    },
     beforeDestroy() {
       this.stopPollingResults()
     },  

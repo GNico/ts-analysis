@@ -1,20 +1,20 @@
 <template>
- <BaseChart 
+<BaseChart 
   :seriesData="chartData" 
   :bands="anomalies"
   :activeBand="activeAnomaly"
-  :zoomEnabled="zoomEnabled"
   :loading="loading"
   @changeActiveBand="setActiveAnomaly"
   @changedExtremes="updateExtremes"
-  :extremes="extremes"
-  />
+  :extremes="extremes" />
 </template>
 
 
 <script>
 import { DefaultChartSettings } from '../../config/settings'
 import BaseChart from "../BaseChart";
+import debounce from "lodash/debounce";
+
 
 export default {
   components: { BaseChart },
@@ -54,10 +54,6 @@ export default {
   },
   data() {
     return {
-      scoreValue: 0,
-      labelContent: '',
-      zoomEnabled: true,
-      
     }
   },
   computed: {
@@ -118,10 +114,22 @@ export default {
       this.$emit('changeActive', id)
     },   
     updateExtremes(event) {
+      if (event.trigger == 'zoom') {
+        this.triggerZoomUpdate(event)
+      } else {
+        this.triggerMwheelzoomUpdate(event)
+      }
+    },
+    triggerZoomUpdate(event) {
       this.$emit('updateRange', { start: Math.round(event.min), end: Math.round(event.max) })
-    } 
+    },
+    triggerMwheelzoomUpdate(event) {
+      this.$emit('updateRange', { start: Math.round(event.min), end: Math.round(event.max) })
+    }
   },
   created() {
+    this.triggerZoomUpdate = debounce(this.triggerZoomUpdate, 400, {'leading': true, 'trailing': false})
+    this.triggerMwheelzoomUpdate = debounce(this.triggerMwheelzoomUpdate, 400, {'leading': false, 'trailing': true})
   },
 }
 </script>

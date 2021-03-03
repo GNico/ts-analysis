@@ -2,7 +2,7 @@
 <div>
   <div>
     <div>Click to select the nodes you wish to inspect</div>
-    <div><b-icon icon="information-outline" size="is-small"/> Order of results correspond to the order of selection</div>
+    <div><b-icon icon="information-outline" size="is-small"/> Order of selection corresponds to the order of results</div>
     <GraphDataProvider :nodes="model">
       <LayeredGraphChart 
         slot-scope="{chartNodes, chartEdges}" 
@@ -26,7 +26,9 @@
        <DebugNodeResult 
         class="item-section" 
         :series="formattedResults[item]['series']" 
-        :anomalies="formattedResults[item]['anomalies']">
+        :anomalies="formattedResults[item]['anomalies']"
+        @updateRange="updateRange"
+        :extremes="extremes">
         <strong class="has-text-grey-light"> <i> {{item}} </i></strong>
       </DebugNodeResult>
     </div>
@@ -42,7 +44,6 @@ import DebugNodeResult from "./DebugNodeResult"
 import GraphDataProvider from "../detectionModel/GraphDataProvider"
 import LayeredGraphChart from "../detectionModel/LayeredGraphChart"
 import {nanoid} from "nanoid"
-import isEmpty from "lodash/isEmpty"
 
 export default {
   components: { DebugNodeResult, GraphDataProvider, LayeredGraphChart },
@@ -52,6 +53,7 @@ export default {
       selectedNodesOrder: [],
       results: {},
       error: '',
+      extremes: {},
     }
   },
   computed: {
@@ -132,6 +134,9 @@ export default {
       }
       return anoms                    
     },
+    updateRange(newRange) {
+      this.extremes = newRange
+    }
   },
   created() {
   },
