@@ -48,7 +48,6 @@
     <template v-if="anomalies.length">
       <div class="section-header has-text-white">
         <div> <strong class="has-text-grey-light"> Anomalies</strong></div>
-     <!--   <AnomaliesFilters v-bind="filters" @update="updateOptions"/>  -->
       </div>
 
       <AnomaliesTable   
@@ -66,7 +65,6 @@
 
 <script>
 import AnomaliesTable from './AnomaliesTable'
-//import AnomaliesFilters from './AnomaliesFilters'
 import Chart from './Chart'
 
 export default {
@@ -101,34 +99,14 @@ export default {
     return {
       loading: false,
       activeAnomalyId: '',
-  /*    filters: {
-        showBaseline: true,
-        showSeries: true,
-        showTrend: false,
-        scoreThreshold: 0,
-        minDuration: '',
-        minDurationTime: 0,        
-      }    */
     }
   },
   computed: {
-  /*  filteredAnomalies() {
-      return this.anomalies.filter(elem =>         
-        (!this.extremes.start || parseInt(elem.from) > this.extremes.start)
-        && (!this.extremes.end || parseInt(elem.from) < this.extremes.end))
-    },  */
-/*    filteredActiveAnomaly() {
-      let filteredAnom = this.filteredAnomalies.find(elem => elem.id === this.activeAnomalyId)
-      return filteredAnom ? filteredAnom.id : ''
-    }, */
   },
   methods: {
     updateRange(event) {
       this.$emit('updateRange', event)
     },
-  /*  updateOptions(event) {
-      this.filters = { ...this.filters, ...event }
-    } */
   }
 }
 </script>
@@ -136,12 +114,6 @@ export default {
 
 
 <style scoped>
-/*.main-content {
-  display: flex;
-  flex-direction: column;
-  overflow-y: overlay;
-  overflow-x: hidden;
-} */
 .node-title {
   display: flex;
   align-items: center;

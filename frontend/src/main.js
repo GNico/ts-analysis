@@ -24,6 +24,12 @@ require('./assets/themes/dark-unica.js');
 require('./assets/sass/main.scss');
 
 
+Highcharts.setOptions({
+    time: {
+        timezoneOffset: 3 * 60
+   }
+});
+
 
 
 new Vue({
