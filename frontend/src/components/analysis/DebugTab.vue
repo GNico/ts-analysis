@@ -8,7 +8,6 @@
         slot-scope="{chartNodes, chartEdges}" 
         :nodes="chartNodes" 
         :edges="chartEdges" 
-        id="model" 
         :selectable="true" 
         :centered="false" 
         @selected="selectedNodes = $event"/>

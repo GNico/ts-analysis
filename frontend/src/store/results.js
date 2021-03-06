@@ -1,29 +1,6 @@
 import api from "../api/repository";
 import { nanoid } from 'nanoid'
-
 import Vue from 'vue'
-
-function formatModel(model) {
-    let formatted = {}
-    let nodes = [] 
-    model.forEach(node => {
-        let formattedNode = { 
-            id: node.id, 
-            group: node.group, 
-            type: node.type, 
-            sources: node.sourceNodes.map(sc => sc.id),
-            debug: true
-        }
-        let params = []
-        Object.keys(node.paramsData).forEach(param => {
-            params.push({ id: param, value: node.paramsData[param]})
-        })
-        formattedNode['params'] = params
-        nodes.push(formattedNode)
-    })
-    formatted['nodes'] = nodes
-    return formatted
-}
 
 const defaultOptions = {
     activeAnomalyId: '',
@@ -100,6 +77,23 @@ const mutations = {
 
 }
 
+
+function formatModel(model) {   
+    let formatted = {}
+    let nodes = [] 
+    model.forEach(node => {
+        let params = []
+        Object.keys(node.paramsData).forEach(param => {
+            params.push({ id: param, value: node.paramsData[param]})
+        })
+        const {sourceNodes, paramsData, ...otherProps} = node
+        const formattedNode = {sources: sourceNodes, params: params, ...otherProps}
+        nodes.push(formattedNode)
+    })
+    formatted['nodes'] = nodes
+    return formatted 
+}
+
 const actions = {    
     setActiveAnomaly(store, id) {
         store.commit('set_active_anomaly', id)
@@ -108,7 +102,6 @@ const actions = {
         if (!settings) return
         commit('add_results', {id: settings.id, loading: true, taskId: undefined })
         dispatch('updateOptions', {id: settings.id, ...defaultOptions})
-        //commit('set_options', {id: settings.id, options: {id: settings.id, ...defaultOptions})
         const model = formatModel(settings.model)
         return  api.getAnomalies({
                     client: settings.client,

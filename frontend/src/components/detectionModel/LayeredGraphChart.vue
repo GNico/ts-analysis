@@ -1,5 +1,5 @@
 <template>
-<div :id="id">
+<div ref="container">
   <svg> 
     <g/>
     <rect/>
@@ -14,10 +14,6 @@ import debounce from "lodash/debounce";
 
 export default {
   props: {
-    id: {   //required for multiple instances
-      type: String,
-      required: true,
-    },
     nodes: {
       type: Array,
       default: () => []
@@ -82,10 +78,11 @@ export default {
     },
     drawChart() {
       //Draw graphics
-      var svg = d3.select("#" + this.id).select("svg")
+      var container = this.$refs.container
+      var svg = d3.select(container).select("svg")
       var inner = svg.select("g");
-      var thediv = document.getElementById(this.id)
-      var maxWidth = thediv.clientWidth
+      var container = this.$refs.container
+      var maxWidth = container.clientWidth
       svg.attr("width", maxWidth)
       // Set up zoom support
       var zoom = d3.zoom().on("zoom", function () {

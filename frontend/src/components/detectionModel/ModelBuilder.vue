@@ -4,7 +4,7 @@
     <div class="column is-4 bordered-column" v-for="group in groups" :key="group">
       <PipeNodeList          
         :group="group"
-        :nodeTypes="nodeTypes[group]" 
+        :nodesDefinition="nodeTypes[group]" 
         :nodes="nodes" 
         @newNode="createNode"
         @nodeParamsUpdate="updateNodeParams"
@@ -25,7 +25,7 @@
   </div>
 
   <GraphDataProvider :nodes="nodes" @validation="validationMessages = $event" >
-    <LayeredGraphChart slot-scope="{chartNodes, chartEdges}" :nodes="chartNodes" :edges="chartEdges" id="model"/>
+    <LayeredGraphChart slot-scope="{chartNodes, chartEdges}" :nodes="chartNodes" :edges="chartEdges"/>
   </GraphDataProvider>
 </div>
 </template>
@@ -33,13 +33,13 @@
 
 <script>
 import PipeNodeList from "./PipeNodeList"
-import {nanoid} from 'nanoid'
 import cloneDeep from "lodash/cloneDeep";
-
+import { customAlphabet } from 'nanoid'
 
 import GraphDataProvider from "./GraphDataProvider"
 import LayeredGraphChart from "./LayeredGraphChart"
 
+const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQLRSTUVWXYZ', 3)
 
 export default {
   components: { GraphDataProvider, PipeNodeList, LayeredGraphChart },
@@ -65,22 +65,24 @@ export default {
   methods: {
     createNode({type, group}) {
       let modelCopy = cloneDeep(this.nodes)
-      let newid = nanoid(3)
+      let newid = nanoid()
       let found = true
       while (found) {
         found = this.nodes.some(el => el.id === newid)
         if (found) {
-          newid = nanoid(3)
+          newid = nanoid()
         }
       }
       let options = this.nodeTypes[group].find(elem => elem.type === type)
       if (options) {
         let newNode = {
           id: newid,
+          type: type,
           group: group,
           sourceNodes: [],
-          debug: false,
-          ...options,
+          debug: true,
+          display: options.display,
+          desc: options.desc
         }
         //fill default param values
         let paramsData = {}

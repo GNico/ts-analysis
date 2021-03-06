@@ -12,7 +12,7 @@
             closeType='is-warning'
             aria-close-label="Close tag"
             @close="deleteNode">
-            {{display}}
+            {{nodeDefiniton.display}}
           </b-tag>         
         </div>
         <a class="card-header-icon">
@@ -30,7 +30,7 @@
         <div class="field is-horizontal node-fields">
           <div class="field-label">
             <b-dropdown
-              :value="sourceNodes"
+              :value="nodeData.sourceNodes"
               @change="sourceNodesChange"
               :multiple="allowMultiple"
               aria-role="list">
@@ -47,37 +47,37 @@
               <b-dropdown-item value='none' v-if="!allowMultiple">
                 <span> None </span>
               </b-dropdown-item>
-              <b-dropdown-item v-for="item in sourceNodesList" :key="item.id" :value="item" aria-role="listitem">
-                <span>{{item.type}} (ID: {{item.id}})</span>
+              <b-dropdown-item v-for="nodeid in sourceNodesList" :key="nodeid" :value="nodeid" aria-role="listitem">
+                <span>{{getNode(nodeid).display}} (ID: {{nodeid}})</span>            
               </b-dropdown-item>
             </b-dropdown>
           </div>
           <!--Display selected source nodes -->
           <div class="field-body">
             <div class="field is-grouped is-grouped-multiline">
-              <div v-if="!sourceNodes.length"><i>None</i></div>
-              <div v-else class="control" v-for="node in sourceNodes">
+              <div v-if="!nodeData.sourceNodes.length"><i>None</i></div>
+              <div v-else class="control" v-for="nodeid in nodeData.sourceNodes">
                 <div class="tags has-addons">
                   <span class="tag is-info" size="is-small">ID</span>
-                  <span class="tag is-dark" size="is-small" style="font-family: monospace">{{node.id}} : {{node.type}}</span>
+                  <span class="tag is-dark" size="is-small" style="font-family: monospace">{{nodeid}} : {{getNode(nodeid).type}}</span>
                 </div>
               </div>      
             </div> 
           </div>
         </div>
         <!--Parameters list -->
-        <b-field v-for="item in paramsComponents" :key="item.id" horizontal class="node-fields">
+        <b-field v-for="param in paramsComponents" :key="param.id" horizontal class="node-fields">
           <template #label>
-            {{item.display}}
-            <b-tooltip type="is-info" :label="item.desc">
+            {{param.display}}
+            <b-tooltip type="is-info" :label="param.desc">
               <b-icon size="is-small" icon="help-circle-outline"></b-icon>
             </b-tooltip>
           </template>
           <component
-            :is="item.component.name"
-            v-bind="item.component.props"
-            :value="paramsData[item.id]"
-            @input="paramsDataChange(item.id, $event)"/>
+            :is="param.component.name"
+            v-bind="param.component.props"
+            :value="nodeData.paramsData[param.id]"
+            @input="paramsDataChange(param.id, $event)"/>
         </b-field>
       </div>
     </div>
@@ -92,38 +92,20 @@ export default {
       type: String,
       default: ''
     },
-    type: {
-      type: String,
-      default: 'Unknown'
-    },
-    display: {
-      type: String,
-      default: 'Unknown'
-    },
-    desc: {
-      type: String,
-      default: 'Unknown'
-    },
-    group: {
-      type: String,
-      default: 'Unknown'
-    },
-    params: {
-      type: Array,
-      default: () => []
-    },
-    paramsData: {
-      type: Object,
-      default: () => {return {}} 
-    },
     nodes: {
       type: Array,
       default: () => []
     },
-    sourceNodes: {
-      type: Array,
-      default: () => []
-    },
+    nodeDefiniton: {
+      type: Object,
+      default: () => {return {
+        type: '',
+        desc: '',
+        display: '',
+        params: '',
+
+      }}
+    }
   },
   data() {
     return {
@@ -131,9 +113,12 @@ export default {
     }
   },
   computed: {
+    nodeData() {
+      return this.nodes.find(elem => elem.id == this.id)
+    },
     paramsComponents() {
       let components = []
-      this.params.forEach(elem => {
+      this.nodeDefiniton.params.forEach(elem => {
         components.push({
           id: elem.id,
           display: elem.display,
@@ -145,16 +130,15 @@ export default {
     },
     sourceNodesList() {
       let id = this.id
-      if (this.group === 'detector' ||  this.group === 'transformer')
-        return this.nodes.filter(elem => elem.id !== this.id && elem.group === 'transformer')
-      if (this.group === 'aggregator') {
-        return this.nodes.filter(elem => elem.id !== this.id && (elem.group === 'detector' || elem.group === 'aggregator'))
+      if (this.nodeData.group === 'detector' ||  this.nodeData.group === 'transformer')
+        return this.nodes.filter(elem => elem.id !== this.id && elem.group === 'transformer').map(elem => elem.id)
+      if (this.nodeData.group === 'aggregator') {
+        return this.nodes.filter(elem => elem.id !== this.id && (elem.group === 'detector' || elem.group === 'aggregator')).map(elem => elem.id)
       }
     },
     allowMultiple() {
-      return this.group === 'aggregator'
+      return this.nodeData.group === 'aggregator'
     }
-
   },
   methods: {
     getFieldComponent(type) {
@@ -211,6 +195,9 @@ export default {
     },
     deleteNode() {
       this.$emit('nodeDelete', this.id)
+    },
+    getNode(id) {
+      return this.nodes.find(item => item.id === id)
     }
   }
 }

@@ -12,7 +12,7 @@
       </template>
 
       <b-dropdown-item 
-        v-for="item in nodeTypes" 
+        v-for="item in nodesDefinition" 
         :key="item.type"
         @click="addNode(item.type)"
         aria-role="listitem">
@@ -24,11 +24,14 @@
   <PipeNode 
     v-for="item in filteredPipenodes" 
     :key="item.id" 
-    v-bind="item"
+    :id="item.id"
     :nodes="nodes"
+    :nodeDefiniton="getNodeDef(item.type)"
     @nodeParamsChange="$emit('nodeParamsUpdate', $event)"
     @nodeSourceChange="$emit('nodeSourceUpdate', $event)"
-    @nodeDelete="$emit('nodeDelete', $event)"/>
+    @nodeDelete="$emit('nodeDelete', $event)">
+
+  </PipeNode>
 
 </div>
 </template>
@@ -44,7 +47,7 @@ export default {
       type: String,
       default: ''
     },
-    nodeTypes: {
+    nodesDefinition: {
       type: Array,
       default: () => []
     },
@@ -70,6 +73,12 @@ export default {
   methods: {
     addNode(type) {
       this.$emit('newNode', {type: type, group: this.group})
+    },
+    getNodeDef(type) {
+      return this.nodesDefinition.find(item => item.type === type)
+    },
+    getNode(id) {
+      return this.nodes.find(item => item.id === id)
     }
   }
 

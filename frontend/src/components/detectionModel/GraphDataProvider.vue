@@ -22,8 +22,8 @@ export default {
       Object.keys(graphNodes).forEach(id => {
         let sourceIds = []
         graphNodes[id].source.forEach(sourceElem => {
-          sourceIds.push(sourceElem.id)
-          graphNodes[sourceElem.id].target.push(id)
+          sourceIds.push(sourceElem)
+          graphNodes[sourceElem].target.push(id)
         })
         graphNodes[id].source = sourceIds
       })
