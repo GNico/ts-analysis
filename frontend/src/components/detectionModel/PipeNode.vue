@@ -65,20 +65,36 @@
             </div> 
           </div>
         </div>
-        <!--Parameters list -->
-        <b-field v-for="param in paramsComponents" :key="param.id" horizontal class="node-fields">
-          <template #label>
-            {{param.display}}
-            <b-tooltip type="is-info" :label="param.desc">
-              <b-icon size="is-small" icon="help-circle-outline"></b-icon>
-            </b-tooltip>
-          </template>
-          <component
-            :is="param.component.name"
-            v-bind="param.component.props"
-            :value="nodeData.paramsData[param.id]"
-            @input="paramsDataChange(param.id, $event)"/>
-        </b-field>
+       
+        <div class="columns is-marginless is-paddingless is-vcentered" v-for="param in paramsComponents" 
+            v-if="checkConditions(param.conditions)"
+            :key="param.id">
+            <div class="column is-6 field-col">
+              <label class="label">
+                {{param.display}} 
+                <b-tooltip type="is-info" :label="param.desc">
+                  <b-icon size="is-small" icon="help-circle-outline"></b-icon>
+                </b-tooltip>
+              </label>
+            </div> 
+            <div class="column is-6 field-col right-align">
+              <component
+                class="short-field is-marginless" 
+                :is="param.component.name"
+                v-bind="param.component.props"
+                :value="nodeData.paramsData[param.id]"
+                @input="paramsDataChange(param.id, $event)">
+
+                <option
+                  v-for="option in param.options"
+                  :value="option.code"
+                  :key="option.code">
+                  {{ option.display }}
+                </option>
+              </component>
+            </div> 
+        </div>
+
       </div>
     </div>
   </b-collapse>
@@ -98,14 +114,15 @@ export default {
     },
     nodeDefiniton: {
       type: Object,
-      default: () => {return {
-        type: '',
-        desc: '',
-        display: '',
-        params: '',
-
+      default: () => {
+        return {
+          type: '',
+          desc: '',
+          display: '',
+          params: '',
       }}
-    }
+    },
+
   },
   data() {
     return {
@@ -120,10 +137,8 @@ export default {
       let components = []
       this.nodeDefiniton.params.forEach(elem => {
         components.push({
-          id: elem.id,
-          display: elem.display,
-          desc: elem.desc,
-          component: this.getFieldComponent(elem.type),
+          ...elem,
+          component: this.getFieldComponent(elem),
         })
       })
       return components
@@ -141,8 +156,25 @@ export default {
     }
   },
   methods: {
-    getFieldComponent(type) {
-      switch (type) {
+    checkConditions(conditions) {
+      if (!conditions || !conditions.length) return true
+      let evaluation = []
+      conditions.forEach(cond => {
+        if (cond.type == "param_equals_value") {
+          evaluation.push(this.nodeData.paramsData[cond.args.param] ===  cond.args.value)
+        }
+      }) 
+      return evaluation.every(Boolean)
+    }, 
+    getFieldComponent(param) {
+      switch (param.type) {
+        case 'Select': 
+          return {
+            name: 'b-select',
+            props: {
+              size: 'is-small',
+            }
+          }
         case 'Float': 
           return {
             name: 'b-input',
@@ -158,15 +190,26 @@ export default {
             props: {
               type: 'number',
               step: 0.01,
-              max: 1,
-              min: 0,
+              max: param.max,
+              min: param.min,
+              size: 'is-small',
+            }
+          }
+        case 'BoundedInt':
+          return {
+            name: 'b-input',
+            props: {
+              type: 'number',
+              step: 1,
+              max: param.max,
+              min: param.min,
               size: 'is-small',
             }
           }
         case 'Boolean':
           return {
             name: 'b-checkbox',
-            props: {          
+            props: {    
             }
           }
         default:
@@ -206,9 +249,14 @@ export default {
 
 
 <style>
+.field-col {
+  padding: 0;
+  margin: 0.25rem;
+}
 
-.node-fields .field-label {
-    flex-grow: 5;
+.right-align {
+  display: flex;
+  justify-content: flex-end;
 }
 
 </style>
