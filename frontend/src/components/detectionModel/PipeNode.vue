@@ -4,26 +4,18 @@
     animation="slide"
     :open="false">
     <template #trigger="props">
-      <div class="card-header" @mouseover="showDelete = true" @mouseleave="showDelete = false">
-        <div class="card-header-title">
-          <b-tag 
-            size="is-medium"
-            :closable="showDelete"
-            closeType='is-warning'
-            aria-close-label="Close tag"
-            @close="deleteNode">
+     <div class="card-header" @mouseover="showDelete = true" @mouseleave="showDelete = false" >
+          <span class="card-header-title custom-header">
+            <span v-if="showDelete" class="tag is-warning header-id-tag" style="{padding: 0}" @click="deleteNode(id)"> &nbsp;X&nbsp; </span>
+            <span v-else class="tag is-info header-id-tag" > {{id}} </span>
             {{nodeDefiniton.display}}
-          </b-tag>         
-        </div>
-        <a class="card-header-icon">
-          <div class="tags has-addons">
-            <a class="tag is-info" size="is-small">ID</a>
-            <a class="tag is-dark" size="is-small" style="font-family: monospace">{{id}}</a>
+          </span>
+          <a class="card-header-icon">
             <b-icon :icon="props.open ? 'menu-up' : 'menu-down'"/>
-          </div>
-        </a>
+          </a>
       </div>
-    </template>
+    </template> 
+
     <div class="card-content">
       <div class="content">
         <!--Source node selection-->
@@ -94,7 +86,6 @@
               </component>
             </div> 
         </div>
-
       </div>
     </div>
   </b-collapse>
@@ -122,7 +113,6 @@ export default {
           params: '',
       }}
     },
-
   },
   data() {
     return {
@@ -258,5 +248,21 @@ export default {
   display: flex;
   justify-content: flex-end;
 }
+
+
+.custom-header {
+   max-width: 100%;
+   overflow: hidden;
+   white-space: nowrap;
+   text-overflow: ellipsis;
+   display: inline-block;
+}
+
+
+.tag.header-id-tag {
+    font-family: monospace;
+    padding: 0.25rem;
+}
+
 
 </style>
