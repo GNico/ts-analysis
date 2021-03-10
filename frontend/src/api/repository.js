@@ -32,6 +32,7 @@ const transformArrayParams = (params) => {
   return options ? options.slice(0, -1) : options;
 }
 
+
 export default {
     //Clients
     getClients() {

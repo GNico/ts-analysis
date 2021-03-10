@@ -86,8 +86,8 @@ function formatModel(model) {
         Object.keys(node.paramsData).forEach(param => {
             params.push({ id: param, value: node.paramsData[param]})
         })
-        const {sourceNodes, paramsData, ...otherProps} = node
-        const formattedNode = {sources: sourceNodes, params: params, ...otherProps}
+        const {paramsData, ...otherProps} = node
+        const formattedNode = {params: params, ...otherProps}
         nodes.push(formattedNode)
     })
     formatted['nodes'] = nodes

@@ -5,10 +5,10 @@
     :open="false">
     <template #trigger="props">
      <div class="card-header" @mouseover="showDelete = true" @mouseleave="showDelete = false" >
-          <span class="card-header-title custom-header">
-            <span v-if="showDelete" class="tag is-warning header-id-tag" style="{padding: 0}" @click="deleteNode(id)"> &nbsp;X&nbsp; </span>
+          <span class="card-header-title long-text-with-ellipsis">
+            <span v-if="showDelete" class="tag is-danger header-id-tag" style="{padding: 0}" @click="deleteNode(id)"> &nbsp;X&nbsp; </span>
             <span v-else class="tag is-info header-id-tag" > {{id}} </span>
-            {{nodeDefiniton.display}}
+            <span class="has-text-grey-light">{{nodeDefiniton.display}} </span>
           </span>
           <a class="card-header-icon">
             <b-icon :icon="props.open ? 'menu-up' : 'menu-down'"/>
@@ -18,46 +18,45 @@
 
     <div class="card-content">
       <div class="content">
-        <!--Source node selection-->
-        <div class="field is-horizontal node-fields">
-          <div class="field-label">
-            <b-dropdown
-              :value="nodeData.sourceNodes"
-              @change="sourceNodesChange"
-              :multiple="allowMultiple"
-              aria-role="list">
-              <template #trigger>
-                <b-tag
-                  class="button is-outlined"
-                  size="is-small"             
-                  icon-right="menu-down">
-                  Input node
-                  <b-icon size="is-small" icon="menu-down"/>
-                </b-tag>
-              </template>
+        <div class="is-flex">
+          <b-dropdown
+            :value="nodeData.sources"
+            @change="sourceNodesChange"
+            :multiple="allowMultiple"
+            aria-role="list">
+            <template #trigger>
+              <b-tag
+                class="button is-outlined"
+                size="is-small"             
+                icon-right="menu-down">
+                Input node
+                <b-icon size="is-small" icon="menu-down"/>
+              </b-tag>
+            </template>
 
-              <b-dropdown-item value='none' v-if="!allowMultiple">
-                <span> None </span>
-              </b-dropdown-item>
-              <b-dropdown-item v-for="nodeid in sourceNodesList" :key="nodeid" :value="nodeid" aria-role="listitem">
-                <span>{{getNode(nodeid).display}} (ID: {{nodeid}})</span>            
-              </b-dropdown-item>
-            </b-dropdown>
-          </div>
-          <!--Display selected source nodes -->
-          <div class="field-body">
-            <div class="field is-grouped is-grouped-multiline">
-              <div v-if="!nodeData.sourceNodes.length"><i>None</i></div>
-              <div v-else class="control" v-for="nodeid in nodeData.sourceNodes">
-                <div class="tags has-addons">
-                  <span class="tag is-info" size="is-small">ID</span>
-                  <span class="tag is-dark" size="is-small" style="font-family: monospace">{{nodeid}} : {{getNode(nodeid).type}}</span>
-                </div>
-              </div>      
-            </div> 
-          </div>
+            <b-dropdown-item value='none' v-if="!allowMultiple">
+              <span> None </span>
+            </b-dropdown-item>
+            <b-dropdown-item v-for="nodeid in sourceNodesList" :key="nodeid" :value="nodeid" aria-role="listitem">
+              <span>{{getNode(nodeid).display}} (ID: {{nodeid}})</span>            
+            </b-dropdown-item>
+          </b-dropdown>
+
+          <div class="node-list">
+            <div v-if="!nodeData.sources.length"><i>None</i></div>
+            <div v-else v-for="nodeid in nodeData.sources">
+              <span class="long-text-with-ellipsis">
+            <!--    <span :style="{'font-family': 'monospace'}" > {{nodeid}}: </span>
+                <span>{{getNode(nodeid).display}} </span> -->
+                <span class="tag has-background-grey-dark has-text-grey-light header-id-tag" > {{nodeid}} </span>
+                <span>{{getNode(nodeid).display}} </span>
+              </span>      
+            </div>      
+          </div> 
         </div>
-       
+
+        <hr v-if="paramsComponents.length" class="separator">
+
         <div class="columns is-marginless is-paddingless is-vcentered" v-for="param in paramsComponents" 
             v-if="checkConditions(param.conditions)"
             :key="param.id">
@@ -224,7 +223,7 @@ export default {
       else if (!this.allowMultiple) {
         sourceNodes = [ event ]
       }
-      this.$emit('nodeSourceChange', {id: this.id, sourceNodes: sourceNodes} )
+      this.$emit('nodeSourceChange', {id: this.id, sources: sourceNodes} )
     },
     deleteNode() {
       this.$emit('nodeDelete', this.id)
@@ -238,7 +237,7 @@ export default {
 
 
 
-<style>
+<style scoped>
 .field-col {
   padding: 0;
   margin: 0.25rem;
@@ -250,7 +249,7 @@ export default {
 }
 
 
-.custom-header {
+.long-text-with-ellipsis {
    max-width: 100%;
    overflow: hidden;
    white-space: nowrap;
@@ -262,7 +261,17 @@ export default {
 .tag.header-id-tag {
     font-family: monospace;
     padding: 0.25rem;
+    margin-right: 0.25rem;
 }
 
 
+.node-list {
+  flex: 1;
+  min-width: 0;
+  margin-left: 0.5rem;
+}
+
+.separator {
+  margin: 0.75rem 0;
+}
 </style>

@@ -73,21 +73,21 @@ export default {
           newid = nanoid()
         }
       }
-      let options = this.nodeTypes[group].find(elem => elem.type === type)
-      if (options) {
+      let definition = this.nodeTypes[group].find(elem => elem.type === type)
+      if (definition) {
         let newNode = {
           id: newid,
           type: type,
           group: group,
-          sourceNodes: [],
+          sources: [],
           debug: true,
-          display: options.display,
-          desc: options.desc
+          display: definition.display,
+          desc: definition.desc
         }
         //fill default param values
         let paramsData = {}
-        if (options.params && options.params.length > 0) {
-          options.params.forEach(param => {
+        if (definition.params && definition.params.length > 0) {
+          definition.params.forEach(param => {
             if (param.hasOwnProperty('value')) {
               paramsData[param.id] = param.value
             }
@@ -115,7 +115,7 @@ export default {
       let nodeIndex = modelCopy.findIndex(elem => elem.id === event.id)
       if (nodeIndex != -1) {
         let nodeCopy = { ...modelCopy[nodeIndex]}
-        nodeCopy.sourceNodes = event.sourceNodes
+        nodeCopy.sources = event.sources
         modelCopy.splice(nodeIndex, 1, nodeCopy)
       } 
       this.updateModel(modelCopy)
@@ -126,9 +126,9 @@ export default {
         if (modelCopy[i].id === id) {
           modelCopy.splice(i, 1)
         } else {
-          for (var j = modelCopy[i].sourceNodes.length - 1; j >= 0; j--) {
-            if (modelCopy[i].sourceNodes[j].id === id) {
-              modelCopy[i].sourceNodes.splice(j, 1)
+          for (var j = modelCopy[i].sources.length - 1; j >= 0; j--) {
+            if (modelCopy[i].sources[j].id === id) {
+              modelCopy[i].sources.splice(j, 1)
             }
           }
         }

@@ -16,7 +16,7 @@ export default {
     bidirectionalNodes() {
       let graphNodes = {}
       this.nodes.forEach(elem => {
-        graphNodes[elem.id] = {id: elem.id, group: elem.group, type: elem.type, source: elem.sourceNodes, target: []}
+        graphNodes[elem.id] = {id: elem.id, display: elem.display, group: elem.group, type: elem.type, source: elem.sources, target: []}
       })
       //add in and out edges to each node
       Object.keys(graphNodes).forEach(id => {
@@ -35,7 +35,7 @@ export default {
         let elem = this.bidirectionalNodes[elemId]
         nodes.push({
           id: elem.id,
-          label: elem.type + ' (' + elem.id + ')'
+          label: elem.display + ' (' + elem.id + ')'
         })
       })
       //start and end nodes
