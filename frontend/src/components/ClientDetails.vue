@@ -3,25 +3,25 @@
   <div class="info-tiles">
     <div class="tile is-ancestor has-text-centered">
       <div class="tile is-parent">
-        <article class="tile is-child box notification-tile">
+        <article class="tile is-child box has-background-grey-dark notification-tile">
           <p class="title">{{total}}</p>
           <p class="subtitle">Total events</p>
         </article>        
       </div>
       <div class="tile is-parent">
-        <article class="tile is-child box notification-tile">
+        <article class="tile is-child box has-background-grey-dark notification-tile">
           <p class="title">{{weeklyAverage}}</p>
           <p class="subtitle">Weekly events (avg)</p>
         </article>
       </div>
       <div class="tile is-parent">
-        <article class="tile is-child box notification-tile">
+        <article class="tile is-child box has-background-grey-dark notification-tile">
           <p class="title">{{rangeData.start}}</p>
           <p class="subtitle">Oldest event</p>
         </article>
       </div>
       <div class="tile is-parent">
-        <article class="tile is-child box notification-tile">
+        <article class="tile is-child box has-background-grey-dark notification-tile">
           <p class="title">{{rangeData.end}}</p>
           <p class="subtitle">Latest event</p>
         </article>

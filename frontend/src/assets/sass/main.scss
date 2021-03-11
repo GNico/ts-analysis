@@ -1,12 +1,8 @@
-@import '~bulmaswatch/solar/_variables.scss';
-@import 'customvariables.scss';
+@import '_variables.scss';
 @import '~bulma/bulma';
-@import '~bulmaswatch/solar/_overrides.scss';
+@import '_overrides.scss';
 @import '~buefy/src/scss/buefy';
 
-.modal-card-body {
-  background-color: $grey-dark;
-}
 
 .transparent-button {
   background-color: transparent;
@@ -33,10 +29,6 @@
   flex-grow: 2; 
 }
 
-.b-table .table tr.detail {
-  background: $grey-darker;
-}
-
 .icn-spinner {
   animation: spin-animation 0.7s infinite;
   display: inline-block;
@@ -49,4 +41,8 @@
   100% {
     transform: rotate(359deg);
   }
+}
+
+.b-table .table tr.detail {
+  background: $grey-darker;
 }

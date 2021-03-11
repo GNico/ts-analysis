@@ -1,5 +1,6 @@
 export const DefaultChartSettings = Object.freeze({
-    BACKGROUND_COLOR: '#002B36',  
+   // BACKGROUND_COLOR: '#002B36',  
+    BACKGROUND_COLOR: 'transparent',  
     ANOMALY_COLOR: 'rgba(255,0,0,0.8)',  
     ANOMALY_ARROW_COLOR: 'yellow',
     HIGHLIGHT_ANOMALY_COLOR: 'rgba(173,216,230,0.3)', 

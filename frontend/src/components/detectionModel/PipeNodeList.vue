@@ -1,7 +1,7 @@
 <template>
 <div>
   <div class="list-header">
-    <span class="subtitle has-text-white"> {{ title }} </span>
+    <span class="is-size-5 has-text-white"> {{ title }} </span>
     <b-dropdown scrollable :max-height="200" aria-role="list" position="is-bottom-left">
       <template #trigger="{ active }">
         <b-button
@@ -91,6 +91,7 @@ export default {
 .list-header {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 1rem;
 }
 
 

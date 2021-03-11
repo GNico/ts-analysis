@@ -4,15 +4,15 @@
     animation="slide"
     :open="false">
     <template #trigger="props">
-     <div class="card-header" @mouseover="showDelete = true" @mouseleave="showDelete = false" >
-          <span class="card-header-title long-text-with-ellipsis">
-            <span v-if="showDelete" class="tag is-danger header-id-tag" style="{padding: 0}" @click="deleteNode(id)"> &nbsp;X&nbsp; </span>
-            <span v-else class="tag is-info header-id-tag" > {{id}} </span>
-            <span class="has-text-grey-light">{{nodeDefiniton.display}} </span>
-          </span>
-          <a class="card-header-icon">
-            <b-icon :icon="props.open ? 'menu-up' : 'menu-down'"/>
-          </a>
+      <div class="card-header" @mouseover="showDelete = true" @mouseleave="showDelete = false" >
+        <span class="card-header-title long-text-with-ellipsis">
+          <span v-if="showDelete" class="tag is-danger header-id-tag" style="{padding: 0}" @click="deleteNode(id)"> &nbsp;X&nbsp; </span>
+          <span v-else class="tag is-info header-id-tag" > {{id}} </span>
+          <span class="has-text-grey-light">{{nodeDefiniton.display}} </span>
+        </span>
+        <a class="card-header-icon">
+          <b-icon :icon="props.open ? 'menu-up' : 'menu-down'"/>
+        </a>
       </div>
     </template> 
 
@@ -20,6 +20,7 @@
       <div class="content">
         <div class="is-flex">
           <b-dropdown
+            append-to-body
             :value="nodeData.sources"
             @change="sourceNodesChange"
             :multiple="allowMultiple"
@@ -33,7 +34,6 @@
                 <b-icon size="is-small" icon="menu-down"/>
               </b-tag>
             </template>
-
             <b-dropdown-item value='none' v-if="!allowMultiple">
               <span> None </span>
             </b-dropdown-item>
@@ -43,15 +43,14 @@
           </b-dropdown>
 
           <div class="node-list">
-            <div v-if="!nodeData.sources.length"><i>None</i></div>
-            <div v-else v-for="nodeid in nodeData.sources">
-              <span class="long-text-with-ellipsis">
-            <!--    <span :style="{'font-family': 'monospace'}" > {{nodeid}}: </span>
-                <span>{{getNode(nodeid).display}} </span> -->
-                <span class="tag has-background-grey-dark has-text-grey-light header-id-tag" > {{nodeid}} </span>
-                <span>{{getNode(nodeid).display}} </span>
-              </span>      
-            </div>      
+            <template v-if="nodeData.sources.length">
+              <div v-for="nodeid in nodeData.sources">
+                <span class="long-text-with-ellipsis">
+                  <span class="tag has-background-grey-dark has-text-grey-light header-id-tag" > {{nodeid}} </span>
+                  <span>{{getNode(nodeid).display}} </span>
+                </span>      
+              </div>      
+            </template>
           </div> 
         </div>
 

@@ -1,10 +1,5 @@
 <template>
-<div class="container"> 
-  <b-field class="has-text-right">
-    <b-checkbox v-model="showFilters" class="has-text-white">
-    Enable filters
-  </b-checkbox>
-  </b-field>
+<div class="container section"> 
 
   <b-table 
     :data="allAnalysis" 
@@ -13,42 +8,34 @@
     checkable
     selectable
     :checked-rows.sync="checked">
-    <template slot-scope="props">    
-      <b-table-column field="name" label="Name" sortable :searchable="showFilters">
-        {{ props.row.name }}
-        <template #searchable="props">
-            <b-input
-              v-if="showFilters"
-              v-model="props.filters[props.column.field]"
-              placeholder="Search..."
-              icon="magnify"
-              size="is-small" />
-        </template>
+    <template slot-scope="props">  
+
+      <b-table-column field="client" label="Client" sortable  >
+        {{ props.row.client }}       
       </b-table-column>
 
-      <b-table-column field="client" label="Client" sortable :searchable="showFilters" >
-        {{ props.row.client }}
-        <template #searchable="props" >
-            <b-input
-              v-if="showFilters"
-              v-model="props.filters[props.column.field]"
-              placeholder="Search..."
-              icon="magnify"
-              size="is-small" />
-        </template>
+      <b-table-column field="name" label="Name" sortable >
+        {{ props.row.name }}      
       </b-table-column>
 
-      <b-table-column field="description" label="Description" :searchable="showFilters">
-        {{ props.row.description }}
-        <template #searchable="props">
-            <b-input
-              v-if="showFilters"
-              v-model="props.filters[props.column.field]"
-              placeholder="Search..."
-              icon="magnify"
-              size="is-small" />
-        </template>
+      
+
+      <b-table-column field="description" label="Description" >
+        {{ props.row.description }}       
       </b-table-column>
+
+      <b-table-column field="monitoring" label="Monitoring">
+        <span class="tag is-warning"">
+          Offline
+        </span>
+      </b-table-column>
+
+      <b-table-column field="alerts" label="Alerts">
+        <span class="tag is-warning"">
+          Disabled
+        </span>
+      </b-table-column>
+
 
       <b-table-column field="load" label="Load">
         <button class="transparent-button" @click="load(props.row.id)">
@@ -81,7 +68,6 @@ export default {
   data() {
     return {
       checked: [],
-      showFilters: false,
     }
   },
   computed: {

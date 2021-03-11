@@ -24,12 +24,6 @@ export default {
 
 $navbar-height: 4rem;
 
-html, body {
-  height: 100%;
-  overflow: auto;
-}
-
-
 
 ::-webkit-scrollbar {
     width: 10px;

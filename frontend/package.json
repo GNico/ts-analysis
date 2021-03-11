@@ -16,7 +16,6 @@
     "axios": "^0.21.1",
     "buefy": "^0.8.20",
     "bulma": "^0.8.2",
-    "bulmaswatch": "^0.7.2",
     "dagre-d3": "^0.6.4",
     "highcharts": "^8.2.2",
     "highcharts-vue": "^1.2.0",

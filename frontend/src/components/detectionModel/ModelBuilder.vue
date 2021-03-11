@@ -154,12 +154,12 @@ export default {
 }
 
 .bordered-columns .bordered-column {
-  border: 2px solid;
+  border: 2px solid rgba(255,255,255,0.1);
   border-left: 0;
 }
 
 .bordered-columns .bordered-column:first-child {
-  border-left: 2px solid;
+  border-left: 2px solid rgba(255,255,255,0.1);
 }
 
 </style>

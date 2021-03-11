@@ -53,7 +53,7 @@
         size="is-small" />
     </b-field>       
     <b-field class="has-text-right sticky-container">
-      <div class="box has-background-grey-darker">
+      <div class="box">
         <a class="button is-primary is-medium has-text-weight-semibold" @click="runAnalysis">
           Run analysis
         </a>
