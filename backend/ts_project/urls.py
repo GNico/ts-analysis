@@ -12,20 +12,18 @@ urlpatterns = [
 
     path('analysis/', views.AnalysisView.as_view(), name='analysis'),
     path('analysis/<slug:id>/', views.AnalysisResultView.as_view(), name='analysis_result'),
-
-
-    path('pipelines/', views.PipelineListView.as_view(), name='pipelines'),
-    path('pipelines/<slug:pk>/', views.PipelineDetailView.as_view(), name='pipeline_detail'),
-
-    path('nodes/', views.PipelineNodesListView.as_view(), name='nodes'),
-    path('nodes/<slug:group>/<slug:type>/', views.PipelineNodesDetailView.as_view(), name='node_detail'),
+    path('periodic-analysis/', views.PeriodicAnalysisListView.as_view(), name='periodic-analysis'),   
 
     path('analysis-settings/', views.AnalysisSettingsListView.as_view(), name='settings'),
     path('analysis-settings/<slug:pk>/', views.AnalysisSettingsDetailView.as_view(), name='settings_detail'),
 
+    path('pipelines/', views.PipelineListView.as_view(), name='pipelines'),
+    path('pipelines/<slug:pk>/', views.PipelineDetailView.as_view(), name='pipeline_detail'),
+    path('nodes/', views.PipelineNodesListView.as_view(), name='nodes'),
+    path('nodes/<slug:group>/<slug:type>/', views.PipelineNodesDetailView.as_view(), name='node_detail'),
+
 
     path('source-files/', views.DataSourceFilesList.as_view(), name='source-files'),
-
     path('testalgo/', views.AlgoTestView.as_view(), name='testalgo'),
 
 ]

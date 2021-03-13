@@ -37,9 +37,15 @@
       </b-table-column>
 
 
-      <b-table-column field="load" label="Load">
-        <button class="transparent-button" @click="load(props.row.id)">
-          <b-icon icon="folder-download" type="is-primary"></b-icon>
+      <b-table-column field="load" label="Start task">
+        <button class="button is-success" @click="start(props.row.id)">
+          Start task
+        </button>
+      </b-table-column>
+
+       <b-table-column field="load" label="Stop task">
+        <button class="button is-danger" @click="stop(props.row.id)">
+          Stop task
         </button>
       </b-table-column>
     </template>
@@ -82,9 +88,11 @@ export default {
     deleteSelected() {
       this.$emit('delete', this.checked)
     },
-    load(event) {
-      this.close()
-      this.$emit('load', event)
+    start(event) {
+      console.log(event)
+    },
+    stop(event) {
+      console.log(event)
     }
   }
 }

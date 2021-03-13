@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Pipeline, Analysis
+from .models import Pipeline, Analysis, PeriodicAnalysis
 
 class ClientInputSerializer(serializers.Serializer):
     name = serializers.RegexField(regex='^[a-z0-9_]+$', allow_blank=False)
@@ -31,3 +31,9 @@ class AnalysisSerializer(serializers.Serializer):
         if self.end and (self.start > self.end):
             raise serializers.ValidationError("Start date must be before end date")
         return value
+
+
+class PeriodicAnalysisSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PeriodicAnalysis
+        fields = [ 'id', 'analysis', 'task', 'time_interval', 'status', 'created' ]
