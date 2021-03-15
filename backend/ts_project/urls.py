@@ -12,7 +12,8 @@ urlpatterns = [
 
     path('analysis/', views.AnalysisView.as_view(), name='analysis'),
     path('analysis/<slug:id>/', views.AnalysisResultView.as_view(), name='analysis_result'),
-    path('periodic-analysis/', views.PeriodicAnalysisListView.as_view(), name='periodic-analysis'),   
+    path('periodic-analysis/', views.PeriodicAnalysisListView.as_view(), name='periodic_analysis'),   
+    path('periodic-analysis/<slug:pk>/', views.PeriodicAnalysisDetailView.as_view(), name='periodic_analysis_detail'),   
 
     path('analysis-settings/', views.AnalysisSettingsListView.as_view(), name='settings'),
     path('analysis-settings/<slug:pk>/', views.AnalysisSettingsDetailView.as_view(), name='settings_detail'),

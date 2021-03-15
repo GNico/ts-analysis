@@ -43,23 +43,19 @@ class Pipeline(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
 
-class PeriodicAnalysis(models.Model):
+class PeriodicAnalysis(models.Model):    
+    class Meta: 
+        db_table = 'periodic_analysis'
+
     class Status(models.TextChoices):
         ACTIVE = 'active'
         DISABLED = 'disabled'
 
-    class TimeInterval(models.TextChoices):
-        ONE_MIN = '1 min'
-        FIVE_MINS = '5 mins'
-        ONE_HOUR = '1 hour'
 
-    class Meta: 
-        db_table = 'periodic_analysis'
-
-    analysis = models.OneToOneField(Analysis, on_delete=models.CASCADE)
+    analysis = models.OneToOneField(Analysis, on_delete=models.CASCADE, primary_key=True)
     task = models.OneToOneField(PeriodicTask, on_delete=models.CASCADE, null=True, blank=True)
     status = models.TextField(choices=Status.choices, default=Status.DISABLED)
-    time_interval = models.TextField(choices=TimeInterval.choices, default=TimeInterval.ONE_MIN)
+    time_interval = models.TextField()
     created = models.DateTimeField(auto_now_add=True) 
 
     def delete(self, *args, **kwargs):
@@ -68,22 +64,28 @@ class PeriodicAnalysis(models.Model):
         return super(self.__class__, self).delete(*args, **kwargs)
 
     def setup_task(self):
-        self.task = PeriodicTask.objects.create(
-            task='periodictask',
-            interval=self.interval_schedule,
-            args=json.dumps([self.id]),
-            start_time=timezone.now()
-        )
-        self.save()
+        print('setup method')
+        print(self.interval_schedule)
+     #   self.task = PeriodicTask.objects.create(
+     #       task='periodictask',
+     #       interval=self.interval_schedule,
+     #       args=json.dumps([self.id]),
+     #       start_time=timezone.now()
+     #   )
+     #   self.save()
 
     @property
     def interval_schedule(self):
-        if self.time_interval == TimeInterval.ONE_MIN:
-            return IntervalSchedule.objects.get_or_create(every=1, period='minutes')
-        if self.time_interval == TimeInterval.FIVE_MINS:
-            return IntervalSchedule.objects.get_or_create(every=5, period='minutes')
-        if self.time_interval == TimeInterval.ONE_HOUR:
-            return IntervalSchedule.objects.get_or_create(every=1, period='hours')
+        import re
+        number, letter = re.findall(r'[A-Za-z]+|\d+', self.time_interval)
+        if letter == 's': 
+            return IntervalSchedule.objects.get_or_create(every=number, period='seconds')[0]
+        if letter == 'm': 
+            return IntervalSchedule.objects.get_or_create(every=number, period='minutes')[0]
+        if letter == 'h': 
+            return IntervalSchedule.objects.get_or_create(every=number, period='hours')[0]
+        if letter == 'd': 
+            return IntervalSchedule.objects.get_or_create(every=number, period='days')[0]
         raise NotImplementedError(
-            '''Interval Schedule for {interval} is not added.'''.format(
+            '''Interval Schedule for {interval} is invalid.'''.format(
                 interval=self.time_interval.value))

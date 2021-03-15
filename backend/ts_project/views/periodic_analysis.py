@@ -2,21 +2,35 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ..models import PeriodicAnalysis
+from ..models import PeriodicAnalysis, Analysis
+
+from ..serializers import PeriodicAnalysisSerializer
+
 
 
 class PeriodicAnalysisListView(APIView):
     def get(self, request):
-        all_analysis = Analysis.objects.all()
-        serializer = AnalysisSettingsSerializer(all_analysis, many=True)
+        all_analysis = PeriodicAnalysis.objects.all()
+        serializer = PeriodicAnalysisSerializer(all_analysis, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        data = request.data
-        print(data.get('analysis', ''))
-        print(data.get('active', True))
-        print(data.get('interval', '1m'))
-        return Response("ok response mock")
+        serializer = PeriodicAnalysisSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+     #   data = request.data
+     #   analysis_id = data.get('analysis', 41)
+     #   analysis = Analysis.objects.get(id=analysis_id)
+     #   status = data.get('active', 'active')
+     #   interval = data.get('interval', '1m')
+
+
+      #  periodic_analysis = PeriodicAnalysis.objects.create(analysis=analysis, status=status)
+       # return Response("ok response mock" + str(periodic_analysis.id))
 
 
 class PeriodicAnalysisDetailView(APIView):
