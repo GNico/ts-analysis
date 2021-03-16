@@ -47,15 +47,10 @@ class PeriodicAnalysis(models.Model):
     class Meta: 
         db_table = 'periodic_analysis'
 
-    class Status(models.TextChoices):
-        ACTIVE = 'active'
-        DISABLED = 'disabled'
-
-
     analysis = models.OneToOneField(Analysis, on_delete=models.CASCADE, primary_key=True)
     task = models.OneToOneField(PeriodicTask, on_delete=models.CASCADE, null=True, blank=True)
-    status = models.TextField(choices=Status.choices, default=Status.DISABLED)
-    time_interval = models.TextField()
+    active = models.BooleanField(default=False)
+    time_interval = models.TextField(default='1h')
     created = models.DateTimeField(auto_now_add=True) 
 
     def delete(self, *args, **kwargs):
@@ -64,15 +59,20 @@ class PeriodicAnalysis(models.Model):
         return super(self.__class__, self).delete(*args, **kwargs)
 
     def setup_task(self):
-        print('setup method')
-        print(self.interval_schedule)
-     #   self.task = PeriodicTask.objects.create(
-     #       task='periodictask',
-     #       interval=self.interval_schedule,
-     #       args=json.dumps([self.id]),
-     #       start_time=timezone.now()
-     #   )
-     #   self.save()
+        self.task = PeriodicTask.objects.create(
+            name=self.analysis_id,
+            task='periodictask',
+            interval=self.interval_schedule,
+            enabled=self.active,
+            args=[self.analysis_id],
+            start_time=timezone.now()
+        )
+        self.save()
+
+    def update_task(self):
+        self.task.enabled = self.active
+        self.task.interval = self.interval_schedule
+        self.task.save()
 
     @property
     def interval_schedule(self):

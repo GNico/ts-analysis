@@ -34,8 +34,8 @@ class AnalysisSerializer(serializers.Serializer):
 
 
 class PeriodicAnalysisSerializer(serializers.ModelSerializer):
-    time_interval = serializers.RegexField(regex='^[0-9]+[smhd]$')
+    time_interval = serializers.RegexField(regex='^[0-9]+[smhd]$', allow_blank=False, required=True)
 
     class Meta:
         model = PeriodicAnalysis
-        fields = [ 'id', 'analysis', 'task', 'status', 'time_interval', 'created' ]
+        fields = [ 'analysis', 'task', 'active', 'time_interval', 'created' ]
