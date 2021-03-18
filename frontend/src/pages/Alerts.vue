@@ -27,6 +27,7 @@
       checkable
       selectable
       :default-sort="['client', 'asc']"
+      :custom-is-checked="(a,b)=> a.analysis === b.analysis"
       :checked-rows.sync="checked">
       <template slot-scope="props">  
 
@@ -136,7 +137,6 @@ export default {
           .then(response => this.fetchPeriodicAnalysis())
           break; 
       }
-      this.checked = []
     }
   },
   created() {

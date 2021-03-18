@@ -20,6 +20,7 @@
 
     <b-table 
       :data="clients" 
+      :default-sort="['name', 'asc']"
       detailed    
       :opened-detailed="openRows"
       detail-key="name"
