@@ -7,6 +7,7 @@ from ..salib.model.analyzer import Analyzer
 from ..salib.model.pipeline.pipeline import Pipeline
 from ..salib.model.pipeline.node_factory import NodeFactory
 
+
 @shared_task(bind=True)
 def perform_analysis(self, data):
     pipeline = Pipeline.from_json(data['model'])
@@ -27,4 +28,3 @@ def perform_analysis(self, data):
     analysis = analyzer.analyze(series)
 
     return analysis.output_format()
-        

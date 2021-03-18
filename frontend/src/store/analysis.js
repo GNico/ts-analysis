@@ -127,11 +127,12 @@ const actions = {
                 .then(response => dispatch("fetchAllAnalysis"))
                 .catch(error => console.log(error))
     },
-  /*  deleteAnalysisList({dispatch}, idList) {
-        return  api.deleteAnalysis(idList)
+    deleteAnalysisList({dispatch}, idList) {
+        console.log(idList)
+        return  api.deleteAnalysisList(idList)
                 .then(response => dispatch("fetchAllAnalysis"))
                 .catch(error => console.log(error))
-    }, */
+    }, 
     createLocalAnalysis(store) {
         const newId = nanoid(5)
         store.commit('add_analysis', { id: newId, ...defaultSettings })

@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from ..serializers import AnalysisSerializer
 from .. import tasks
 
+
 class AnalysisView(APIView):
     def post(self, request):
         serializer = AnalysisSerializer(data=request.data)

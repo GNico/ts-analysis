@@ -1,7 +1,6 @@
 from django.db import models
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
 from django.utils import timezone
-import json
 
 
 class Client(models.Model):
@@ -50,6 +49,7 @@ class PeriodicAnalysis(models.Model):
     analysis = models.OneToOneField(Analysis, on_delete=models.CASCADE, primary_key=True)
     task = models.OneToOneField(PeriodicTask, on_delete=models.CASCADE, null=True, blank=True)
     active = models.BooleanField(default=False)
+    alerts_enabled = models.BooleanField(default=False)
     time_interval = models.TextField(default='1h')
     created = models.DateTimeField(auto_now_add=True) 
 
@@ -89,3 +89,5 @@ class PeriodicAnalysis(models.Model):
         raise NotImplementedError(
             '''Interval Schedule for {interval} is invalid.'''.format(
                 interval=self.time_interval.value))
+
+

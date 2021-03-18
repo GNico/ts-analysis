@@ -154,7 +154,16 @@ export default {
         return repository.delete("/analysis-settings/" + id + "/")
     },
     deleteAnalysisList(ids) {
-        return repository.delete("/analysis-settings/", { data: { ids: ids } })
+        return repository.post("/analysis-settings/?delete", {ids: ids} )
+    },
+
+
+    //Periodic analysis
+    getAllPeriodicAnalysis() {
+        return repository.get("/periodic-analysis/")
+    },
+    updatePeriodicAnalysisList(ids, options) {
+        return repository.post("/periodic-analysis/?update", {ids: ids, ...options})
     },
 
 

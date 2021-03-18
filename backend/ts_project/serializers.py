@@ -35,7 +35,12 @@ class AnalysisSerializer(serializers.Serializer):
 
 class PeriodicAnalysisSerializer(serializers.ModelSerializer):
     time_interval = serializers.RegexField(regex='^[0-9]+[smhd]$', allow_blank=False, required=True)
+    client = serializers.CharField(source='analysis.client', read_only=True)
+    name = serializers.CharField(source='analysis.name', read_only=True)
+    description = serializers.CharField(source='analysis.description', read_only=True)
+    last_run_at = serializers.DateTimeField(source='task.last_run_at', read_only=True)
 
     class Meta:
         model = PeriodicAnalysis
-        fields = [ 'analysis', 'task', 'active', 'time_interval', 'created' ]
+        fields = [ 'analysis', 'task', 'active', 'alerts_enabled', 'time_interval', 'created', 'client', 'name', 'description', 'last_run_at' ]
+

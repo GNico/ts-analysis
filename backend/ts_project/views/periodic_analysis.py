@@ -14,11 +14,29 @@ class PeriodicAnalysisListView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
+        if 'update' in request.query_params:
+            return self._bulk_update(request)
         serializer = PeriodicAnalysisSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def _bulk_update(self, request):
+        print(request.data)
+        update_ids = request.data.get('ids', [])
+        objs = PeriodicAnalysis.objects.filter(analysis_id__in=update_ids)
+        active = request.data.get('active', None)
+        alerts_enabled = request.data.get('alerts_enabled', None)
+        #not a bulk save because we need to call post_save signal
+        for item in objs:
+            if (active is not None):
+                item.active = active
+            if (alerts_enabled is not None):
+                item.alerts_enabled = alerts_enabled
+            item.save()
+        return Response(status=status.HTTP_201_CREATED)
+
 
 
 class PeriodicAnalysisDetailView(APIView):
