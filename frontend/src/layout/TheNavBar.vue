@@ -7,10 +7,10 @@
   </template>
 
   <template slot="start">
-      <router-link to='/' exact class="navbar-item">Manage</router-link>
-      <router-link to='/Visualize' exact class="navbar-item">Visualize</router-link>
-      <router-link to='/Analize' exact class="navbar-item">Analize</router-link>
-      <router-link to='/Alerts' exact class="navbar-item">Alerts</router-link>
+      <router-link to='/' exact class="navbar-item">Data Management</router-link>
+      <router-link to='/Visualization' exact class="navbar-item">Visualization</router-link>
+      <router-link to='/Analysis' exact class="navbar-item">Analysis</router-link>
+      <router-link to='/Monitoring' exact class="navbar-item">Monitoring</router-link>
       <router-link to='/Test' exact class="navbar-item">Test</router-link>
   </template>
 

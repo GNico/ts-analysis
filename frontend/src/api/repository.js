@@ -162,6 +162,12 @@ export default {
     getAllPeriodicAnalysis() {
         return repository.get("/periodic-analysis/")
     },
+    getPeriodicAnalysis(id) {
+        return repository.get("/periodic-analysis/" + id + "/")
+    },
+    updatePeriodicAnalysis(id, options) {
+        return repository.put("/periodic-analysis/" + id + "/", options)
+    },
     updatePeriodicAnalysisList(ids, options) {
         return repository.post("/periodic-analysis/?update", {ids: ids, ...options})
     },

@@ -26,37 +26,38 @@
       checkbox-position="right"
       checkable
       selectable
+      detailed
+      :opened-detailed="openRows"
+      detail-key="analysis"
+      @details-open="addRowDetails"
       :default-sort="['client', 'asc']"
       :custom-is-checked="(a,b)=> a.analysis === b.analysis"
       :checked-rows.sync="checked">
       <template slot-scope="props">  
-
         <b-table-column field="client" label="Client" sortable  >
           {{ props.row.client }}       
         </b-table-column>
-
         <b-table-column field="name" label="Analysis Name" sortable >
           {{ props.row.name }}      
         </b-table-column>
-
         <b-table-column field="description" label="Analysis Description" >
           {{ props.row.description }}       
         </b-table-column>
-
         <b-table-column field="monitoring" label="Monitoring">
           <span v-if="props.row.active" class="tag is-success""> Active </span>
           <span v-else class="tag is-warning""> Disabled </span>
         </b-table-column>
-
         <b-table-column field="alerts" label="Alerts">
           <span v-if="props.row.alerts_enabled" class="tag is-success""> Enabled </span>
           <span v-else class="tag is-warning""> Disabled </span>
         </b-table-column>
-
         <b-table-column field="last_run" label="Last run">
            {{ formatDate(props.row.last_run_at) }}
         </b-table-column>
+      </template>
 
+      <template #detail="props">
+        <TableDetails :details="rowDetails[props.row.analysis]" @update="updateOptions(props.row.analysis, $event)"/>
       </template>
     </b-table>
   </template>
@@ -64,16 +65,17 @@
 </template>
 
 <script>
+import TableDetails from '../components/monitoring/TableDetails'
 import api from '../api/repository'
 import { formatDate } from '../utils/helpers'
 
 export default {
-  props: { 
-
-  },
+  components: { TableDetails },
   data() {
     return {
-      checked: [],
+      checked: [],     
+      openRows: [],   
+      rowDetails: {},
       allPeriodicAnalysis: [],
       error: '',
       currentAction: 'Delete Analysis',
@@ -89,7 +91,7 @@ export default {
   computed: {
     checkedIds() {
       return this.checked.map(elem => elem.analysis)
-    }
+    },
   },
   methods: {
     fetchPeriodicAnalysis() {
@@ -137,7 +139,22 @@ export default {
           .then(response => this.fetchPeriodicAnalysis())
           break; 
       }
-    }
+    },
+    addRowDetails(row) {
+      api.getPeriodicAnalysis(row.analysis)
+      .then(response => {
+        this.rowDetails = {...this.rowDetails, [row.analysis]: response.data}
+      })    
+    },
+    updateOptions(id, options) {
+      api.updatePeriodicAnalysis(id, options)
+      .then(response => {
+        let index = this.allPeriodicAnalysis.findIndex(elem => elem.analysis == id)
+        if (index != -1) {
+          this.allPeriodicAnalysis.splice(index, 1, response.data )
+        }
+      })
+    },
   },
   created() {
     this.fetchPeriodicAnalysis()

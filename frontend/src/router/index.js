@@ -7,19 +7,19 @@ function lazyLoad(view){
 let routes = [
   {
     path: '/',
-    component: lazyLoad('Home')
+    component: lazyLoad('DataManagement')
   },
   {
-    path: '/Visualize',
-    component: lazyLoad('Visualize')
+    path: '/Visualization',
+    component: lazyLoad('Visualization')
   },
   {
-    path: '/Analize',
+    path: '/Analysis',
     component: lazyLoad('Analysis')
   },
   {
-    path: '/Alerts',
-    component: lazyLoad('Alerts')
+    path: '/Monitoring',
+    component: lazyLoad('Monitoring')
   },
   {
     path: '/Test',
