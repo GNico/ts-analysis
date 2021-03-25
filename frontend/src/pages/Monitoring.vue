@@ -1,24 +1,41 @@
 <template>
 <div class="container section"> 
+  <ModalLoadAnalysis 
+    :allAnalysis="savedAnalysis"
+    :isActive="loadModalActive" 
+    @close="loadModalActive = false"
+    @load="addMonitor"
+    title="Select Analysis"
+    :allowDelete="false"
+    confirmLabel="Create Monitor"
+  />
+
   <div v-if="error" class="is-size-5 has-text-centered"> {{ error }} </div>
   <template v-else>
-    <div class="selected-action has-text-right">
-      <span class="selected-label">On selected:</span> 
-      <a class="button is-small is-primary button-left" @click="performAction">{{currentAction}}</a>
-      <b-dropdown scrollable :max-height="200" aria-role="list" position="is-bottom-left">
-        <template #trigger="{ active }">
-          <b-button class="button-right" icon-left="menu-down" size="is-small" type="is-primary"/>
-        </template>
+    <div class="table-options">
+      <a class="button is-primary is-small" @click="loadModalActive = !loadModalActive">
+        <b-icon  icon="playlist-plus"></b-icon>
+        <span class="has-text-weight-semibold">New Monitor</span>
+      </a>
 
-        <b-dropdown-item 
-          v-for="action in onSelectedActions" 
-          :key="action"
-          @click="currentAction = action"
-          aria-role="listitem">
-          {{action}}
-        </b-dropdown-item>
-      </b-dropdown>
-    </div> 
+      <div class="selected-action has-text-right">
+        <span class="selected-label">On selected:</span> 
+        <a class="button is-small is-primary button-left" @click="performAction">{{currentAction}}</a>
+        <b-dropdown scrollable :max-height="200" aria-role="list" position="is-bottom-left">
+          <template #trigger="{ active }">
+            <b-button class="button-right" icon-left="menu-down" size="is-small" type="is-primary"/>
+          </template>
+
+          <b-dropdown-item 
+            v-for="action in onSelectedActions" 
+            :key="action"
+            @click="currentAction = action"
+            aria-role="listitem">
+            {{action}}
+          </b-dropdown-item>
+        </b-dropdown>
+      </div> 
+    </div>
 
     <b-table 
       :data="allPeriodicAnalysis" 
@@ -29,7 +46,8 @@
       detailed
       :opened-detailed="openRows"
       detail-key="analysis"
-      @details-open="addRowDetails"
+      @details-open="addRowDetails($event.analysis)"
+      @click="toggleRow"
       :default-sort="['client', 'asc']"
       :custom-is-checked="(a,b)=> a.analysis === b.analysis"
       :checked-rows.sync="checked">
@@ -66,11 +84,12 @@
 
 <script>
 import TableDetails from '../components/monitoring/TableDetails'
+import ModalLoadAnalysis from "../components/analysis/ModalLoadAnalysis"
 import api from '../api/repository'
 import { formatDate } from '../utils/helpers'
 
 export default {
-  components: { TableDetails },
+  components: { TableDetails, ModalLoadAnalysis },
   data() {
     return {
       checked: [],     
@@ -78,19 +97,24 @@ export default {
       rowDetails: {},
       allPeriodicAnalysis: [],
       error: '',
-      currentAction: 'Delete Analysis',
+      currentAction: 'Delete Monitor',
       onSelectedActions: [
-        'Delete Analysis',
-        'Activate Monitoring',
-        'Disable Monitoring',
+        'Delete Monitor',
+        'Activate Monitor',
+        'Disable Monitor',
         'Activate Alerts',
         'Turn off Alerts'
-      ]
+      ],
+      loadModalActive: false,
+
     }
   },
   computed: {
     checkedIds() {
       return this.checked.map(elem => elem.analysis)
+    },
+    savedAnalysis() {
+      return this.$store.state.analysis.all
     },
   },
   methods: {
@@ -140,11 +164,20 @@ export default {
           break; 
       }
     },
-    addRowDetails(row) {
-      api.getPeriodicAnalysis(row.analysis)
+    addRowDetails(analysisId) {
+      api.getPeriodicAnalysis(analysisId)
       .then(response => {
-        this.rowDetails = {...this.rowDetails, [row.analysis]: response.data}
+        this.rowDetails = {...this.rowDetails, [analysisId]: response.data}
       })    
+    },
+    toggleRow(event) {
+      let index = this.openRows.findIndex(elem => elem === event.analysis)
+      if (index != -1) {
+        this.openRows.splice(index, 1)
+      } else {
+        this.openRows.push(event.analysis)
+        this.addRowDetails(event.analysis)
+      }
     },
     updateOptions(id, options) {
       api.updatePeriodicAnalysis(id, options)
@@ -155,20 +188,29 @@ export default {
         }
       })
     },
+    addMonitor(event) {
+      console.log(event)
+    }
   },
   created() {
     this.fetchPeriodicAnalysis()
+    this.$store.dispatch("analysis/fetchAllAnalysis")
   }
 }
 </script>
 
 
 <style scoped>
-.selected-action {
+.table-options {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 0.75rem;
+}
+
+.selected-action {
+  display: flex;
+  align-items: center;
 }
 
 .selected-label {

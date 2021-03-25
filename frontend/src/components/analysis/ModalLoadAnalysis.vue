@@ -1,7 +1,7 @@
 <template>
 <ModalCard 
   :isActive="isActive" 
-  title="Load Analysis"
+  :title="title"
   minheight="50%"
   @close="close">
 
@@ -51,8 +51,8 @@
 
   <template v-slot:footer-right>
     <div>
-      <button :disabled="!selected" class="button is-small is-primary" @click="load">Load</button>
-      <button :disabled="!selected" class="button is-small is-danger" @click="confirmDelete">Delete</button>
+      <button :disabled="!selected" class="button is-small is-primary" @click="load">{{confirmLabel}}</button>
+      <button v-show="allowDelete" :disabled="!selected" class="button is-small is-danger" @click="confirmDelete">Delete</button>
       <button class="button is-small" @click="close">Cancel</button>
     </div>
   </template>
@@ -73,6 +73,18 @@ export default {
     isActive: {
       type: Boolean,
       default: false,
+    },
+    title: {
+      type: String,
+      default: 'Load Analysis'
+    },
+    allowDelete: {
+      type: Boolean,
+      default: true
+    },
+    confirmLabel: {
+      type: String,
+      default: 'Load'
     }
   },
   data() {
