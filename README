@@ -50,9 +50,10 @@ BACKEND
 -run the server
 	python3 manage.py runserver 
 
--run Celery worker in another terminal (activate venv first)
+-run Celery worker & beat in another terminal (activate venv first)
 	source venv/bin/activate
-	celery worker -A tsa --loglevel=info
+	celery -A tsa worker --loglevel=info
+	celery -A tsa beat --loglevel=info
 
 -access
 	localhost:8000
