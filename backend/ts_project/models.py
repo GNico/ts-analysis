@@ -54,6 +54,7 @@ class PeriodicAnalysis(models.Model):
     created = models.DateTimeField(auto_now_add=True) 
 
     def delete(self, *args, **kwargs):
+        print("does it get called")
         if self.task is not None:
             self.task.delete()
         return super(self.__class__, self).delete(*args, **kwargs)

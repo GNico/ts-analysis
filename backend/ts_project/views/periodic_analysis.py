@@ -14,6 +14,8 @@ class PeriodicAnalysisListView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
+        if 'delete' in request.query_params:
+            return self._bulk_delete(request)
         if 'update' in request.query_params:
             return self._bulk_update(request)
         serializer = PeriodicAnalysisSerializer(data=request.data)
@@ -22,13 +24,12 @@ class PeriodicAnalysisListView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    #we need to call each save individually to trigger post_save signal
     def _bulk_update(self, request):
-        print(request.data)
         update_ids = request.data.get('ids', [])
         objs = PeriodicAnalysis.objects.filter(analysis_id__in=update_ids)
         active = request.data.get('active', None)
         alerts_enabled = request.data.get('alerts_enabled', None)
-        #not a bulk save because we need to call post_save signal
         for item in objs:
             if (active is not None):
                 item.active = active
@@ -36,6 +37,14 @@ class PeriodicAnalysisListView(APIView):
                 item.alerts_enabled = alerts_enabled
             item.save()
         return Response(status=status.HTTP_201_CREATED)
+
+    #deleting each element individually because bulk delete doesnt call model's delete method
+    def _bulk_delete(self, request):
+        delete_ids = request.data.get('ids', [])
+        objs = PeriodicAnalysis.objects.filter(analysis_id__in=delete_ids)
+        for item in objs:
+            item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 

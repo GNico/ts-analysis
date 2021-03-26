@@ -131,13 +131,15 @@ export default {
     },
     confirmDelete() {
       this.$buefy.dialog.confirm({
-        title: 'Deleting Analysis',
+        title: 'Deleting Monitor',
         message: 'Are you sure you want to <b>delete</b> this items? This action cannot be undone.',
-        confirmText: 'Delete Analysis',
+        confirmText: 'Delete Monitor',
         type: 'is-danger',
         scroll: 'keep',
         hasIcon: true,
-        onConfirm: () => this.$store.dispatch('analysis/deleteAnalysisList', this.checkedIds).then(response => this.fetchPeriodicAnalysis())
+        onConfirm: () => api.deletePeriodicAnalysisList(this.checkedIds).then(response => {
+          this.fetchPeriodicAnalysis()
+        })
       })
     },
     performAction() {
@@ -188,8 +190,26 @@ export default {
         }
       })
     },
-    addMonitor(event) {
-      console.log(event)
+    addMonitor(id) {
+      let index = this.allPeriodicAnalysis.findIndex(elem => elem.analysis == id)
+      if (index != -1) {
+        this.$buefy.toast.open({
+          message: "Monitor already exists!",
+          type: 'is-danger',
+          duration: 2500,
+        })
+      } else {
+        api.addNewPeriodicAnalysis(id)
+        .then(response => {
+          this.fetchPeriodicAnalysis()
+          this.$buefy.toast.open({
+            message: "Monitor created",
+            type: 'is-success',
+            duration: 2500,
+          })
+        })
+        .catch(error => console.log(error))
+      }      
     }
   },
   created() {

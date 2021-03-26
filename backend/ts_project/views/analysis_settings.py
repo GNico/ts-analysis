@@ -24,7 +24,6 @@ class AnalysisSettingsListView(APIView):
 
     def _bulk_delete(self, request):
         delete_ids = request.data.get('ids', [])
-        print(delete_ids)
         Analysis.objects.filter(id__in=delete_ids).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

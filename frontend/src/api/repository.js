@@ -157,7 +157,6 @@ export default {
         return repository.post("/analysis-settings/?delete", {ids: ids} )
     },
 
-
     //Periodic analysis
     getAllPeriodicAnalysis() {
         return repository.get("/periodic-analysis/")
@@ -165,12 +164,22 @@ export default {
     getPeriodicAnalysis(id) {
         return repository.get("/periodic-analysis/" + id + "/")
     },
+    addNewPeriodicAnalysis(id) {
+        return repository.post("/periodic-analysis/", {analysis: id})
+    },
     updatePeriodicAnalysis(id, options) {
         return repository.put("/periodic-analysis/" + id + "/", options)
     },
     updatePeriodicAnalysisList(ids, options) {
         return repository.post("/periodic-analysis/?update", {ids: ids, ...options})
     },
+    deletePeriodicAnalysis(id) {
+        return repository.delete(/periodic-analysis/ + id + "/")
+    },
+    deletePeriodicAnalysisList(ids) {
+        return repository.post("/periodic-analysis/?delete", {ids: ids} )
+    },
+
 
 
     //Misc

@@ -34,7 +34,7 @@ class AnalysisSerializer(serializers.Serializer):
 
 
 class PeriodicAnalysisSerializer(serializers.ModelSerializer):
-    time_interval = serializers.RegexField(regex='^[0-9]+[smhd]$', allow_blank=False, required=True)
+    time_interval = serializers.RegexField(regex='^[0-9]+[smhd]$', allow_blank=False, required=False)
     client = serializers.CharField(source='analysis.client', read_only=True)
     name = serializers.CharField(source='analysis.name', read_only=True)
     description = serializers.CharField(source='analysis.description', read_only=True)

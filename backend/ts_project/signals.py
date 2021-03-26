@@ -3,10 +3,10 @@ from django.dispatch import receiver
 
 from .models import PeriodicAnalysis, Analysis
 
-@receiver(post_save, sender=Analysis)
-def create_periodic_analysis(sender, instance, created, **kwargs):
-    if created:
-        PeriodicAnalysis.objects.create(analysis=instance)
+#@receiver(post_save, sender=Analysis)
+#def create_periodic_analysis(sender, instance, created, **kwargs):
+#    if created:
+#        PeriodicAnalysis.objects.create(analysis=instance)
 
 
 @receiver(pre_delete, sender=Analysis)
