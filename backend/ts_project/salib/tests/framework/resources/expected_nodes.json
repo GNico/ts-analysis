@@ -506,11 +506,37 @@
       "display": "Intersect",
       "params": [
         {
+          "id": "resolution",
+          "type": "Select",
+          "display": "Resolution",
+          "desc": "Combine using temporal axis or anomaly wise",
+          "conditions": [],
+          "value": "temporal",
+          "options": [
+            {
+              "code": "temporal",
+              "display": "Temporal"
+            },
+            {
+              "code": "anomaly",
+              "display": "Anomaly"
+            }
+          ]
+        },
+        {
           "id": "strict",
           "type": "Boolean",
           "display": "Strict",
           "desc": "If true anomalies must match exact bounds, otherwise, any overlap is considered valid",
-          "conditions": [],
+          "conditions": [
+            {
+              "type": "param_equals_value",
+              "args": {
+                "param": "resolution",
+                "value": "anomaly"
+              }
+            }
+          ],
           "value": true
         }
       ]

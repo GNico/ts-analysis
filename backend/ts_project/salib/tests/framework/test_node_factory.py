@@ -13,6 +13,7 @@ class TestNodeFactory(unittest.TestCase):
         expected_file = os.path.join(dir, 'resources/expected_nodes.json')
         expected = json.loads(Path(expected_file).read_text())
         actual = NodeFactory.nodes_list()
+        # print(json.dumps(actual))
         self.assertEqual(expected, actual)
 
     def test_parsing(self):
