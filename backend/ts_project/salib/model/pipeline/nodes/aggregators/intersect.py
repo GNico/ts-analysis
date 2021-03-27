@@ -62,6 +62,7 @@ class Intersect(Node):
                     new_anomaly = Anomaly(lhs.series, lhs.start, lhs.end, score, desc)
                     result.append(new_anomaly)
                 else:
+                    pass
                     # Partial overlaps
                     # Case left partial in right
                     #if (lhs.start >= rhs.start and lhs.start <= rhs.end):
