@@ -3,14 +3,14 @@ import unittest
 from model.anomaly import Anomaly
 from model.pipeline.nodes.node_result import NodeResult
 from model.pipeline.nodes.node import Node
-from model.pipeline.nodes.aggregators._or import Or
-from model.pipeline.nodes.aggregators._and import And
+from model.pipeline.nodes.aggregators.union import Union
+from model.pipeline.nodes.aggregators.intersect import Intersect
 
 
 class TestAggregators(unittest.TestCase):
 
     def test_and_aggregator_no_overlap(self):
-        and_node = And('test')
+        and_node = Intersect('test')
         and_node.set_param_value('strict', True)
         series = None
         fst = [Anomaly.from_epoch(series, 0, 2, 1.0)]
@@ -19,7 +19,7 @@ class TestAggregators(unittest.TestCase):
         self.case(and_node, fst, snd, expected)
 
     def test_and_aggregator_some_overlap_strict(self):
-        and_node = And('test')
+        and_node = Intersect('test')
         and_node.set_param_value('strict', True)
         series = None
         fst = [Anomaly.from_epoch(series, 0, 2, 1.0)]
@@ -28,7 +28,7 @@ class TestAggregators(unittest.TestCase):
         self.case(and_node, fst, snd, expected)
 
     def test_and_aggregator_some_overlap_non_strict(self):
-        and_node = And('test')
+        and_node = Intersect('test')
         and_node.set_param_value('strict', False)
         series = None
         a1 = Anomaly.from_epoch(series, 0, 2, 1.0)
@@ -37,7 +37,7 @@ class TestAggregators(unittest.TestCase):
         self.case(and_node, [a1], [a2], expected)
 
     def test_and_aggregator_some_overlap_strict(self):
-        and_node = And('test')
+        and_node = Intersect('test')
         and_node.set_param_value('strict', True)
         series = None
         a1 = Anomaly.from_epoch(series, 0, 2, 1.0)
@@ -47,7 +47,7 @@ class TestAggregators(unittest.TestCase):
         self.case(and_node, [a1], [a2, a3], expected)
 
     def test_and_aggregator_some_overlap_nonstrict(self):
-        and_node = And('test')
+        and_node = Intersect('test')
         and_node.set_param_value('strict', False)
         series = None
         a1 = Anomaly.from_epoch(series, 0, 2, 1.0)
@@ -57,7 +57,7 @@ class TestAggregators(unittest.TestCase):
         self.case(and_node, [a1], [a2, a3], expected)
 
     def test_and_aggregator_full_overlap(self):
-        and_node = And('test')
+        and_node = Intersect('test')
         and_node.set_param_value('strict', False)
         series = None
         a1 = Anomaly.from_epoch(series, 0, 5, 1.0)
@@ -69,17 +69,17 @@ class TestAggregators(unittest.TestCase):
         self.case(and_node, fst, snd, expected)
 
     def test_and_aggregator_edge_case(self):
-        self.case(And('test'), [], [], [])
+        self.case(Intersect('test'), [], [], [])
 
     def test_or_aggregator_edge_case(self):
-        self.case(Or('test'), [], [], [])
+        self.case(Union('test'), [], [], [])
 
     def test_or_aggregator_base_case(self):
         series = None
         fst = [Anomaly.from_epoch(series, 0, 1, 1.0)]
         snd = [Anomaly.from_epoch(series, 2, 4, 1.0)]
         expected = fst + snd
-        self.case(Or('test'), fst, snd, expected)
+        self.case(Union('test'), fst, snd, expected)
 
     def case(self, node, fst_anomalies, snd_anomalies, expected_output):
         self.maxDiff = None

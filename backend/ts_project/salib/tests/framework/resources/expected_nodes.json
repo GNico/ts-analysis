@@ -392,7 +392,7 @@
             {
               "type": "param_equals_value",
               "args": {
-                "param": "agg_method_lhs",
+                "param": "agg_method_rhs",
                 "value": "quantile"
               }
             }
@@ -449,7 +449,7 @@
     {
       "type": "Quantile",
       "desc": "Compare values with given quantiles and identify anomalies beyond inter-quantile range",
-      "display": "Inter-quantile range",
+      "display": "Quantile",
       "params": [
         {
           "id": "high",
@@ -495,15 +495,15 @@
   ],
   "aggregator": [
     {
-      "type": "OR",
+      "type": "Union",
       "desc": "Combine all anomalies from sources",
-      "display": "Or",
+      "display": "Union",
       "params": []
     },
     {
-      "type": "AND",
-      "desc": "Combine overlapping anomalies from sources",
-      "display": "And",
+      "type": "Intersect",
+      "desc": "Combine and merge overlapping anomalies from sources",
+      "display": "Intersect",
       "params": [
         {
           "id": "strict",

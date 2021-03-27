@@ -1,7 +1,7 @@
 from ..node import Node
 from ..node_result import NodeResult
 
-class Or(Node):
+class Union(Node):
 
     def __init__(self, id):
         super().__init__(id)
@@ -13,10 +13,10 @@ class Or(Node):
         return NodeResult(self, inputs=inputs, anomalies=or_anomalies)
 
     def __str__(self):
-        return 'OR(' + ','.join([s.id for s in self.sources]) + ')'
+        return 'Union(' + ','.join([s.id for s in self.sources]) + ')'
 
     def desc(self):
         return 'Combine all anomalies from sources'
 
     def display(self):
-        return 'Or'
+        return 'Union'

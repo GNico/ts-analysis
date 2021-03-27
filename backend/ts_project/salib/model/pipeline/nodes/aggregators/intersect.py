@@ -3,7 +3,7 @@ from ..node_result import NodeResult
 from ...params.boolean import Boolean
 from ....anomaly import Anomaly
 
-class And(Node):
+class Intersect(Node):
 
     def __init__(self, id):
         super().__init__(id)
@@ -35,10 +35,10 @@ class And(Node):
         return list(set(result)) # Remove duplicates
 
     def __str__(self):
-        return 'AND(' + ','.join([s.id for s in self.sources]) + ')'
+        return 'Intersect(' + ','.join([s.id for s in self.sources]) + ')'
 
     def desc(self):
-        return 'Combine overlapping anomalies from sources'
+        return 'Combine and merge overlapping anomalies from sources'
 
     def display(self):
-        return 'And'
+        return 'Intersect'
