@@ -40,7 +40,7 @@ class Quantile(NodeDetector):
         return "Quantile(%s,%s)[%s]" % (self.get_param_values() + (self.id,))
 
     def display(self):
-        return 'Inter-quantile range'
+        return 'Quantile'
 
     def desc(self):
         return 'Compare values with given quantiles and identify anomalies beyond inter-quantile range'
