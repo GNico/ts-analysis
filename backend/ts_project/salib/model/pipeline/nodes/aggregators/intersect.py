@@ -52,9 +52,26 @@ class Intersect(Node):
         return list(set(result)) # Remove duplicates
 
     def temporal_join(self, lhss, rhss):
-        # TODO
         result = []
-        return result
+        for lhs in lhss:
+            for rhs in rhss:
+                if lhs.start == rhs.start and lhs.end == rhs.end:
+                    score = max(lhs.score, rhs.score)
+                    desc = 'Intersecting(' + str(lhs.desc) + ',' + str(rhs.desc) + ')'
+                    # TODO consider issue with taking lhs series
+                    new_anomaly = Anomaly(lhs.series, lhs.start, lhs.end, score, desc)
+                    result.append(new_anomaly)
+                else:
+                    # Partial overlaps
+                    # Case left partial in right
+                    #if (lhs.start >= rhs.start and lhs.start <= rhs.end):
+                    # Case left all in right
+                    # Case right partial in left
+                    # Case right all in left
+
+
+
+        return list(set(result)) # Remove duplicates
 
     def __str__(self):
         return 'Intersect(' + ','.join([s.id for s in self.sources]) + ')[' + self.get_param('resolution').value + ']'

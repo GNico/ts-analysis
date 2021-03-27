@@ -26,6 +26,15 @@ class Anomaly:
             "source_node": self.source_node_id()
         }
 
+    def epoch_span(self):
+        from_timestamp = timestamp_to_epoch(self.start)
+        to_timestamp = timestamp_to_epoch(self.end)
+        return (from_timestamp, to_timestamp)
+
+    def epoch_span_secs(self):
+        epoch_span_ms = self.epoch_span()
+        return tuple(map(lambda x: x//1000, epoch_span_ms))
+
     def source_node_id(self):
         if self.source_node is not None:
             return self.source_node.id
