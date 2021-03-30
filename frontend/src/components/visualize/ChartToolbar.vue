@@ -38,8 +38,8 @@
     </div>
 
     <div class="level-right toolbar-right">
-      <div class="level-item datepicker-field">
-        <label class="label">From</label>
+      <div class="level-item is-flex is-align-items-center">
+        <label class="label mb-0 mr-2">From</label>
         <b-datepicker             
             :first-day-of-week="1"
             placeholder="Click to select..."
@@ -60,8 +60,8 @@
         </b-datepicker>
       </div>
 
-      <div class="level-item datepicker-field">
-        <label class="label">To</label>
+      <div class="level-item is-flex is-align-items-center">
+        <label class="label mb-0 mr-2">To</label>
         <b-datepicker          
             :first-day-of-week="1"
             placeholder="Click to select..."
@@ -182,16 +182,6 @@ export default {
 
 .toolbar-right > div:not(:last-child)  {
   margin-right: 0.75rem;
-}
-
-.datepicker-field {
-  display: flex;
-  align-items: center;
-}
-
-.datepicker-field > .label {
-  margin-bottom: 0;
-  margin-right: 0.5rem;
 }
 
 .options-card {

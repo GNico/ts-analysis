@@ -1,14 +1,19 @@
 <template>
 <div>
-  <section class="section">
+  <CardSeries 
+    :isActive="isOpenSeriesEdit" 
+    :id="currentSeriesId"
+    @close="isOpenSeriesEdit = false" />
+    
+  <section class="section p-4">
     <ChartToolbar 
-      class="char-bar" 
+      class="mb-3" 
       :zoomEnabled="zoomEnabled"
       @zoomToggle="toggleZoom"
       @refresh="forceRerender"
       @export="exportSeriesData"/>
 
-    <div class="chart-container is-gapless is-multiline">   
+    <div class="is-relative is-gapless is-multiline">   
       <div class="legends">
         <LegendSeriesTag 
           v-for="item in sortedSeries"
@@ -48,13 +53,7 @@
         @tagsCountRequest="getTagsCount"
         />
     </div>
-  </section>
- 
-  <CardSeries 
-    :isActive="isOpenSeriesEdit" 
-    :id="currentSeriesId"
-    @close="isOpenSeriesEdit = false" />
-  
+  </section>  
 </div>
 </template>
 
@@ -190,14 +189,6 @@ export default {
 
 
 <style scoped>
-.char-bar {
-  margin-bottom: 0.75rem;
-}
-
-.chart-container { 
-  position: relative;
- }
-
 .char-sec {
   height: inherit;
 }
@@ -210,9 +201,5 @@ export default {
 .legends {
   position: absolute;
   z-index: 999;
-}
-
-.section {
-  padding: 1rem;
 }
 </style>

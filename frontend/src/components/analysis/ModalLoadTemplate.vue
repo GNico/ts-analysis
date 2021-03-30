@@ -12,10 +12,11 @@
     hoverable
     :selected.sync="selected"
     @dblclick="load">
-    <template slot-scope="props">
        
       <b-table-column field="name" label="Name" sortable searchable>
-        {{ props.row.name }}
+        <template v-slot="props">
+          {{ props.row.name }}
+        </template>
         <template #searchable="props">
             <b-input
               v-model="props.filters[props.column.field]"
@@ -26,7 +27,9 @@
       </b-table-column>
 
       <b-table-column field="description" label="Description" searchable>
-        {{ props.row.description }}
+        <template v-slot="props">
+          {{ props.row.description }}
+        </template>        
         <template #searchable="props">
             <b-input
               v-model="props.filters[props.column.field]"
@@ -36,9 +39,7 @@
         </template>
       </b-table-column>
 
-  
-    </template>
-  </b-table>
+    </b-table>
 
   <template v-slot:footer-right>
     <div>

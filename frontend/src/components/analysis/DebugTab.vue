@@ -15,7 +15,6 @@
     <b-button type="is-primary" label="Inspect selected" @click="getNodesResults"> </b-button>
   </div>
 
-
   <div v-if="error" class="item-section">
     {{error}}
   </div>

@@ -109,14 +109,14 @@
     <div class="column is-full ">
       <div class="label is-small">Filters</div>
     </div>
-    <div class="column is-6 filters-column">
+    <div class="column is-6 pt-0">
       <TreeSelect 
         class="filters-box"
         rootName="All tags"
         :itemsTree="allTags"
         v-model="seriesOptions.tags" />
     </div>
-    <div class="column is-6 filters-column">
+    <div class="column is-6 pt-0">
       <TreeSelect 
         class="filters-box"
         rootName="All contexts"
@@ -247,10 +247,6 @@ export default {
 
 
 <style scoped>
-
-.filters-column {
-  padding-top: 0;
-}
 
 .filters-box {
   padding-left: 0.5rem;

@@ -17,7 +17,7 @@
     @delete="deleteModel"
   />
 
-  <div class="column is-3">
+  <div class="column is-3 pb-0">
     <!--Data options -->
     <div class="subtitle"> Data input </div>
     <b-field horizontal label="Client">
@@ -61,9 +61,9 @@
     </b-field> 
   </div>
 
-  <div class="column is-9 right-section">
+  <div class="column is-9 right-section pb-0">
     <!--Model building -->
-    <div class="subtitle subtitle-with-buttons"> 
+    <div class="subtitle is-flex is-justify-content-space-between"> 
       Detection model
       <b-field grouped position="is-right">
         <p class="control">
@@ -87,7 +87,7 @@
       </b-field>
     </div>
     <ModelBuilder 
-      class="model-box" 
+      class="pt-2" 
       :nodes="analysis.model"
       @input="updateAnalysis('model', $event)"
     />
@@ -184,18 +184,9 @@ export default {
   overflow-y: auto;
 }
 
-.subtitle-with-buttons {
-  display: flex;
-  justify-content: space-between;
-}
-
 .right-section {
   border-left: 1px solid rgba(255,255,255,0.1);
 } 
-
-.model-box {
-  padding-top: 0.5rem;
-}
 
 .sticky-container {
   position: sticky;
@@ -207,7 +198,5 @@ export default {
   padding-right: 0;
 }
 
-.column {
-  padding-bottom: 0;
-}
+
 </style>

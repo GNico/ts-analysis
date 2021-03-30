@@ -6,8 +6,8 @@
     <template #trigger="props">
       <div class="card-header" @mouseover="showDelete = true" @mouseleave="showDelete = false" >
         <span class="card-header-title long-text-with-ellipsis">
-          <span v-if="showDelete" class="tag is-danger header-id-tag" style="{padding: 0}" @click="deleteNode(id)"> &nbsp;X&nbsp; </span>
-          <span v-else class="tag is-info header-id-tag" > {{id}} </span>
+          <span v-if="showDelete" class="tag is-danger is-family-monospace p-1 mr-1" @click="deleteNode(id)"> &nbsp;X&nbsp; </span>
+          <span v-else class="tag is-info is-family-monospace p-1 mr-1" > {{id}} </span>
           <span class="has-text-grey-light">{{nodeDefiniton.display}} </span>
         </span>
         <a class="card-header-icon">
@@ -54,12 +54,12 @@
           </div> 
         </div>
 
-        <hr v-if="paramsComponents.length" class="separator">
+        <hr v-if="paramsComponents.length" class="my-3">
 
-        <div class="columns is-marginless is-paddingless is-vcentered" v-for="param in paramsComponents" 
+        <div class="columns is-marginless p-0 m-1 is-vcentered" v-for="param in paramsComponents" 
             v-if="checkConditions(param.conditions)"
             :key="param.id">
-            <div class="column is-6 field-col">
+            <div class="column is-6 is-paddingless">
               <label class="label">
                 {{param.display}} 
                 <b-tooltip type="is-info" :label="param.desc">
@@ -67,7 +67,7 @@
                 </b-tooltip>
               </label>
             </div> 
-            <div class="column is-6 field-col right-align">
+            <div class="column is-6 p-0 m-1 is-flex is-justify-content-flex-end">
               <component
                 class="short-field is-marginless" 
                 :is="param.component.name"
@@ -237,16 +237,6 @@ export default {
 
 
 <style scoped>
-.field-col {
-  padding: 0;
-  margin: 0.25rem;
-}
-
-.right-align {
-  display: flex;
-  justify-content: flex-end;
-}
-
 
 .long-text-with-ellipsis {
    max-width: 100%;
@@ -256,21 +246,10 @@ export default {
    display: inline-block;
 }
 
-
-.tag.header-id-tag {
-    font-family: monospace;
-    padding: 0.25rem;
-    margin-right: 0.25rem;
-}
-
-
 .node-list {
   flex: 1;
   min-width: 0;
   margin-left: 0.5rem;
 }
 
-.separator {
-  margin: 0.75rem 0;
-}
 </style>

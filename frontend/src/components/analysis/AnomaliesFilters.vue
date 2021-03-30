@@ -19,7 +19,7 @@
     custom
     paddingless
   >
-    <div class="modal-card" style="max-width:400px;">
+    <div class="modal-card" style="max-width:400px; border-radius: 0.4em">    
       <section class="modal-card-body">
         <b-field horizontal label="Min Duration">
           <b-tooltip
@@ -42,7 +42,7 @@
           </b-field> 
 
           <b-field horizontal label="Score threshold" >
-            <b-slider :value="scoreThreshold" @input="update('scoreThreshold', $event)" lazy indicator></b-slider>
+            <b-slider :value="scoreThreshold" @input="update('scoreThreshold', $event)" lazy></b-slider>
           </b-field>
 
           <b-field horizontal label="">
@@ -137,11 +137,4 @@ export default {
     }
   }
 }
-
-
 </script>
-
-
-<style>
-
-</style>

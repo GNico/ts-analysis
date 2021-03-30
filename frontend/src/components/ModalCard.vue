@@ -77,7 +77,7 @@ export default {
 
 <style>
 .custom-modal .modal-card {
-  border: 2px solid rgba(255,255,255, 0.05);
+  border: 2px solid rgba(255,255,255, 0.2);
   border-radius: 10px;
 }
 

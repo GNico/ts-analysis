@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div class="info-tiles">
+  <div class="my-4">
     <div class="tile is-ancestor has-text-centered">
       <div class="tile is-parent">
         <article class="tile is-child box has-background-grey-dark notification-tile">
@@ -53,8 +53,8 @@
                 <tr v-for="event in lastEvents">
                   <td>
                     <div><i class="mdi mdi-calendar"></i> {{ formatDate(event[0]) }}</div>
-                    <div class="tags tagcontainer">
-                      <i class="mdi mdi-tag-multiple"></i> 
+                    <div class="tags is-flex is-flex-wrap-nowrap">
+                      <i class="mdi mdi-tag-multiple mr-1"></i> 
                       <span v-if="!event[1].length"> No tags </span>
                       <span v-else v-for="tag in event[1]" class="tag is-primary">{{tag}}</span>
                     </div>
@@ -167,25 +167,12 @@ export default {
 
 
 <style>
-.info-tiles {
-  margin: 1rem 0;
-}
-
 .events-card .card-table {
   max-height: 350px;
   max-width: 400px;
   width: inherit;
   overflow-y: auto;
   overflow-x: auto;
-}
-
-.tagcontainer {
-  display: flex;
-  flex-flow: row nowrap;
-}
-
-.tagcontainer i {
-  margin-right: 0.25rem;
 }
 
 .notification-tile {

@@ -12,41 +12,45 @@
     hoverable
     :selected.sync="selected"
     @dblclick="load">
-    <template slot-scope="props">
        
       <b-table-column field="name" label="Name" sortable searchable>
-        {{ props.row.name }}
+        <template v-slot="props">
+          {{ props.row.name }}
+        </template>
         <template #searchable="props">
             <b-input
               v-model="props.filters[props.column.field]"
               placeholder="Search..."
               icon="magnify"
               size="is-small" />
-        </template>
+        </template>        
       </b-table-column>
 
       <b-table-column field="client" label="Client" sortable searchable >
-        {{ props.row.client }}
+        <template v-slot="props">
+          {{ props.row.client }}
+        </template>
         <template #searchable="props" >
             <b-input
               v-model="props.filters[props.column.field]"
               placeholder="Search..."
               icon="magnify"
-              size="is-small" />
-        </template>
+              size="is-small" />              
+        </template>        
       </b-table-column>
 
       <b-table-column field="description" label="Description" searchable>
-        {{ props.row.description }}
+        <template v-slot="props">
+          {{ props.row.description }}
+        </template>
         <template #searchable="props">
             <b-input
               v-model="props.filters[props.column.field]"
               placeholder="Search..."
               icon="magnify"
               size="is-small" />
-        </template>
+        </template>        
       </b-table-column>
-    </template>
   </b-table>
 
   <template v-slot:footer-right>

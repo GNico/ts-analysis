@@ -1,7 +1,7 @@
  <template>
 <div>
   <form @submit.prevent="handleSubmit">
-    <div class="modal-card" style="width: 300px">
+    <div class="modal-card" style="width: 300px; border-radius: 0.4em">
       <section class="modal-card-body">
         <b-field label="Name">
           <b-input

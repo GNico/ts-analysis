@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div class="list-header">
+  <div class="is-flex is-justify-content-space-between mb-4">
     <span class="is-size-5 has-text-white"> {{ title }} </span>
     <b-dropdown scrollable :max-height="200" aria-role="list" position="is-bottom-left">
       <template #trigger="{ active }">
@@ -85,14 +85,3 @@ export default {
 }
 
 </script>
-
-<style scoped>
-
-.list-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-}
-
-
-</style>

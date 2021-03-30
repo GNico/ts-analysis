@@ -13,22 +13,20 @@
   :show-detail-icon="false"
   @select="changeActiveAnomaly($event)">
 
-  <template slot-scope="props">
-    <b-table-column field="score" label="Score" sortable numeric >
-       <span class="tag is-info is-small">{{ props.row.score }}</span>
-    </b-table-column>
+  <b-table-column field="score" label="Score" sortable numeric v-slot="props">
+     <span class="tag is-info is-small">{{ props.row.score }}</span>
+  </b-table-column>
 
-    <b-table-column field="from" label="Start date" sortable centered>
-      {{ new Date(props.row.from).toLocaleString('es-AR', {month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}) }}      
-    </b-table-column>
-    
-    <b-table-column field="to" label="End date" sortable centered>
-      {{ new Date(props.row.to).toLocaleString('es-AR', {month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}) }}
-    </b-table-column>
+  <b-table-column field="from" label="Start date" sortable centered v-slot="props">
+    {{ new Date(props.row.from).toLocaleString('es-AR', {month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}) }}      
+  </b-table-column>
+  
+  <b-table-column field="to" label="End date" sortable centered v-slot="props">
+    {{ new Date(props.row.to).toLocaleString('es-AR', {month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}) }}
+  </b-table-column>
 
-  </template>
 
-  <template slot="detail" slot-scope="props">
+  <template #detail="props">
     <article :id="props.row.id" class="extra has-text-centered">                    
       <p>
           <strong>{{ props.row.id }}</strong>

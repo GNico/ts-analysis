@@ -12,28 +12,33 @@
 
   <div v-if="error" class="is-size-5 has-text-centered"> {{ error }} </div>
   <template v-else>
-    <div class="table-options">
+    <div class="is-flex is-align-items-center is-justify-content-space-between mb-3 ">
       <a class="button is-primary is-small" @click="loadModalActive = !loadModalActive">
         <b-icon  icon="playlist-plus"></b-icon>
         <span class="has-text-weight-semibold">New Monitor</span>
       </a>
 
-      <div class="selected-action has-text-right">
-        <span class="selected-label">On selected:</span> 
-        <a class="button is-small is-primary button-left" @click="performAction">{{currentAction}}</a>
-        <b-dropdown scrollable :max-height="200" aria-role="list" position="is-bottom-left">
-          <template #trigger="{ active }">
-            <b-button class="button-right" icon-left="menu-down" size="is-small" type="is-primary"/>
-          </template>
-
-          <b-dropdown-item 
-            v-for="action in onSelectedActions" 
-            :key="action"
-            @click="currentAction = action"
-            aria-role="listitem">
-            {{action}}
-          </b-dropdown-item>
-        </b-dropdown>
+      <div class="is-flex is-align-items-center has-text-right">
+        <span class="mr-2">On selected:</span> 
+        <div class="field has-addons">
+          <p class="control">
+            <a class="button is-small is-primary" @click="performAction">{{currentAction}}</a>
+          </p>
+          <p class="control">
+            <b-dropdown scrollable :max-height="200" aria-role="list" position="is-bottom-left">
+              <template #trigger="{ active }">
+                <b-button class="button-right is-shadowless" icon-left="menu-down" size="is-small" type="is-primary"/>
+              </template>
+              <b-dropdown-item 
+                v-for="action in onSelectedActions" 
+                :key="action"
+                @click="currentAction = action"
+                aria-role="listitem">
+                {{action}}
+              </b-dropdown-item>
+            </b-dropdown>
+          </p>
+        </div>        
       </div> 
     </div>
 
@@ -51,28 +56,27 @@
       :default-sort="['client', 'asc']"
       :custom-is-checked="(a,b)=> a.analysis === b.analysis"
       :checked-rows.sync="checked">
-      <template slot-scope="props">  
-        <b-table-column field="client" label="Client" sortable  >
-          {{ props.row.client }}       
-        </b-table-column>
-        <b-table-column field="name" label="Analysis Name" sortable >
-          {{ props.row.name }}      
-        </b-table-column>
-        <b-table-column field="description" label="Analysis Description" >
-          {{ props.row.description }}       
-        </b-table-column>
-        <b-table-column field="monitoring" label="Monitoring">
-          <span v-if="props.row.active" class="tag is-success""> Active </span>
-          <span v-else class="tag is-warning""> Disabled </span>
-        </b-table-column>
-        <b-table-column field="alerts" label="Alerts">
-          <span v-if="props.row.alerts_enabled" class="tag is-success""> Enabled </span>
-          <span v-else class="tag is-warning""> Disabled </span>
-        </b-table-column>
-        <b-table-column field="last_run" label="Last run">
-           {{ formatDate(props.row.last_run_at) }}
-        </b-table-column>
-      </template>
+
+      <b-table-column field="client" label="Client" sortable v-slot="props">
+        {{ props.row.client }}       
+      </b-table-column>
+      <b-table-column field="name" label="Analysis Name" sortable v-slot="props">
+        {{ props.row.name }}      
+      </b-table-column>
+      <b-table-column field="description" label="Analysis Description" v-slot="props">
+        {{ props.row.description }}       
+      </b-table-column>
+      <b-table-column field="monitoring" label="Monitoring" v-slot="props">
+        <span v-if="props.row.active" class="tag is-success""> Active </span>
+        <span v-else class="tag is-warning""> Disabled </span>
+      </b-table-column>
+      <b-table-column field="alerts" label="Alerts" v-slot="props">
+        <span v-if="props.row.alerts_enabled" class="tag is-success""> Enabled </span>
+        <span v-else class="tag is-warning""> Disabled </span>
+      </b-table-column>
+      <b-table-column field="last_run" label="Last run" v-slot="props">
+         {{ formatDate(props.row.last_run_at) }}
+      </b-table-column>
 
       <template #detail="props">
         <TableDetails :details="rowDetails[props.row.analysis]" @update="updateOptions(props.row.analysis, $event)"/>
@@ -221,28 +225,11 @@ export default {
 
 
 <style scoped>
-.table-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
-}
-
-.selected-action {
-  display: flex;
-  align-items: center;
-}
-
-.selected-label {
-  margin-right: 0.5rem;
-}
-
-.button-left {
-  border-radius: 3px 0 0 3px;
-}
-
 .button-right {
-  border-radius: 0 3px 3px 0;
+  border-left: 1px solid rgba(255,255,255,0.5);
+}
+
+.button-right:focus {
   border-left: 1px solid rgba(255,255,255,0.5);
 }
 </style>

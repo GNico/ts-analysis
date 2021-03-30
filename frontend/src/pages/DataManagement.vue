@@ -1,7 +1,7 @@
 <template>
 <div class="container">
   <div class="section">
-    <b-dropdown ref="dropdown" class="top-button" position="is-bottom-right" append-to-body trap-focus>
+    <b-dropdown ref="dropdown" class="mb-3" position="is-bottom-right" append-to-body trap-focus>
       <a
         class="button is-primary is-small"
         slot="trigger"
@@ -27,56 +27,22 @@
       :show-detail-icon="false"
       striped>       
 
-      <template slot-scope="props">
-        <b-table-column sortable field="name" label="Client">
+        <b-table-column sortable field="name" label="Client" v-slot="props">
           {{ props.row.name }}
         </b-table-column>
 
-        <!--Ready status-->
-        <template v-if="['Ready','Failed'].includes(props.row.status)")>
-          <b-table-column sortable field="count" label="Status">
-            <span class="tag" :class="props.row.status == 'Ready' ? 'is-success' : 'is-danger'">
-              {{props.row.status}}
-            </span> 
-          </b-table-column>
-          <b-table-column sortable field="created"  label="Created">
-            {{ formatDate(props.row.created) }}
-          </b-table-column>
-          <b-table-column sortable field="modified" label="Last modified">
-            {{ formatDate(props.row.modified) }}
-          </b-table-column>    
-          
-          <b-table-column label="Action" >
-            <template v-if="props.row.status == 'Ready'">
-              <b-tooltip label="View details">
-                <button class="transparent-button" @click="toggleDetails(props.row.name)">
-                  <b-icon icon="eye-outline" type="is-primary"></b-icon>
-                </button>
-              </b-tooltip>
-              <b-tooltip label="Edit">
-                <button class="transparent-button">
-                  <b-icon icon="pencil" type="is-primary"></b-icon>
-                </button>
-              </b-tooltip>
-              <b-tooltip label="Settings">
-                <button class="transparent-button">
-                  <b-icon icon="cog" type="is-primary"></b-icon>
-                </button>
-              </b-tooltip>
-            </template>
-            <b-tooltip label="Delete">
-              <button class="transparent-button" @click="confirmDelete(props.row.name)">
-                <b-icon icon="delete-forever" type="is-primary" size="is-samll"></b-icon>
-              </button>
-            </b-tooltip>
-          </b-table-column> 
-        </template>
+        <b-table-column sortable field="count" label="Status" v-slot="props"
+          :td-attrs="(row) => ({
+            colspan: getRowProps(row).colspan,
+          })"
+        >
+          <span v-if="getRowProps(props.row).colspan == 1" class="tag" :class="getRowProps(props.row).classColor">
+            {{props.row.status}}
+          </span> 
 
-        <!--Other status-->
-        <b-table-column v-else colspan=4 sortable field="count"  label="Status">
-          <div class="columns is-vcentered">
+          <div v-else class="columns is-vcentered">
             <div class="column is-3">
-              <span class="tag" :class="props.row.status == 'Indexing' ? 'is-info' : 'is-link'">
+              <span class="tag" :class="getRowProps(props.row).classColor">
                 {{ props.row.status }}
               </span> 
             </div>
@@ -86,10 +52,56 @@
           </div>
         </b-table-column>
 
-      </template>    
+        <b-table-column sortable field="created"  label="Created" v-slot="props"
+          :td-attrs="(row) => ({
+            class: getRowProps(row).colspan == 1 ? '' : 'is-hidden',
+          })"
+        >
+          {{ formatDate(props.row.created) }}
+        </b-table-column>
+
+        <b-table-column sortable field="modified" label="Last modified" v-slot="props"
+          :td-attrs="(row) => ({
+            class: getRowProps(row).colspan == 1 ? '' : 'is-hidden',
+          })"
+        >
+          {{ formatDate(props.row.modified) }}
+        </b-table-column>    
+
+          
+        <b-table-column label="Action" v-slot="props"
+          :td-attrs="(row) => ({
+            class: getRowProps(row).colspan == 1 ? '' : 'is-hidden',
+          })"
+        >
+          <template v-if="props.row.status == 'Ready'">
+            <b-tooltip label="View details">
+              <button class="transparent-button" @click="toggleDetails(props.row.name)">
+                <b-icon icon="eye-outline" type="is-primary"></b-icon>
+              </button>
+            </b-tooltip>
+            <b-tooltip label="Edit">
+              <button class="transparent-button">
+                <b-icon icon="pencil" type="is-primary"></b-icon>
+              </button>
+            </b-tooltip>
+            <b-tooltip label="Settings">
+              <button class="transparent-button">
+                <b-icon icon="cog" type="is-primary"></b-icon>
+              </button>
+            </b-tooltip>
+          </template>
+          <b-tooltip label="Delete">
+            <button class="transparent-button" @click="confirmDelete(props.row.name)">
+              <b-icon icon="delete-forever" type="is-primary" size="is-samll"></b-icon>
+            </button>
+          </b-tooltip>
+        </b-table-column> 
+
+
 
       <!--Row details-->
-      <template slot="detail" slot-scope="props">
+      <template #detail="props">
         <ClientDetails :name="props.row.name" :clientDetails="clientDetails"/>
       </template>  
     </b-table>
@@ -167,6 +179,30 @@ export default {
           this.$store.dispatch('clients/fetchClientDetails', name) 
         }
       },
+      getRowProps(row) {
+        switch (row.status) {
+          case 'Ready': 
+            return {
+              classColor: 'is-success',
+              colspan: 1,
+            }
+          case 'Failed': 
+            return {
+              classColor: 'is-danger',
+              colspan: 1,
+            }
+          case 'Indexing': 
+            return {
+              classColor: 'is-info',
+              colspan: 4,
+            }
+          case 'Waiting': 
+            return {
+              classColor: 'is-link',
+              colspan: 4,
+            }
+        }
+      }
     },
     created () {
       this.pollClients()
@@ -177,10 +213,3 @@ export default {
     },
 }
 </script>
-
-
-<style scoped>
-.top-button {
-  margin-bottom: 0.75rem;
-}
-</style>

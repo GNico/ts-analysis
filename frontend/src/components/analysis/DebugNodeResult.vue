@@ -6,7 +6,7 @@
       <b-dropdown
         trap-focus>
         <template #trigger>            
-          <a class="node-title has-text-white">
+          <a class="is-flex is-align-items-center has-text-white">
             <span><strong>{{node.display}}</strong></span>
             <b-icon v-if="node.paramsData" icon="menu-down"></b-icon>
           </a>
@@ -23,7 +23,7 @@
                   <div> {{node.desc}} </div>
                   <hr class="param-separator">
                   <div> Parameters: </div>
-                  <div v-for="entry in Object.entries(node.paramsData)" :label="entry[0]" class="param-list">
+                  <div v-for="entry in Object.entries(node.paramsData)" :label="entry[0]" class="ml-4">
                     <span> {{entry[0]}}: {{entry[1]}} </span>
                   </div>
                 </section>                            
@@ -112,21 +112,11 @@ export default {
 </script>
 
 
-
 <style scoped>
-.node-title {
-  display: flex;
-  align-items: center;
-}
-
 .param-separator {
   background-color: rgba(255,255,255,0.1);
   height: 1px;
   margin: 1rem 0 1rem 0;
-}
-
-.param-list {
-  margin-left: 1rem;
 }
 
 .thechart {
@@ -140,5 +130,4 @@ export default {
   align-items: center;
   height: 30px;
 }
-
 </style>

@@ -6,7 +6,6 @@ $grey-dark:    #073642;
 $grey-darker:  #002B36;
 $grey-darkest: #001e25;
 
-
 $orange       : #cb4b16;
 $yellow       : #b58900;
 $green        : #859900;
@@ -114,6 +113,8 @@ $navbar-dropdown-item-active-color: $grey-lighter;
 $dropdown-content-background-color: $grey-darker;
 $dropdown-item-color: $text;
 $dropdown-item-hover-color: $link-hover;
+$dropdown-content-padding-bottom: 0;
+$dropdown-content-padding-top: 0;
 
 $datepicker-item-color:	$grey-light;
 $datepicker-item-disabled-color: $grey;
@@ -127,3 +128,4 @@ $modal-card-title-color: $grey-light;
 $tag-background-color: transparent;
 $table-sticky-header-height: inherit;
 
+$tabs-boxed-link-active-background-color: $grey-dark;

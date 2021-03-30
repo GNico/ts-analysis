@@ -14,7 +14,7 @@
           <label class="label">Background</label>
         </div>
         <div class="field-body">
-          <div class="field is-narrow short-field">
+          <div class="field is-narrow shorter-field">
             <div class="control">
               <ColorSelect v-model="chartSettings.backgroundColor"/>
             </div>
@@ -136,16 +136,3 @@ export default {
 }
 
 </script>
-
-
-<style scoped>
-
-.color-input {
-  visibility: hidden;
-}
-
-.color-box {
-  max-width: 30%;
-}
-
-</style>
