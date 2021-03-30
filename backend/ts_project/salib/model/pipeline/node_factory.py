@@ -7,8 +7,8 @@ from .nodes.detectors.simple_threshold import SimpleThreshold
 from .nodes.detectors.interquartile_range import InterQuartileRange
 from .nodes.detectors.quantile import Quantile
 
-from .nodes.aggregators._and import And
-from .nodes.aggregators._or import Or
+from .nodes.aggregators.union import Union
+from .nodes.aggregators.intersect import Intersect
 
 class NodeFactory:
 
@@ -25,8 +25,8 @@ class NodeFactory:
             'InterQuartileRange': InterQuartileRange
         },
         'aggregator': {
-            'OR': Or,
-            'AND': And
+            'Union': Union,
+            'Intersect': Intersect,
         }
     }
 

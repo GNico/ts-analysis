@@ -1,6 +1,6 @@
-from ._or import Or
+from .union import Union
 
-class Root(Or):
+class Root(Union):
 
     def __init__(self):
         super().__init__('_Root')

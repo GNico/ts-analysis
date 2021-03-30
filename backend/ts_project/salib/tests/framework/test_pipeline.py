@@ -11,7 +11,7 @@ class TestPipeline(unittest.TestCase):
                 {
                     'id': '1',
                     'group': 'aggregator',
-                    'type': 'OR',
+                    'type': 'Union',
                     'params': [],
                     'sources': ['2', '3']
                 },
@@ -54,7 +54,7 @@ class TestPipeline(unittest.TestCase):
         self.assertEqual('_Root(1)', str(pipeline.root_node))
         self.assertEqual(1, len(pipeline.root_node.sources))
         orNode = pipeline.root_node.sources[0]
-        self.assertEqual('OR(2,3)', str(orNode))
+        self.assertEqual('Union(2,3)', str(orNode))
         self.assertEqual(2, len(orNode.sources))
         self.assertEqual('SimpleThreshold(None,None,False,False)[2]', str(orNode.sources[0]))
         self.assertEqual('SimpleThreshold(None,None,True,False)[3]', str(orNode.sources[1]))

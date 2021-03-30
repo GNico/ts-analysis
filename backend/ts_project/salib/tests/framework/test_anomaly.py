@@ -57,3 +57,7 @@ class TestAnomaly(unittest.TestCase):
             'source_node': 'test_node'
         }
         self.assertEqual(expected, anomaly.output_format())
+
+    def test_epoch_span(self):
+        anomaly = Anomaly.from_epoch(self.series, 1, 2, 1.0, 'awesome')
+        self.assertEqual((1, 2), anomaly.epoch_span_secs())
