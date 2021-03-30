@@ -11,6 +11,7 @@
       type="text" 
       size="is-small" 
       v-model="name"
+      lazy
       required
     />
   </b-field>
@@ -18,6 +19,7 @@
     <b-input 
       type="textarea" 
       size="is-small" 
+      lazy
       v-model="description"
     />
   </b-field>

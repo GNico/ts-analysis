@@ -74,7 +74,7 @@
           <label class="label">Interval</label>
         </div>
         <div class="field-body">
-          <div class="field is-narrow shorter-field">
+          <div class="field is-narrow short-field">
             <div class="control">
               <b-tooltip
                 label="Input must be a number followed by a valid letter [ m = minutes, h = hour, d = day ]"

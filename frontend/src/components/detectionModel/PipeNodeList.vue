@@ -1,5 +1,11 @@
 <template>
 <div>
+  <div class="notices is-top" :class="isDescriptionVisible ? '' : 'is-hidden'">
+    <div role="alert" class="toast is-info is-top" style="">
+      <div><strong class="has-text-white">{{display}}: </strong>{{ description }}</div>
+    </div>
+  </div>
+
   <div class="is-flex is-justify-content-space-between mb-4">
     <span class="is-size-5 has-text-white"> {{ title }} </span>
     <b-dropdown scrollable :max-height="200" aria-role="list" position="is-bottom-left">
@@ -15,6 +21,8 @@
         v-for="item in nodesDefinition" 
         :key="item.type"
         @click="addNode(item.type)"
+        @mouseover.native="showDesc(item)"
+        @mouseleave.native="hideDesc()"
         aria-role="listitem">
         {{item.display}}
       </b-dropdown-item>
@@ -29,8 +37,9 @@
     :nodeDefiniton="getNodeDef(item.type)"
     @nodeParamsChange="$emit('nodeParamsUpdate', $event)"
     @nodeSourceChange="$emit('nodeSourceUpdate', $event)"
-    @nodeDelete="$emit('nodeDelete', $event)">
-
+    @nodeDelete="$emit('nodeDelete', $event)"
+    @mouseover.native="showDesc(item)"
+    @mouseleave.native="hideDesc()">
   </PipeNode>
 
 </div>
@@ -38,7 +47,7 @@
 
 
 <script>
-import PipeNode from "./PipeNode"
+import PipeNode from "./PipeNode";
 
 export default {
   components: { PipeNode },
@@ -58,7 +67,9 @@ export default {
   },
   data() {
     return {
-
+      isDescriptionVisible: false,
+      display: '',
+      description: '',
     }
   },
   computed: {
@@ -79,9 +90,15 @@ export default {
     },
     getNode(id) {
       return this.nodes.find(item => item.id === id)
+    },
+    showDesc(item) {
+      this.display = item.display 
+      this.description = item.desc
+      this.isDescriptionVisible = true
+    },
+    hideDesc() {
+      this.isDescriptionVisible = false
     }
   }
-
 }
-
 </script>
