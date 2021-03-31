@@ -1,3 +1,5 @@
+import pandas as pd
+
 from ..node_transformer import NodeTransformer
 
 from ...params.string import String
