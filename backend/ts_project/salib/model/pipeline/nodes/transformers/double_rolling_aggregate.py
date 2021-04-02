@@ -117,7 +117,7 @@ class DoubleRollingAggregate(NodeTransformer):
             )
             s_rolling_right.name = s.name
         else:
-            s_shifted = pd.Series(s.values, s.index + pd.Timedelta(window[1]))
+            s_shifted = pd.Series(s.values, s.index + pd.Timedelta(window_rhs))
             s_shifted = s_shifted.append(
                 pd.Series(index=s.index, dtype="float64")
             )

@@ -11,8 +11,14 @@ class NodeTransformer(Node):
         if len(inputs) != 1:
             raise Exception("NodeTransformer must have exactly 1 input")
         input = inputs[0]
-        new_series = Series(self.transform(input.series))
+        new_pdseries = self.transform_and_validate(input.series)
+        new_series = Series(new_pdseries)
         return NodeResult(self, inputs=inputs, series=new_series)
+
+    def transform_and_validate(self, pdseries):
+        new_pdseries = self.transform(pdseries)
+        new_pdseries.dropna(inplace=True)
+        return new_pdseries
 
     def transform(self, series):
         raise Exception('Unimplemented transform() method for NodeTransformer')
