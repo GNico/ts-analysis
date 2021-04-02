@@ -52,27 +52,43 @@ class Intersect(Node):
         return list(set(result)) # Remove duplicates
 
     def temporal_join(self, lhss, rhss):
+        # TODO consider issue with taking lhs series
         result = []
         for lhs in lhss:
             for rhs in rhss:
                 if lhs.start == rhs.start and lhs.end == rhs.end:
-                    score = max(lhs.score, rhs.score)
-                    desc = 'Intersecting(' + str(lhs.desc) + ',' + str(rhs.desc) + ')'
-                    # TODO consider issue with taking lhs series
+                    score = Intersect.combined_scores(lhs, rhs)
+                    desc = Intersect.combined_desc(lhs, rhs)
                     new_anomaly = Anomaly(lhs.series, lhs.start, lhs.end, score, desc)
                     result.append(new_anomaly)
                 else:
-                    pass
-                    # Partial overlaps
-                    # Case left partial in right
-                    #if (lhs.start >= rhs.start and lhs.start <= rhs.end):
-                    # Case left all in right
-                    # Case right partial in left
-                    # Case right all in left
-
+                    fst, snd = sorted((lhs,rhs))
+                    # Total inclusion
+                    if snd.start >= fst.start and snd.end <= fst.end:
+                        score = Intersect.combined_scores(lhs, rhs)
+                        desc = Intersect.combined_desc(lhs, rhs)
+                        new_anomaly = Anomaly(lhs.series, snd.start, snd.end, score, desc)
+                        result.append(new_anomaly)
+                    # Partial inclusion
+                    elif fst.end >= snd.start and fst.end <= snd.end:
+                        score = Intersect.combined_scores(lhs, rhs)
+                        desc = Intersect.combined_desc(lhs, rhs)
+                        new_start = snd.start
+                        new_end = fst.end
+                        if new_start < new_end:
+                            new_anomaly = Anomaly(lhs.series, new_start, fst.end, score, desc)
+                            result.append(new_anomaly)
 
 
         return list(set(result)) # Remove duplicates
+
+    @staticmethod
+    def combined_scores(lhs, rhs):
+        return max(lhs.score, rhs.score)
+
+    @staticmethod
+    def combined_desc(lhs, rhs):
+        return 'Intersecting(' + str(lhs.desc) + ',' + str(rhs.desc) + ')'
 
     def __str__(self):
         return 'Intersect(' + ','.join([s.id for s in self.sources]) + ')[' + self.get_param('resolution').value + ']'
