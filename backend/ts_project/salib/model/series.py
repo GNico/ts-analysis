@@ -10,10 +10,7 @@ class Series:
             raise RuntimeError("Series must contain 2 or more data points!")
         self.start = pdseries.index[0]
         self.end = pdseries.index[-1]
-        if interval is None:
-            self.interval = self.calculate_interval()
-        else:
-            self.interval = interval
+        self.interval = self.calculate_interval() if interval is None else interval
 
     def calculate_interval(self):
         series = self.pdseries
