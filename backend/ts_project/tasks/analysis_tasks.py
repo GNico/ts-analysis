@@ -27,4 +27,5 @@ def perform_analysis(self, data):
     analyzer = Analyzer(pipeline=pipeline)
     analysis = analyzer.analyze(series)
 
-    return analysis.output_format()
+    output_json = analysis.output_format()
+    return output_json

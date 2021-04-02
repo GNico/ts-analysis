@@ -9,11 +9,10 @@ class StdNormalize(NodeTransformer):
         pdseries = series.pdseries
         mean = pdseries.mean()
         std = pdseries.std()
-
         if std == 0:
             std = 1
-
-        return (pdseries - mean) / std
+        std_series = (pdseries - mean) / std
+        return std_series
 
     def __str__(self):
         return "EMA(" + str(self.decay()) + ")[" + self.id + "]"

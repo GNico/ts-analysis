@@ -56,5 +56,5 @@ class Series:
         for i in range(0, self.span()):
             output.append(
                 [timestamp_to_epoch(self.pdseries.index[i]),
-                 int(self.pdseries[i])])
+                 float(self.pdseries[i])])
         return output
