@@ -34,9 +34,9 @@
           "id": "window",
           "type": "String",
           "display": "Window",
-          "desc": "Window size in time interval (eg: 1h)",
+          "desc": "Window size in time interval (eg: 12h)",
           "conditions": [],
-          "value": "30m"
+          "value": "12h"
         },
         {
           "id": "center",

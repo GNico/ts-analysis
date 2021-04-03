@@ -18,7 +18,7 @@ class RollingAggregate(NodeTransformer):
         self._closed = None
 
     def add_common_params(self):
-        self.add_required_param(String('window', 'Window', 'Window size in time interval (eg: 1h)', '30m'))
+        self.add_required_param(String('window', 'Window', 'Window size in time interval (eg: 12h)', '12h'))
         self.add_required_param(Boolean('center', 'Center', 'Center aggregation window around value', False))
         self.add_required_param(BoundedInt('min_periods', 'Min. periods', 'Min number of periods', 0, None, 0))
         agg_method_options = [
