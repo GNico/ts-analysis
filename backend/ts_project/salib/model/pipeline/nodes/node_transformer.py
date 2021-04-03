@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 from .node import Node
 from .node_result import NodeResult
@@ -19,7 +20,8 @@ class NodeTransformer(Node):
 
     def transform_and_validate(self, pdseries):
         new_pdseries = self.transform(pdseries)
-        new_pdseries.dropna(inplace=True)
+        with pd.option_context('mode.use_inf_as_na', True):
+            new_pdseries.dropna(inplace=True)
         inf_timestamps = list(new_pdseries[np.isinf(new_pdseries)].index)
         if len(inf_timestamps) > 0:
             raise ValueError('Found inf values from %s at: %s' % (self.id, inf_timestamps))
