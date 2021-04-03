@@ -21,7 +21,8 @@ class Pipeline:
         else:
             node_inputs = []
             for node_source in node.sources:
-                node_inputs.append(self.execute_node(node_source))    
+                node_inputs.append(self.execute_node(node_source))
+        node.validate_inputs(node_inputs)
         return node.execute(node_inputs)
 
     @staticmethod

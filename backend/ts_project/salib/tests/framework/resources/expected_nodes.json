@@ -4,7 +4,8 @@
       "type": "StdNormalize",
       "desc": "Normalize data such that mean = 0 and std dev = 1",
       "display": "Standard normalization",
-      "params": []
+      "params": [],
+      "num_required_inputs": 1
     },
     {
       "type": "Shift",
@@ -19,7 +20,8 @@
           "conditions": [],
           "value": "12h"
         }
-      ]
+      ],
+      "num_required_inputs": 1
     },
     {
       "type": "EMA",
@@ -38,7 +40,8 @@
           "strict_min": false,
           "strict_max": false
         }
-      ]
+      ],
+      "num_required_inputs": 1
     },
     {
       "type": "RollingAggregate",
@@ -161,7 +164,8 @@
           "strict_min": false,
           "strict_max": false
         }
-      ]
+      ],
+      "num_required_inputs": 1
     },
     {
       "type": "DoubleRollingAggregate",
@@ -418,7 +422,8 @@
           "strict_min": false,
           "strict_max": false
         }
-      ]
+      ],
+      "num_required_inputs": 1
     }
   ],
   "detector": [
@@ -459,7 +464,8 @@
           "conditions": [],
           "value": null
         }
-      ]
+      ],
+      "num_required_inputs": 1
     },
     {
       "type": "Quantile",
@@ -490,7 +496,8 @@
           "strict_min": false,
           "strict_max": false
         }
-      ]
+      ],
+      "num_required_inputs": 1
     },
     {
       "type": "InterQuartileRange",
@@ -505,7 +512,8 @@
           "conditions": [],
           "value": 0.3
         }
-      ]
+      ],
+      "num_required_inputs": 1
     }
   ],
   "aggregator": [
@@ -513,7 +521,8 @@
       "type": "Union",
       "desc": "Combine all anomalies from sources",
       "display": "Union",
-      "params": []
+      "params": [],
+      "num_required_inputs": null
     },
     {
       "type": "Intersect",
@@ -554,7 +563,8 @@
           ],
           "value": true
         }
-      ]
+      ],
+      "num_required_inputs": null
     }
   ]
 }

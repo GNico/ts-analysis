@@ -10,8 +10,8 @@ class Shift(NodeTransformer):
         self.add_required_param(String('delta', 'Time delta', 'Time delta to shift (eg: 1h)', '12h'))
 
 
-    def transform(self, series):
-        pdseries = series.pdseries
+    def transform(self, seriess):
+        pdseries = seriess[0].pdseries
         s_shifted = pd.Series(pdseries.values, pdseries.index + pd.Timedelta(self.delta()))
         s_shifted = s_shifted.append(
             pd.Series(index=pdseries.index, dtype="float64")

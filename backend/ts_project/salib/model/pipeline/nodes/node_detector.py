@@ -6,10 +6,9 @@ class NodeDetector(Node):
 
     def __init__(self, id):
         super().__init__(id)
+        super().set_required_inputs(1)
 
     def execute(self, inputs):
-        if len(inputs) != 1:
-            raise Exception("NodeDetector must have exactly 1 input")
         input = inputs[0]
         anomalies = self.anomalies(input)
         for anomaly in anomalies:

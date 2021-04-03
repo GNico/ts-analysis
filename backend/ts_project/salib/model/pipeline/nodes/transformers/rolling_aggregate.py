@@ -59,8 +59,8 @@ class RollingAggregate(NodeTransformer):
     def desc(self):
         return 'Rolling aggregate'
 
-    def transform(self, series):
-        return self.transform_pdseries(series.pdseries)
+    def transform(self, seriess):
+        return self.transform_pdseries(seriess[0].pdseries)
 
     def transform_pdseries(self, s):
         window, center, min_periods, agg = self.get_common_params()

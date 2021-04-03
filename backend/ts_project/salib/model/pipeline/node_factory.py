@@ -65,6 +65,7 @@ class NodeFactory:
                 entry['desc'] = instance.desc()
                 entry['display'] = instance.display()
                 entry['params'] = instance.params_definition()
+                entry['num_required_inputs'] = instance.num_required_inputs
                 nodes.append(entry)
             output[group] = nodes
         return output

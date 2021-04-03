@@ -5,8 +5,8 @@ class StdNormalize(NodeTransformer):
     def __init__(self, id):
         super().__init__(id)
 
-    def transform(self, series):
-        pdseries = series.pdseries
+    def transform(self, seriess):
+        pdseries = seriess[0].pdseries
         mean = pdseries.mean()
         std = pdseries.std()
         if std == 0:

@@ -79,8 +79,8 @@ class DoubleRollingAggregate(NodeTransformer):
     def desc(self):
         return 'Double rolling aggregate'
 
-    def transform(self, series):
-        s = series.pdseries
+    def transform(self, seriess):
+        s = seriess[0].pdseries
         window_lhs, window_rhs, center, min_periods_lhs, min_periods_rhs, agg_method_lhs, agg_method_rhs, diff = self.get_common_params()
 
         if center:
