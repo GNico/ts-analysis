@@ -5,6 +5,7 @@
     <div><b-icon icon="information-outline" size="is-small"/> Order of selection corresponds to the order of results</div>
     <GraphDataProvider :nodes="model">
       <LayeredGraphChart 
+        ref="graphChart"
         slot-scope="{chartNodes, chartEdges}" 
         :nodes="chartNodes" 
         :edges="chartEdges" 
@@ -12,7 +13,8 @@
         :centered="false" 
         @selected="selectedNodes = $event"/>
     </GraphDataProvider>
-    <b-button type="is-primary" label="Inspect selected" @click="getNodesResults"> </b-button>
+    <b-button type="is-primary" label="Inspect selected" @click="getNodesResults" :disabled="!isSelected"> </b-button>
+    <b-button type="is-primary" label="Clear all" @click="clearSelected" :disabled="!isSelected"> </b-button>
   </div>
 
   <div v-if="error" class="item-section">
@@ -88,6 +90,9 @@ export default {
         }
       })
       return formatted
+    },
+    isSelected() {
+      return this.selectedNodes.length > 0
     }
 
   },
@@ -136,6 +141,9 @@ export default {
     },
     updateRange(newRange) {
       this.extremes = newRange
+    },
+    clearSelected() {
+      this.$refs.graphChart.clearSelected()
     }
   },
   created() {

@@ -38,6 +38,11 @@ export default {
       selectedNodes: [],    
     }
   },
+  computed: {
+    cursor() {
+      return this.selectable ? 'cursor: pointer;' : ''
+    },
+  },
   methods: {
     createLayout() {
       this.g = new dagreD3.graphlib.Graph().setGraph({})
@@ -47,11 +52,11 @@ export default {
         item.rx = item.ry = 5;
         this.g.setNode(item.id, item);
         if (this.selectedNodes.includes(item.id)) {
-          this.g.node(item.id).style = 'fill: green; stroke: yellow;'
-          this.g.node(item.id).labelStyle = 'fill:  yellow;'
+          this.g.node(item.id).style = 'fill: green; stroke: yellow;' + this.cursor
+          this.g.node(item.id).labelStyle = 'fill:  yellow;' + this.cursor
         } else {
-          this.g.node(item.id).style = 'fill:#005aff; stroke: white;'
-          this.g.node(item.id).labelStyle = 'fill:  white;'
+          this.g.node(item.id).style = 'fill:#005aff; stroke: white;' + this.cursor
+          this.g.node(item.id).labelStyle = 'fill:  white;' + this.cursor
         }        
       });
       // Link relationship
@@ -68,13 +73,20 @@ export default {
       let index = this.selectedNodes.findIndex(elem => elem == nodeId)
       if (index === -1) {
         this.selectedNodes.push(nodeId)
-        d3.select("#" + nodeId + ' rect').attr('style', 'fill: green; stroke: yellow')
-        d3.select("#" + nodeId + ' text').attr('style', 'fill: yellow;')
+        d3.select("#" + nodeId + ' rect').attr('style', 'fill: green; stroke: yellow;' + this.cursor) 
+        d3.select("#" + nodeId + ' text').attr('style', 'fill: yellow;' + this.cursor) 
       } else {
         this.selectedNodes.splice(index, 1)
-        d3.select("#" + nodeId + ' rect').attr('style', 'fill: #005aff; stroke: white')
-        d3.select("#" + nodeId + ' text').attr('style', 'fill:  white;')
+        d3.select("#" + nodeId + ' rect').attr('style', 'fill: #005aff; stroke: white;' + this.cursor) 
+        d3.select("#" + nodeId + ' text').attr('style', 'fill:  white;' + this.cursor)
       }
+    },
+    clearSelected() {
+      this.selectedNodes.forEach(elem => {
+        d3.select("#" + elem + ' rect').attr('style', 'fill: #005aff; stroke: white;' + this.cursor) 
+        d3.select("#" + elem + ' text').attr('style', 'fill:  white;' + this.cursor)
+      })
+      this.selectedNodes = []
     },
     drawChart() {
       //Draw graphics

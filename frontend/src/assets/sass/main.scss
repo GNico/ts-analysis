@@ -46,3 +46,11 @@
 .b-table .table tr.detail {
   background: $grey-darker;
 }
+
+//fix unwanted outline on tabs
+.tab-item:focus {
+    outline: none;
+}
+[role=tabpanel]:focus { 
+    outline: none; 
+}

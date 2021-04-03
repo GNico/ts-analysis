@@ -229,7 +229,10 @@ export default {
         tooltip: {
           split: false,
           shared: true,
-          valueDecimals: 0,
+          pointFormatter: function() {
+            let val = (this.y % 1) ? parseFloat(this.y).toFixed(2) : this.y
+            return 'Value: <b>' + val + '</b><br/>'
+          } 
         },  
         plotOptions: {
           arearange: {

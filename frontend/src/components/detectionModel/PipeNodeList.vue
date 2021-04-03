@@ -22,7 +22,7 @@
         :key="item.type"
         @click="addNode(item.type)"
         @mouseover.native="showDesc(item)"
-        @mouseleave.native="hideDesc()"
+        @mouseleave.native="hideDesc"
         aria-role="listitem">
         {{item.display}}
       </b-dropdown-item>
@@ -37,10 +37,7 @@
     :nodeDefiniton="getNodeDef(item.type)"
     @nodeParamsChange="$emit('nodeParamsUpdate', $event)"
     @nodeSourceChange="$emit('nodeSourceUpdate', $event)"
-    @nodeDelete="$emit('nodeDelete', $event)"
-    @mouseover.native="showDesc(item)"
-    @mouseleave.native="hideDesc()">
-  </PipeNode>
+    @nodeDelete="$emit('nodeDelete', $event)"/>
 
 </div>
 </template>
