@@ -32,7 +32,8 @@ function validate(bidirectionalNodes) {
             }         
         }
     })
-    return validationMessages
+    return []
+   // return validationMessages
 
 }
 

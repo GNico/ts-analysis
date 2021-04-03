@@ -140,7 +140,7 @@ export default {
       }
     },
     allowMultiple() {
-      return this.nodeData.group === 'aggregator'
+      return this.nodeData.group === 'aggregator' || this.nodeData.group === 'transformer'
     }
   },
   methods: {
