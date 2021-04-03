@@ -123,11 +123,12 @@ export default {
     deleteNode(id) {
       let modelCopy = cloneDeep(this.nodes)
       for (var i = modelCopy.length - 1; i >= 0; i--) {
+        console.log(modelCopy[i])
         if (modelCopy[i].id === id) {
           modelCopy.splice(i, 1)
         } else {
           for (var j = modelCopy[i].sources.length - 1; j >= 0; j--) {
-            if (modelCopy[i].sources[j].id === id) {
+            if (modelCopy[i].sources[j] === id) {
               modelCopy[i].sources.splice(j, 1)
             }
           }
