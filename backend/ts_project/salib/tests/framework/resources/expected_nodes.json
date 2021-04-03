@@ -7,6 +7,21 @@
       "params": []
     },
     {
+      "type": "Shift",
+      "desc": "Shift series in time by a fixed time delta",
+      "display": "Time shift",
+      "params": [
+        {
+          "id": "delta",
+          "type": "String",
+          "display": "Time delta",
+          "desc": "Time delta to shift (eg: 1h)",
+          "conditions": [],
+          "value": "12h"
+        }
+      ]
+    },
+    {
       "type": "EMA",
       "desc": "Exponential moving average with decay rate",
       "display": "Exponential moving average",

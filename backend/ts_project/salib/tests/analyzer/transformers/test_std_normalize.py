@@ -8,20 +8,38 @@ from model.pipeline.node_factory import NodeFactory
 from model.test.test_series_builder import TestSeriesBuilder
 from model.test.testcase import TestCase
 
-class TestRollingAggregate(unittest.TestCase):
+from model.utils import timestamp_to_epoch
 
-    def test_rolling_aggregate_mean(self):
+class TestStdNormalize(unittest.TestCase):
+
+    def test_std_normalize(self):
         series = self.build_triangle()
         self.assertEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0], series.as_list())
         
-        factory = NodeFactory.transformer('test', 'RollingAggregate')
-        factory.set_param_value('window', 2)
-        factory.set_param_value('center', False)
-        factory.set_param_value('min_periods', 0)
-        factory.set_param_value('agg_method', 'mean')
-        ram = factory.build()
+        factory = NodeFactory.transformer('test', 'StdNormalize')
+        stdnormalize = factory.build()
 
-        self.case(series, ram, [0.0, 0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.0, 8.5, 7.5, 6.5, 5.5, 4.5, 3.5, 2.5, 1.5, 0.5])
+        self.case(series, stdnormalize, 
+            [-1.5270292013639366,
+            -1.1876893788386174,
+            -0.8483495563132981,
+            -0.5090097337879789,
+            -0.16966991126265962,
+            0.16966991126265962,
+            0.5090097337879789,
+            0.8483495563132981,
+            1.1876893788386174,
+            1.5270292013639366,
+            1.5270292013639366,
+            1.1876893788386174,
+            0.8483495563132981,
+            0.5090097337879789,
+            0.16966991126265962,
+            -0.16966991126265962,
+            -0.5090097337879789,
+            -0.8483495563132981,
+            -1.1876893788386174,
+            -1.5270292013639366])
 
     def case(self, series, node, expected_series):
         pipeline = Pipeline(node)

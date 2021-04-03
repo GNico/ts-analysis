@@ -15,7 +15,7 @@ class StdNormalize(NodeTransformer):
         return std_series
 
     def __str__(self):
-        return "EMA(" + str(self.decay()) + ")[" + self.id + "]"
+        return "Standardize[" + self.id + "]"
 
     def display(self):
         return 'Standard normalization'

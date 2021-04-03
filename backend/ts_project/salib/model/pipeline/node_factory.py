@@ -1,5 +1,6 @@
 from .nodes.transformers.ema import EMA
 from .nodes.transformers.std_normalize import StdNormalize
+from .nodes.transformers.shift import Shift
 from .nodes.transformers.rolling_aggregate import RollingAggregate
 from .nodes.transformers.double_rolling_aggregate import DoubleRollingAggregate
 
@@ -15,6 +16,7 @@ class NodeFactory:
     NODE_TYPES = {
         'transformer': {
             'StdNormalize': StdNormalize,
+            'Shift': Shift,
             'EMA': EMA,
             'RollingAggregate': RollingAggregate,
             'DoubleRollingAggregate': DoubleRollingAggregate
