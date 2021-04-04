@@ -3,10 +3,10 @@ from .analysis import Analysis
 class Analyzer:
 
     def __init__(self, pipeline, config={}):
-        self.anomaly_pipeline = pipeline
+        self.pipeline = pipeline
         self.config = config
 
-    def analyze(self, series):
-        result = self.anomaly_pipeline.execute(series)
+    def analyze(self, inputs):
+        result = self.pipeline.execute(inputs)
         anomalies = result.anomalies
-        return Analysis(series, result, anomalies)
+        return Analysis(inputs, result, anomalies)
