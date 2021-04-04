@@ -2,8 +2,8 @@ from .nodes.transformers.ema import EMA
 from .nodes.transformers.difference import Difference
 from .nodes.transformers.std_normalize import StdNormalize
 from .nodes.transformers.shift import Shift
+from .nodes.transformers.identity import Identity
 from .nodes.transformers.rolling_aggregate import RollingAggregate
-from .nodes.transformers.double_rolling_aggregate import DoubleRollingAggregate
 
 from .nodes.detectors.simple_threshold import SimpleThreshold
 from .nodes.detectors.interquartile_range import InterQuartileRange
@@ -18,10 +18,10 @@ class NodeFactory:
         'transformer': {
             'StdNormalize': StdNormalize,
             'Shift': Shift,
+            'Identity': Identity,
             'EMA': EMA,
             'Difference': Difference,
             'RollingAggregate': RollingAggregate,
-            'DoubleRollingAggregate': DoubleRollingAggregate
         },
         'detector': {
             'SimpleThreshold': SimpleThreshold,
