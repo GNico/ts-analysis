@@ -43,10 +43,11 @@ class Node:
         self.set_param(new_param)
 
     def validate_inputs(self, inputs):
-        if self.num_required_inputs() is not None:
+        num_required_inputs = self.num_required_inputs()
+        if num_required_inputs is not None:
             num_inputs = len(inputs)
-            if num_inputs != self.num_required_inputs:
-                raise ValueError("Node %s must have %s inputs, %s given" %(self.id, self.num_required_inputs, num_inputs))
+            if num_inputs != num_required_inputs:
+                raise ValueError("Node %s must have %s inputs, %s given" %(self.id, num_required_inputs, num_inputs))
 
     def num_required_inputs(self):
         count = len(self.input_names)

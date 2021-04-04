@@ -1,4 +1,5 @@
 from .nodes.transformers.ema import EMA
+from .nodes.transformers.difference import Difference
 from .nodes.transformers.std_normalize import StdNormalize
 from .nodes.transformers.shift import Shift
 from .nodes.transformers.rolling_aggregate import RollingAggregate
@@ -18,6 +19,7 @@ class NodeFactory:
             'StdNormalize': StdNormalize,
             'Shift': Shift,
             'EMA': EMA,
+            'Difference': Difference,
             'RollingAggregate': RollingAggregate,
             'DoubleRollingAggregate': DoubleRollingAggregate
         },

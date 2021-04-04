@@ -19,11 +19,11 @@ class Pipeline:
             return node.execute([NodeResult(None, [], series=self.series)])
         # Else we calculate recursively all inputs
         else:
-            node_inputs = []
+            node_input_results = []
             for node_source in node.sources:
-                node_inputs.append(self.execute_node(node_source))
-        node.validate_inputs(node_inputs)
-        return node.execute(node_inputs)
+                node_input_results.append(self.execute_node(node_source))
+        node.validate_inputs(node_input_results)
+        return node.execute(node_input_results)
 
     @staticmethod
     def from_json(obj):

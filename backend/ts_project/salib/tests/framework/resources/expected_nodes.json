@@ -59,6 +59,46 @@
       }
     },
     {
+      "type": "Difference",
+      "desc": "Difference operator",
+      "display": "Difference",
+      "params": [
+        {
+          "id": "metric",
+          "type": "Select",
+          "display": "Difference metric",
+          "desc": "Difference metric between window values",
+          "conditions": [],
+          "value": "sub",
+          "options": [
+            {
+              "code": "sub",
+              "display": "Substract"
+            },
+            {
+              "code": "l1",
+              "display": "L1 distance metric (mod sum)"
+            },
+            {
+              "code": "rel_diff",
+              "display": "Relative difference"
+            },
+            {
+              "code": "abs_rel_diff",
+              "display": "Absolute relative difference"
+            }
+          ]
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 2,
+        "names": [
+          "left",
+          "right"
+        ]
+      }
+    },
+    {
       "type": "RollingAggregate",
       "desc": "Rolling aggregate",
       "display": "Rolling Aggregate",
