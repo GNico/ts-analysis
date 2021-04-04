@@ -5,7 +5,12 @@
       "desc": "Normalize data such that mean = 0 and std dev = 1",
       "display": "Standard normalization",
       "params": [],
-      "num_required_inputs": 1
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
     },
     {
       "type": "Shift",
@@ -21,7 +26,12 @@
           "value": "12h"
         }
       ],
-      "num_required_inputs": 1
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
     },
     {
       "type": "EMA",
@@ -41,7 +51,12 @@
           "strict_max": false
         }
       ],
-      "num_required_inputs": 1
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
     },
     {
       "type": "RollingAggregate",
@@ -165,7 +180,12 @@
           "strict_max": false
         }
       ],
-      "num_required_inputs": 1
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
     },
     {
       "type": "DoubleRollingAggregate",
@@ -423,7 +443,12 @@
           "strict_max": false
         }
       ],
-      "num_required_inputs": 1
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
     }
   ],
   "detector": [
@@ -465,7 +490,12 @@
           "value": null
         }
       ],
-      "num_required_inputs": 1
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
     },
     {
       "type": "Quantile",
@@ -497,7 +527,12 @@
           "strict_max": false
         }
       ],
-      "num_required_inputs": 1
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
     },
     {
       "type": "InterQuartileRange",
@@ -513,7 +548,12 @@
           "value": 0.3
         }
       ],
-      "num_required_inputs": 1
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
     }
   ],
   "aggregator": [
@@ -522,7 +562,10 @@
       "desc": "Combine all anomalies from sources",
       "display": "Union",
       "params": [],
-      "num_required_inputs": null
+      "inputs": {
+        "num_required_inputs": null,
+        "names": []
+      }
     },
     {
       "type": "Intersect",
@@ -564,7 +607,10 @@
           "value": true
         }
       ],
-      "num_required_inputs": null
+      "inputs": {
+        "num_required_inputs": null,
+        "names": []
+      }
     }
   ]
 }

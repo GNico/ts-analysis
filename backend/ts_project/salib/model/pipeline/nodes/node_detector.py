@@ -6,7 +6,7 @@ class NodeDetector(Node):
 
     def __init__(self, id):
         super().__init__(id)
-        super().set_required_inputs(1)
+        super().set_input_names(['input'])
 
     def execute(self, inputs):
         input = inputs[0]

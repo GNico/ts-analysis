@@ -8,7 +8,7 @@ class Node:
         self.required_params = {}
         self.sources = []
         self.debug = True
-        self.num_required_inputs = None
+        self.input_names = []
 
     def display(self):
         raise Exception('Undefined display name: ' + type(self).__name__)
@@ -43,13 +43,26 @@ class Node:
         self.set_param(new_param)
 
     def validate_inputs(self, inputs):
-        if self.num_required_inputs is not None:
+        if self.num_required_inputs() is not None:
             num_inputs = len(inputs)
             if num_inputs != self.num_required_inputs:
                 raise ValueError("Node %s must have %s inputs, %s given" %(self.id, self.num_required_inputs, num_inputs))
 
-    def set_required_inputs(self, n):
-        self.num_required_inputs = n
+    def num_required_inputs(self):
+        count = len(self.input_names)
+        if count == 0:
+            return None
+        else:
+            return count
+
+    def set_input_names(self, input_names):
+        self.input_names = input_names
+
+    def inputs_definition(self):
+        return {
+            'num_required_inputs': self.num_required_inputs(),
+            'names': self.input_names
+        }
 
     def get_param(self, id):
         if id in self.params: 
