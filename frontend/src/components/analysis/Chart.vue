@@ -91,7 +91,7 @@ export default {
       var cdata = []
       if (this.seriesData.length > 0) {
         cdata.push({
-          name: 'Average',
+          name: 'Avg',
           type: 'line',
           data: this.seriesData,
           zIndex: 2,
