@@ -79,11 +79,19 @@ export default {
         max: this.range.end
       }
     }, 
+    arearangedata() {
+      let newdata = []
+      this.seriesData.forEach(point => {
+        newdata.push([ point[0], point[1], point[1] ])
+      })
+      return newdata
+    },
+
     chartData() {
       var cdata = []
       if (this.seriesData.length > 0) {
         cdata.push({
-          name: 'Value',
+          name: 'Average',
           type: 'line',
           data: this.seriesData,
           zIndex: 2,
@@ -95,6 +103,22 @@ export default {
               lineWidthPlus: 0
             }
           },
+        },
+        {
+          name: 'Range',
+          type: 'arearange',
+          data: this.arearangedata,
+          zIndex: 1,
+          color: this.seriesColor,
+          fillOpacity: 0.3,
+          enableMouseTracking: true,
+          lineWidth: 0,
+          states: {
+            hover: {
+              lineWidthPlus: 0
+            }
+          },
+
         })
       } else {
         cdata.push({          

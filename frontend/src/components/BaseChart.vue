@@ -14,7 +14,6 @@
 <script>
 import { DefaultChartSettings } from '../config/settings.js'
 import { nanoid } from 'nanoid'
-
 import Highcharts from 'highcharts'
 
 function sum(arr) {
@@ -229,42 +228,33 @@ export default {
         tooltip: {
           split: false,
           shared: true,
-          pointFormatter: function() {
-            let val = (this.y % 1) ? parseFloat(this.y).toFixed(2) : this.y
-            return 'Value: <b>' + val + '</b><br/>'
-          } 
         },  
         plotOptions: {
-        /* not needed for now since it's not used atm. In case we need it, change obsolete approximation callback
           arearange: {
             dataGrouping: {
               enabled: true,
               groupPixelWidth: 6,
               smoothed: true,
-              approximation: function (low, high) {
+              approximation: 'range',
+             /* approximation: function (low, high) {
                 return [sum(low), sum(high)];
-              }, 
+              }, */
+            },
+          }, 
+          line: {
+            tooltip: {
+              pointFormatter: function() {
+                let val = (this.y % 1) ? parseFloat(this.y).toFixed(2) : this.y
+                return '<span style="color:' + this.color + '">● </span>' +  this.series.name + ': <b>'  + val + '</b><br/>'
+              }
             }
-          }, */
+          },
           series: {
             dataGrouping: {
               enabled: true,
               groupPixelWidth: 6,
               smoothed: true,
-              approximation: 'average'
-           /*   approximation: function(arr) {
-                var start = this.dataGroupInfo.start;
-                console.log(
-                  'dataGroupInfo:',
-                    this.dataGroupInfo,
-                    'Raw data:',
-                    this.options.data.slice(
-                        start,
-                        start + this.dataGroupInfo.length
-                    )
-                )
-                return sum(arr) 
-              } */
+              approximation: 'average',                        
             },
             animation: false,
             lineWidth: this.normalizedSettings.lineWidth,
