@@ -40,8 +40,10 @@
       :loading="loading"
       :activeAnomaly="activeAnomalyId"
       :range="extremes"
+      :syncCrosshairEnabled="true"
       @changeActive="activeAnomalyId = $event"
-      @updateRange="updateRange" />
+      @updateRange="updateRange"
+       />
   </div>
 
   <div class="column is-4" :style="{height: height + 'px'}">     

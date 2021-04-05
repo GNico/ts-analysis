@@ -47,6 +47,11 @@ import {nanoid} from "nanoid"
 
 export default {
   components: { DebugNodeResult, GraphDataProvider, LayeredGraphChart },
+  provide() {
+    return {
+      sharedState: this.sharedState
+    }
+  },
   data() {
     return {
       selectedNodes: [],
@@ -54,6 +59,9 @@ export default {
       results: {},
       error: '',
       extremes: {},
+      sharedState: {
+        crosshair: {}
+      }
     }
   },
   computed: {

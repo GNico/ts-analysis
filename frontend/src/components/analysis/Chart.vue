@@ -6,7 +6,10 @@
   :loading="loading"
   @changeActiveBand="setActiveAnomaly"
   @changedExtremes="updateExtremes"
-  :extremes="extremes" />
+  :extremes="extremes" 
+  @crosshairMove="syncCrosshairs"
+  :crosshair="crosshair"
+  :syncCrosshairEnabled="syncCrosshairEnabled"/>
 </template>
 
 
@@ -18,6 +21,7 @@ import debounce from "lodash/debounce";
 
 export default {
   components: { BaseChart },
+  inject: ['sharedState'],
   props: {   
     seriesData: {
       type: Array,
@@ -50,6 +54,10 @@ export default {
           end: null
         }
       }
+    },
+    syncCrosshairEnabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -57,6 +65,9 @@ export default {
     }
   },
   computed: {
+    crosshair() {
+      return this.sharedState ? this.sharedState.crosshair : {}
+    },
     extremes() {
       return {
         min: this.range.start,
@@ -125,6 +136,11 @@ export default {
     },
     triggerMwheelzoomUpdate(event) {
       this.$emit('updateRange', { start: Math.round(event.min), end: Math.round(event.max) })
+    },
+    syncCrosshairs(event) {
+      if (this.syncCrosshairEnabled && this.sharedState) {
+        this.sharedState.crosshair = event
+      }
     }
   },
   created() {
