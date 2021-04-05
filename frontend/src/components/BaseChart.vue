@@ -235,6 +235,7 @@ export default {
           } 
         },  
         plotOptions: {
+        /* not needed for now since it's not used atm. In case we need it, change obsolete approximation callback
           arearange: {
             dataGrouping: {
               enabled: true,
@@ -242,15 +243,28 @@ export default {
               smoothed: true,
               approximation: function (low, high) {
                 return [sum(low), sum(high)];
-              },
+              }, 
             }
-          },
+          }, */
           series: {
             dataGrouping: {
               enabled: true,
               groupPixelWidth: 6,
               smoothed: true,
-              approximation: 'sum'
+              approximation: 'average'
+           /*   approximation: function(arr) {
+                var start = this.dataGroupInfo.start;
+                console.log(
+                  'dataGroupInfo:',
+                    this.dataGroupInfo,
+                    'Raw data:',
+                    this.options.data.slice(
+                        start,
+                        start + this.dataGroupInfo.length
+                    )
+                )
+                return sum(arr) 
+              } */
             },
             animation: false,
             lineWidth: this.normalizedSettings.lineWidth,

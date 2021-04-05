@@ -17,11 +17,16 @@
 import { DefaultChartSettings } from '../../config/settings'
 import BaseChart from "../BaseChart";
 import debounce from "lodash/debounce";
-
+import throttle from "lodash/throttle";
 
 export default {
   components: { BaseChart },
-  inject: ['sharedState'],
+  inject: {
+    sharedState: {
+      name: 'sharedState',
+      default: {}
+    }
+  },
   props: {   
     seriesData: {
       type: Array,
@@ -146,6 +151,7 @@ export default {
   created() {
     this.triggerZoomUpdate = debounce(this.triggerZoomUpdate, 400, {'leading': true, 'trailing': false})
     this.triggerMwheelzoomUpdate = debounce(this.triggerMwheelzoomUpdate, 400, {'leading': false, 'trailing': true})
+    this.syncCrosshairs = throttle(this.syncCrosshairs, 50, {'leading': true, 'trailing': true})
   },
 }
 </script>
