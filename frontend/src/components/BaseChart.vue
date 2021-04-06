@@ -64,6 +64,10 @@ export default {
       type: Object,
       default: () => { return {} }
     },
+    tooltipFormatter: {
+      type: Function,
+      default: undefined
+    }
   },
   data () {
     return {
@@ -229,6 +233,30 @@ export default {
           split: false,
           shared: true,
           xDateFormat: '%A, %e %b %Y, %H:%M',
+          useHTML: true,
+
+
+
+          formatter: this.tooltipFormatter
+
+
+        /*   function() { 
+
+            var d = new Date(this.x);
+
+            //console.log( this.points[0].series.currentDataGrouping);
+
+            var header = '<small>' + d.toString().split(' ')[0] + ', ' + d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear() +'</small><br>'
+            let val = (this.points[0].y % 1) ? parseFloat(this.points[0].y).toFixed(2) : this.points[0].y
+
+            var text =  header  +
+            'Value: <b>' + val + '</b><br>' +
+            'Min: <b>' + this.points[1].point.low + '</b><br>' +
+            'Max: <b>' + this.points[1].point.high + '</b>'  
+
+            return text
+          } */
+
         },  
         plotOptions: {
           arearange: {
