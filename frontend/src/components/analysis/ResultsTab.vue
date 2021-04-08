@@ -7,7 +7,7 @@
     <div v-else class="columns is-fullheight">
       <div class="column is-4 side-menu is-hidden-mobile">        
         <div class="table-header has-text-white">
-          <div> <strong class="has-text-grey-light" > <i> Anomalies </i></strong></div>
+          <div> <strong class="has-text-white" > <i> Anomalies </i></strong></div>
           <AnomaliesFilters v-bind="activeOptions" @update="updateOptions"/> 
         </div>
 
@@ -22,10 +22,10 @@
       <div class="column main-content">
         <Chart       
           :seriesData="seriesData"
-          :baseline="baseline"
           :anomalies="anomalies"
           :loading="loading"
           :activeAnomaly="activeAnomaly"
+          :showMinMax="activeOptions.showMinMax"
           @changeActive="updateOptions({activeAnomalyId: $event})"
           @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" />
       </div>
@@ -73,13 +73,7 @@ export default {
               this.resultsData && 
               this.resultsData.hasOwnProperty("series") && 
               this.activeOptions.showSeries ? this.resultsData.series :  [] 
-      },
-      baseline() {
-        return (!this.loading && 
-              this.resultsData &&
-              this.resultsData.hasOwnProperty("baseline") && 
-              this.activeOptions.showBaseline) ? this.resultsData.baseline : []
-      },
+      },      
       anomalies() {
         return !this.loading &&
               this.resultsData &&      

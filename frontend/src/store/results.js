@@ -4,7 +4,7 @@ import Vue from 'vue'
 
 const defaultOptions = {
     activeAnomalyId: '',
-    showBaseline: true,
+    showMinMax: true,
     showSeries: true,
     showTrend: false,
     scoreThreshold: 0,

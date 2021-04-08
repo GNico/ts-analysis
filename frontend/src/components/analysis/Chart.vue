@@ -10,7 +10,7 @@
   @crosshairMove="syncCrosshairs"
   :crosshair="crosshair"
   :syncCrosshairEnabled="syncCrosshairEnabled"
-  :tooltipFormatter="formatter"/>
+  :tooltipFormatter="tooltipFormatter"/>
 </template>
 
 
@@ -19,40 +19,8 @@ import { DefaultChartSettings } from '../../config/settings'
 import BaseChart from "../BaseChart";
 import debounce from "lodash/debounce";
 import throttle from "lodash/throttle";
-import { formatDateVerbose } from '../../utils/helpers'
+import { analysisTooltipFormatter } from '../../utils/helpers'
 
-
-var formatter = function() { 
-  function hourlyHeader(original, range) {
-    var d = new Date(original+range)
-    const hour = d.getHours().toString().padStart(2, '0')
-    const minutes = d.getMinutes().toString().padStart(2, '0')
-    return '<small>' + formatDateVerbose(original) + ` to ${hour}:${minutes}</small><br>`
-  }
-  var currentDataGrouping = this.points[0].series.currentDataGrouping
-  var header = ''
-  if (currentDataGrouping) {
-    if (currentDataGrouping.unitName == 'day') {
-      header = '<small>' + formatDateVerbose(this.x, true, false) + 
-        ' to ' + formatDateVerbose(this.x + currentDataGrouping.totalRange , false, false) +'</small><br>'
-    } 
-    if (currentDataGrouping.unitName == 'hour') {
-      header = hourlyHeader(this.x, currentDataGrouping.totalRange)
-    }
-  } else {
-    header = hourlyHeader(this.x, this.points[0].series.closestPointRange)
-  }
-  let val = (this.points[0].y % 1) ? parseFloat(this.points[0].y).toFixed(2) : this.points[0].y
-  var min = 'Min: <b>' + this.points[1].point.low + '</b><br>'
-  var max = 'Max: <b>' + this.points[1].point.high + '</b>'  
-  var text =  header 
-  if (currentDataGrouping) {
-    text = `${text} Avg: <b>${val}</b><br>${min}${max}`
-  } else {
-    text = `${text} Value: <b>${val}</b><br>`
-  }
-  return text
-} 
 
 export default {
   components: { BaseChart },
@@ -71,9 +39,9 @@ export default {
       type: Array,
       default: () => { return [] }
     },
-    baseline: {
-      type: Array,
-      default: () => { return [] }
+    showMinMax: {
+      type: Boolean,
+      default: false,
     },
     loading: {
       type: Boolean,
@@ -102,7 +70,6 @@ export default {
   },
   data() {
     return {
-      formatter: formatter
     }
   },
   computed: {
@@ -122,12 +89,11 @@ export default {
       })
       return newdata
     },
-
     chartData() {
       var cdata = []
       if (this.seriesData.length > 0) {
         cdata.push({
-          name: 'Avg',
+          name: 'Average',
           type: 'line',
           data: this.seriesData,
           zIndex: 2,
@@ -139,23 +105,24 @@ export default {
               lineWidthPlus: 0
             }
           },
-        },
-        {
-          name: 'Range',
-          type: 'arearange',
-          data: this.arearangedata,
-          zIndex: 1,
-          color: this.seriesColor,
-          fillOpacity: 0.3,
-          enableMouseTracking: true,
-          lineWidth: 0,
-          states: {
-            hover: {
-              lineWidthPlus: 0
-            }
-          },
-
         })
+        if (this.showMinMax) {
+          cdata.push({
+            name: 'Range',
+            type: 'arearange',
+            data: this.arearangedata,
+            zIndex: 1,
+            color: this.seriesColor,
+            fillOpacity: 0.3,
+            enableMouseTracking: true,
+            lineWidth: 0,
+            states: {
+              hover: {
+                lineWidthPlus: 0
+              }
+            }
+          })
+        }
       } else {
         cdata.push({          
           color: 'rgba(0,0,0,0)',
@@ -163,27 +130,11 @@ export default {
           showInLegend: false
         })
       }
-      if (this.baseline.length > 0) {
-        cdata.push({
-          name: 'Expected',
-          type: 'arearange',
-          data: this.baseline,
-          zIndex: 1,
-          lineWidth: 0,
-          fillOpacity: DefaultChartSettings.BASELINE_OPACITY,
-          color: DefaultChartSettings.BASELINE_COLOR,
-          states: {
-            hover: {
-              lineWidthPlus: 0
-            }
-          },
-          marker: {
-              enabled: false
-          }
-        })
-      }
       return cdata
     },
+    tooltipFormatter() {
+      return analysisTooltipFormatter
+    }
   },
   methods: {
     setActiveAnomaly(id) {

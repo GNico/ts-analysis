@@ -230,33 +230,12 @@ export default {
           enabled: false,
         },
         tooltip: {
+          animation: false,
           split: false,
           shared: true,
           xDateFormat: '%A, %e %b %Y, %H:%M',
           useHTML: true,
-
-
-
-          formatter: this.tooltipFormatter
-
-
-        /*   function() { 
-
-            var d = new Date(this.x);
-
-            //console.log( this.points[0].series.currentDataGrouping);
-
-            var header = '<small>' + d.toString().split(' ')[0] + ', ' + d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear() +'</small><br>'
-            let val = (this.points[0].y % 1) ? parseFloat(this.points[0].y).toFixed(2) : this.points[0].y
-
-            var text =  header  +
-            'Value: <b>' + val + '</b><br>' +
-            'Min: <b>' + this.points[1].point.low + '</b><br>' +
-            'Max: <b>' + this.points[1].point.high + '</b>'  
-
-            return text
-          } */
-
+          formatter: this.tooltipFormatter        
         },  
         plotOptions: {
           arearange: {
@@ -269,12 +248,12 @@ export default {
                 return [sum(low), sum(high)];
               }, */
             },
-            tooltip: {                     
+          /*  tooltip: {                     
               pointFormatter: function() {
                 return  '<span style="color:transparent">● </span>Min: <b>'  + this.low + '</b><br/>' +
                         '<span style="color:transparent">● </span>Max: <b>'  + this.high + '</b><br/>'
               },              
-            }
+            }*/
           }, 
           line: {
             tooltip: {                     
@@ -282,7 +261,7 @@ export default {
                 let val = (this.y % 1) ? parseFloat(this.y).toFixed(2) : this.y
                 return '<span style="color:' + this.color + '">● </span>' +  this.series.name + ': <b>'  + val + '</b><br/>'
               },              
-            }
+            } 
           },
           series: {
             dataGrouping: {
@@ -295,7 +274,8 @@ export default {
                 week: ['Week from %A,  %e %b %Y', '%A,  %e %b %Y', '-%A, %b %e'],
                 month: ['%B %Y', '%B', '-%B %Y'],
                 year: ['%Y', '%Y', '-%Y']                  
-              }                       
+              },
+                                   
             },
             animation: false,
             lineWidth: this.normalizedSettings.lineWidth,
