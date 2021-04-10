@@ -22,13 +22,14 @@ class AnalysisSerializer(serializers.Serializer):
     client = serializers.CharField(allow_blank=False)
     tags = serializers.ListField(child=serializers.CharField(), required=False, allow_empty=True, min_length=None, max_length=None)
     contexts = serializers.ListField(child=serializers.CharField(), required=False, allow_empty=True, min_length=None, max_length=None)
-    start = serializers.DateTimeField(required=False)
-    end = serializers.DateTimeField(required=False)
+    start = serializers.DateTimeField(required=False, allow_null=True)
+    end = serializers.DateTimeField(required=False, allow_null=True)
     interval = serializers.RegexField(regex='^[0-9]+[mhd]$', allow_blank=True, required=False)
     model = serializers.JSONField()
 
     def validate_start(self, value):
-        if self.end and (self.start > self.end):
+        data = self.get_initial()
+        if data['end'] and data['start'] and (data['start'] > data['end']):
             raise serializers.ValidationError("Start date must be before end date")
         return value
 

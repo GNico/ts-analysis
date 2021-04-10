@@ -9,9 +9,7 @@ class AnalysisView(APIView):
     def post(self, request):
         serializer = AnalysisSerializer(data=request.data)
         if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        print("the data")
-        print(serializer.validated_data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
         task = tasks.perform_analysis.delay(serializer.data)
         return Response({"task_id": task.id})
 

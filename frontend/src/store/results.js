@@ -106,8 +106,10 @@ const actions = {
         return  api.getAnomalies({
                     client: settings.client,
                     tags: settings.tags,
-                    contexts: settings.contexts,
+                    contexts: settings.contexts,                    
                     interval: settings.interval,
+                    start: settings.start,
+                    end: settings.end,
                     model: model
                 })
                 .then(response => {    

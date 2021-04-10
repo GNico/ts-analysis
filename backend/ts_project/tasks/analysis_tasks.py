@@ -10,7 +10,6 @@ from ..salib.model.pipeline.node_factory import NodeFactory
 
 @shared_task(bind=True)
 def perform_analysis(self, data):
-    print(data)
     pipeline = Pipeline.from_json(data['model'])
     data_series = services.get_series( 
         client_name=data.get('client', ''), 
