@@ -39,8 +39,8 @@ class TestSeriesBuilder:
         return TestSeriesBuilder.linear(length, value, 0, interval, unit)
 
     @staticmethod
-    def linear(length, startvalue, slope, interval=1, unit='s'):
+    def linear(length, startvalue, slope, interval=1, unit='s', start_time=0):
         data = []
         for i in range(length):
-            data.append([i*interval, startvalue + slope*i*interval])
+            data.append([(i*interval)+start_time, startvalue + slope*i*interval])
         return TestSeriesBuilder(data, interval, unit)
