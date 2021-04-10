@@ -55,6 +55,11 @@ const headerTooltipFormatter = function() {
 }
 
 
+const roundValue = function(value) {
+    return (value % 1) ? parseFloat(value).toFixed(2) : value
+}
+
+
 const analysisTooltipFormatter = function() {
     var grouping = this.points[0].point.dataGroup
     var tooltipHtml = ''
@@ -72,11 +77,10 @@ const analysisTooltipFormatter = function() {
           min = newval
         }
     } 
-    var val = (this.points[0].y % 1) ? parseFloat(this.points[0].y).toFixed(2) : this.points[0].y
     tooltipHtml = '<span style="color:' + this.points[0].series.color + '">● </span>' +
-        this.points[0].series.name + ': <b>'  + val+ '</b><br/>' + 
-        '<span style="color:transparent">● </span>Min: <b>'  + min + '</b><br/>' +
-        '<span style="color:transparent">● </span>Max: <b>'  + max + '</b><br/>'
+        this.points[0].series.name + ': <b>'  + roundValue(this.points[0].y) + '</b><br/>' + 
+        '<span style="color:transparent">● </span>Min: <b>'  + roundValue(min) + '</b><br/>' +
+        '<span style="color:transparent">● </span>Max: <b>'  + roundValue(max) + '</b><br/>'
     } else {
       tooltipHtml = '<span style="color:' + this.points[0].series.color + '">● </span>Total: <b>' +
         this.points[0].y+ '</b><br/>'

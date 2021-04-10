@@ -9,6 +9,8 @@ const defaultSettings = {
   contexts: [],
   tags: [],
   interval: '1h',
+  start: null,
+  end: null,
   model: [],
   saveId: undefined,
 }
@@ -88,7 +90,9 @@ const actions = {
                 client: settings.client, 
                 tags: settings.tags, 
                 contexts: settings.contexts, 
-                interval: settings.interval
+                interval: settings.interval,
+                start: settings.start,
+                end: settings.end,
             },
             model: settings.model 
         }
@@ -110,7 +114,9 @@ const actions = {
                 client: settings.client, 
                 tags: settings.tags, 
                 contexts: settings.contexts, 
-                interval: settings.interval
+                interval: settings.interval,
+                start: settings.start,
+                end: settings.end,                
             },
             model: settings.model 
         }

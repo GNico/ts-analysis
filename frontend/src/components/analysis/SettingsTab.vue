@@ -52,6 +52,44 @@
         pattern="^[0-9]+[mhd]$" 
         size="is-small" />
     </b-field>       
+    <b-field horizontal label="From">
+      <b-datepicker          
+        :first-day-of-week="1"
+        size="is-small"
+        :value="analysis.start"
+        @input="updateAnalysis('start', $event)">
+        <button class="button is-primary is-small"
+            @click="updateAnalysis('start', new Date())">
+            <b-icon icon="calendar-today" size="is-small"></b-icon>
+            <span>Today</span>
+        </button>
+
+        <button class="button is-danger is-small"
+            @click="updateAnalysis('start', null)">
+            <b-icon icon="close-thick" size="is-small"></b-icon>
+            <span>Clear</span>
+        </button>
+      </b-datepicker>
+    </b-field>
+     <b-field horizontal label="To">
+      <b-datepicker          
+        :first-day-of-week="1"
+        size="is-small"
+        :value="analysis.end"
+        @input="updateAnalysis('end', $event)">
+        <button class="button is-primary is-small"
+            @click="updateAnalysis('end', new Date())">
+            <b-icon icon="calendar-today" size="is-small"></b-icon>
+            <span>Today</span>
+        </button>
+
+        <button class="button is-danger is-small"
+            @click="updateAnalysis('end', null)">
+            <b-icon icon="close-thick" size="is-small"></b-icon>
+            <span>Clear</span>
+        </button>
+      </b-datepicker>
+    </b-field>
     <b-field class="has-text-right sticky-container">
       <div class="box">
         <a class="button is-primary is-medium has-text-weight-semibold" @click="runAnalysis">

@@ -136,6 +136,9 @@ export default {
                     formatted.tags = data.data_options.tags
                     formatted.contexts = data.data_options.contexts
                     formatted.interval = data.data_options.interval
+                    formatted.start = data.data_options.start
+                    formatted.end = data.data_options.end
+
                     formatted.name = data.name
                     formatted.description = data.description
                     formatted.model = data.model

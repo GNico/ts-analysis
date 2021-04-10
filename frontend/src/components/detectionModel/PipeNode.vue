@@ -73,7 +73,7 @@
                 :is="param.component.name"
                 v-bind="param.component.props"
                 :value="nodeData.paramsData[param.id]"
-                @input="paramsDataChange(param.id, $event)">
+                @input="paramsDataChange(param.id, $event, param.type)">
 
                 <option
                   v-for="option in param.options"
@@ -210,9 +210,9 @@ export default {
           }      
         }
     },
-    paramsDataChange(name, event) {
-      const parsed = parseFloat(event)
-      this.$emit('nodeParamsChange', {id: this.id, [name]: (isNaN(parsed) ? event : parsed)})
+    paramsDataChange(name, value, type) {
+      let parsed = (type === 'Float' || type === "BoundedFloat") ? parseFloat(value) : value
+      this.$emit('nodeParamsChange', {id: this.id, [name]: parsed})
     },
     sourceNodesChange(event) {
       let sourceNodes = event
