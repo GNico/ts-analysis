@@ -1,7 +1,8 @@
 import VueRouter from 'vue-router'
+import Index from '@/pages/monitoring/Index.vue'
 
 function lazyLoad(view){
-  return() => import(`@/pages/${view}.vue`)
+  return () => import(`@/pages/${view}.vue`)
 }
 
 let routes = [
@@ -19,7 +20,17 @@ let routes = [
   },
   {
     path: '/Monitoring',
-    component: lazyLoad('Monitoring')
+    component: Index,
+    children: [
+      {
+        component: lazyLoad("monitoring/Incidents"),
+        path: 'Incidents'
+      },
+      {
+        component: lazyLoad("monitoring/Monitors"),
+        path: 'Monitors'
+      },
+    ] 
   },
   {
     path: '/Test',
