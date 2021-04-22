@@ -42,6 +42,16 @@ class Pipeline(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
 
+class Monitor(models.Model):
+    class Meta:
+        db_table = 'monitors'
+
+    name = models.TextField()
+
+    def __str__(self):
+        return self.name
+    
+
 class PeriodicAnalysis(models.Model):    
     class Meta: 
         db_table = 'periodic_analysis'
@@ -54,7 +64,6 @@ class PeriodicAnalysis(models.Model):
     created = models.DateTimeField(auto_now_add=True) 
 
     def delete(self, *args, **kwargs):
-        print("does it get called")
         if self.task is not None:
             self.task.delete()
         return super(self.__class__, self).delete(*args, **kwargs)

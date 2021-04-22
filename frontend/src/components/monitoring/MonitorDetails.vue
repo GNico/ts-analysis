@@ -1,7 +1,7 @@
 <template>
 <div class="p-5">  
 
-  <div class="title">A Monitor Name</div>
+  <div class="title">Name: {{ $route.params.id }}</div>
   
   <b-tabs type="is-medium"  :animated="false"  destroy-on-hide>
     <b-tab-item label="Analysis list" icon="file-eye" value="Analysis">
@@ -66,6 +66,19 @@ export default {
     deleteItem() {
       console.log("deleting")
     }
+  },
+  watch: {
+    $route(to, from) {
+      console.log("route change")
+      console.log(to)
+      console.log(from)
+    }
+  },
+  created() {
+    console.log("created")
+  },
+  mounted() {
+    console.log("mounted")
   }
 }
 
