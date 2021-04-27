@@ -3,10 +3,26 @@
     
     <div class="is-flex is-justify-content-space-between mb-5">
       <b-input placeholder="Search"> </b-input>
-      <a class="button is-primary">
-        <b-icon icon="playlist-plus"></b-icon>
-        <span class="has-text-weight-semibold">New monitor</span>
-      </a>
+
+
+      <b-dropdown ref="dropdown" position="is-bottom-left" append-to-body trap-focus>
+        <a
+          class="button is-primary"
+          slot="trigger"
+          role="button">
+          <b-icon  icon="playlist-plus"></b-icon>
+          <span class="has-text-weight-semibold">New Monitor</span>
+        </a>
+        <b-dropdown-item
+          aria-role="menu-item"
+          :focusable="false"
+          custom
+          paddingless>
+          <FormNewMonitor @submit="addMonitor" :loading="creatingMonitor"/>
+        </b-dropdown-item>
+      </b-dropdown>
+
+     
     </div>
 
       
@@ -16,24 +32,26 @@
       sticky-header      
       selectable
       hoverable
-      @click="openMonitor"
+      @cellclick="openMonitor"
       :default-sort="['name', 'asc']">
 
-      <b-table-column field="name" label="Monitor" sortable v-slot="props" width="50%">
+      <b-table-column field="name" label="Monitor" sortable v-slot="props" width="50%" cell-class="is-clickable">
         {{ props.row.name }}       
       </b-table-column>
-      <b-table-column field="detectors" label="Detectors" sortable v-slot="props" numeric>
+      <b-table-column field="detectors" label="Detectors" sortable v-slot="props" numeric cell-class="is-clickable">
         {{ props.row.detectors }}       
       </b-table-column>
-      <b-table-column field="incidents" label="Open incidents" sortable v-slot="props" numeric>
+      <b-table-column field="incidents" label="Open incidents" sortable v-slot="props" numeric cell-class="is-clickable">
         {{ props.row.incidents }}       
       </b-table-column>
-      <b-table-column field="last_incident" label="Last incident" v-slot="props"  width="20%" centered>
+      <b-table-column field="last_incident" label="Last incident" v-slot="props"  width="20%" centered cell-class="is-clickable">
         {{ props.row.last_incident }}
       </b-table-column>
 
       <b-table-column field="delete" label="" v-slot="props" centered>
-        <b-icon icon="trash-can" size=""/>
+        <button class="transparent-button" @click="deleteMonitor">
+          <b-icon icon="trash-can" type="is-grey"></b-icon>
+        </button>
       </b-table-column>
     
     </b-table>
@@ -43,9 +61,10 @@
 <script>
 import api from '@/api/repository'
 import { formatDate } from '@/utils/helpers'
+import FormNewMonitor from '@/components/monitoring/FormNewMonitor'
 
 export default {
-  components: {  },
+  components: { FormNewMonitor },
   data() {
     return {
       allMonitors: [{
@@ -61,7 +80,8 @@ export default {
         last_incident: '20 Jun 2021, 18:25'
       }],
       error: '',      
-      loadModalActive: false,
+
+      creatingMonitor: false,
     }
   },
   computed: {   
@@ -94,48 +114,25 @@ export default {
         })
       })
     },
-    openMonitor(row) {
-      this.$router.push({ name: 'MonitorDetails', params: {id: row.name}}) 
-    },
-   /* toggleRow(event) {
-      let index = this.openRows.findIndex(elem => elem === event.analysis)
-      if (index != -1) {
-        this.openRows.splice(index, 1)
-      } else {
-        this.openRows.push(event.analysis)
-        this.addRowDetails(event.analysis)
+    addMonitor(form) {
+      this.$refs.dropdown.isActive = false
+      //set creatingMonitor = true
+      //call create monitor
+      //THEN switch to page
+      //CATCH display error 
+      //set creatingMonitor = false
+      //if success clear form and deactive dropdown
+      console.log(form.name)
+    },    
+    deleteMonitor() {
+      console.log("deleting")
+    },    
+    openMonitor(row, column, rowIndex, columnIndex ) {
+      //warning: hardcoded last row
+      if (columnIndex != 4) {    
+        this.$router.push({ name: 'MonitorDetails', params: {id: row.name}}) 
       }
     },
-*/  updateOptions(id, options) {
-      api.updatePeriodicAnalysis(id, options)
-      .then(response => {
-        let index = this.allPeriodicAnalysis.findIndex(elem => elem.analysis == id)
-        if (index != -1) {
-          this.allPeriodicAnalysis.splice(index, 1, response.data )
-        }
-      })
-    },
- /*   addMonitor(id) {
-      let index = this.allMonitors.findIndex(elem => elem.analysis == id)
-      if (index != -1) {
-        this.$buefy.toast.open({
-          message: "Monitor already exists!",
-          type: 'is-danger',
-          duration: 2500,
-        })
-      } else {
-        api.addNewPeriodicAnalysis(id)
-        .then(response => {
-          this.fetchPeriodicAnalysis()
-          this.$buefy.toast.open({
-            message: "Monitor created",
-            type: 'is-success',
-            duration: 2500,
-          })
-        })
-        .catch(error => console.log(error))
-      }      
-    } */
   },
   created() {
     this.fetchMonitors()
@@ -152,4 +149,5 @@ export default {
 .button-right:focus {
   border-left: 1px solid rgba(255,255,255,0.5);
 }
+
 </style>

@@ -12,8 +12,8 @@ urlpatterns = [
 
     path('analysis/', views.AnalysisView.as_view(), name='analysis'),
     path('analysis/<slug:id>/', views.AnalysisResultView.as_view(), name='analysis_result'),
-    path('periodic-analysis/', views.PeriodicAnalysisListView.as_view(), name='periodic_analysis'),   
-    path('periodic-analysis/<slug:pk>/', views.PeriodicAnalysisDetailView.as_view(), name='periodic_analysis_detail'),   
+   # path('periodic-analysis/', views.PeriodicAnalysisListView.as_view(), name='periodic_analysis'),   
+   # path('periodic-analysis/<slug:pk>/', views.PeriodicAnalysisDetailView.as_view(), name='periodic_analysis_detail'),   
 
     path('analysis-settings/', views.AnalysisSettingsListView.as_view(), name='settings'),
     path('analysis-settings/<slug:pk>/', views.AnalysisSettingsDetailView.as_view(), name='settings_detail'),
@@ -22,6 +22,14 @@ urlpatterns = [
     path('pipelines/<slug:pk>/', views.PipelineDetailView.as_view(), name='pipeline_detail'),
     path('nodes/', views.PipelineNodesListView.as_view(), name='nodes'),
     path('nodes/<slug:group>/<slug:type>/', views.PipelineNodesDetailView.as_view(), name='node_detail'),
+
+
+    path('monitors/', views.MonitorListView.as_view(), name='monitors'),
+    path('monitors/<slug:monitor_id>/', views.MonitorDetailView.as_view(), name='monitors_detail'),
+    path('monitors/<slug:monitor_id>/detectors/', views.PeriodicAnalysisListView.as_view(), name='periodic_analysis'),
+    path('monitors/<slug:monitor_id>/detectors/<slug:detector_id>/', views.PeriodicAnalysisDetailView.as_view(), name='periodic_analysis_detail'),   
+
+
 
 
     path('source-files/', views.DataSourceFilesList.as_view(), name='source-files'),
