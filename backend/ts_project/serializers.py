@@ -19,6 +19,8 @@ class AnalysisSettingsSerializer(serializers.ModelSerializer):
 
 
 class AnalysisSerializer(serializers.Serializer):
+    name = serializers.CharField(allow_blank=False)
+    description = serializers.CharField(allow_blank=True)
     client = serializers.CharField(allow_blank=False)
     tags = serializers.ListField(child=serializers.CharField(), required=False, allow_empty=True, min_length=None, max_length=None)
     contexts = serializers.ListField(child=serializers.CharField(), required=False, allow_empty=True, min_length=None, max_length=None)
@@ -36,25 +38,41 @@ class AnalysisSerializer(serializers.Serializer):
 
 class PeriodicAnalysisSerializer(serializers.ModelSerializer):
     time_interval = serializers.RegexField(regex='^[0-9]+[smhd]$', allow_blank=False, required=False)
-    client = serializers.CharField(source='analysis.client', read_only=True)
-    name = serializers.CharField(source='analysis.name', read_only=True)
-    description = serializers.CharField(source='analysis.description', read_only=True)
+   # client = serializers.CharField(source='analysis.client', read_only=True)
+   #  name = serializers.CharField(source='analysis.name', read_only=True)
+   # description = serializers.CharField(source='analysis.description', read_only=True)
     last_run_at = serializers.DateTimeField(source='task.last_run_at', read_only=True)
+    analysis_details = AnalysisSerializer(read_only=True, source='analysis')
 
     class Meta:
         model = PeriodicAnalysis
-        fields = [ 'id', 'monitor', 'analysis', 'task', 'active', 'alerts_enabled', 'time_interval', 'created', 'client', 'name', 'description', 'last_run_at' ]
+        fields = [ 'id', 'monitor', 'analysis', 'analysis_details', 'task', 'active', 'alerts_enabled', 'time_interval', 'created', 'last_run_at' ]
 
 
 
 class MonitorSerializer(serializers.ModelSerializer):
+    detectors = PeriodicAnalysisSerializer(many=True, read_only=True)
+
     class Meta:
         model = Monitor
-        fields = [ 'id', 'name', 'notification_email']
+        fields = [ 'id', 'name', 'notification_email', 'detectors']
 
 
 
 class MonitorListSerializer(serializers.ModelSerializer):
+    detectors = serializers.SerializerMethodField("get_detector")
+    incidents = serializers.SerializerMethodField("get_incidents")
+    last_incident = serializers.SerializerMethodField("get_last_incident")
+
     class Meta:
         model = Monitor
-        fields = [ 'id', 'name', 'notification_email']
+        fields = [ 'id', 'name', 'detectors', 'incidents', 'last_incident']
+
+    def get_detector(self, obj):
+        return 3
+
+    def get_incidents(self, obj):
+        return 25
+
+    def get_last_incident(self, obj):
+        return '27/04/2021'

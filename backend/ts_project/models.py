@@ -57,10 +57,8 @@ class PeriodicAnalysis(models.Model):
     class Meta: 
         db_table = 'periodic_analysis'
 
-    monitor = models.ForeignKey(Monitor, on_delete=models.CASCADE, null=True)
+    monitor = models.ForeignKey(Monitor, on_delete=models.CASCADE, related_name="detectors", null=True)
     analysis = models.ForeignKey(Analysis, on_delete=models.CASCADE)
-   # analysis = models.OneToOneField(Analysis, on_delete=models.CASCADE, primary_key=True)
-
     task = models.OneToOneField(PeriodicTask, on_delete=models.CASCADE, null=True, blank=True)
     active = models.BooleanField(default=False)
     alerts_enabled = models.BooleanField(default=False)

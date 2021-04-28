@@ -183,6 +183,32 @@ export default {
         return repository.post("/periodic-analysis/?delete", {ids: ids} )
     },
 
+    //Monitoring 
+    addNewMonitor(name) {
+        return repository.post("/monitors/", { name: name })
+    },
+    getAllMonitors() {
+        return repository.get("/monitors/")
+    },
+    getMonitorDetails(id) {
+        return repository.get("/monitors/" + id + "/")
+    },
+    updateMonitor(id, options) {
+        return repository.put("/monitors/" + id + "/", options)
+    },
+    deleteMonitor(id) {
+        return repository.delete("/monitors/" + id + "/")
+    },
+    //detectors
+    addNewPeriodicAnalysis(monitorId, analysisId) {
+        return repository.post("/monitors/" + monitorId + "/detectors/", {analysis: analysisId})
+    },
+    updatePeriodicAnalysis(monitorId, detectorId, options) {
+        return repository.put("/monitors/" + monitorId + "/detectors/" + detectorId + "/" , options)
+    },    
+    deletePeriodicAnalysis(monitorId, detectorId) {
+        return repository.delete("/monitors/" + monitorId + "/detectors/" + detectorId + "/" )
+    },
 
 
     //Misc

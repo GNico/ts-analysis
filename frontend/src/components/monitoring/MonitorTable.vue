@@ -49,7 +49,7 @@
       </b-table-column>
 
       <b-table-column field="delete" label="" v-slot="props" centered>
-        <button class="transparent-button" @click="deleteMonitor">
+        <button class="transparent-button" @click="deleteMonitor(props.row.id)">
           <b-icon icon="trash-can" type="is-grey"></b-icon>
         </button>
       </b-table-column>
@@ -82,6 +82,7 @@ export default {
       error: '',      
 
       creatingMonitor: false,
+
     }
   },
   computed: {   
@@ -91,12 +92,12 @@ export default {
   },
   methods: {
     fetchMonitors() {
-  /*    return  api.getAllMonitors()
+      return  api.getAllMonitors()
               .then(response => {
                 this.error = ''
                 this.allMonitors = response.data
               })
-              .catch(error => this.error = 'There was an error retrieving data') */
+              .catch(error => this.error = 'There was an error retrieving data')
     },
     formatDate(input) {
       return formatDate(input)
@@ -115,22 +116,30 @@ export default {
       })
     },
     addMonitor(form) {
-      this.$refs.dropdown.isActive = false
-      //set creatingMonitor = true
-      //call create monitor
-      //THEN switch to page
-      //CATCH display error 
-      //set creatingMonitor = false
-      //if success clear form and deactive dropdown
-      console.log(form.name)
+      this.creatingMonitor = true
+      api.addNewMonitor(form.name)
+      .then(response => {
+        this.creatingMonitor = false
+        this.$router.push({ name: 'MonitorDetails', params: {id: response.data.id }})
+      })
+      .catch(error => {
+        this.creatingMonitor = false
+        this.$refs.dropdown.isActive = false
+        this.$buefy.toast.open({
+          message: 'An error occurred',
+          type: 'is-danger',
+          duration: 2500,
+        })
+      })     
     },    
-    deleteMonitor() {
-      console.log("deleting")
+    deleteMonitor(id) {
+      api.deleteMonitor(id)
+      .then(this.fetchMonitors)     
     },    
     openMonitor(row, column, rowIndex, columnIndex ) {
       //warning: hardcoded last row
       if (columnIndex != 4) {    
-        this.$router.push({ name: 'MonitorDetails', params: {id: row.name}}) 
+        this.$router.push({ name: 'MonitorDetails', params: {id: row.id}}) 
       }
     },
   },

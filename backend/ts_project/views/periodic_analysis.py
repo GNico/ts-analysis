@@ -52,19 +52,19 @@ class PeriodicAnalysisListView(APIView):
 
 
 class PeriodicAnalysisDetailView(APIView):
-    def get_object(self, pk):
+    def get_object(self, monitor_id, pk):
         try:
-            return PeriodicAnalysis.objects.get(pk=pk)
+            return PeriodicAnalysis.objects.filter(monitor=monitor_id).get(pk=pk)
         except PeriodicAnalysis.DoesNotExist:
             raise Http404
 
     def get(self, request, monitor_id, detector_id):
-        detector = self.get_object(detector_id)
+        detector = self.get_object(monitor_id, detector_id)
         serializer = PeriodicAnalysisSerializer(detector)
         return Response(serializer.data)
 
     def put(self, request, monitor_id, detector_id):
-        detector = self.get_object(detector_id)
+        detector = self.get_object(monitor_id, detector_id)
         serializer = PeriodicAnalysisSerializer(detector, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -72,6 +72,6 @@ class PeriodicAnalysisDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, monitor_id, detector_id):
-        detector = self.get_object(detector_id)
+        detector = self.get_object(monitor_id, detector_id)
         detector.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
