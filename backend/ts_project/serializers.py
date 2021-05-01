@@ -42,7 +42,7 @@ class PeriodicAnalysisSerializer(serializers.ModelSerializer):
    #  name = serializers.CharField(source='analysis.name', read_only=True)
    # description = serializers.CharField(source='analysis.description', read_only=True)
     last_run_at = serializers.DateTimeField(source='task.last_run_at', read_only=True)
-    analysis_details = AnalysisSerializer(read_only=True, source='analysis')
+    analysis_details = AnalysisSettingsSerializer(read_only=True, source='analysis')
 
     class Meta:
         model = PeriodicAnalysis

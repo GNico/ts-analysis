@@ -9,7 +9,7 @@
     :allowDelete="false"
     confirmLabel="Create Detector"
   />
-
+  
 
   <div class="title">{{ data.name }}</div>
   <b-tabs type="is-medium"  :animated="false"  destroy-on-hide>
@@ -24,7 +24,7 @@
       <div v-for="detector in data.detectors" class="card my-5">
         <header class="card-header">
             <div class="card-header-title is-justify-content-space-between">
-              <span>{{detector.analysis_details.name}}</span>
+              <span>{{detector.analysis_details.client}}: {{detector.analysis_details.name}}</span>
               <div class="is-flex is-align-items-center">
                 <div class="header-item"> {{detector.last_run_at}} </div>
                 <div class="header-item clickable" @click="confirmDelete(detector.id)">                
@@ -40,25 +40,117 @@
                   type="is-success" 
                   passive-type="is-danger" 
                   :rounded="false">
-                  {{detector.active ? 'ONLINE' : 'DISABLED'}}
+                  {{detector.active ? 'ONLINE' : 'OFFLINE'}}
                 </b-switch>
               </div>
             </div>        
         </header>
         <div class="card-content">
           <div class="content">
+            <b-tabs size="" type="is-boxed" vertical :animated="false">
+
+              <!--DETECTOR SETTINGS-->
+              <b-tab-item label="Detector settings">
+                <div class="columns">
+                  <div class="column is-12-mobile is-10-desktop is-8-widescreen is-6-fullhd">
+                    <b-field horizontal>   
+                      <template #label>
+                        Execution interval
+                        <b-tooltip type="is-info" label="Amount of time that passes between analysis executions">
+                          <b-icon size="is-small" icon="help-circle-outline"></b-icon>
+                        </b-tooltip>
+                      </template>           
+                      <b-input 
+                      v-model="options.time_interval"
+                      size="is-small" 
+                      class="shorter-field"
+                      type="text" 
+                      pattern="^[0-9]+[mhd]$"/>
+                    </b-field>                     
+                    <b-field horizontal>
+                      <template #label>
+                        Relevant period
+                        <b-tooltip type="is-info" label="Incidents older than this parameter will be ignored">
+                          <b-icon size="is-small" icon="help-circle-outline"></b-icon>
+                        </b-tooltip>
+                      </template>
+                      <b-input 
+                      size="is-small" 
+                      class="shorter-field"
+                      v-model="options.incidents_period"
+                      type="text" 
+                      pattern="^[0-9]+[mhd]$"/>
+                    </b-field>
+                    <b-field horizontal label="Notifications">
+                      <b-switch 
+                        v-model="options.alerts_enabled" 
+                        size="is-small" 
+                        type="is-primary" 
+                        passive-type="is-grey">
+                        {{options.alerts_enabled ? 'Enabled' : 'Disabled'}}
+                      </b-switch>
+                    </b-field>
+                    
+                    <b-field horizontal class="mt-5">
+                      <a class="button is-primary is-small has-text-weight-semibold" @click="updateOpts">
+                        Save changes
+                      </a>
+                    </b-field>                   
+                  </div>
+                </div>
+              </b-tab-item> 
 
 
-            <GraphDataProvider :nodes="detector.analysis_details.model">
+              <!--ANALYSIS SETTINGS-->
+              <b-tab-item label="Analysis settings">
+                <div class="columns">
+                  <div class="column is-12-mobile is-10-desktop is-8-widescreen is-6-fullhd">
+                    <b-field horizontal label="Client">
+                      {{detector.analysis_details.client}}
+                    </b-field>
+                    <b-field horizontal label="Tags">
+                      some tags?
+                    </b-field>
+                    <b-field horizontal label="Contexts">
+                      some contexts?
+                    </b-field>
+                    <b-field horizontal label="Interval">
+                      {{detector.analysis_details.data_options.interval}}
+                    </b-field>
+                    <b-field horizontal label="Detection model">
+                      <a>Show graph</a>
+                    </b-field>
+                    <b-field horizontal class="mt-5">
+                      <a class="button is-primary is-small has-text-weight-semibold" @click="editAnalysis">
+                        Edit settings
+                      </a>
+                    </b-field>                   
+                  </div>
+                </div>
+              </b-tab-item>
+
+              <!--RESULTS-->
+              <b-tab-item label="Results">                        
+              </b-tab-item>
+
+            </b-tabs>
+
+
+           
+      <!--  <GraphDataProvider :nodes="detector.analysis_details.model">
               <LayeredGraphChart slot-scope="{chartNodes, chartEdges}" :nodes="chartNodes" :edges="chartEdges"/>
             </GraphDataProvider>
-
+          -->
+          
 
           </div>
         </div>
       </div>     
     </b-tab-item>
     <b-tab-item label="Notification channels" icon="bell" value="Notifications">
+
+      
+      
       <span class="is-size-5"> {{data.notification_email}} </span>
     </b-tab-item>
     
@@ -83,7 +175,12 @@ export default {
       loadModalActive: false,
       loading: false,
       error: '',
-      data: {}
+      data: {},
+      options: {
+        alerts_enabled: true,
+        time_interval: undefined,
+        incidents_period: undefined,
+      }
     }
   },
   computed: {
@@ -125,6 +222,12 @@ export default {
     deleteItem(id) {
       api.deletePeriodicAnalysis(this.data.id, id)
       .then(this.fetchData(this.data.id))
+    },
+    updateOpts() {
+      this.$emit('update', this.options)
+    },
+    editAnalysis() {
+      //should switch to analysis page
     }
   },
   watch: {

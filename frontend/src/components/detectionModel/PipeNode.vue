@@ -59,7 +59,7 @@
         <div class="columns is-marginless p-0 m-1 is-vcentered" v-for="param in paramsComponents" 
             v-if="checkConditions(param.conditions)"
             :key="param.id">
-            <div class="column is-6 is-paddingless">
+            <div class="column is-6 is-paddingless pr-4 is-flex is-justify-content-flex-end">
               <label class="label">
                 {{param.display}} 
                 <b-tooltip type="is-info" :label="param.desc">
@@ -67,7 +67,7 @@
                 </b-tooltip>
               </label>
             </div> 
-            <div class="column is-6 p-0 m-1 is-flex is-justify-content-flex-end">
+            <div class="column is-6 p-0 m-1 is-flex is-justify-content-flex-start">
               <component
                 class="short-field is-marginless" 
                 :is="param.component.name"
