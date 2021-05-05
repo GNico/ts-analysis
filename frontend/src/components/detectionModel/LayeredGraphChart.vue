@@ -103,7 +103,14 @@ export default {
       svg.call(zoom);
 
       var render = new dagreD3.render();
-      render(inner, this.g);
+
+      //console.log(inner)
+      //console.log(this.g)
+       try {
+        render(inner, this.g);
+      } catch (error) {
+        console.log(error);
+      }
 
       if (!this.nodes.length) return
       
@@ -143,8 +150,10 @@ export default {
      
     },
     refresh() {
-      this.createLayout()
-      this.drawChart()
+      if (this.$refs.container.clientWidth) {
+        this.createLayout()
+        this.drawChart()
+      }     
     }
   },
   created() {

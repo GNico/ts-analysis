@@ -10,6 +10,11 @@
     confirmLabel="Create Detector"
   />
   
+  <ModalDetectorGraph
+    :model="modelData"
+    :isActive="modelModalActive"
+    @close="modelModalActive = false"
+  />
 
   <div class="title">{{ data.name }}</div>
   <b-tabs type="is-medium"  :animated="false"  destroy-on-hide>
@@ -46,20 +51,19 @@
             </div>        
         </header>
         <div class="card-content">
-          <div class="content">
             <b-tabs size="" type="is-boxed" vertical :animated="false">
 
               <!--DETECTOR SETTINGS-->
               <b-tab-item label="Detector settings">
                 <div class="columns">
                   <div class="column is-12-mobile is-10-desktop is-8-widescreen is-6-fullhd">
-                    <b-field horizontal>   
-                      <template #label>
+                    <b-field horizontal label="Execution interval">   
+                    <!--  <template #label>
                         Execution interval
                         <b-tooltip type="is-info" label="Amount of time that passes between analysis executions">
                           <b-icon size="is-small" icon="help-circle-outline"></b-icon>
                         </b-tooltip>
-                      </template>           
+                      </template>    -->       
                       <b-input 
                       v-model="options.time_interval"
                       size="is-small" 
@@ -67,13 +71,13 @@
                       type="text" 
                       pattern="^[0-9]+[mhd]$"/>
                     </b-field>                     
-                    <b-field horizontal>
-                      <template #label>
+                    <b-field horizontal label="Relevant period">
+                   <!--   <template #label>
                         Relevant period
                         <b-tooltip type="is-info" label="Incidents older than this parameter will be ignored">
                           <b-icon size="is-small" icon="help-circle-outline"></b-icon>
                         </b-tooltip>
-                      </template>
+                      </template> -->
                       <b-input 
                       size="is-small" 
                       class="shorter-field"
@@ -118,7 +122,7 @@
                       {{detector.analysis_details.data_options.interval}}
                     </b-field>
                     <b-field horizontal label="Detection model">
-                      <a>Show graph</a>
+                      <a @click="showGraph(detector.analysis_details.model)">Show</a>
                     </b-field>
                     <b-field horizontal class="mt-5">
                       <a class="button is-primary is-small has-text-weight-semibold" @click="editAnalysis">
@@ -135,15 +139,8 @@
 
             </b-tabs>
 
-
-           
-      <!--  <GraphDataProvider :nodes="detector.analysis_details.model">
-              <LayeredGraphChart slot-scope="{chartNodes, chartEdges}" :nodes="chartNodes" :edges="chartEdges"/>
-            </GraphDataProvider>
-          -->
           
 
-          </div>
         </div>
       </div>     
     </b-tab-item>
@@ -164,12 +161,11 @@
 
 <script>
 import api from '@/api/repository'
-import GraphDataProvider from '@/components/detectionModel/GraphDataProvider'
-import LayeredGraphChart from '@/components/detectionModel/LayeredGraphChart'
 import ModalLoadAnalysis from '@/components/analysis/ModalLoadAnalysis'
+import ModalDetectorGraph from './ModalDetectorGraph'
 
 export default {
-  components: { GraphDataProvider, LayeredGraphChart, ModalLoadAnalysis },
+  components: { ModalDetectorGraph, ModalLoadAnalysis },
   data() {
     return {
       loadModalActive: false,
@@ -180,7 +176,10 @@ export default {
         alerts_enabled: true,
         time_interval: undefined,
         incidents_period: undefined,
-      }
+      },
+
+      modelModalActive: false,
+      modelData: [],
     }
   },
   computed: {
@@ -228,6 +227,10 @@ export default {
     },
     editAnalysis() {
       //should switch to analysis page
+    },
+    showGraph(data) {
+      this.modelModalActive = true
+      this.modelData = data
     }
   },
   watch: {
