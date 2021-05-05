@@ -47,10 +47,17 @@ class Monitor(models.Model):
         db_table = 'monitors'
 
     name = models.TextField()
-    notification_email = models.EmailField(blank=True)
 
     def __str__(self):
         return self.name
+
+
+class NotificationChannel(models.Model):
+    class Meta:
+        db_table = 'notification_channels'
+
+    monitor = models.ForeignKey(Monitor, on_delete=models.CASCADE, related_name="notification_channels")
+    email = models.EmailField(blank=False)
     
 
 class PeriodicAnalysis(models.Model):    
@@ -63,6 +70,7 @@ class PeriodicAnalysis(models.Model):
     active = models.BooleanField(default=False)
     alerts_enabled = models.BooleanField(default=False)
     time_interval = models.TextField(default='1h')
+    relevant_period = models.TextField(default='1d')
     created = models.DateTimeField(auto_now_add=True) 
 
     def delete(self, *args, **kwargs):

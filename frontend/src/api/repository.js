@@ -161,7 +161,7 @@ export default {
     },
 
     //Periodic analysis
-    getAllPeriodicAnalysis() {
+/*    getAllPeriodicAnalysis() {
         return repository.get("/periodic-analysis/")
     },
     getPeriodicAnalysis(id) {
@@ -181,7 +181,7 @@ export default {
     },
     deletePeriodicAnalysisList(ids) {
         return repository.post("/periodic-analysis/?delete", {ids: ids} )
-    },
+    }, */
 
     //Monitoring 
     addNewMonitor(name) {

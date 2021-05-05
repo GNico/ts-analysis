@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Pipeline, Analysis, PeriodicAnalysis, Monitor
+from .models import Pipeline, Analysis, PeriodicAnalysis, Monitor, NotificationChannel
 
 class ClientInputSerializer(serializers.Serializer):
     name = serializers.RegexField(regex='^[a-z0-9_]+$', allow_blank=False)
@@ -46,17 +46,22 @@ class PeriodicAnalysisSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PeriodicAnalysis
-        fields = [ 'id', 'monitor', 'analysis', 'analysis_details', 'task', 'active', 'alerts_enabled', 'time_interval', 'created', 'last_run_at' ]
+        fields = [ 'id', 'monitor', 'analysis', 'analysis_details', 'task', 'active', 'alerts_enabled', 'time_interval', 'relevant_period', 'created', 'last_run_at' ]
 
+
+class NotificationChannelSerializer(serializers.ModelSerializer):
+    class Meta: 
+        model = NotificationChannel
+        fields = [ 'id', 'email' ]
 
 
 class MonitorSerializer(serializers.ModelSerializer):
     detectors = PeriodicAnalysisSerializer(many=True, read_only=True)
+    notification_channels = NotificationChannelSerializer(many=True, read_only=True)
 
     class Meta:
         model = Monitor
-        fields = [ 'id', 'name', 'notification_email', 'detectors']
-
+        fields = [ 'id', 'name', 'notification_channels', 'detectors']
 
 
 class MonitorListSerializer(serializers.ModelSerializer):

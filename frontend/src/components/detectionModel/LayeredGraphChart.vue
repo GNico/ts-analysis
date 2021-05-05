@@ -103,14 +103,7 @@ export default {
       svg.call(zoom);
 
       var render = new dagreD3.render();
-
-      //console.log(inner)
-      //console.log(this.g)
-       try {
-        render(inner, this.g);
-      } catch (error) {
-        console.log(error);
-      }
+      render(inner, this.g);
 
       if (!this.nodes.length) return
       
