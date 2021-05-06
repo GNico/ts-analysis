@@ -28,8 +28,8 @@ urlpatterns = [
     path('monitors/<slug:monitor_id>/', views.MonitorDetailView.as_view(), name='monitors_detail'),
     path('monitors/<slug:monitor_id>/detectors/', views.PeriodicAnalysisListView.as_view(), name='periodic_analysis'),
     path('monitors/<slug:monitor_id>/detectors/<slug:detector_id>/', views.PeriodicAnalysisDetailView.as_view(), name='periodic_analysis_detail'),   
-
-
+    path('notification-channels/', views.NotificationChannelView.as_view(), name='notifications_channels'),
+    path('notification-channels/<slug:pk>/', views.NotificationChannelDetailView.as_view(), name='notifications_channels_detail'),
 
 
     path('source-files/', views.DataSourceFilesList.as_view(), name='source-files'),

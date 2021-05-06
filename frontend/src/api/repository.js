@@ -209,6 +209,16 @@ export default {
     deletePeriodicAnalysis(monitorId, detectorId) {
         return repository.delete("/monitors/" + monitorId + "/detectors/" + detectorId + "/" )
     },
+    //notification channels
+    addNewNotificationChannel(monitorId, email) {
+        return repository.post("/notification-channels/", {monitor: monitorId, email: email})
+    },
+    getAllNotificationChannels() {
+        return repository.get("/notification-channels/")
+    },
+    deleteNotificationChannel(id) {
+        return repository.delete("/notification-channels/" + id + "/")
+    },
 
 
     //Misc

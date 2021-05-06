@@ -4,7 +4,6 @@
     <div class="is-flex is-justify-content-space-between mb-5">
       <b-input placeholder="Search"> </b-input>
 
-
       <b-dropdown ref="dropdown" position="is-bottom-left" append-to-body trap-focus>
         <a
           class="button is-primary"
@@ -21,7 +20,6 @@
           <FormNewMonitor @submit="addMonitor" :loading="creatingMonitor"/>
         </b-dropdown-item>
       </b-dropdown>
-
      
     </div>
 
@@ -137,7 +135,7 @@ export default {
       .then(this.fetchMonitors)     
     },    
     openMonitor(row, column, rowIndex, columnIndex ) {
-      //warning: hardcoded last row
+      //warning: hardcoded last row index
       if (columnIndex != 4) {    
         this.$router.push({ name: 'MonitorDetails', params: {id: row.id}}) 
       }

@@ -2,8 +2,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ..models import Monitor
-from ..serializers import MonitorSerializer, MonitorListSerializer
+from ..models import Monitor, NotificationChannel
+from ..serializers import MonitorSerializer, MonitorListSerializer, NotificationChannelSerializer
 from django.http import Http404
 
 
@@ -19,7 +19,6 @@ class MonitorListView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class MonitorDetailView(APIView):
@@ -48,3 +47,23 @@ class MonitorDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+
+class NotificationChannelView(APIView):
+    def get(self, request):
+        channels = NotificationChannel.objects.all()
+        serializer = NotificationChannelSerializer(channels, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = NotificationChannelSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class NotificationChannelDetailView(APIView):
+    def delete(self, request, pk):
+        channel = NotificationChannel.objects.get(pk=pk)
+        channel.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

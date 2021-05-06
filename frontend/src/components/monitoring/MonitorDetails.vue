@@ -27,7 +27,6 @@
         </a>
       </div>
       
-
       <CardDetector 
         v-for="detector in monitor.detectors" 
         :key="detector.id"
@@ -36,32 +35,29 @@
         @update="updateOpts"
         @editAnalysis="editAnalysis"
         @showGraph="showGraph"
-        />
-
+      />
     </b-tab-item>
 
     <b-tab-item label="Notification channels" icon="bell" value="Notifications">
-
-      
-      <span class="is-size-5"> {{monitor.notification_email}} </span>
+      <MonitorNotifications 
+        :emails="monitor.notification_channels"
+        @add="addNotification"
+        @delete="deleteNotification"/>
     </b-tab-item>
-    
   </b-tabs>
-
-  
-
-
 </div>
 </template>
+
 
 <script>
 import api from '@/api/repository'
 import ModalLoadAnalysis from '@/components/analysis/ModalLoadAnalysis'
 import ModalDetectorGraph from './ModalDetectorGraph'
 import CardDetector from './CardDetector'
+import MonitorNotifications from './MonitorNotifications'
 
 export default {
-  components: { ModalDetectorGraph, ModalLoadAnalysis, CardDetector },
+  components: { ModalDetectorGraph, ModalLoadAnalysis, CardDetector, MonitorNotifications },
   data() {
     return {
       loadModalActive: false,
@@ -119,7 +115,19 @@ export default {
     showGraph(data) {
       this.modelModalActive = true
       this.modelData = data
-    } 
+    },
+    deleteNotification(id) {
+      api.deleteNotificationChannel(id)
+      .then(response => {
+        this.fetchData(this.monitor.id)
+      })
+    },
+    addNotification(email) {
+      api.addNewNotificationChannel(this.monitor.id, email)
+      .then(response => {
+        this.fetchData(this.monitor.id)
+      })
+    }
   },
   watch: {
     $route(to, from) {
