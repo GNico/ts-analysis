@@ -7,9 +7,11 @@ from ..serializers import MonitorSerializer, MonitorListSerializer, Notification
 from django.http import Http404
 
 
+from django.db.models import Count
+
 class MonitorListView(APIView):
     def get(self, request):
-        all_monitors = Monitor.objects.all()
+        all_monitors = Monitor.objects.annotate(num_detectors=Count('detectors'))
         serializer = MonitorListSerializer(all_monitors, many=True)
         return Response(serializer.data)
 

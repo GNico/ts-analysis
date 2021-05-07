@@ -63,13 +63,13 @@ class MonitorSerializer(serializers.ModelSerializer):
 
 
 class MonitorListSerializer(serializers.ModelSerializer):
-    detectors = serializers.SerializerMethodField("get_detector")
+    num_detectors = serializers.IntegerField(read_only=True)
     incidents = serializers.SerializerMethodField("get_incidents")
     last_incident = serializers.SerializerMethodField("get_last_incident")
 
     class Meta:
         model = Monitor
-        fields = [ 'id', 'name', 'detectors', 'incidents', 'last_incident']
+        fields = [ 'id', 'name', 'num_detectors', 'incidents', 'last_incident']
 
     def get_detector(self, obj):
         return 3

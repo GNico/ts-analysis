@@ -32,7 +32,7 @@
         :key="detector.id"
         :detector="detector"
         @delete="deleteItem"
-        @update="updateOpts"
+        @update="updateOpts(detector.id, $event)"
         @editAnalysis="editAnalysis"
         @showGraph="showGraph"
       />
@@ -105,8 +105,11 @@ export default {
         this.fetchData(this.monitor.id)
       })
     },
-    updateOpts(options) {
-      this.$emit('update', options)
+    updateOpts(id, options) {
+      api.updatePeriodicAnalysis(this.monitor.id, id, options)
+      .then(response => {
+        this.fetchData(this.monitor.id)
+      })
     },
     editAnalysis(analysis) {
       //should switch to analysis page

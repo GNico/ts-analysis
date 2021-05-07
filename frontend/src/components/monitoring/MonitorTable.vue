@@ -1,9 +1,7 @@
 <template>
   <div class="p-5"> 
-    
     <div class="is-flex is-justify-content-space-between mb-5">
       <b-input placeholder="Search"> </b-input>
-
       <b-dropdown ref="dropdown" position="is-bottom-left" append-to-body trap-focus>
         <a
           class="button is-primary"
@@ -20,10 +18,7 @@
           <FormNewMonitor @submit="addMonitor" :loading="creatingMonitor"/>
         </b-dropdown-item>
       </b-dropdown>
-     
     </div>
-
-      
 
     <b-table 
       :data="allMonitors" 
@@ -37,7 +32,7 @@
         {{ props.row.name }}       
       </b-table-column>
       <b-table-column field="detectors" label="Detectors" sortable v-slot="props" numeric cell-class="is-clickable">
-        {{ props.row.detectors }}       
+        {{ props.row.num_detectors }}       
       </b-table-column>
       <b-table-column field="incidents" label="Open incidents" sortable v-slot="props" numeric cell-class="is-clickable">
         {{ props.row.incidents }}       
@@ -45,13 +40,11 @@
       <b-table-column field="last_incident" label="Last incident" v-slot="props"  width="20%" centered cell-class="is-clickable">
         {{ props.row.last_incident }}
       </b-table-column>
-
       <b-table-column field="delete" label="" v-slot="props" centered>
         <button class="transparent-button" @click="deleteMonitor(props.row.id)">
           <b-icon icon="trash-can" type="is-grey"></b-icon>
         </button>
-      </b-table-column>
-    
+      </b-table-column>    
     </b-table>
   </div>
 </template>
@@ -65,22 +58,9 @@ export default {
   components: { FormNewMonitor },
   data() {
     return {
-      allMonitors: [{
-        name: 'Pepega',
-        detectors: 2,
-        incidents: 0,
-        last_incident: '20 Jun 2021, 12:45'
-      },
-      {
-        name: 'Another',
-        detectors: 23,
-        incidents: 2,
-        last_incident: '20 Jun 2021, 18:25'
-      }],
+      allMonitors: [],
       error: '',      
-
       creatingMonitor: false,
-
     }
   },
   computed: {   

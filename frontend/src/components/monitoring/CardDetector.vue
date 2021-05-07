@@ -2,7 +2,10 @@
 <div class="card my-5">
   <header class="card-header">
     <div class="card-header-title is-justify-content-space-between">
-      <span>{{detector.analysis_details.client}}: {{detector.analysis_details.name}}</span>
+      <div class="is-flex is-vcentered clickable highlightable" @click="expanded = !expanded">
+        <b-icon class="minimize-icon" :icon="!expanded ? 'window-minimize' : 'menu-down'" size="is-default" ></b-icon>
+        <span>&nbsp;{{detector.analysis_details.client}}: {{detector.analysis_details.name}}</span>
+      </div>
       <div class="is-flex is-align-items-center">
         <div class="header-item"> {{detector.last_run_at}} </div>
         <div class="header-item clickable" @click="confirmDelete">                
@@ -12,19 +15,20 @@
           Delete 
         </div>
         <b-switch 
-          v-model="detector.active" 
+          v-model="active" 
+          @input="updateActive"
           left-label 
           size="is-small" 
           type="is-success" 
           passive-type="is-danger" 
           :rounded="false">
-          {{detector.active ? 'ONLINE' : 'OFFLINE'}}
+          {{active ? 'ONLINE' : 'OFFLINE'}}
         </b-switch>
       </div>
     </div>        
   </header>
-  <div class="card-content">
-    <b-tabs size="" type="is-boxed" vertical :animated="false">
+  <div class="card-content" v-show="expanded">
+    <b-tabs type="is-boxed" vertical :animated="false">
 
       <!--DETECTOR SETTINGS-->
       <b-tab-item label="Detector settings">
@@ -54,14 +58,14 @@
               <b-input 
               size="is-small" 
               class="shorter-field"
-              v-model="options.incidents_period"
+              v-model="options.relevant_period"
               type="text" 
               pattern="^[0-9]+[mhd]$"/>
             </b-field>
             <b-field horizontal label="Notifications">
               <b-switch 
                 v-model="options.alerts_enabled" 
-                size="is-small" 
+                :rounded="false"
                 type="is-primary" 
                 passive-type="is-grey">
                 {{options.alerts_enabled ? 'Enabled' : 'Disabled'}}
@@ -114,6 +118,8 @@
 </template>
 
 <script>
+import debounce from "lodash/debounce"
+
 export default {
   props: {
     detector: {
@@ -123,12 +129,13 @@ export default {
   },
   data() {
     return {
+      expanded: true,
+      active: undefined,
       options: {
-        alerts_enabled: true,
+        alerts_enabled: undefined,
         time_interval: undefined,
-        incidents_period: undefined,
+        relevant_period: undefined,
       }
-
     }
   },
   methods: {
@@ -144,42 +151,55 @@ export default {
       })
     },
     deleteItem() {
-    // api.deletePeriodicAnalysis(this.detector.monitor, this.detector.id)
-     // .then(response => {
-        //this.fetchData(this.data.id)
       this.$emit('delete', this.detector.id)
-    //  })
     }, 
     updateOpts() {
       this.$emit('update', this.options)
     },
+    updateActive() {
+      this.$emit('update', {active: this.active})
+    },
     editAnalysis() {
       this.$emit('editAnalysis', this.detector.analysis)
-      //should switch to analysis page
     },
     showGraph() {
       this.$emit('showGraph', this.detector.analysis_details.model)
-     // this.modelModalActive = true
-     // this.modelData = data
     }
+  },
+  watch: {
+    detector: {
+      deep: true,
+      immediate: true,
+      handler(newOpts) {
+        this.active = newOpts.active
+        Object.keys(this.options).forEach(key => {
+          if (newOpts.hasOwnProperty(key) && this.options[key] !== newOpts[key]) {
+            this.options[key] = newOpts[key] 
+          }
+        })
+      }
+    }
+  },
+  created() {
+    this.updateActive = debounce(this.updateActive, 400)
   }
 }
-
 </script>
 
 
 <style scoped>
-
 .header-item {
   border-right: 1px solid;
   padding-right: 0.75rem;
   margin-right: 0.75rem;
 }
 
-
 .clickable {
   cursor: pointer;
   user-select: none;
 }
 
+.highlightable:hover {
+  filter: brightness(200%);
+}
 </style>

@@ -63,6 +63,7 @@ class NotificationChannel(models.Model):
 class PeriodicAnalysis(models.Model):    
     class Meta: 
         db_table = 'periodic_analysis'
+        ordering = ['created']
 
     monitor = models.ForeignKey(Monitor, on_delete=models.CASCADE, related_name="detectors", null=True)
     analysis = models.ForeignKey(Analysis, on_delete=models.CASCADE)

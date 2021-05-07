@@ -16,9 +16,9 @@
 
 <script>
 import { DefaultChartSettings } from '../../config/settings'
-import BaseChart from "../BaseChart";
-import debounce from "lodash/debounce";
-import throttle from "lodash/throttle";
+import BaseChart from "../BaseChart"
+import debounce from "lodash/debounce"
+import throttle from "lodash/throttle"
 import { analysisTooltipFormatter } from '../../utils/helpers'
 
 
