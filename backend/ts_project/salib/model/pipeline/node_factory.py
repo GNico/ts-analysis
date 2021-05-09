@@ -88,10 +88,10 @@ class NodeFactory:
 
     @staticmethod
     def from_json(obj):
-        id = obj['id']
-        group = obj['group']
-        type = obj['type']
         try:
+            id = obj['id']
+            group = obj['group']
+            type = obj['type']
             builder = NodeFactory(id, group, type)
             if 'params' in obj.keys():
                 params = obj['params']
@@ -105,7 +105,7 @@ class NodeFactory:
                 builder.set_debug(True)
             return builder.build()
         except Exception as e:
-            raise RuntimeError('Error parsing node ' + str((id, group, type)) + ': `' + str(obj) + '`') from e
+            raise RuntimeError('Error parsing node `' + str(obj) + '`') from e
 
     def __init__(self, id, group, type):
         self.node = NodeFactory.base_node(id, group, type)
