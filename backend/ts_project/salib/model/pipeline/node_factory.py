@@ -91,18 +91,21 @@ class NodeFactory:
         id = obj['id']
         group = obj['group']
         type = obj['type']
-        builder = NodeFactory(id, group, type)
-        if 'params' in obj.keys():
-            params = obj['params']
-            for param in params:
-                builder.set_param_value(param['id'], param['value'])
-        if 'sources' in obj.keys():
-            sources = obj['sources']
-            for source in sources:
-                builder.add_source(source)
-        if obj.get('debug') is True:
-            builder.set_debug(True)
-        return builder.build()
+        try:
+            builder = NodeFactory(id, group, type)
+            if 'params' in obj.keys():
+                params = obj['params']
+                for param in params:
+                    builder.set_param_value(param['id'], param['value'])
+            if 'sources' in obj.keys():
+                sources = obj['sources']
+                for source in sources:
+                    builder.add_source(source)
+            if obj.get('debug') is True:
+                builder.set_debug(True)
+            return builder.build()
+        except Exception as e:
+            raise RuntimeError('Error parsing node ' + str((id, group, type)) + ': `' + str(obj) + '`') from e
 
     def __init__(self, id, group, type):
         self.node = NodeFactory.base_node(id, group, type)

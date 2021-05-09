@@ -14,8 +14,8 @@ class STL(NodeTransformer):
     def add_params(self):
         output_options = [
             SelectOption("trend", "Trend"),
-            SelectOption("season", "Seasonality"),
-            SelectOption("residual", "Residual"),
+            SelectOption("seasonal", "Seasonality"),
+            SelectOption("resid", "Residual"),
         ]
         self.add_required_param(Select('output', 'Output', 'STL output', output_options, output_options[0].code))        
         self.add_required_param(BoundedInt('period', 'Period', 'Expected seasonality', 0, None, 24))
@@ -32,7 +32,14 @@ class STL(NodeTransformer):
         output, period, robust = self.get_params()
         stl = stl_model.STL(pdseries, seasonal=STL.adapt_period(period), robust=robust)
         result = stl.fit()
-        from celery.contrib import rdb; rdb.set_trace()
+        if output == 'resid':
+            return result.resid
+        elif output == 'trend':
+            return result.trend
+        elif output == 'seasonal':
+            return result.seasonal
+        else:
+            raise ValueError('Invalid output: ' + output)
         return result
 
     @staticmethod
