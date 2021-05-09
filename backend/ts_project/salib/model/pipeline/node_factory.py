@@ -4,6 +4,7 @@ from .nodes.transformers.std_normalize import StdNormalize
 from .nodes.transformers.shift import Shift
 from .nodes.transformers.identity import Identity
 from .nodes.transformers.rolling_aggregate import RollingAggregate
+from .nodes.transformers.stl import STL
 
 from .nodes.detectors.simple_threshold import SimpleThreshold
 from .nodes.detectors.interquartile_range import InterQuartileRange
@@ -22,6 +23,7 @@ class NodeFactory:
             'EMA': EMA,
             'Difference': Difference,
             'RollingAggregate': RollingAggregate,
+            'STL': STL
         },
         'detector': {
             'SimpleThreshold': SimpleThreshold,
@@ -86,21 +88,24 @@ class NodeFactory:
 
     @staticmethod
     def from_json(obj):
-        id = obj['id']
-        group = obj['group']
-        type = obj['type']
-        builder = NodeFactory(id, group, type)
-        if 'params' in obj.keys():
-            params = obj['params']
-            for param in params:
-                builder.set_param_value(param['id'], param['value'])
-        if 'sources' in obj.keys():
-            sources = obj['sources']
-            for source in sources:
-                builder.add_source(source)
-        if obj.get('debug') is True:
-            builder.set_debug(True)
-        return builder.build()
+        try:
+            id = obj['id']
+            group = obj['group']
+            type = obj['type']
+            builder = NodeFactory(id, group, type)
+            if 'params' in obj.keys():
+                params = obj['params']
+                for param in params:
+                    builder.set_param_value(param['id'], param['value'])
+            if 'sources' in obj.keys():
+                sources = obj['sources']
+                for source in sources:
+                    builder.add_source(source)
+            if obj.get('debug') is True:
+                builder.set_debug(True)
+            return builder.build()
+        except Exception as e:
+            raise RuntimeError('Error parsing node `' + str(obj) + '`') from e
 
     def __init__(self, id, group, type):
         self.node = NodeFactory.base_node(id, group, type)

@@ -238,6 +238,59 @@
           "input"
         ]
       }
+    },
+    {
+      "type": "STL",
+      "desc": "Seasonal-Trend decomposition (LOESS)",
+      "display": "STL decomposition",
+      "params": [
+        {
+          "id": "output",
+          "type": "Select",
+          "display": "Output",
+          "desc": "STL output",
+          "conditions": [],
+          "value": "trend",
+          "options": [
+            {
+              "code": "trend",
+              "display": "Trend"
+            },
+            {
+              "code": "seasonal",
+              "display": "Seasonality"
+            },
+            {
+              "code": "resid",
+              "display": "Residual"
+            }
+          ]
+        },
+        {
+          "id": "period",
+          "type": "BoundedInt",
+          "display": "Period",
+          "desc": "Expected seasonality",
+          "conditions": [],
+          "value": 24,
+          "min": 0,
+          "max": null
+        },
+        {
+          "id": "robust",
+          "type": "Boolean",
+          "display": "Robust",
+          "desc": "Tolerate larger errors using LOWESS",
+          "conditions": [],
+          "value": true
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
     }
   ],
   "detector": [
