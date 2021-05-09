@@ -291,6 +291,39 @@
           "input"
         ]
       }
+    },
+    {
+      "type": "AutoRegression",
+      "desc": "Auto-regression with lags & seasonality",
+      "display": "Auto-Regression",
+      "params": [
+        {
+          "id": "period",
+          "type": "BoundedInt",
+          "display": "Period",
+          "desc": "Expected seasonality",
+          "conditions": [],
+          "value": 24,
+          "min": 0,
+          "max": null
+        },
+        {
+          "id": "lags",
+          "type": "BoundedInt",
+          "display": "Lags",
+          "desc": "Number of lags to use",
+          "conditions": [],
+          "value": 6,
+          "min": 0,
+          "max": null
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
     }
   ],
   "detector": [
