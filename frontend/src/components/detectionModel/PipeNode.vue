@@ -183,6 +183,15 @@ export default {
               size: 'is-small',
             }
           }
+        case 'Int': 
+          return {
+            name: 'b-input',
+            props: {
+              type: 'number',
+              step: 1,
+              size: 'is-small',
+            }
+          }
         case 'BoundedInt':
           return {
             name: 'b-input',
@@ -211,7 +220,22 @@ export default {
         }
     },
     paramsDataChange(name, value, type) {
-      let parsed = (type === 'Float' || type === "BoundedFloat") ? parseFloat(value) : value
+      let parsed = ''
+      switch (type) {
+        case 'Float':
+        case 'BoundedFloat':
+          parsed = parseFloat(value)
+          break;
+        case 'Int':
+        case 'BoundedInt':
+          parsed = parseInt(value)
+          break;
+        default:
+          parsed = value
+      }
+
+      //let parsed = (type === 'Float' || type === "BoundedFloat") ? parseFloat(value) : value
+      console.log(typeof parsed)
       this.$emit('nodeParamsChange', {id: this.id, [name]: parsed})
     },
     sourceNodesChange(event) {
