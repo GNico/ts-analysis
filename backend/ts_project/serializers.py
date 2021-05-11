@@ -12,15 +12,17 @@ class PipelineSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description', 'nodes', 'created', 'modified']
 
 
+#serializer for database analysis settings
 class AnalysisSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Analysis
         fields = ['id', 'client', 'name', 'description', 'data_options', 'model', 'created', 'modified']
 
 
+#serializer for performing analysis requests
 class AnalysisSerializer(serializers.Serializer):
-    name = serializers.CharField(allow_blank=False)
-    description = serializers.CharField(allow_blank=True)
+    #name = serializers.CharField(allow_blank=False)
+    #description = serializers.CharField(allow_blank=True)
     client = serializers.CharField(allow_blank=False)
     tags = serializers.ListField(child=serializers.CharField(), required=False, allow_empty=True, min_length=None, max_length=None)
     contexts = serializers.ListField(child=serializers.CharField(), required=False, allow_empty=True, min_length=None, max_length=None)
