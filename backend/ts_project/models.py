@@ -2,6 +2,7 @@ from django.db import models
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
 from django.utils import timezone
 
+from . import task_priorities
 
 class Client(models.Model):
     class Meta:        
@@ -75,7 +76,6 @@ class PeriodicAnalysis(models.Model):
     created = models.DateTimeField(auto_now_add=True) 
 
     def delete(self, *args, **kwargs):
-        print("calls periodicanalysis delete")
         if self.task is not None:
             self.task.delete()
         return super(self.__class__, self).delete(*args, **kwargs)
@@ -86,8 +86,9 @@ class PeriodicAnalysis(models.Model):
             task='periodictask',
             interval=self.interval_schedule,
             enabled=self.active,
-            args=[self.analysis_id],
-            start_time=timezone.now()
+            args=[self.id],
+            start_time=timezone.now(),
+            priority=task_priorities.PERIODIC_ANALYSIS
         )
         self.save()
 
@@ -111,5 +112,10 @@ class PeriodicAnalysis(models.Model):
         raise NotImplementedError(
             '''Interval Schedule for {interval} is invalid.'''.format(
                 interval=self.time_interval.value))
+
+
+class Results(models.Model):
+    class Meta:
+        db_table = 'results'
 
 

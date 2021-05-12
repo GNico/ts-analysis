@@ -1,8 +1,10 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
 from ..serializers import AnalysisSerializer
 from .. import tasks
+from .. import task_priorities
 
 
 class AnalysisView(APIView):
@@ -10,7 +12,8 @@ class AnalysisView(APIView):
         serializer = AnalysisSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
-        task = tasks.perform_analysis.delay(serializer.data)
+        #task = tasks.perform_analysis.delay(serializer.data)
+        task = tasks.perform_analysis.apply_async(args=[serializer.data], priority=task_priorities.LIVE_ANALYSIS)
         return Response({"task_id": task.id})
 
 

@@ -3,7 +3,7 @@
   <header class="card-header">
     <div class="card-header-title is-justify-content-space-between">
       <div class="is-flex is-vcentered clickable highlightable" @click="expanded = !expanded">
-        <b-icon class="minimize-icon" :icon="!expanded ? 'window-minimize' : 'menu-down'" size="is-default" ></b-icon>
+        <b-icon class="minimize-icon" :icon="!expanded ? 'menu-right' : 'menu-down'" size="is-default" ></b-icon>
         <span>&nbsp;{{detector.analysis_details.client}}: {{detector.analysis_details.name}}</span>
       </div>
       <div class="is-flex is-align-items-center">
@@ -27,7 +27,7 @@
       </div>
     </div>        
   </header>
-  <div class="card-content" v-show="expanded">
+  <div class="card-content p-4" v-show="expanded">
     <b-tabs type="is-boxed" vertical :animated="false">
 
       <!--DETECTOR SETTINGS-->
@@ -202,4 +202,5 @@ export default {
 .highlightable:hover {
   filter: brightness(200%);
 }
+
 </style>

@@ -1,6 +1,7 @@
 from .models import Client
 from .elastic import series_search, series_indexer
 from . import tasks
+from . import task_priorities
 from . import utils
 
 search = series_search.SeriesSearch()
@@ -15,6 +16,7 @@ def add_new_client(client_name, docs_path):
         raise ClientNameAlreadyExists()
     filenames = utils.get_files_from_directory(docs_path)
     task = tasks.index_series_data.delay(client_name, filenames)
+    task = tasks.index_series_data.apply_async(args=[client_name, filenames], priority=task_priorities.INDEXING)
     client = Client.objects.create(name=client_name, index_name='', task_id=task.id, status='Pending')
     return task.id
    

@@ -74,7 +74,6 @@ const mutations = {
     set_active_anomaly(state, anomalyId) {
         state.activeAnomalyId = anomalyId
     },
-
 }
 
 
