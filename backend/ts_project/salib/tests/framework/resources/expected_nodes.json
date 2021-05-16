@@ -293,6 +293,59 @@
       }
     },
     {
+      "type": "Seasonal decompose",
+      "desc": "Seasonal & trend decomposition using averages",
+      "display": "Seasonal decomposition",
+      "params": [
+        {
+          "id": "output",
+          "type": "Select",
+          "display": "Output",
+          "desc": "Seasonal decompose output",
+          "conditions": [],
+          "value": "trend",
+          "options": [
+            {
+              "code": "trend",
+              "display": "Trend"
+            },
+            {
+              "code": "seasonal",
+              "display": "Seasonality"
+            },
+            {
+              "code": "resid",
+              "display": "Residual"
+            }
+          ]
+        },
+        {
+          "id": "period",
+          "type": "BoundedInt",
+          "display": "Period",
+          "desc": "Expected seasonality",
+          "conditions": [],
+          "value": 24,
+          "min": 0,
+          "max": null
+        },
+        {
+          "id": "two_sided",
+          "type": "Boolean",
+          "display": "Two sided",
+          "desc": "Calculate moving averages in both directions for robustness",
+          "conditions": [],
+          "value": true
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
       "type": "AutoRegression",
       "desc": "Auto-regression with lags & seasonality",
       "display": "Auto-Regression",
@@ -314,6 +367,29 @@
           "desc": "Number of lags to use",
           "conditions": [],
           "value": 6,
+          "min": 0,
+          "max": null
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
+      "type": "ALMA",
+      "desc": "Arnaud Legoux moving average",
+      "display": "Arnaud Legoux moving average",
+      "params": [
+        {
+          "id": "window",
+          "type": "BoundedInt",
+          "display": "Window",
+          "desc": "Window size",
+          "conditions": [],
+          "value": 24,
           "min": 0,
           "max": null
         }

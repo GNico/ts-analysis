@@ -5,7 +5,9 @@ from .nodes.transformers.shift import Shift
 from .nodes.transformers.identity import Identity
 from .nodes.transformers.rolling_aggregate import RollingAggregate
 from .nodes.transformers.stl import STL
+from .nodes.transformers.seasonal_decompose import SeasonalDecompose
 from .nodes.transformers.autoreg import AutoReg
+from .nodes.transformers.alma import ALMA
 
 from .nodes.detectors.simple_threshold import SimpleThreshold
 from .nodes.detectors.interquartile_range import InterQuartileRange
@@ -25,7 +27,9 @@ class NodeFactory:
             'Difference': Difference,
             'RollingAggregate': RollingAggregate,
             'STL': STL,
-            'AutoRegression': AutoReg
+            'Seasonal decompose': SeasonalDecompose,
+            'AutoRegression': AutoReg,
+            'ALMA': ALMA
         },
         'detector': {
             'SimpleThreshold': SimpleThreshold,
