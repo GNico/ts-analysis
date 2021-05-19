@@ -9,7 +9,7 @@ class SeriesView(APIView):
         data = services.get_series( 
             client_name=pk, 
             start=request.query_params.get('start', ''),
-            end=request.query_params.get('end', ''),
+            end=request.query_params.get('end', now),
             contexts=request.query_params.getlist('contexts', []),             
             tags=request.query_params.getlist('tags', []),             
             interval=request.query_params.get('interval', '1h'))

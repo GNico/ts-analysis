@@ -33,7 +33,7 @@ class AnalysisSerializer(serializers.Serializer):
 
     def validate_start(self, value):
         data = self.get_initial()
-        if data['end'] and data['start'] and (data['start'] > data['end']):
+        if data.get('end') and data.get('start') and (data['start'] > data['end']):
             raise serializers.ValidationError("Start date must be before end date")
         return value
 
@@ -41,12 +41,11 @@ class AnalysisSerializer(serializers.Serializer):
 class PeriodicAnalysisSerializer(serializers.ModelSerializer):
     time_interval = serializers.RegexField(regex='^[0-9]+[smhd]$', allow_blank=False, required=False)
     relevant_period = serializers.RegexField(regex='^[0-9]+[smhd]$', allow_blank=False, required=False)
-    last_run_at = serializers.DateTimeField(source='task.last_run_at', read_only=True)
     analysis_details = AnalysisSettingsSerializer(read_only=True, source='analysis')
 
     class Meta:
         model = PeriodicAnalysis
-        fields = [ 'id', 'monitor', 'analysis', 'analysis_details', 'task', 'active', 'alerts_enabled', 'time_interval', 'relevant_period', 'created', 'last_run_at' ]
+        fields = [ 'id', 'monitor', 'analysis', 'analysis_details', 'task', 'active', 'alerts_enabled', 'time_interval', 'relevant_period', 'created', 'last_run' ]
 
 
 class NotificationChannelSerializer(serializers.ModelSerializer):

@@ -73,7 +73,9 @@ class PeriodicAnalysis(models.Model):
     alerts_enabled = models.BooleanField(default=False)
     time_interval = models.TextField(default='1h')
     relevant_period = models.TextField(default='1d')
-    created = models.DateTimeField(auto_now_add=True) 
+    #data period o algo asi indepiendente del from to del analysis
+    created = models.DateTimeField(auto_now_add=True)     
+    last_run = models.DateTimeField(null=True)
 
     def delete(self, *args, **kwargs):
         if self.task is not None:
@@ -83,7 +85,7 @@ class PeriodicAnalysis(models.Model):
     def setup_task(self):
         self.task = PeriodicTask.objects.create(
             name=self.id,
-            task='periodictask',
+            task='periodic_analysis',
             interval=self.interval_schedule,
             enabled=self.active,
             args=[self.id],
@@ -118,4 +120,23 @@ class Results(models.Model):
     class Meta:
         db_table = 'results'
 
+    periodic_analysis = models.ForeignKey(PeriodicAnalysis, on_delete=models.CASCADE, related_name="results")
+    anomalies = models.JSONField()
+    run_datetime = models.DateTimeField(null=True) 
+
+
+class Incidents(models.Model):
+    class Meta:
+        db_table = 'incidents'
+
+    class State(models.TextChoices):
+        OPEN = 'Open'
+        CLOSED = 'Closed'
+
+    periodic_analysis = models.ForeignKey(PeriodicAnalysis, on_delete=models.CASCADE, related_name="incidents")
+    state = models.CharField(max_length=10, choices=State.choices, default=State.OPEN)
+    start = models.DateTimeField() 
+    end = models.DateTimeField() 
+    score = models.DecimalField(max_digits=3, decimal_places=2, default=1.0)
+    desc = models.TextField(null=True)
 
