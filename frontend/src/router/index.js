@@ -1,7 +1,7 @@
 import VueRouter from 'vue-router'
-import Index from '@/pages/monitoring/Index.vue'
+//import Index from '@/pages/monitoring/Index.vue'
 import MonitorDetails from '@/components/monitoring/MonitorDetails.vue'
-import MonitorTable from '@/components/monitoring/MonitorTable.vue'
+//import MonitorTable from '@/components/monitoring/MonitorTable.vue'
 
 function lazyLoad(view){
   return () => import(`@/pages/${view}.vue`)
@@ -22,7 +22,7 @@ let routes = [
   },
   {
     path: '/Monitoring',
-    component: Index,
+    component: lazyLoad('monitoring/Index'),
     children: [
       {
         path: '', 
@@ -38,7 +38,7 @@ let routes = [
         children: [
           {
             path: '',
-            component: MonitorTable
+            component: () => import(`@/components/monitoring/MonitorTable.vue`)
           },
           {
             name: 'MonitorDetails',

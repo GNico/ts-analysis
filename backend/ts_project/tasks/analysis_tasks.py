@@ -1,5 +1,5 @@
 from celery import shared_task
-from ..models import PeriodicAnalysis, Results, Incidents
+from ..models import PeriodicAnalysis, Results, Incident
 
 import pandas as pd
 from datetime import datetime, timezone
@@ -67,9 +67,9 @@ def perform_periodic_analysis(self, id):
         run_datetime=now)
 
     #create incidents (remove old for now)
-    Incidents.objects.filter(periodic_analysis=periodic_analysis).delete()
+    Incident.objects.filter(periodic_analysis=periodic_analysis).delete()
     for anomaly in analysis_results['anomalies']:
-        incident = Incidents.objects.create(
+        incident = Incident.objects.create(
             periodic_analysis=periodic_analysis,
             start=datetime.fromtimestamp(anomaly['from']/1000.0, tz=timezone.utc),
             end=datetime.fromtimestamp(anomaly['to']/1000.0, tz=timezone.utc),

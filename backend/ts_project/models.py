@@ -125,7 +125,7 @@ class Results(models.Model):
     run_datetime = models.DateTimeField(null=True) 
 
 
-class Incidents(models.Model):
+class Incident(models.Model):
     class Meta:
         db_table = 'incidents'
 

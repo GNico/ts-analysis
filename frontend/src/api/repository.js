@@ -219,6 +219,10 @@ export default {
     deleteNotificationChannel(id) {
         return repository.delete("/notification-channels/" + id + "/")
     },
+    //incidents
+    getAllIncidents() {
+        return repository.get("/incidents/")
+    },
 
 
     //Misc

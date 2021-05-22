@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Pipeline, Analysis, PeriodicAnalysis, Monitor, NotificationChannel
+from .models import Pipeline, Analysis, PeriodicAnalysis, Monitor, NotificationChannel, Incident
 
 class ClientInputSerializer(serializers.Serializer):
     name = serializers.RegexField(regex='^[a-z0-9_]+$', allow_blank=False)
@@ -80,3 +80,26 @@ class MonitorListSerializer(serializers.ModelSerializer):
 
     def get_last_incident(self, obj):
         return '27/04/2021'
+
+
+class IncidentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Incident
+        fields = '__all__'
+
+
+class IncidentListSerializer(serializers.ModelSerializer):
+    class AnalysisListingField(serializers.RelatedField):
+        def to_representation(self, value):
+            return value.analysis.name
+
+    class MonitorListingField(serializers.RelatedField):
+        def to_representation(self, value):
+            return value.monitor.name
+
+    monitor = MonitorListingField(read_only=True, source='periodic_analysis')
+    analysis_name = AnalysisListingField(read_only=True, source='periodic_analysis')
+
+    class Meta:
+        model = Incident
+        fields = ['id', 'state', 'score', 'start', 'end', 'desc', 'analysis_name', 'monitor']

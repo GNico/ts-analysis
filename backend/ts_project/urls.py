@@ -31,6 +31,8 @@ urlpatterns = [
     path('notification-channels/', views.NotificationChannelView.as_view(), name='notifications_channels'),
     path('notification-channels/<slug:pk>/', views.NotificationChannelDetailView.as_view(), name='notifications_channels_detail'),
 
+    path('incidents/', views.IncidentsListView.as_view(), name='incidents'),
+
 
     path('source-files/', views.DataSourceFilesList.as_view(), name='source-files'),
     path('testalgo/', views.AlgoTestView.as_view(), name='testalgo'),
