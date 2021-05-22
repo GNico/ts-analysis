@@ -1,23 +1,31 @@
 <template>
   <div class="p-5"> 
-    <div class="is-flex is-justify-content-space-between mb-5">
-      <b-input placeholder="Search"> </b-input>
-      <b-dropdown ref="dropdown" position="is-bottom-left" append-to-body trap-focus>
-        <a
-          class="button is-primary"
-          slot="trigger"
-          role="button">
-          <b-icon  icon="playlist-plus"></b-icon>
-          <span class="has-text-weight-semibold">New Monitor</span>
-        </a>
-        <b-dropdown-item
-          aria-role="menu-item"
-          :focusable="false"
-          custom
-          paddingless>
-          <FormNewMonitor @submit="addMonitor" :loading="creatingMonitor"/>
-        </b-dropdown-item>
-      </b-dropdown>
+
+    <div class="columns is-marginless mb-4">
+      <div class="column is-6-mobile is-5-widescreen is-4-fullhd  is-paddingless">
+        <b-input expanded placeholder="Search..." size="is-small"></b-input>        
+      </div>
+
+      <div class="column is-paddingless">
+        <div class="is-flex is-align-items-center has-text-right is-justify-content-flex-end">
+          <b-dropdown ref="dropdown" position="is-bottom-left" append-to-body trap-focus>
+            <a
+              class="button is-primary is-small"
+              slot="trigger"
+              role="button">
+              <b-icon  icon="playlist-plus"></b-icon>
+              <span class="has-text-weight-semibold">New Monitor</span>
+            </a>
+            <b-dropdown-item
+              aria-role="menu-item"
+              :focusable="false"
+              custom
+              paddingless>
+              <FormNewMonitor @submit="addMonitor" :loading="creatingMonitor"/>
+            </b-dropdown-item>
+          </b-dropdown>        
+        </div> 
+      </div>
     </div>
 
     <b-table 
@@ -37,7 +45,7 @@
       <b-table-column field="incidents" label="Open incidents" sortable v-slot="props" numeric cell-class="is-clickable">
         {{ props.row.incidents }}       
       </b-table-column>
-      <b-table-column field="last_incident" label="Last incident" v-slot="props"  width="20%" centered cell-class="is-clickable">
+      <b-table-column field="last_incident" label="Last incident" sortable v-slot="props"  width="20%" centered cell-class="is-clickable">
         {{ props.row.last_incident }}
       </b-table-column>
       <b-table-column field="delete" label="" v-slot="props" centered>

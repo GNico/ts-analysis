@@ -10,15 +10,15 @@
     :default-sort="['name', 'asc']">
 
     <b-table-column field="state" label="State"  width="5%" sortable v-slot="props"  cell-class="is-clickable">
-      {{ props.row.state }}       
+      <span class="tag is-small is-info">{{ props.row.state }}</span>     
     </b-table-column>
     <b-table-column field="score" label="Score" width="5%" sortable v-slot="props"  cell-class="is-clickable">
-      {{ props.row.score }}       
+      <span class="tag">{{ props.row.score }}</span>     
     </b-table-column>
-    <b-table-column field="monitor" label="Monitor name" sortable v-slot="props"  cell-class="is-clickable">
+    <b-table-column field="monitor" label="Monitor name" width="30%" sortable v-slot="props"  cell-class="is-clickable">
       {{ props.row.monitor }}       
     </b-table-column>
-    <b-table-column field="detector" label="Detector name" sortable v-slot="props"  cell-class="is-clickable">
+    <b-table-column field="detector" label="Detector name" width="30%" sortable v-slot="props"  cell-class="is-clickable">
       {{ props.row.analysis_name }}       
     </b-table-column>
     <b-table-column field="start" label="Start" v-slot="props" centered cell-class="is-clickable">

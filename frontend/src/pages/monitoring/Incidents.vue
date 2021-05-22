@@ -1,5 +1,77 @@
 <template>
 <div class="p-5">
+
+  <div class="columns is-marginless mb-4">
+    <div class="column is-6-mobile is-5-widescreen is-4-fullhd  is-paddingless">
+      <b-field grouped>
+          <b-input expanded placeholder="Search..." size="is-small"></b-input>
+          <p class="control">
+            <a class="button is-primary is-small">
+              <b-icon size="is-small" icon="filter-variant"></b-icon>
+              <span class="has-text-weight-semibold">Filters</span>
+            </a>
+          </p>
+      </b-field>
+    </div>
+
+    <div class="column is-paddingless">
+      <div class="is-flex is-align-items-center has-text-right is-justify-content-flex-end">
+        <span class="mr-2">On selected:</span> 
+        <div class="field has-addons">
+          <p class="control">
+            <a class="button is-small is-primary" @click="performAction">{{currentAction}}</a>
+          </p>
+          <p class="control">
+            <b-dropdown scrollable :max-height="200" aria-role="list" position="is-bottom-left">
+              <template #trigger="{ active }">
+                <b-button class="button-right is-shadowless" icon-left="menu-down" size="is-small" type="is-primary"/>
+              </template>
+              <b-dropdown-item 
+                v-for="action in onSelectedActions" 
+                :key="action"
+                @click="currentAction = action"
+                aria-role="listitem">
+                {{action}}
+              </b-dropdown-item>
+            </b-dropdown>
+          </p>
+        </div>        
+      </div> 
+    </div>
+  </div>
+<!--  <div class="is-flex is-align-items-center is-justify-content-space-between mb-3 ">
+    <div class="is-flex is-align-items-center">
+      <b-input placeholder="Search" size="is-small" class="mr-3"> </b-input>
+      <a class="button is-primary is-small">
+        <b-icon  icon="playlist-plus"></b-icon>
+        <span class="has-text-weight-semibold">Filters</span>
+      </a>
+    </div>    
+
+    <div class="is-flex is-align-items-center has-text-right">
+      <span class="mr-2">On selected:</span> 
+      <div class="field has-addons">
+        <p class="control">
+          <a class="button is-small is-primary" @click="performAction">{{currentAction}}</a>
+        </p>
+        <p class="control">
+          <b-dropdown scrollable :max-height="200" aria-role="list" position="is-bottom-left">
+            <template #trigger="{ active }">
+              <b-button class="button-right is-shadowless" icon-left="menu-down" size="is-small" type="is-primary"/>
+            </template>
+            <b-dropdown-item 
+              v-for="action in onSelectedActions" 
+              :key="action"
+              @click="currentAction = action"
+              aria-role="listitem">
+              {{action}}
+            </b-dropdown-item>
+          </b-dropdown>
+        </p>
+      </div>        
+    </div> 
+  </div> -->
+
   <IncidentsTable :incidents="allIncidents"/>
 </div>
 </template>
@@ -14,7 +86,13 @@ export default {
   data() {
     return {
       allIncidents: [],
-      error: ''
+      error: '',
+      currentAction: 'Mark as closed',
+      onSelectedActions: [
+        'Mark as closed',
+        'Mark as open',
+        'Delete incident',       
+      ],
     }
   },
   methods: {
@@ -25,6 +103,9 @@ export default {
                 this.allIncidents = response.data
               })
               .catch(error => this.error = 'There was an error retrieving data')
+    },
+    performAction() {
+
     }
   },
   created() {
@@ -33,3 +114,14 @@ export default {
 }
 
 </script>
+
+
+<style scoped>
+.button-right {
+  border-left: 1px solid rgba(255,255,255,0.5);
+}
+
+.button-right:focus {
+  border-left: 1px solid rgba(255,255,255,0.5);
+}
+</style>
