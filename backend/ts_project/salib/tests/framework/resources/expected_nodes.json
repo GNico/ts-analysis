@@ -268,13 +268,11 @@
         },
         {
           "id": "period",
-          "type": "BoundedInt",
+          "type": "String",
           "display": "Period",
-          "desc": "Expected seasonality",
+          "desc": "Expected seasonality in periods or time interval (eg: 12h)",
           "conditions": [],
-          "value": 24,
-          "min": 0,
-          "max": null
+          "value": "7d"
         },
         {
           "id": "robust",
@@ -321,13 +319,11 @@
         },
         {
           "id": "period",
-          "type": "BoundedInt",
+          "type": "String",
           "display": "Period",
-          "desc": "Expected seasonality",
+          "desc": "Expected seasonality in periods or time interval (eg: 12h)",
           "conditions": [],
-          "value": 24,
-          "min": 0,
-          "max": null
+          "value": "7d"
         },
         {
           "id": "two_sided",
@@ -352,13 +348,11 @@
       "params": [
         {
           "id": "period",
-          "type": "BoundedInt",
+          "type": "String",
           "display": "Period",
-          "desc": "Expected seasonality",
+          "desc": "Expected seasonality in periods or time interval (eg: 12h)",
           "conditions": [],
-          "value": 24,
-          "min": 0,
-          "max": null
+          "value": "7d"
         },
         {
           "id": "lags",
@@ -385,13 +379,11 @@
       "params": [
         {
           "id": "window",
-          "type": "BoundedInt",
+          "type": "String",
           "display": "Window",
-          "desc": "Window size",
+          "desc": "Window size in periods or time interval (eg: 12h)",
           "conditions": [],
-          "value": 24,
-          "min": 0,
-          "max": null
+          "value": "12h"
         }
       ],
       "inputs": {

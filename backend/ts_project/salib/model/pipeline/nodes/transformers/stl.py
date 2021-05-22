@@ -3,7 +3,8 @@ import statsmodels.tsa.seasonal as sm
 from ..node_transformer import NodeTransformer
 from ...params.select import Select, SelectOption
 from ...params.boolean import Boolean
-from ...params.int import BoundedInt
+from ...params.string import String
+from ....utils import timedelta_to_period
 
 class STL(NodeTransformer):
 
@@ -18,7 +19,7 @@ class STL(NodeTransformer):
             SelectOption("resid", "Residual"),
         ]
         self.add_required_param(Select('output', 'Output', 'STL output', output_options, output_options[0].code))        
-        self.add_required_param(BoundedInt('period', 'Period', 'Expected seasonality', 0, None, 24))
+        self.add_required_param(String('period', 'Period', 'Expected seasonality in periods or time interval (eg: 12h)', '7d'))
         self.add_required_param(Boolean('robust', 'Robust', 'Tolerate larger errors using LOWESS', True))
 
     def get_params(self):
@@ -28,9 +29,11 @@ class STL(NodeTransformer):
         return (output, period, robust)
 
     def transform(self, seriess):
-        pdseries = seriess[0].pdseries
+        series = seriess[0]
+        pdseries = series.pdseries
         output, period, robust = self.get_params()
-        stl = sm.STL(pdseries, seasonal=STL.adapt_period(period), robust=robust)
+        calc_period = timedelta_to_period(period, series.step())
+        stl = sm.STL(pdseries, seasonal=STL.adapt_period(calc_period), robust=robust)
         result = stl.fit()
         if output == 'resid':
             return result.resid

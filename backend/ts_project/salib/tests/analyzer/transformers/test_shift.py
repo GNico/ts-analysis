@@ -20,6 +20,13 @@ class TestShift(unittest.TestCase):
         stdnormalize = factory.build()
         self.case(series, stdnormalize, 2, 4, [[2000, 0.0], [3000, 1.0], [4000, 2.0]])
 
+    def test_shift_positive_periods(self):
+        series = self.build_test_series()
+        factory = NodeFactory.transformer('test', 'Shift')
+        factory.set_param_value('delta', '1')
+        stdnormalize = factory.build()
+        self.case(series, stdnormalize, 2, 4, [[2000, 0.0], [3000, 1.0], [4000, 2.0]])
+
     def test_shift_negative(self):
         series = self.build_test_series()
         factory = NodeFactory.transformer('test', 'Shift')
