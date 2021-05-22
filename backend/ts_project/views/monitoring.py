@@ -7,11 +7,18 @@ from ..serializers import MonitorSerializer, MonitorListSerializer, Notification
 from django.http import Http404
 
 
-from django.db.models import Count
+from django.db.models import Count, Q, Max
+
+
+
 
 class MonitorListView(APIView):
     def get(self, request):
-        all_monitors = Monitor.objects.annotate(num_detectors=Count('detectors'))
+        num_detectors = Count('detectors', distinct=True)
+        num_incidents = Count('detectors__incidents', distinct=True, filter=Q(detectors__incidents__state='Open'))
+        last_incident = Max('detectors__incidents__start')
+
+        all_monitors = Monitor.objects.annotate(num_detectors=num_detectors, num_incidents=num_incidents, last_incident=last_incident)
         serializer = MonitorListSerializer(all_monitors, many=True)
         return Response(serializer.data)
 

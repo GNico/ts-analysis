@@ -21,10 +21,10 @@
     <b-table-column field="detector" label="Detector name" width="30%" sortable v-slot="props"  cell-class="is-clickable">
       {{ props.row.analysis_name }}       
     </b-table-column>
-    <b-table-column field="start" label="Start" v-slot="props" centered cell-class="is-clickable">
+    <b-table-column field="start" label="Start" sortable v-slot="props" centered cell-class="is-clickable">
       {{ formatDate(props.row.start) }}
     </b-table-column>
-    <b-table-column field="end" label="End" v-slot="props" centered cell-class="is-clickable">
+    <b-table-column field="end" label="End" sortable v-slot="props" centered cell-class="is-clickable">
       {{ formatDate(props.row.end) }}
     </b-table-column>    
 

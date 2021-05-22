@@ -65,21 +65,12 @@ class MonitorSerializer(serializers.ModelSerializer):
 
 class MonitorListSerializer(serializers.ModelSerializer):
     num_detectors = serializers.IntegerField(read_only=True)
-    incidents = serializers.SerializerMethodField("get_incidents")
-    last_incident = serializers.SerializerMethodField("get_last_incident")
+    num_incidents = serializers.IntegerField(read_only=True)
+    last_incident = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = Monitor
-        fields = [ 'id', 'name', 'num_detectors', 'incidents', 'last_incident']
-
-    def get_detector(self, obj):
-        return 3
-
-    def get_incidents(self, obj):
-        return 25
-
-    def get_last_incident(self, obj):
-        return '27/04/2021'
+        fields = [ 'id', 'name', 'num_detectors', 'num_incidents', 'last_incident']
 
 
 class IncidentSerializer(serializers.ModelSerializer):
