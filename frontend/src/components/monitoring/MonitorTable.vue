@@ -1,6 +1,5 @@
 <template>
   <div class="p-5"> 
-
     <div class="columns is-marginless mb-4">
       <div class="column is-6-mobile is-5-widescreen is-4-fullhd  is-paddingless">
         <b-input expanded placeholder="Search..." size="is-small"></b-input>        
@@ -43,10 +42,10 @@
         {{ props.row.num_detectors }}       
       </b-table-column>
       <b-table-column field="incidents" label="Open incidents" sortable v-slot="props" numeric cell-class="is-clickable">
-        {{ props.row.incidents }}       
+        {{ props.row.num_incidents }}       
       </b-table-column>
       <b-table-column field="last_incident" label="Last incident" sortable v-slot="props"  width="20%" centered cell-class="is-clickable">
-        {{ props.row.last_incident }}
+        {{ formatDate(props.row.last_incident) }}
       </b-table-column>
       <b-table-column field="delete" label="" v-slot="props" centered>
         <button class="transparent-button" @click="deleteMonitor(props.row.id)">
@@ -59,7 +58,7 @@
 
 <script>
 import api from '@/api/repository'
-import { formatDate } from '@/utils/helpers'
+import { formatDateVerbose } from '@/utils/helpers'
 import FormNewMonitor from '@/components/monitoring/FormNewMonitor'
 
 export default {
@@ -86,7 +85,7 @@ export default {
               .catch(error => this.error = 'There was an error retrieving data')
     },
     formatDate(input) {
-      return formatDate(input)
+      return formatDateVerbose(input)
     },
     confirmDelete() {
       this.$buefy.dialog.confirm({

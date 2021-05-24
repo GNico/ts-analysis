@@ -32,7 +32,7 @@ urlpatterns = [
     path('notification-channels/<slug:pk>/', views.NotificationChannelDetailView.as_view(), name='notifications_channels_detail'),
 
     path('incidents/', views.IncidentsListView.as_view(), name='incidents'),
-
+    path('incidents/<slug:incident_id>/', views.IncidentDetailView.as_view(), name='incident_detail'),
 
     path('source-files/', views.DataSourceFilesList.as_view(), name='source-files'),
     path('testalgo/', views.AlgoTestView.as_view(), name='testalgo'),

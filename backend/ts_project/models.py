@@ -128,6 +128,7 @@ class Results(models.Model):
 class Incident(models.Model):
     class Meta:
         db_table = 'incidents'
+        ordering = ['start']
 
     class State(models.TextChoices):
         OPEN = 'Open'

@@ -5,11 +5,7 @@ from rest_framework.views import APIView
 from ..models import Monitor, NotificationChannel
 from ..serializers import MonitorSerializer, MonitorListSerializer, NotificationChannelSerializer
 from django.http import Http404
-
-
 from django.db.models import Count, Q, Max
-
-
 
 
 class MonitorListView(APIView):

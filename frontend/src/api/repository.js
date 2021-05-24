@@ -223,6 +223,12 @@ export default {
     getAllIncidents() {
         return repository.get("/incidents/")
     },
+    updateIncidentsList(ids, options) {
+        return repository.post("/incidents/?update", {ids: ids, ...options})
+    },
+    deleteIncidentsList(ids) {
+        return repository.post("/incidents/?delete", {ids: ids} )
+    },
 
 
     //Misc
