@@ -347,14 +347,6 @@
       "display": "Auto-Regression",
       "params": [
         {
-          "id": "period",
-          "type": "String",
-          "display": "Period",
-          "desc": "Expected seasonality in periods or time interval (eg: 12h)",
-          "conditions": [],
-          "value": "7d"
-        },
-        {
           "id": "lags",
           "type": "BoundedInt",
           "display": "Lags",
@@ -363,6 +355,14 @@
           "value": 6,
           "min": 0,
           "max": null
+        },
+        {
+          "id": "period",
+          "type": "String",
+          "display": "Period",
+          "desc": "Expected seasonality in periods or time interval (eg: 12h). Empty or zero to ignore.",
+          "conditions": [],
+          "value": "0"
         }
       ],
       "inputs": {
