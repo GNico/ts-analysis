@@ -97,8 +97,8 @@ export default {
     },
   },
   methods: {
-    openIncident() {
-      console.log('open')
+    openIncident(incident) {
+      this.$emit('select', incident)
     },
     formatDate(date) {
       return formatDate(date)

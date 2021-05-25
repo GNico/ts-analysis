@@ -229,6 +229,9 @@ export default {
     deleteIncidentsList(ids) {
         return repository.post("/incidents/?delete", {ids: ids} )
     },
+    getIncidentDetails(id) {
+        return repository.get("/incidents/" + id + "/")
+    },
 
 
     //Misc

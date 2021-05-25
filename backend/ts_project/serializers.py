@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import Pipeline, Analysis, PeriodicAnalysis, Monitor, NotificationChannel, Incident
+from . import services
+
 
 class ClientInputSerializer(serializers.Serializer):
     name = serializers.RegexField(regex='^[a-z0-9_]+$', allow_blank=False)
@@ -12,17 +14,15 @@ class PipelineSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description', 'nodes', 'created', 'modified']
 
 
-#serializer for database analysis settings
+#serializer to store analysis settings
 class AnalysisSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Analysis
         fields = ['id', 'client', 'name', 'description', 'data_options', 'model', 'created', 'modified']
 
 
-#serializer for performing analysis requests
+#serializer for performing live analysis requests
 class AnalysisSerializer(serializers.Serializer):
-    #name = serializers.CharField(allow_blank=False)
-    #description = serializers.CharField(allow_blank=True)
     client = serializers.CharField(allow_blank=False)
     tags = serializers.ListField(child=serializers.CharField(), required=False, allow_empty=True, min_length=None, max_length=None)
     contexts = serializers.ListField(child=serializers.CharField(), required=False, allow_empty=True, min_length=None, max_length=None)
@@ -45,13 +45,13 @@ class PeriodicAnalysisSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PeriodicAnalysis
-        fields = [ 'id', 'monitor', 'analysis', 'analysis_details', 'task', 'active', 'alerts_enabled', 'time_interval', 'relevant_period', 'created', 'last_run' ]
+        fields = ['id', 'monitor', 'analysis', 'analysis_details', 'task', 'active', 'alerts_enabled', 'time_interval', 'relevant_period', 'created', 'last_run' ]
 
 
 class NotificationChannelSerializer(serializers.ModelSerializer):
     class Meta: 
         model = NotificationChannel
-        fields = [ 'id', 'email', 'monitor' ]
+        fields = ['id', 'email', 'monitor']
 
 
 class MonitorSerializer(serializers.ModelSerializer):
@@ -60,7 +60,7 @@ class MonitorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Monitor
-        fields = [ 'id', 'name', 'notification_channels', 'detectors']
+        fields = ['id', 'name', 'notification_channels', 'detectors']
 
 
 class MonitorListSerializer(serializers.ModelSerializer):
@@ -70,13 +70,20 @@ class MonitorListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Monitor
-        fields = [ 'id', 'name', 'num_detectors', 'num_incidents', 'last_incident']
+        fields = ['id', 'name', 'num_detectors', 'num_incidents', 'last_incident']
 
 
 class IncidentSerializer(serializers.ModelSerializer):
+    series = serializers.SerializerMethodField()
+
+    def get_series(self, obj):
+        options = obj.periodic_analysis.analysis.data_options
+        data = services.get_series(options['client'], options['start'], options['end'], options['contexts'], options['tags'], options['interval'])
+        return data
+
     class Meta:
         model = Incident
-        fields = '__all__'
+        fields = ['id', 'state', 'score', 'start', 'end', 'desc', 'series']
 
 
 class IncidentListSerializer(serializers.ModelSerializer):

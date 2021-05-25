@@ -56,7 +56,7 @@
       <b-datepicker          
         :first-day-of-week="1"
         size="is-small"
-        :value="analysis.start ? new Date(analysis.start) : ''"
+        :value="analysis.start ? new Date(analysis.start) : null"
         @input="updateAnalysis('start', $event)">
         <button class="button is-primary is-small"
             @click="updateAnalysis('start', new Date())">
@@ -75,7 +75,7 @@
       <b-datepicker          
         :first-day-of-week="1"
         size="is-small"
-        :value="analysis.end ? new Date(analysis.end) : ''"
+        :value="analysis.end ? new Date(analysis.end) : null"
         @input="updateAnalysis('end', $event)">
         <button class="button is-primary is-small"
             @click="updateAnalysis('end', new Date())">

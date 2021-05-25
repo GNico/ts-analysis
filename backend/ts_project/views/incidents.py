@@ -4,6 +4,8 @@ from rest_framework.views import APIView
 
 from ..models import Incident
 from ..serializers import IncidentListSerializer, IncidentSerializer
+from .. import services
+
 from django.http import Http404
 
 
@@ -52,7 +54,9 @@ class IncidentDetailView(APIView):
 
     def get(self, request, incident_id):
         incident = self.get_object(incident_id)
+        #data_options = incident.periodic_analysis.analysis.data_options
         serializer = IncidentSerializer(incident)
+      
         return Response(serializer.data)
 
     def put(self, request, incident_id):

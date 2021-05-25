@@ -115,8 +115,8 @@ const actions = {
                 tags: settings.tags, 
                 contexts: settings.contexts, 
                 interval: settings.interval,
-                start: settings.start,
-                end: settings.end,                
+                start: settings.start ? settings.start.toISOString() : null,
+                end:  settings.end ? settings.end.toISOString() : null,               
             },
             model: settings.model 
         }
