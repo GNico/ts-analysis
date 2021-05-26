@@ -2,6 +2,7 @@ from django.db import models
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
 from django.utils import timezone
 
+from . import task_priorities
 
 class Client(models.Model):
     class Meta:        
@@ -42,31 +43,54 @@ class Pipeline(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
 
+class Monitor(models.Model):
+    class Meta:
+        db_table = 'monitors'
+
+    name = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+
+class NotificationChannel(models.Model):
+    class Meta:
+        db_table = 'notification_channels'
+
+    monitor = models.ForeignKey(Monitor, on_delete=models.CASCADE, related_name="notification_channels")
+    email = models.EmailField(blank=False)
+    
+
 class PeriodicAnalysis(models.Model):    
     class Meta: 
         db_table = 'periodic_analysis'
+        ordering = ['created']
 
-    analysis = models.OneToOneField(Analysis, on_delete=models.CASCADE, primary_key=True)
+    monitor = models.ForeignKey(Monitor, on_delete=models.CASCADE, related_name="detectors", null=True)
+    analysis = models.ForeignKey(Analysis, on_delete=models.CASCADE)
     task = models.OneToOneField(PeriodicTask, on_delete=models.CASCADE, null=True, blank=True)
     active = models.BooleanField(default=False)
     alerts_enabled = models.BooleanField(default=False)
     time_interval = models.TextField(default='1h')
-    created = models.DateTimeField(auto_now_add=True) 
+    relevant_period = models.TextField(default='1d')
+    #data period o algo asi indepiendente del from to del analysis
+    created = models.DateTimeField(auto_now_add=True)     
+    last_run = models.DateTimeField(null=True)
 
     def delete(self, *args, **kwargs):
-        print("does it get called")
         if self.task is not None:
             self.task.delete()
         return super(self.__class__, self).delete(*args, **kwargs)
 
     def setup_task(self):
         self.task = PeriodicTask.objects.create(
-            name=self.analysis_id,
-            task='periodictask',
+            name=self.id,
+            task='periodic_analysis',
             interval=self.interval_schedule,
             enabled=self.active,
-            args=[self.analysis_id],
-            start_time=timezone.now()
+            args=[self.id],
+            start_time=timezone.now(),
+            priority=task_priorities.PERIODIC_ANALYSIS
         )
         self.save()
 
@@ -91,4 +115,29 @@ class PeriodicAnalysis(models.Model):
             '''Interval Schedule for {interval} is invalid.'''.format(
                 interval=self.time_interval.value))
 
+
+class Results(models.Model):
+    class Meta:
+        db_table = 'results'
+
+    periodic_analysis = models.ForeignKey(PeriodicAnalysis, on_delete=models.CASCADE, related_name="results")
+    anomalies = models.JSONField()
+    run_datetime = models.DateTimeField(null=True) 
+
+
+class Incident(models.Model):
+    class Meta:
+        db_table = 'incidents'
+        ordering = ['start']
+
+    class State(models.TextChoices):
+        OPEN = 'Open'
+        CLOSED = 'Closed'
+
+    periodic_analysis = models.ForeignKey(PeriodicAnalysis, on_delete=models.CASCADE, related_name="incidents")
+    state = models.CharField(max_length=10, choices=State.choices, default=State.OPEN)
+    start = models.DateTimeField() 
+    end = models.DateTimeField() 
+    score = models.DecimalField(max_digits=3, decimal_places=2, default=1.0)
+    desc = models.TextField(null=True)
 

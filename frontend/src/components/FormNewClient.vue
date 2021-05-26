@@ -1,5 +1,4 @@
  <template>
-<div>
   <form @submit.prevent="handleSubmit">
     <div class="modal-card" style="width: 300px; border-radius: 0.4em">
       <section class="modal-card-body">
@@ -31,13 +30,10 @@
       </footer>
     </div>
   </form>
-</div>
 </template>
 
 
 <script>
-import api from "../api/repository"
-
 export default {
   name: 'FormNewClient',
   props: {

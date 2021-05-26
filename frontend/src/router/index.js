@@ -1,7 +1,10 @@
 import VueRouter from 'vue-router'
+//import Index from '@/pages/monitoring/Index.vue'
+import MonitorDetails from '@/components/monitoring/MonitorDetails.vue'
+//import MonitorTable from '@/components/monitoring/MonitorTable.vue'
 
 function lazyLoad(view){
-  return() => import(`@/pages/${view}.vue`)
+  return () => import(`@/pages/${view}.vue`)
 }
 
 let routes = [
@@ -19,18 +22,40 @@ let routes = [
   },
   {
     path: '/Monitoring',
-    component: lazyLoad('Monitoring')
+    component: lazyLoad('monitoring/Index'),
+    children: [
+      {
+        path: '', 
+        beforeEnter: (to, from, next) => next('/Monitoring/Incidents')
+      },
+      {
+        path: 'Incidents',
+        component: lazyLoad("monitoring/Incidents")
+      },
+      {                
+        path: 'Monitors',
+        component: lazyLoad("monitoring/Monitors"),
+        children: [
+          {
+            path: '',
+            component: () => import(`@/components/monitoring/MonitorTable.vue`)
+          },
+          {
+            name: 'MonitorDetails',
+            path: ':id',
+            component: MonitorDetails
+          }
+        ]
+      },
+    ] 
   },
   {
     path: '/Test',
     component: lazyLoad('Test')
   } 
-
 ];
 
 export default new VueRouter({
-
   routes,
   linkActiveClass: 'is-active'
-
 });

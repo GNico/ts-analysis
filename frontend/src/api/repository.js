@@ -161,7 +161,7 @@ export default {
     },
 
     //Periodic analysis
-    getAllPeriodicAnalysis() {
+/*    getAllPeriodicAnalysis() {
         return repository.get("/periodic-analysis/")
     },
     getPeriodicAnalysis(id) {
@@ -181,8 +181,57 @@ export default {
     },
     deletePeriodicAnalysisList(ids) {
         return repository.post("/periodic-analysis/?delete", {ids: ids} )
-    },
+    }, */
 
+    //Monitoring 
+    addNewMonitor(name) {
+        return repository.post("/monitors/", { name: name })
+    },
+    getAllMonitors() {
+        return repository.get("/monitors/")
+    },
+    getMonitorDetails(id) {
+        return repository.get("/monitors/" + id + "/")
+    },
+    updateMonitor(id, options) {
+        return repository.put("/monitors/" + id + "/", options)
+    },
+    deleteMonitor(id) {
+        return repository.delete("/monitors/" + id + "/")
+    },
+    //detectors
+    addNewPeriodicAnalysis(monitorId, analysisId) {
+        return repository.post("/monitors/" + monitorId + "/detectors/", {analysis: analysisId})
+    },
+    updatePeriodicAnalysis(monitorId, detectorId, options) {
+        return repository.put("/monitors/" + monitorId + "/detectors/" + detectorId + "/" , options)
+    },    
+    deletePeriodicAnalysis(monitorId, detectorId) {
+        return repository.delete("/monitors/" + monitorId + "/detectors/" + detectorId + "/" )
+    },
+    //notification channels
+    addNewNotificationChannel(monitorId, email) {
+        return repository.post("/notification-channels/", {monitor: monitorId, email: email})
+    },
+    getAllNotificationChannels() {
+        return repository.get("/notification-channels/")
+    },
+    deleteNotificationChannel(id) {
+        return repository.delete("/notification-channels/" + id + "/")
+    },
+    //incidents
+    getAllIncidents() {
+        return repository.get("/incidents/")
+    },
+    updateIncidentsList(ids, options) {
+        return repository.post("/incidents/?update", {ids: ids, ...options})
+    },
+    deleteIncidentsList(ids) {
+        return repository.post("/incidents/?delete", {ids: ids} )
+    },
+    getIncidentDetails(id) {
+        return repository.get("/incidents/" + id + "/")
+    },
 
 
     //Misc

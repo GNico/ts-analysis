@@ -143,8 +143,10 @@ export default {
      
     },
     refresh() {
-      this.createLayout()
-      this.drawChart()
+      if (this.$refs.container.clientWidth) {
+        this.createLayout()
+        this.drawChart()
+      }     
     }
   },
   created() {
