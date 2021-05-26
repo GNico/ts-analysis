@@ -12,6 +12,9 @@
   cursor:pointer;
   overflow: hidden;
   outline:none;
+  :hover {
+    filter: brightness(1.50);
+  }
 }
 
 .short-field {

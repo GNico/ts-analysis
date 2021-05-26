@@ -11,7 +11,9 @@
       <p class="card-header-title">
         {{incident.monitor}} → {{incident.analysis_name}}
       </p>
-      <a class="button m-2 is-small" @click="$emit('close')"> X </a>
+      <button class="transparent-button"  @click="$emit('close')">
+        <b-icon icon="close" type="is-primary"></b-icon>
+      </button>
     </header>
     <div class="card-content" >
       <div class="content" >
