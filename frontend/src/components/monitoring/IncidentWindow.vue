@@ -1,34 +1,38 @@
 <template>
+<div>
 <VueDraggableResizable :w="1000" :h="500" :z="999" 
   :handles="['br']"
   @dragging="onDrag" 
   @resizing="onResize" 
   :drag-handle="'.drag'"
   :parent="false" >
-  <div class="card drag" :style="{height: '100%'}">
-    <header class="card-header">
+  <div class="card" :style="{height: '100%'}">
+    <header class="card-header drag">
       <p class="card-header-title">
-        {{incident.id}}
+        {{incident.monitor}} → {{incident.analysis_name}}
       </p>
-      <a class="button m-2 is-small"> X </a>
+      <a class="button m-2 is-small" @click="$emit('close')"> X </a>
     </header>
-    <div class="card-content">
-      <div class="content">
-        Lorem ipsum leo risus, porta ac consectetur ac, vestibulum at eros. Donec id elit non mi porta gravida 
-        at eget metus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
-        Cras mattis consectetur purus sit amet fermentum.
+    <div class="card-content" >
+      <div class="content" >
+        <BaseChart 
+          :seriesData="chartData" 
+          :bands="chartIncident"
+          :style="myStyles"/>
       </div>
     </div>
   </div>
 </VueDraggableResizable>
+</div>
 </template>
 
 
 <script>
 import VueDraggableResizable from 'vue-draggable-resizable'
+import BaseChart from '@/components/BaseChart'
 
 export default {
-  components: { VueDraggableResizable },
+  components: { VueDraggableResizable, BaseChart },
   props: {
     incident: {
       type: Object,
@@ -37,10 +41,30 @@ export default {
   },
   data() {
     return {
-      width: 0,
-      height: 0,
+      width: 1000,
+      height: 500,
       x: 0,
-      y: 0
+      y: 0,      
+    }
+  },
+  computed: {
+    chartData() {
+      return [ {data: this.incident.series}]
+    },
+    chartIncident() {
+      return [{ 
+        id: 'p',
+        from: Date.parse(this.incident.start),
+        to: Date.parse(this.incident.end),
+      }]
+    },
+    myStyles () {
+      let h = this.height - 100
+      let w = this.width - 50
+      return {
+        height: `${h}px`,
+        width: `${w}px`,
+      }
     }
   },
   methods: {

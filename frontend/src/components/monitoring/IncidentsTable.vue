@@ -42,6 +42,7 @@
     :data="allIncidents" 
     sticky-header      
     selectable
+    :selected.sync="selected"
     checkable
     checkbox-position="right"
     hoverable
@@ -54,7 +55,7 @@
       <span class="tag is-small" :class="props.row.state=='Open' ? 'is-success' : 'is-warning'">{{ props.row.state }}</span>     
     </b-table-column>
     <b-table-column field="score" label="Score" width="5%" sortable v-slot="props"  cell-class="is-clickable">
-      <span class="tag">{{ props.row.score }}</span>     
+      <span>{{ props.row.score }}</span>     
     </b-table-column>
     <b-table-column field="monitor" label="Monitor name" width="30%" sortable v-slot="props"  cell-class="is-clickable">
       {{ props.row.monitor }}       
@@ -82,6 +83,7 @@ export default {
     return {
       allIncidents: [],
       checked: [],
+      selected: undefined,
       error: '',
       currentAction: 'Mark as closed',
       onSelectedActions: [

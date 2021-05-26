@@ -1,10 +1,11 @@
 <template>
 <div class="p-5">
 
-  <IncidentWindow :incident="selectedIncident">
-  </IncidentWindow>
-
+  <IncidentWindow v-if="showIncident" 
+    :incident="selectedIncident"
+    @close="showIncident = false"/>
   <IncidentsTable @select="onSelected"/>
+
 </div>
 </template>
 
@@ -18,7 +19,8 @@ export default {
   components: { IncidentsTable, IncidentWindow },
   data() {
     return {
-      selectedIncident: {} 
+      selectedIncident: {},
+      showIncident: false,
     }
   },
   methods: {
@@ -26,6 +28,9 @@ export default {
       api.getIncidentDetails(incident.id)
       .then(response => {
         this.selectedIncident = { ...response.data }
+        this.selectedIncident.monitor = incident.monitor
+        this.selectedIncident.analysis_name = incident.analysis_name
+        this.showIncident = true     
       })
     }
   },
