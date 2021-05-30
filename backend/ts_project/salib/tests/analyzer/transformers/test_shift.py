@@ -42,8 +42,9 @@ class TestShift(unittest.TestCase):
         self.case(series, stdnormalize, 1, 3, [[1000, 0.0], [2000, 1.0], [3000, 2.0]])
 
     def case(self, series, node, start, end, json):
-        pipeline = Pipeline(node)
+        pipeline = Pipeline([node])
         analyzer = Analyzer(pipeline=pipeline)
+        # TODO: define named inputs
         analysis = analyzer.analyze(series)
         result = analysis.result_for_node(node.id)
 

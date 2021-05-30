@@ -1,7 +1,7 @@
 from .node_factory import NodeFactory
 from .nodes.node_result import NodeResult
 from .nodes.aggregators.root import Root
-from .nodees.node_source import NodeReference, InputReference
+from .nodes.node_source import NodeReference, InputReference
 
 class Pipeline:
 
@@ -47,8 +47,8 @@ class Pipeline:
         root = Root()
         for node in nodes:
             if node.id not in all_source_references:
-                root.add_source(node.id)
-        
+                root.add_source(NodeReference(node.id))
+
         return root
 
     @staticmethod
