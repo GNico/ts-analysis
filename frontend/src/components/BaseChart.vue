@@ -14,7 +14,6 @@
 <script>
 import { DefaultChartSettings } from '../config/settings.js'
 import { nanoid } from 'nanoid'
-
 import Highcharts from 'highcharts'
 
 function sum(arr) {
@@ -65,6 +64,10 @@ export default {
       type: Object,
       default: () => { return {} }
     },
+    tooltipFormatter: {
+      type: Function,
+      default: undefined
+    }
   },
   data () {
     return {
@@ -169,11 +172,11 @@ export default {
                 }
               }
             }
-          },
+          },        
           events: {
-            load: function() {
-              //this.rGroup = this.renderer.g('rGroup').add() // create an SVG group to allow translate
-            },      
+           /* load: function() {
+              this.rGroup = this.renderer.g('rGroup').add() // create an SVG group to allow translate
+            },      */
             selection: this.selectAreaByDrag,
             click: this.unselectByClick,
           },
@@ -227,12 +230,12 @@ export default {
           enabled: false,
         },
         tooltip: {
+          animation: false,
           split: false,
           shared: true,
-          pointFormatter: function() {
-            let val = (this.y % 1) ? parseFloat(this.y).toFixed(2) : this.y
-            return 'Value: <b>' + val + '</b><br/>'
-          } 
+          xDateFormat: '%A, %e %b %Y, %H:%M',
+          useHTML: true,
+          formatter: this.tooltipFormatter        
         },  
         plotOptions: {
           arearange: {
@@ -240,17 +243,39 @@ export default {
               enabled: true,
               groupPixelWidth: 6,
               smoothed: true,
-              approximation: function (low, high) {
+              approximation: 'range',             
+             /* approximation: function (low, high) {
                 return [sum(low), sum(high)];
-              },
-            }
+              }, */
+            },
+          /*  tooltip: {                     
+              pointFormatter: function() {
+                return  '<span style="color:transparent">● </span>Min: <b>'  + this.low + '</b><br/>' +
+                        '<span style="color:transparent">● </span>Max: <b>'  + this.high + '</b><br/>'
+              },              
+            }*/
+          }, 
+          line: {
+            tooltip: {                     
+              pointFormatter: function() {
+                let val = (this.y % 1) ? parseFloat(this.y).toFixed(2) : this.y
+                return '<span style="color:' + this.color + '">● </span>' +  this.series.name + ': <b>'  + val + '</b><br/>'
+              },              
+            } 
           },
           series: {
             dataGrouping: {
               enabled: true,
               groupPixelWidth: 6,
               smoothed: true,
-              approximation: 'sum'
+              dateTimeLabelFormats: {
+                hour: ['%A,  %e %b %Y, %H:%M', '%A, %e %b %Y, %H:%M', '-%H:%M'],
+                day: ['%A,  %e %b %Y', '%A,  %e %b %Y', '-%A, %b %e'],
+                week: ['Week from %A,  %e %b %Y', '%A,  %e %b %Y', '-%A, %b %e'],
+                month: ['%B %Y', '%B', '-%B %Y'],
+                year: ['%Y', '%Y', '-%Y']                  
+              },
+                                   
             },
             animation: false,
             lineWidth: this.normalizedSettings.lineWidth,

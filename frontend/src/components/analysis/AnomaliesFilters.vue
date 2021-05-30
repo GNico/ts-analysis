@@ -52,8 +52,8 @@
           </b-field>
               
           <b-field horizontal label="">
-            <b-checkbox :value="showBaseline" @input="update('showBaseline', $event)">
-              <strong class="has-text-white">Show baseline</strong>
+            <b-checkbox :value="showMinMax" @input="update('showMinMax', $event)">
+              <strong class="has-text-white">Show min and max values</strong>
             </b-checkbox>        
           </b-field>
 
@@ -94,7 +94,7 @@ export default {
       type: Boolean,
       default: true,
     },
-    showBaseline: {
+    showMinMax: {
       type: Boolean,
       default: true,
     },

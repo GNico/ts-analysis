@@ -14,6 +14,7 @@
     :crosshair="crosshair"
     :syncCrosshairEnabled="true"
     @selection="getTagsCount(panel.id, $event)"
+    :tooltipFormatter="tooltipFormatter"
   />
 </div>
 </template>
@@ -22,6 +23,9 @@
 <script>
 import BaseChart from "../BaseChart";
 import debounce from "lodash/debounce";
+
+import { multiseriesTooltipFormatter } from '../../utils/helpers'
+
 
 
 export default {
@@ -71,6 +75,9 @@ export default {
     }
   },
   computed: {
+    tooltipFormatter() {
+      return multiseriesTooltipFormatter
+    },
     chartSeriesData() {
       let allSeriesData = []
       this.panels.forEach(panel => {      

@@ -3,6 +3,7 @@
 @import '_overrides.scss';
 @import '~buefy/src/scss/buefy';
 
+//@import '~vue-draggable-resizable/dist/VueDraggableResizable.css';
 
 .transparent-button {
   background-color: transparent;
@@ -11,6 +12,9 @@
   cursor:pointer;
   overflow: hidden;
   outline:none;
+  :hover {
+    filter: brightness(1.50);
+  }
 }
 
 .short-field {
@@ -54,3 +58,38 @@
 [role=tabpanel]:focus { 
     outline: none; 
 }
+
+
+//vue draggable
+.vdr {
+  touch-action: none;
+  position: absolute;
+  box-sizing: border-box;
+}
+.handle {
+  box-sizing: border-box;
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #EEE;
+  border: 1px solid #333;
+}
+
+.handle-br {
+  bottom: -10px;
+  right: -10px;
+  cursor: se-resize;
+}
+@media only screen and (max-width: 768px) {
+  [class*="handle-"]:before {
+    content: '';
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    top: -10px;
+    position: absolute;
+  }
+}
+
+
+

@@ -90,6 +90,10 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TRACK_STARTED = True
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    'queue_order_strategy': 'priority',
+}
+
 
 
 # Password validation

@@ -2,6 +2,7 @@ import pandas as pd
 
 from ..node_transformer import NodeTransformer
 from ...params.string import String
+from ....utils import timedelta_to_period
 
 class Shift(NodeTransformer):
 
@@ -11,8 +12,10 @@ class Shift(NodeTransformer):
 
 
     def transform(self, seriess):
-        pdseries = seriess[0].pdseries
-        s_shifted = pd.Series(pdseries.values, pdseries.index + pd.Timedelta(self.delta()))
+        series = seriess[0]
+        pdseries = series.pdseries
+        calc_shift = timedelta_to_period(self.delta(), series.step(), validate=False)
+        s_shifted = pd.Series(pdseries.values, pdseries.index + (series.step() * calc_shift))
         s_shifted = s_shifted.append(
             pd.Series(index=pdseries.index, dtype="float64")
         )

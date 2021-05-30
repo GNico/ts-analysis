@@ -1,5 +1,4 @@
 <template>
-
 <div v-else class="columns" :style="{height: height + 50 + 'px'}">
   <div class="column main-content" :style="{height: height + 'px'}">
     <div class="section-header ">
@@ -30,6 +29,10 @@
             </div>
         </b-dropdown-item>
       </b-dropdown>
+      
+      <b-checkbox v-model="showMinMax">
+        <strong class="has-text-white">Show min and max values</strong>
+      </b-checkbox>
     </div>
 
     <Chart     
@@ -40,14 +43,17 @@
       :loading="loading"
       :activeAnomaly="activeAnomalyId"
       :range="extremes"
+      :syncCrosshairEnabled="true"
+      :showMinMax="showMinMax"
       @changeActive="activeAnomalyId = $event"
-      @updateRange="updateRange" />
+      @updateRange="updateRange"
+    />
   </div>
 
   <div class="column is-4" :style="{height: height + 'px'}">     
     <template v-if="anomalies.length">
       <div class="section-header has-text-white">
-        <div> <strong class="has-text-grey-light"> Anomalies</strong></div>
+        <div> <strong class="has-text-white"> Anomalies</strong></div>
       </div>
 
       <AnomaliesTable   
@@ -55,7 +61,7 @@
         :anomalies="anomalies"
         :activeAnomaly="activeAnomalyId"
         @changeActive="activeAnomalyId = $event"
-        /> 
+      /> 
     </template>
   </div>
 </div> 
@@ -99,6 +105,7 @@ export default {
     return {
       loading: false,
       activeAnomalyId: '',
+      showMinMax: false,
     }
   },
   computed: {

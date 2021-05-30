@@ -59,7 +59,7 @@
         <div class="columns is-marginless p-0 m-1 is-vcentered" v-for="param in paramsComponents" 
             v-if="checkConditions(param.conditions)"
             :key="param.id">
-            <div class="column is-6 is-paddingless">
+            <div class="column is-6 is-paddingless pr-4 is-flex is-justify-content-flex-end">
               <label class="label">
                 {{param.display}} 
                 <b-tooltip type="is-info" :label="param.desc">
@@ -67,13 +67,13 @@
                 </b-tooltip>
               </label>
             </div> 
-            <div class="column is-6 p-0 m-1 is-flex is-justify-content-flex-end">
+            <div class="column is-6 p-0 m-1 is-flex is-justify-content-flex-start">
               <component
                 class="short-field is-marginless" 
                 :is="param.component.name"
                 v-bind="param.component.props"
                 :value="nodeData.paramsData[param.id]"
-                @input="paramsDataChange(param.id, $event)">
+                @input="paramsDataChange(param.id, $event, param.type)">
 
                 <option
                   v-for="option in param.options"
@@ -183,6 +183,15 @@ export default {
               size: 'is-small',
             }
           }
+        case 'Int': 
+          return {
+            name: 'b-input',
+            props: {
+              type: 'number',
+              step: 1,
+              size: 'is-small',
+            }
+          }
         case 'BoundedInt':
           return {
             name: 'b-input',
@@ -210,9 +219,24 @@ export default {
           }      
         }
     },
-    paramsDataChange(name, event) {
-      const parsed = parseFloat(event)
-      this.$emit('nodeParamsChange', {id: this.id, [name]: (isNaN(parsed) ? event : parsed)})
+    paramsDataChange(name, value, type) {
+      let parsed = ''
+      switch (type) {
+        case 'Float':
+        case 'BoundedFloat':
+          parsed = parseFloat(value)
+          break;
+        case 'Int':
+        case 'BoundedInt':
+          parsed = parseInt(value)
+          break;
+        default:
+          parsed = value
+      }
+
+      //let parsed = (type === 'Float' || type === "BoundedFloat") ? parseFloat(value) : value
+      console.log(typeof parsed)
+      this.$emit('nodeParamsChange', {id: this.id, [name]: parsed})
     },
     sourceNodesChange(event) {
       let sourceNodes = event

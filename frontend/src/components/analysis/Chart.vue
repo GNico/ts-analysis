@@ -6,18 +6,30 @@
   :loading="loading"
   @changeActiveBand="setActiveAnomaly"
   @changedExtremes="updateExtremes"
-  :extremes="extremes" />
+  :extremes="extremes" 
+  @crosshairMove="syncCrosshairs"
+  :crosshair="crosshair"
+  :syncCrosshairEnabled="syncCrosshairEnabled"
+  :tooltipFormatter="tooltipFormatter"/>
 </template>
 
 
 <script>
 import { DefaultChartSettings } from '../../config/settings'
-import BaseChart from "../BaseChart";
-import debounce from "lodash/debounce";
+import BaseChart from "../BaseChart"
+import debounce from "lodash/debounce"
+import throttle from "lodash/throttle"
+import { analysisTooltipFormatter } from '../../utils/helpers'
 
 
 export default {
   components: { BaseChart },
+  inject: {
+    sharedState: {
+      name: 'sharedState',
+      default: {}
+    }
+  },
   props: {   
     seriesData: {
       type: Array,
@@ -27,9 +39,9 @@ export default {
       type: Array,
       default: () => { return [] }
     },
-    baseline: {
-      type: Array,
-      default: () => { return [] }
+    showMinMax: {
+      type: Boolean,
+      default: false,
     },
     loading: {
       type: Boolean,
@@ -50,6 +62,10 @@ export default {
           end: null
         }
       }
+    },
+    syncCrosshairEnabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -57,17 +73,27 @@ export default {
     }
   },
   computed: {
+    crosshair() {
+      return this.sharedState ? this.sharedState.crosshair : {}
+    },
     extremes() {
       return {
         min: this.range.start,
         max: this.range.end
       }
     }, 
+    arearangedata() {
+      let newdata = []
+      this.seriesData.forEach(point => {
+        newdata.push([ point[0], point[1], point[1] ])
+      })
+      return newdata
+    },
     chartData() {
       var cdata = []
       if (this.seriesData.length > 0) {
         cdata.push({
-          name: 'Value',
+          name: 'Average',
           type: 'line',
           data: this.seriesData,
           zIndex: 2,
@@ -80,6 +106,23 @@ export default {
             }
           },
         })
+        if (this.showMinMax) {
+          cdata.push({
+            name: 'Range',
+            type: 'arearange',
+            data: this.arearangedata,
+            zIndex: 1,
+            color: this.seriesColor,
+            fillOpacity: 0.3,
+            enableMouseTracking: true,
+            lineWidth: 0,
+            states: {
+              hover: {
+                lineWidthPlus: 0
+              }
+            }
+          })
+        }
       } else {
         cdata.push({          
           color: 'rgba(0,0,0,0)',
@@ -87,27 +130,11 @@ export default {
           showInLegend: false
         })
       }
-      if (this.baseline.length > 0) {
-        cdata.push({
-          name: 'Expected',
-          type: 'arearange',
-          data: this.baseline,
-          zIndex: 1,
-          lineWidth: 0,
-          fillOpacity: DefaultChartSettings.BASELINE_OPACITY,
-          color: DefaultChartSettings.BASELINE_COLOR,
-          states: {
-            hover: {
-              lineWidthPlus: 0
-            }
-          },
-          marker: {
-              enabled: false
-          }
-        })
-      }
       return cdata
     },
+    tooltipFormatter() {
+      return analysisTooltipFormatter
+    }
   },
   methods: {
     setActiveAnomaly(id) {
@@ -125,11 +152,17 @@ export default {
     },
     triggerMwheelzoomUpdate(event) {
       this.$emit('updateRange', { start: Math.round(event.min), end: Math.round(event.max) })
-    }
+    },
+    syncCrosshairs(event) {
+      if (this.syncCrosshairEnabled && this.sharedState) {
+        this.sharedState.crosshair = event
+      }
+    },
   },
   created() {
     this.triggerZoomUpdate = debounce(this.triggerZoomUpdate, 400, {'leading': true, 'trailing': false})
     this.triggerMwheelzoomUpdate = debounce(this.triggerMwheelzoomUpdate, 400, {'leading': false, 'trailing': true})
+    this.syncCrosshairs = throttle(this.syncCrosshairs, 50, {'leading': true, 'trailing': true})
   },
 }
 </script>

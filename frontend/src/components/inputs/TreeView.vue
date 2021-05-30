@@ -107,7 +107,7 @@ export default {
               this.allChildLeaves.some(leaf => this.value.some(sel => sel == leaf.id)))      
     }
   },
-  methods: { 
+  methods: {
     checkboxEmit(event) {
       if (this.isParent) {
         if (this.allChildLeavesSelected) {
