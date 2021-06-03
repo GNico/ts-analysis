@@ -40,7 +40,7 @@ export default {
       })
       //start and end nodes
       if (nodes.length > 0) {
-        nodes.push({id: 'start', label: 'Input data'})
+       // nodes.push({id: 'start', label: 'Input data'})
         nodes.push({id: 'end', label: 'Result'})
       }
       return nodes
@@ -55,7 +55,8 @@ export default {
         }
         if (!elem.source || elem.source.length == 0) {
           if (elem.group == 'transformer' || elem.group == 'detector') 
-            edges.push({source: 'start', target: elem.id})
+            console.log("nothing")
+           // edges.push({source: 'start', target: elem.id})
         } else {
           elem.source.forEach(sourceId => {
             edges.push({source: sourceId, target: elem.id})

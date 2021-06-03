@@ -1,4 +1,5 @@
 <template>
+<div>
   <b-collapse
     class="card"
     animation="slide"
@@ -13,7 +14,7 @@
         <a class="card-header-icon">
           <b-icon :icon="props.open ? 'menu-up' : 'menu-down'"/>
         </a>
-      </div>
+      </div>     
     </template> 
 
     <div class="card-content">
@@ -87,6 +88,7 @@
       </div>
     </div>
   </b-collapse>
+</div>
 </template>
 
 

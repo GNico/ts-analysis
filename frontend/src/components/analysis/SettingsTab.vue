@@ -99,7 +99,7 @@
     </b-field> 
   </div>
 
-  <div class="column is-9 right-section pb-0">
+  <div class="column is-9 pb-0 right-section">
     <!--Model building -->
     <div class="subtitle is-flex is-justify-content-space-between"> 
       Detection model
@@ -130,6 +130,7 @@
       @input="updateAnalysis('model', $event)"
     />
   </div>
+
 </div>
 </template>
 
