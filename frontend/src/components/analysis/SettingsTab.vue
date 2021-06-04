@@ -1,6 +1,5 @@
 <template>
 <div class="columns">
-
   <ModalSaveTemplate
     :isActive="saveTemplateModalActive"
     :allModels="models"
@@ -8,7 +7,6 @@
     @update="updateModel"
     @save="saveModel"
   />
-
   <ModalLoadTemplate
     :isActive="loadTemplateModalActive"
     :allModels="models"
@@ -27,9 +25,9 @@
           class="is-outlined"
           label="Add Input" 
           type="is-info"
-          size="is-small"/>        
+          size="is-small"
+          @click="addInput"/>        
       </div>
-
 
       <InputCard v-for="(input, index) in analysis.data_options"
         :index="index"
@@ -39,10 +37,9 @@
         :allClients="clients"
         :tagOptions="allTags"
         :contextOptions="allContexts"
-        @update="updateAnalysis"/>
+        @update="updateAnalysis"
+        @delete="deleteInput"/>
     </div>
-
-
 
     <b-field class="has-text-right sticky-container">
       <div class="box">
@@ -51,9 +48,6 @@
         </a>
       </div>
     </b-field> 
-
-
-
   </div>
 
   <div class="column is-9 pb-0 right-section">
@@ -98,7 +92,6 @@ import ModalSaveTemplate from "./ModalSaveTemplate";
 import ModalLoadTemplate from "./ModalLoadTemplate";
 import InputCard from "@/components/analysis/InputCard";
 import cloneDeep from "lodash/cloneDeep";
-
 
 export default {
   components:  { ModelBuilder, ModalSaveTemplate, ModalLoadTemplate, InputCard },
@@ -167,6 +160,22 @@ export default {
         updatedSettings = { id: this.analysis.id, data_options: dataOptionsCopy}
       }
       this.$store.dispatch('analysis/updateLocalSettings', updatedSettings)
+    },
+    addInput() {
+      let dataOptionsCopy = cloneDeep(this.analysis.data_options)
+      dataOptionsCopy.push({
+        contexts: [],
+        tags: [],
+        interval: '1h',
+        start: null,
+        end: null,
+      })
+      this.$store.dispatch('analysis/updateLocalSettings', {id: this.analysis.id, data_options: dataOptionsCopy})      
+    },
+    deleteInput(index) {
+      let dataOptionsCopy = cloneDeep(this.analysis.data_options)
+      dataOptionsCopy.splice(index, 1)
+      this.$store.dispatch('analysis/updateLocalSettings', {id: this.analysis.id, data_options: dataOptionsCopy})      
     }
   },
   watch: {
@@ -207,14 +216,9 @@ export default {
   padding-right: 0;
 }
 
-
-
-
 .inputs-box {
   margin-right: 0;
   margin-left: 0;
   border: 2px solid rgba(255,255,255,0.1);
 }
-
-
 </style>

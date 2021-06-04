@@ -136,7 +136,8 @@ export default {
     sourceNodesList() {
       let id = this.id
       if (this.nodeData.group === 'detector' ||  this.nodeData.group === 'transformer')
-        return this.nodes.filter(elem => elem.id !== this.id && elem.group === 'transformer').map(elem => elem.id)
+        return this.nodes.filter(elem => elem.id !== this.id && 
+          (elem.group === 'transformer' || elem.group === 'input')).map(elem => elem.id)
       if (this.nodeData.group === 'aggregator') {
         return this.nodes.filter(elem => elem.id !== this.id && (elem.group === 'detector' || elem.group === 'aggregator')).map(elem => elem.id)
       }

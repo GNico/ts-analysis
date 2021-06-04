@@ -6,25 +6,13 @@ const defaultSettings = {
   name: '',
   description: '',
   client: '',
-  data_options: [ {
-    contexts: [],
-    tags: [],
-    interval: '1h',
-    start: null,
-    end: null,
-  },
-  {
+  data_options: [{
     contexts: [],
     tags: [],
     interval: '1h',
     start: null,
     end: null,
   }],
-  //contexts: [],
-  //tags: [],
-  //interval: '1h',
-  //start: null,
-  //end: null,
   model: [],
   saveId: undefined,
 }

@@ -7,7 +7,7 @@
     <template #trigger="props">
       <div class="card-header" @mouseover="showDelete = true" @mouseleave="showDelete = false" >
         <span class="card-header-title long-text-with-ellipsis">
-          <span v-if="showDelete" class="tag is-danger is-family-monospace p-1 mr-1" @click="deleteNode(id)"> &nbsp;X&nbsp; </span>
+          <span v-if="showDelete" class="tag is-danger is-family-monospace p-1 mr-1" @click="deleteInput"> &nbsp;X&nbsp; </span>
           <span v-else class="tag is-info  is-family-monospace p-1 mr-1"> &nbsp;{{inputNumber}}&nbsp; </span>
           <span class="has-text-grey-light">  &nbsp; Input </span>
         </span>
@@ -144,6 +144,9 @@ export default {
         this.$emit('update', { prop: prop, value: value, index: this.index })
       } 
     },
+    deleteInput() {
+      this.$emit('delete', this.index)
+    }
   },
   watch: { 
     
