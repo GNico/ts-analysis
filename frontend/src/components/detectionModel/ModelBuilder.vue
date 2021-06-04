@@ -1,23 +1,5 @@
 <template>
-<div>
-  <div class="buttons">
-    <b-button 
-      type="is-info"
-      size="is-small"
-      icon-left="plus"
-      @click="addInput">
-      Add input
-    </b-button>
-
-    <b-button 
-      type="is-info"
-      size="is-small"
-      icon-left="delete"
-      :disabled="!inputNodes.length"
-      @click="removeInput">
-      Remove input
-    </b-button>
-  </div>
+<div>  
   <div class="columns bordered-columns has-background-grey-dark">    
     <div class="column is-4 bordered-column" v-for="group in groups" :key="group">
       <PipeNodeList          
@@ -42,12 +24,27 @@
     </span>
   </div>
 
+  <div class="buttons">
+    <b-button 
+      type="is-info"
+      size="is-small"
+      icon-left="plus"
+      @click="addInput">
+      Add model input
+    </b-button>
+    <b-button 
+      type="is-info"
+      size="is-small"
+      icon-left="delete"
+      :disabled="!inputNodes.length"
+      @click="removeInput">
+      Remove model input
+    </b-button>
+  </div>
 
   <GraphDataProvider :nodes="nodes" @validation="validationMessages = $event" >
     <LayeredGraphChart slot-scope="{chartNodes, chartEdges}" :nodes="chartNodes" :edges="chartEdges" :centered="true" />
   </GraphDataProvider>
-
-
 
 </div>
 </template>
@@ -83,14 +80,9 @@ export default {
     groups() {
       return Object.keys(this.nodeTypes)
     },    
-
-
-
     inputNodes() {
       return this.nodes.filter(elem => elem.group == "input")
     }
-
-
   },
   methods: {  
     addInput() {

@@ -6,11 +6,25 @@ const defaultSettings = {
   name: '',
   description: '',
   client: '',
-  contexts: [],
-  tags: [],
-  interval: '1h',
-  start: null,
-  end: null,
+  data_options: [ {
+    contexts: [],
+    tags: [],
+    interval: '1h',
+    start: null,
+    end: null,
+  },
+  {
+    contexts: [],
+    tags: [],
+    interval: '1h',
+    start: null,
+    end: null,
+  }],
+  //contexts: [],
+  //tags: [],
+  //interval: '1h',
+  //start: null,
+  //end: null,
   model: [],
   saveId: undefined,
 }
@@ -86,14 +100,15 @@ const actions = {
             client: settings.client,
             name: name,
             description: description,
-            data_options: { 
+           /* data_options: { 
                 client: settings.client, 
                 tags: settings.tags, 
                 contexts: settings.contexts, 
                 interval: settings.interval,
                 start: settings.start,
                 end: settings.end,
-            },
+            },*/
+            data_options: settings.data_options,
             model: settings.model 
         }
         return  api.addNewAnalysis(objectToSave)
@@ -110,6 +125,8 @@ const actions = {
             client: settings.client,
             name: name,
             description: description,
+            data_options: settings.data_options,
+            /* 
             data_options: { 
                 client: settings.client, 
                 tags: settings.tags, 
@@ -117,7 +134,7 @@ const actions = {
                 interval: settings.interval,
                 start: settings.start ? settings.start.toISOString() : null,
                 end:  settings.end ? settings.end.toISOString() : null,               
-            },
+            }, */
             model: settings.model 
         }
         return  api.updateAnalysis(objectToSave, settings.saveId)

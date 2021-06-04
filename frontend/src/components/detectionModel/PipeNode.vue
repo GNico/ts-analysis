@@ -8,7 +8,7 @@
       <div class="card-header" @mouseover="showDelete = true" @mouseleave="showDelete = false" >
         <span class="card-header-title long-text-with-ellipsis">
           <span v-if="showDelete" class="tag is-danger is-family-monospace p-1 mr-1" @click="deleteNode(id)"> &nbsp;X&nbsp; </span>
-          <span v-else class="tag is-info is-family-monospace p-1 mr-1" > {{id}} </span>
+          <span v-else class="tag is-info is-family-monospace p-1 mr-1"> {{id}} </span>
           <span class="has-text-grey-light">{{nodeDefiniton.display}} </span>
         </span>
         <a class="card-header-icon">
