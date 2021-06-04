@@ -96,15 +96,12 @@
 import ModelBuilder from "../detectionModel/ModelBuilder";
 import ModalSaveTemplate from "./ModalSaveTemplate";
 import ModalLoadTemplate from "./ModalLoadTemplate";
-
 import InputCard from "@/components/analysis/InputCard";
-import SearchSelect from '@/components/inputs/SearchSelect.vue';
 import cloneDeep from "lodash/cloneDeep";
 
 
-
 export default {
-  components:  {  SearchSelect, ModelBuilder, ModalSaveTemplate, ModalLoadTemplate, InputCard },
+  components:  { ModelBuilder, ModalSaveTemplate, ModalLoadTemplate, InputCard },
   data () {
     return {
       saveTemplateModalActive: false,  
@@ -153,7 +150,7 @@ export default {
     },
     updateAnalysis({prop, value, index}) {
       let updatedSettings = undefined
-      if (prop != 'data_options') {
+      if (prop == 'client' || prop == 'model') {
         updatedSettings = {id: this.analysis.id, [prop]: value }
         // reset tag and contexts if client changed
         if (prop == 'client' && value !=  this.analysis.client) {
