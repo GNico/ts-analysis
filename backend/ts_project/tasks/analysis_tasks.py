@@ -14,7 +14,7 @@ from ..adapters import SalibModelAdapter
 def run_analysis(data, model):
     salib_model = SalibModelAdapter.toSalib(model)
     pipeline = Pipeline.from_json(salib_model)
-    analyzer = Analyzer(pipeline=pipeline)
+    analyzer = Analyzer(pipeline=pipeline, debug=True)
 
     data_series = services.get_series( 
         client_name=data.get('client', ''), 
@@ -28,7 +28,12 @@ def run_analysis(data, model):
     ts = pd.Series(count, index=dates)
     series = Series(ts)
 
-    return  analyzer.analyze(series)
+    # TODO
+    # inputs = {
+    #    "input_id" : Series
+    # }
+
+    return  analyzer.analyze(inputs)
 
 
 @shared_task(bind=True)

@@ -11,5 +11,17 @@ class SalibModelAdapter:
             del new_node['paramsData']    
             new_node['params'] = params
             nodes.append(new_node)
+
+            # TODO convert 
+            # [ 
+            #     {
+            #         'type': 'input' / 'node',
+            #         'ref': 'id_node/input'
+            #     }
+            # ]
+            
+            
+
+
         return {'nodes': nodes}
 
