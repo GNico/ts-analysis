@@ -87,15 +87,7 @@ const actions = {
         const objectToSave = { 
             client: settings.client,
             name: name,
-            description: description,
-           /* data_options: { 
-                client: settings.client, 
-                tags: settings.tags, 
-                contexts: settings.contexts, 
-                interval: settings.interval,
-                start: settings.start,
-                end: settings.end,
-            },*/
+            description: description,          
             data_options: settings.data_options,
             model: settings.model 
         }
@@ -113,16 +105,7 @@ const actions = {
             client: settings.client,
             name: name,
             description: description,
-            data_options: settings.data_options,
-            /* 
-            data_options: { 
-                client: settings.client, 
-                tags: settings.tags, 
-                contexts: settings.contexts, 
-                interval: settings.interval,
-                start: settings.start ? settings.start.toISOString() : null,
-                end:  settings.end ? settings.end.toISOString() : null,               
-            }, */
+            data_options: settings.data_options,           
             model: settings.model 
         }
         return  api.updateAnalysis(objectToSave, settings.saveId)

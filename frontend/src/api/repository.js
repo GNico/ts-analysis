@@ -132,13 +132,8 @@ export default {
                 (data) => {
                     let formatted = {}
                     formatted.saveId = data.id
-                    formatted.client = data.data_options.client
-                    formatted.tags = data.data_options.tags
-                    formatted.contexts = data.data_options.contexts
-                    formatted.interval = data.data_options.interval
-                    formatted.start = data.data_options.start
-                    formatted.end = data.data_options.end
-
+                    formatted.client = data.client
+                    formatted.data_options = data.data_options
                     formatted.name = data.name
                     formatted.description = data.description
                     formatted.model = data.model
