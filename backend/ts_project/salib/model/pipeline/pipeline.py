@@ -1,7 +1,7 @@
 from .node_factory import NodeFactory
 from .nodes.node_result import NodeResult
 from .nodes.aggregators.root import Root
-from .nodes.node_source import NodeReference, InputReference
+from .nodes.node_source import NodeRef
 
 class Pipeline:
 
@@ -20,17 +20,20 @@ class Pipeline:
         else:
             node_input_results = []
             for node_source_ref in node.sources:
-                if isinstance(node_source_ref, NodeReference):
-                    source = self.node_reference_table[node_source_ref.reference]
+                if node_source_ref.is_node_ref():
+                    source = self.resolve_node_reference(node_source_ref.ref)
                     node_input_results.append(self.execute_node(source, inputs))
-                elif isinstance(node_source_ref, InputReference):
-                    series = inputs[node_source_ref.reference]
+                elif node_source_ref.is_input_ref():
+                    series = inputs[node_source_ref.ref]
                     node_input_results.append(NodeResult(None, [], series=series))
                 else:
                     raise ValueError("Invalid node %s source %s" % (node.id, node_source_ref))
                 
         node.validate_inputs(node_input_results)
-        return node.execute(node_input_results, inputs)
+        return node.execute(node_input_results)
+
+    def resolve_node_reference(self, reference):
+        return self.node_reference_table[reference]
 
     @staticmethod
     def from_json(obj):
@@ -40,14 +43,15 @@ class Pipeline:
 
     @staticmethod
     def build_root_node(nodes):
-        all_source_references = set()
+        all_node_references = set()
         for node in nodes:
-            all_source_references.update([source.reference for source in node.sources])
+            all_node_references.update([s.ref for s in node.node_sources()])
         
         root = Root()
+        # Add nodes that are not referenced by anyone as source to root node
         for node in nodes:
-            if node.id not in all_source_references:
-                root.add_source(NodeReference(node.id))
+            if node.id not in all_node_references:
+                root.add_source(NodeRef(node.id))
 
         return root
 

@@ -6,7 +6,7 @@ class Root(Union):
         super().__init__('_Root')
 
     def __str__(self):
-        return '_Root(' + ','.join([s.id for s in self.sources]) + ')'
+        return '_Root(' + ','.join(map(str,self.sources)) + ')'
 
     def desc(self):
         return 'Root node'

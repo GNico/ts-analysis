@@ -6,5 +6,5 @@ class MockAnalyzer:
     def __init__(self, anomalies):
         self.anomalies = anomalies
 
-    def analyze(self, pdseries):
-        return Analysis(pdseries, None, self.anomalies)
+    def analyze(self, inputs):
+        return Analysis(inputs, None, self.anomalies, False)

@@ -16,14 +16,11 @@ class NodeResult:
     def add_anomalies(self, anomalies):
         self.anomalies.extend(anomalies)
 
-    def is_debug(self):
-        return self.node and self.node.is_debug()
-
-    def debug_nodes(self, accumulator):
-        if self.is_debug():
-            accumulator.append(self)
+    def all_sources(self, acc=[]):
         for input in self.inputs:
-            input.debug_nodes(accumulator)
+            acc.append(input)
+            input.all_sources(acc)
+        return acc
 
     def find_node(self, id):
         if self.id == id:
@@ -31,7 +28,7 @@ class NodeResult:
         else:
             match = None
             for input in self.inputs:
-                match = input.find_node(x)
+                match = input.find_node(id)
                 if match is not None:
                     break
             return match

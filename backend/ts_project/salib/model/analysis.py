@@ -1,9 +1,10 @@
 class Analysis:
 
-    def __init__(self, series, result, anomalies):
-        self.series = series
+    def __init__(self, inputs, result, anomalies, debug):
+        self.inputs = inputs
         self.result = result
         self.anomalies = anomalies
+        self.debug = debug
         self.build_anomalies_map()
 
     def anomalies_by_node(self):
@@ -11,11 +12,6 @@ class Analysis:
 
     def result_for_node(self, id):
         return self.result.find_node(id)
-
-    def result_debug_nodes(self):
-        debug_nodes = []
-        self.result.debug_nodes(debug_nodes)
-        return debug_nodes
 
     def build_anomalies_map(self):
         self.anomalies_by_node = {}
@@ -28,21 +24,26 @@ class Analysis:
             self.anomalies_by_node[source_node_id].append(anomaly)
 
     def output_format(self):
-        series = self.series.output_format()
+        inputs = {k: v.output_format() for k, v in self.inputs.items()}
         anomalies = list(map(lambda a: a.output_format(), self.anomalies))
-        
-        debug_nodes = self.result_debug_nodes()
-        debug_nodes_output = {}
-        for debug_node in debug_nodes:
-            # TODO: hack
-            out_series = debug_node.series if debug_node.series is not None else self.series
-            debug_nodes_output[debug_node.id] = {
-                "series": out_series.output_format(),
-                "anomalies": list(map(lambda a: a.output_format(), debug_node.anomalies))
-            }
 
-        return {
-            "series": series,
+        result = {
+            "inputs": inputs,
             "anomalies": anomalies,
-            "debug_nodes": debug_nodes_output,
         }
+
+        if self.debug:
+            all_sources = self.result.all_sources()
+            debug_nodes_output = {}
+
+            for debug_node in all_sources:
+                out_series = debug_node.series
+                if debug_node.id is not None:
+                    debug_nodes_output[debug_node.id] = {
+                        "series": out_series.output_format() if out_series is not None else None,
+                        "anomalies": list(map(lambda a: a.output_format(), debug_node.anomalies))
+                    }
+
+            result["debug_nodes"] = debug_nodes_output
+
+        return result
