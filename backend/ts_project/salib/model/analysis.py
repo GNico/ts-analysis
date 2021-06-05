@@ -40,7 +40,8 @@ class Analysis:
                 out_series = debug_node.series
                 if debug_node.id is not None:
                     debug_nodes_output[debug_node.id] = {
-                        "series": out_series.output_format() if out_series is not None else None,
+                        # TODO return list of series (show in same graph in UI)
+                        "series": [out_series.output_format()] if out_series is not None else None,
                         "anomalies": list(map(lambda a: a.output_format(), debug_node.anomalies))
                     }
 
