@@ -5,6 +5,7 @@ from model.anomaly import Anomaly
 from model.analysis import Analysis
 from model.pipeline.pipeline import Pipeline
 from model.pipeline.node_factory import NodeFactory
+from model.pipeline.nodes.node_source import InputRef
 from model.pipeline.params.float import Float, BoundedFloat
 from model.test.test_series_builder import TestSeriesBuilder
 from model.test.testcase import TestCase
@@ -22,11 +23,12 @@ class TestAnalysis(unittest.TestCase):
         factory.set_param_value('center', False)
         factory.set_param_value('min_periods', 0)
         factory.set_param_value('agg_method', 'max')
+        factory.add_source(InputRef('input'))
         node = factory.build()
 
-        pipeline = Pipeline(node)
-        analyzer = Analyzer(pipeline=pipeline)
-        analysis = analyzer.analyze(series)
+        pipeline = Pipeline([node])
+        analyzer = Analyzer(pipeline=pipeline, debug=True)
+        analysis = analyzer.analyze({'input':series})
 
         expected = {
             "anomalies": [],
@@ -34,51 +36,53 @@ class TestAnalysis(unittest.TestCase):
                 "test_node": {
                     "anomalies": [],
                     "series": [
-                        [0, 0],
-                        [1000, 1],
-                        [2000, 2],
-                        [3000, 3],
-                        [4000, 4],
-                        [5000, 5],
-                        [6000, 6],
-                        [7000, 7],
-                        [8000, 8],
-                        [9000, 9],
-                        [10000, 9],
-                        [11000, 9],
-                        [12000, 9],
-                        [13000, 9],
-                        [14000, 9],
-                        [15000, 8],
-                        [16000, 7],
-                        [17000, 6],
-                        [18000, 5],
-                        [19000, 4],
+                        [0, 0.0],
+                        [1000, 1.0],
+                        [2000, 2.0],
+                        [3000, 3.0],
+                        [4000, 4.0],
+                        [5000, 5.0],
+                        [6000, 6.0],
+                        [7000, 7.0],
+                        [8000, 8.0],
+                        [9000, 9.0],
+                        [10000, 9.0],
+                        [11000, 9.0],
+                        [12000, 9.0],
+                        [13000, 9.0],
+                        [14000, 9.0],
+                        [15000, 8.0],
+                        [16000, 7.0],
+                        [17000, 6.0],
+                        [18000, 5.0],
+                        [19000, 4.0],
                     ],
                 }
             },
-            "series": [
-                [0, 0],
-                [1000, 1],
-                [2000, 2],
-                [3000, 3],
-                [4000, 4],
-                [5000, 5],
-                [6000, 6],
-                [7000, 7],
-                [8000, 8],
-                [9000, 9],
-                [10000, 9],
-                [11000, 8],
-                [12000, 7],
-                [13000, 6],
-                [14000, 5],
-                [15000, 4],
-                [16000, 3],
-                [17000, 2],
-                [18000, 1],
-                [19000, 0],
-            ],
+            "inputs": {
+                "input": [
+                    [0, 0.0],
+                    [1000, 1.0],
+                    [2000, 2.0],
+                    [3000, 3.0],
+                    [4000, 4.0],
+                    [5000, 5.0],
+                    [6000, 6.0],
+                    [7000, 7.0],
+                    [8000, 8.0],
+                    [9000, 9.0],
+                    [10000, 9.0],
+                    [11000, 8.0],
+                    [12000, 7.0],
+                    [13000, 6.0],
+                    [14000, 5.0],
+                    [15000, 4.0],
+                    [16000, 3.0],
+                    [17000, 2.0],
+                    [18000, 1.0],
+                    [19000, 0.0],
+                ]
+            },
         }
 
         self.assertEqual(expected, analysis.output_format())
@@ -92,38 +96,39 @@ class TestAnalysis(unittest.TestCase):
         factory.set_param_value('center', False)
         factory.set_param_value('min_periods', 0)
         factory.set_param_value('agg_method', 'max')
-        factory.set_debug(False)
+        factory.add_source(InputRef('input'))
         node = factory.build()
 
-        pipeline = Pipeline(node)
-        analyzer = Analyzer(pipeline=pipeline)
-        analysis = analyzer.analyze(series)
+        pipeline = Pipeline([node])
+        analyzer = Analyzer(pipeline=pipeline, debug=False)
+        analysis = analyzer.analyze({'input':series})
 
         expected = {
             "anomalies": [],
-            "debug_nodes": {},
-            "series": [
-                [0, 0],
-                [1000, 1],
-                [2000, 2],
-                [3000, 3],
-                [4000, 4],
-                [5000, 5],
-                [6000, 6],
-                [7000, 7],
-                [8000, 8],
-                [9000, 9],
-                [10000, 9],
-                [11000, 8],
-                [12000, 7],
-                [13000, 6],
-                [14000, 5],
-                [15000, 4],
-                [16000, 3],
-                [17000, 2],
-                [18000, 1],
-                [19000, 0],
-            ],
+            "inputs": {
+                "input": [
+                    [0, 0.0],
+                    [1000, 1.0],
+                    [2000, 2.0],
+                    [3000, 3.0],
+                    [4000, 4.0],
+                    [5000, 5.0],
+                    [6000, 6.0],
+                    [7000, 7.0],
+                    [8000, 8.0],
+                    [9000, 9.0],
+                    [10000, 9.0],
+                    [11000, 8.0],
+                    [12000, 7.0],
+                    [13000, 6.0],
+                    [14000, 5.0],
+                    [15000, 4.0],
+                    [16000, 3.0],
+                    [17000, 2.0],
+                    [18000, 1.0],
+                    [19000, 0.0],
+                ]
+            },
         }
 
         self.assertEqual(expected, analysis.output_format())

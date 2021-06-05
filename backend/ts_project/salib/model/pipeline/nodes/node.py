@@ -7,7 +7,6 @@ class Node:
         self.params = {}
         self.required_params = {}
         self.sources = []
-        self.debug = True
         self.input_names = []
 
     def display(self):
@@ -22,14 +21,17 @@ class Node:
     def add_source(self, source):
         self.sources.append(source)
 
+    def node_sources(self):
+        return list(filter(lambda x: x.is_node_ref(), self.sources))
+
+    def input_sources(self):
+        return list(filter(lambda x: x.is_node_ref(), self.sources))
+
+    def sources(self):
+        return self.sources
+
     def add_param(self, param):
         self.params[param.id] = param
-
-    def set_debug(self, value):
-        self.debug = value
-
-    def is_debug(self):
-        return self.debug
 
     def add_required_param(self, param):
         self.required_params[param.id] = param
@@ -51,10 +53,7 @@ class Node:
 
     def num_required_inputs(self):
         count = len(self.input_names)
-        if count == 0:
-            return None
-        else:
-            return count
+        return None if count == 0 else count
 
     def set_input_names(self, input_names):
         self.input_names = input_names

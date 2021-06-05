@@ -13,7 +13,16 @@ class TestPipeline(unittest.TestCase):
                     'group': 'aggregator',
                     'type': 'Union',
                     'params': [],
-                    'sources': ['2', '3']
+                    'sources': [
+                        {
+                            'type': 'node',
+                            'ref':'2',
+                        },
+                        {
+                            'type': 'node',
+                            'ref':'3',
+                        },
+                    ]
                 },
                 {
                     'id': '2',
@@ -49,15 +58,20 @@ class TestPipeline(unittest.TestCase):
                 }
             ]
         }
+        
         pipeline = Pipeline.from_json(obj)
 
-        self.assertEqual('_Root(1)', str(pipeline.root_node))
+        self.assertEqual('_Root(Node[1])', str(pipeline.root_node))
         self.assertEqual(1, len(pipeline.root_node.sources))
-        orNode = pipeline.root_node.sources[0]
-        self.assertEqual('Union(2,3)', str(orNode))
-        self.assertEqual(2, len(orNode.sources))
-        self.assertEqual('SimpleThreshold(None,None,False,False)[2]', str(orNode.sources[0]))
-        self.assertEqual('SimpleThreshold(None,None,True,False)[3]', str(orNode.sources[1]))
+        or_node = pipeline.resolve_node_reference(pipeline.root_node.sources[0].ref)
+        self.assertEqual('Union(Node[2],Node[3])', str(or_node))
+        self.assertEqual(2, len(or_node.sources))
+        self.assertEqual('Node[2]', str(or_node.sources[0]))
+        self.assertEqual('Node[3]', str(or_node.sources[1]))
+        or_node_source_0_resolved = pipeline.resolve_node_reference(or_node.sources[0].ref)
+        or_node_source_1_resolved = pipeline.resolve_node_reference(or_node.sources[1].ref)
+        self.assertEqual('SimpleThreshold(None,None,False,False)[2]', str(or_node_source_0_resolved))
+        self.assertEqual('SimpleThreshold(None,None,True,False)[3]', str(or_node_source_1_resolved))
 
     def test_parsing_implicit_aggregator(self):
         obj = {
@@ -99,7 +113,7 @@ class TestPipeline(unittest.TestCase):
         }
         pipeline = Pipeline.from_json(obj)
 
-        self.assertEqual('_Root(2,3)', str(pipeline.root_node))
+        self.assertEqual('_Root(Node[2],Node[3])', str(pipeline.root_node))
         self.assertEqual(2, len(pipeline.root_node.sources))
-        self.assertEqual('SimpleThreshold(None,None,False,False)[2]', str(pipeline.root_node.sources[0]))
-        self.assertEqual('SimpleThreshold(None,None,True,True)[3]', str(pipeline.root_node.sources[1]))
+        self.assertEqual('Node[2]', str(pipeline.root_node.sources[0]))
+        self.assertEqual('Node[3]', str(pipeline.root_node.sources[1]))
