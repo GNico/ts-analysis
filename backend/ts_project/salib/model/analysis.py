@@ -39,7 +39,6 @@ class Analysis:
             for debug_node in all_sources:
                 if debug_node.id is not None:
                     debug_nodes_output[debug_node.id] = {
-                        # TODO return list of series (show in same graph in UI)
                         "series": [s.output_format() for s in debug_node.display_series()],
                         "anomalies": list(map(lambda a: a.output_format(), debug_node.anomalies))
                     }

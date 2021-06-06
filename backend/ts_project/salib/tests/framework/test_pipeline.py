@@ -117,3 +117,134 @@ class TestPipeline(unittest.TestCase):
         self.assertEqual(2, len(pipeline.root_node.sources))
         self.assertEqual('Node[2]', str(pipeline.root_node.sources[0]))
         self.assertEqual('Node[3]', str(pipeline.root_node.sources[1]))
+
+    def test_parsing_loop_detection_2nodes(self):
+        obj = {
+            'nodes': [
+                {
+                    'id': '1',
+                    'group': 'detector',
+                    'type': 'SimpleThreshold',
+                    'params': [
+                        {
+                            'id': 'inside',
+
+                            'value': False
+                        },
+                        {
+                            'id': 'strict',
+                            'value': False
+                        }
+                    ],
+                    'sources': [
+                        {
+                            'type': 'node',
+                            'ref': '2'
+                        }
+                    ]
+                },
+                {
+                    'id': '2',
+                    'group': 'detector',
+                    'type': 'SimpleThreshold',
+                    'params': [
+                        {
+                            'id': 'inside',
+                            'value': True
+                        },
+                        {
+                            'id': 'strict',
+                            'value': True
+                        }
+                    ],
+                    'sources': [
+                        {
+                            'type': 'node',
+                            'ref': '1'
+                        }
+                    ]
+                }
+            ]
+        }
+
+        try:
+            pipeline = Pipeline.from_json(obj)
+            raise AssertionError("Should throw loop exception")
+        except ValueError as e:
+            self.assertEqual("Found recursion in node 1, path: ['1', '2']", str(e))
+
+    def test_parsing_loop_detection_3nodes(self):
+        obj = {
+            'nodes': [
+                {
+                    'id': '1',
+                    'group': 'detector',
+                    'type': 'SimpleThreshold',
+                    'params': [
+                        {
+                            'id': 'inside',
+
+                            'value': False
+                        },
+                        {
+                            'id': 'strict',
+                            'value': False
+                        }
+                    ],
+                    'sources': [
+                        {
+                            'type': 'node',
+                            'ref': '2'
+                        }
+                    ]
+                },
+                {
+                    'id': '2',
+                    'group': 'detector',
+                    'type': 'SimpleThreshold',
+                    'params': [
+                        {
+                            'id': 'inside',
+                            'value': True
+                        },
+                        {
+                            'id': 'strict',
+                            'value': True
+                        }
+                    ],
+                    'sources': [
+                        {
+                            'type': 'node',
+                            'ref': '3'
+                        }
+                    ]
+                },
+                {
+                    'id': '3',
+                    'group': 'detector',
+                    'type': 'SimpleThreshold',
+                    'params': [
+                        {
+                            'id': 'inside',
+                            'value': True
+                        },
+                        {
+                            'id': 'strict',
+                            'value': True
+                        }
+                    ],
+                    'sources': [
+                        {
+                            'type': 'node',
+                            'ref': '1'
+                        }
+                    ]
+                }
+            ]
+        }
+
+        try:
+            pipeline = Pipeline.from_json(obj)
+            raise AssertionError("Should throw loop exception")
+        except ValueError as e:
+            self.assertEqual("Found recursion in node 1, path: ['1', '2', '3']", str(e))

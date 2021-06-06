@@ -8,7 +8,7 @@ class Pipeline:
     def __init__(self, nodes):
         self.nodes = nodes
         self.node_reference_table = Pipeline.build_node_reference_table(nodes)
-        self.root_node = Pipeline.build_root_node(nodes)
+        self.root_node = self.build_root_node(nodes)
 
     def execute(self, inputs):
         result = self.execute_node(self.root_node, inputs)
@@ -41,10 +41,10 @@ class Pipeline:
         all_nodes = [NodeFactory.from_json(node) for node in nodes]
         return Pipeline(all_nodes)
 
-    @staticmethod
-    def build_root_node(nodes):
+    def build_root_node(self, nodes):
         all_node_references = set()
         for node in nodes:
+            self.validate_no_recursion_for(node)            
             all_node_references.update([s.ref for s in node.node_sources()])
         
         root = Root()
@@ -53,7 +53,22 @@ class Pipeline:
             if node.id not in all_node_references:
                 root.add_source(NodeRef(node.id))
 
+
         return root
+
+    def validate_no_recursion_for(self, node):
+        try:
+            path = []
+            self.validate_no_recursion(node, path)
+        except ValueError as e:
+            raise ValueError("Found recursion in node %s, path: %s" % (node.id, path)) from e
+
+    def validate_no_recursion(self, node, nodes_seen):
+        nodes_seen.append(node.id)
+        for source in node.node_sources():
+            if source.ref in nodes_seen:
+                raise ValueError('Duplicate found %s' % source.ref)
+            self.validate_no_recursion(self.resolve_node_reference(source.ref), nodes_seen)
 
     @staticmethod
     def build_node_reference_table(nodes):
