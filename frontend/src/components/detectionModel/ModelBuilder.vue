@@ -53,10 +53,9 @@
 <script>
 import PipeNodeList from "./PipeNodeList"
 import cloneDeep from "lodash/cloneDeep";
-import { customAlphabet } from 'nanoid'
-
 import GraphDataProvider from "./GraphDataProvider"
 import LayeredGraphChart from "./LayeredGraphChart"
+import { customAlphabet } from 'nanoid'
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQLRSTUVWXYZ', 3)
 
@@ -93,12 +92,12 @@ export default {
     },
     removeInput() {
       let inputNumber = this.inputNodes.length
-      this.deleteNode(inputNumber)
+      this.deleteNode(inputNumber.toString())
     },
     getNewInputNode() {
       let inputNumber = this.inputNodes.length + 1
       let newNode = {
-        id: inputNumber,
+        id: inputNumber.toString(),
         type: 'input',
         group: 'input',
         sources: [],

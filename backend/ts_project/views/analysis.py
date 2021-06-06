@@ -11,8 +11,7 @@ class AnalysisView(APIView):
     def post(self, request):
         serializer = AnalysisSerializer(data=request.data)
         if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
-        #task = tasks.perform_analysis.delay(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)      
         task = tasks.perform_live_analysis.apply_async(args=[serializer.data], priority=task_priorities.LIVE_ANALYSIS)
         return Response({"task_id": task.id})
 
@@ -24,7 +23,6 @@ class AnalysisResultView(APIView):
             return Response({"task_id": id, "state": "pending"})
         elif task.state == 'SUCCESS':
             res = task.result
-            print(res)
             nodes = request.query_params.getlist('nodes', [])           
             if (nodes):
                 node_results = { k: res['debug_nodes'].get(k, {}) for k in nodes}

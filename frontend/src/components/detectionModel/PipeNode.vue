@@ -236,9 +236,6 @@ export default {
         default:
           parsed = value
       }
-
-      //let parsed = (type === 'Float' || type === "BoundedFloat") ? parseFloat(value) : value
-      console.log(typeof parsed)
       this.$emit('nodeParamsChange', {id: this.id, [name]: parsed})
     },
     sourceNodesChange(event) {

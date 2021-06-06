@@ -80,7 +80,7 @@ const actions = {
                     store.commit('add_analysis', settings)
                     store.dispatch('setActiveAnalysis', settings.id)
                 })
-                .catch(error => console.log())
+                .catch(error => console.log(error.response.data))
     }, 
     saveAnalysis({commit, getters, dispatch}, {id, name, description}) {
         const settings = getters.getAnalysisById(id)
@@ -97,7 +97,7 @@ const actions = {
                     commit('update_analysis', {id, name, description, saveId})
                     dispatch("fetchAllAnalysis")
                 })
-                .catch(error => console.log(error)) 
+                .catch(error => console.log(error.response.data)) 
     },
     updateAnalysis({commit, getters, dispatch}, {id, name, description}) {
         const settings = getters.getAnalysisById(id)
@@ -113,19 +113,19 @@ const actions = {
                     commit('update_analysis', {id, name, description})
                     dispatch("fetchAllAnalysis")
                 })
-                .catch(error => console.log(error))
+                .catch(error => console.log(error.response.data))
 
     },
     deleteAnalysis({dispatch}, id) {
         return  api.deleteAnalysis(id)
                 .then(response => dispatch("fetchAllAnalysis"))
-                .catch(error => console.log(error))
+                .catch(error => console.log(error.response.data))
     },
     deleteAnalysisList({dispatch}, idList) {
         console.log(idList)
         return  api.deleteAnalysisList(idList)
                 .then(response => dispatch("fetchAllAnalysis"))
-                .catch(error => console.log(error))
+                .catch(error => console.log(error.response.data))
     }, 
     createLocalAnalysis(store) {
         const newId = nanoid(5)

@@ -87,11 +87,7 @@ const actions = {
         dispatch('updateOptions', {id: settings.id, ...defaultOptions})
         return  api.getAnomalies({
                     client: settings.client,
-                    tags: settings.tags,
-                    contexts: settings.contexts,                    
-                    interval: settings.interval,
-                    start: settings.start,
-                    end: settings.end,
+                    data_options: settings.data_options,                    
                     model: settings.model
                 })
                 .then(response => {    
