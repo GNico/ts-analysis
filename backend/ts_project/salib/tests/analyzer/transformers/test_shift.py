@@ -50,9 +50,9 @@ class TestShift(unittest.TestCase):
         analysis = analyzer.analyze(inputs)
         result = analysis.result_for_node(node.id)
 
-        self.assertEqual(start, timestamp_to_epoch_secs(result.series.start))
-        self.assertEqual(end, timestamp_to_epoch_secs(result.series.end))
-        self.assertEqual(json, result.series.output_format())
+        self.assertEqual(start, timestamp_to_epoch_secs(result.output_series.start))
+        self.assertEqual(end, timestamp_to_epoch_secs(result.output_series.end))
+        self.assertEqual(json, result.output_series.output_format())
 
     def build_test_series(self):
         series = TestSeriesBuilder.linear(3, 0, 1, start_time=1).build()

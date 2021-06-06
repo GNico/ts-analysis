@@ -52,7 +52,7 @@ class TestStdNormalize(unittest.TestCase):
         analysis = analyzer.analyze(inputs)
         result = analysis.result_for_node(node.id)
 
-        self.assertEqual(expected_series, result.series.as_list())
+        self.assertEqual(expected_series, result.output_series.as_list())
 
     def build_triangle(self):
         sb_up = TestSeriesBuilder.linear(10, 0, 1)

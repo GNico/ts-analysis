@@ -25,7 +25,7 @@ class Pipeline:
                     node_input_results.append(self.execute_node(source, inputs))
                 elif node_source_ref.is_input_ref():
                     series = inputs[node_source_ref.ref]
-                    node_input_results.append(NodeResult(None, [], series=series))
+                    node_input_results.append(NodeResult(None, [], output_series=series))
                 else:
                     raise ValueError("Invalid node %s source %s" % (node.id, node_source_ref))
                 
