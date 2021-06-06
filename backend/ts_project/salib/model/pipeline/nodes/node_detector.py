@@ -13,7 +13,7 @@ class NodeDetector(Node):
         anomalies = self.anomalies(input)
         for anomaly in anomalies:
             anomaly.set_source_node(self)
-        return NodeResult(self, inputs=inputs, series=input.series, anomalies=anomalies)
+        return NodeResult(self, inputs=inputs, output_series=input.output_series, anomalies=anomalies)
 
     def anomalies(self, series):
         raise Exception('Unimplemented anomalies method for NodeDetector')

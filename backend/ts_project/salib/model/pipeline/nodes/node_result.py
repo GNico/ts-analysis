@@ -1,20 +1,26 @@
 class NodeResult:
 
-    def __init__(self, source_node, inputs, series=None, anomalies=[]):
+    def __init__(self, source_node, inputs, output_series=None, anomalies=[]):
         self.node = source_node
         if self.node is None:
             self.id = None
         else:
             self.id = self.node.id
-        self.series = series
+        self.output_series = output_series
         self.anomalies = anomalies
         self.inputs = inputs
 
-    def set_series(self, series):
-        self.series = series
+    def set_output_series(self, output_series):
+        self.output_series = output_series
 
     def add_anomalies(self, anomalies):
         self.anomalies.extend(anomalies)
+
+    def display_series(self):
+        if self.output_series is not None:
+            return [self.output_series]
+        else:
+            return sum([i.display_series() for i in self.inputs], [])
 
     def all_sources(self, acc=[]):
         for input in self.inputs:
