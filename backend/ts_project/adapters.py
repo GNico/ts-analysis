@@ -6,8 +6,11 @@ class SalibModelAdapter:
         for node in model:
             if (node['type'] == 'input'): 
                 input_nodes.add(node['id'])
+
         nodes = []
         for node in model:
+            if node['type'] == 'input':
+                continue
             new_node = node.copy()
             formatted_params = []
             paramsdata = node.get('paramsData', {})
