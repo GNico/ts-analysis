@@ -178,7 +178,7 @@ class TestAggregators(unittest.TestCase):
         
         result = node.execute([fst_input, snd_input])
 
-        expected_display_series = [fst_series, snd_series]
+        expected_display_series = {'input_1': fst_series, 'input_2': snd_series}
         self.assertEqual(expected_display_series, result.display_series())
         return result.anomalies
 

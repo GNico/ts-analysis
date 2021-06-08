@@ -35,8 +35,8 @@ class TestAnalysis(unittest.TestCase):
             "debug_nodes": {
                 "test_node": {
                     "anomalies": [],
-                    "series": [
-                        [
+                    "series": {
+                        "output": [
                             [0, 0.0],
                             [1000, 1.0],
                             [2000, 2.0],
@@ -58,10 +58,10 @@ class TestAnalysis(unittest.TestCase):
                             [18000, 5.0],
                             [19000, 4.0],
                         ]
-                    ],
+                    },
                 }
             },
-            "inputs": {
+            "series": {
                 "input": [
                     [0, 0.0],
                     [1000, 1.0],
@@ -107,7 +107,7 @@ class TestAnalysis(unittest.TestCase):
 
         expected = {
             "anomalies": [],
-            "inputs": {
+            "series": {
                 "input": [
                     [0, 0.0],
                     [1000, 1.0],
