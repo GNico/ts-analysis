@@ -77,8 +77,8 @@ export default {
   components: { AnomaliesTable, Chart },
   props: {
     series: {
-      type: Array,
-      default: () => []
+      type: Object,
+      default: () => {return {}}
     },
     anomalies: {
       type: Array,

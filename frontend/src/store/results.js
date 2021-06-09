@@ -111,6 +111,7 @@ const actions = {
             .then(response => {
                 if (response.data.state == 'success')
                     commit('add_results', {id: results.id, loading: false, taskId: response.data.task_id, results: response.data.result, error: '' })
+                    console.log(response.data.result)
                 if (response.data.state == 'failed')
                     commit('add_results', {id: results.id, loading: false, taskId: response.data.task_id, results: {}, error: response.data.error })
             })

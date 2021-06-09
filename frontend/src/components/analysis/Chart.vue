@@ -19,7 +19,7 @@ import { DefaultChartSettings } from '../../config/settings'
 import BaseChart from "../BaseChart"
 import debounce from "lodash/debounce"
 import throttle from "lodash/throttle"
-import { analysisTooltipFormatter } from '../../utils/helpers'
+import { analysisTooltipFormatter, multiseriesTooltipFormatter } from '../../utils/helpers'
 
 
 export default {
@@ -32,12 +32,12 @@ export default {
   },
   props: {   
     seriesData: {
-      type: Array,
-      default: () => { return [] }
+      type: Object,
+      default: () => { return {} }
     },
     anomalies: {
       type: Array,
-      default: () => { return [] }
+      default: () => []
     },
     showMinMax: {
       type: Boolean,
@@ -70,6 +70,7 @@ export default {
   },
   data() {
     return {
+      tooltipFormatter: analysisTooltipFormatter
     }
   },
   computed: {
@@ -82,20 +83,21 @@ export default {
         max: this.range.end
       }
     }, 
-    arearangedata() {
-      let newdata = []
-      this.seriesData.forEach(point => {
-        newdata.push([ point[0], point[1], point[1] ])
-      })
-      return newdata
-    },
     chartData() {
       var cdata = []
-      if (this.seriesData.length > 0) {
+      var seriesIds = Object.keys(this.seriesData)
+      if (seriesIds.length == 0) { //no series
+        cdata.push({          
+          color: 'rgba(0,0,0,0)',
+          enableMouseTracking: false,
+          showInLegend: false
+        })
+      } else if (seriesIds.length == 1) { //1 series = show variance
+        this.tooltipFormatter = analysisTooltipFormatter
         cdata.push({
           name: 'Average',
           type: 'line',
-          data: this.seriesData,
+          data: this.seriesData[seriesIds[0]],
           zIndex: 2,
           fillOpacity: 1,
           enableMouseTracking: true,
@@ -110,7 +112,7 @@ export default {
           cdata.push({
             name: 'Range',
             type: 'arearange',
-            data: this.arearangedata,
+            data: this.toArearangeData(this.seriesData[seriesIds[0]]),
             zIndex: 1,
             color: this.seriesColor,
             fillOpacity: 0.3,
@@ -122,19 +124,27 @@ export default {
               }
             }
           })
-        }
-      } else {
-        cdata.push({          
-          color: 'rgba(0,0,0,0)',
-          enableMouseTracking: false,
-          showInLegend: false
+        } 
+      } else {  //more than 1 series, dont show variance
+        this.tooltipFormatter = multiseriesTooltipFormatter
+        seriesIds.forEach(seriesId => {
+          cdata.push({
+            name: seriesId,
+            type: 'line',
+            data: this.seriesData[seriesId],
+            zIndex: 2,
+            fillOpacity: 1,
+            enableMouseTracking: true,
+            states: {
+              hover: {
+                lineWidthPlus: 0
+              }
+            },
+          })
         })
       }
       return cdata
     },
-    tooltipFormatter() {
-      return analysisTooltipFormatter
-    }
   },
   methods: {
     setActiveAnomaly(id) {
@@ -158,6 +168,13 @@ export default {
         this.sharedState.crosshair = event
       }
     },
+    toArearangeData(seriesData) {
+      let rangedata = []
+      seriesData.forEach(point => {
+        rangedata.push([ point[0], point[1], point[1] ])
+      })
+      return rangedata
+    }
   },
   created() {
     this.triggerZoomUpdate = debounce(this.triggerZoomUpdate, 400, {'leading': true, 'trailing': false})
