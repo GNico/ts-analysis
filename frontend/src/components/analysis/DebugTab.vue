@@ -7,7 +7,7 @@
       <LayeredGraphChart 
         ref="graphChart"
         slot-scope="{chartNodes, chartEdges}" 
-        :nodes="chartNodes" 
+        :nodes="chartNodes"
         :edges="chartEdges" 
         :selectable="true" 
         :centered="false" 
@@ -29,8 +29,7 @@
         :anomalies="formattedResults[item]['anomalies']"
         @updateRange="updateRange"
         :extremes="extremes"
-        :node="getNode(item)">       
-      </DebugNodeResult>
+        :node="getNode(item)"/>       
     </div>
   </div>
 </div>
@@ -38,7 +37,6 @@
 
 
 <script>
-
 import api from "../../api/repository";
 import DebugNodeResult from "./DebugNodeResult"
 import GraphDataProvider from "../detectionModel/GraphDataProvider"
@@ -102,7 +100,6 @@ export default {
     isSelected() {
       return this.selectedNodes.length > 0
     }
-
   },
   methods: {
     getNodesResults() {

@@ -143,7 +143,7 @@ export default {
       }
     },
     allowMultiple() {
-      return this.nodeData.group === 'aggregator' || this.nodeData.group === 'transformer'
+      return this.nodeDefiniton.inputs['num_required_inputs'] != 1
     }
   },
   methods: {
@@ -238,13 +238,19 @@ export default {
       }
       this.$emit('nodeParamsChange', {id: this.id, [name]: parsed})
     },
-    sourceNodesChange(event) {
-      let sourceNodes = event
-      if (sourceNodes === 'none') {
-        sourceNodes = []
-      }
-      else if (!this.allowMultiple) {
-        sourceNodes = [ event ]
+    sourceNodesChange(selected) {
+      let sourceNodes = selected
+      if (!this.allowMultiple) {
+        if (sourceNodes === 'none') {
+          sourceNodes = []
+        } else {
+          sourceNodes = [ selected ]
+        }
+      } else {
+        let numberOfInputs = this.nodeDefiniton.inputs['num_required_inputs']
+        if (numberOfInputs && selected.length > numberOfInputs) {
+          sourceNodes = sourceNodes.slice(-(numberOfInputs))
+        }
       }
       this.$emit('nodeSourceChange', {id: this.id, sources: sourceNodes} )
     },
