@@ -96,7 +96,6 @@ const actions = {
                 .catch(error => { 
                     if (error.response) {
                         commit('add_results', {id: settings.id, loading: false, results: {}, error: "An error occurred while processing the request"})
-                        console.log(error)
                     } else if (error.request) {
                         commit('add_results', {id: settings.id, loading: false, results: {}, error: "The server could not be reached"})
                     } else {

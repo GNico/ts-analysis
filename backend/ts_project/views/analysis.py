@@ -25,11 +25,22 @@ class AnalysisResultView(APIView):
             res = task.result
             nodes = request.query_params.getlist('nodes', [])           
             if (nodes):
-                node_results = { k: res['debug_nodes'].get(k, {}) for k in nodes}
-                return Response({"task_id": id, "state": "success", "node_results": node_results}) 
+                node_results = { k: res['debug_nodes'].get(k, None) for k in nodes}
+                res['debug_nodes'] = node_results
+                return Response({
+                    'task_id': id, 
+                    'state': 'success', 
+                    'result': res
+                }) 
             else:
                 final_result = { 'series': res['series'], 'anomalies': res['anomalies'] }
-                return Response({"task_id": id, "state": "success", "result": final_result})            
+                return Response({
+                    "task_id": id, 
+                    "state": "success", 
+                    "result": final_result
+                })     
+
+                       
         elif task.state == 'FAILED':
             return Response({"task_id": id, "state": "failed", "error": "An error occurred while performing the analysis"}) 
 
