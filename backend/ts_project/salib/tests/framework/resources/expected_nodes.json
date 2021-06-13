@@ -240,6 +240,72 @@
       }
     },
     {
+      "type": "MultiRollingAggregate",
+      "desc": "Multi Rolling aggregate",
+      "display": "Multi Rolling Aggregate",
+      "params": [
+        {
+          "id": "window",
+          "type": "String",
+          "display": "Window",
+          "desc": "Window size in time interval (eg: 12h)",
+          "conditions": [],
+          "value": "12h"
+        },
+        {
+          "id": "center",
+          "type": "Boolean",
+          "display": "Center",
+          "desc": "Center aggregation window around value",
+          "conditions": [],
+          "value": false
+        },
+        {
+          "id": "min_periods",
+          "type": "BoundedInt",
+          "display": "Min. periods",
+          "desc": "Min number of periods",
+          "conditions": [],
+          "value": 0,
+          "min": 0,
+          "max": null
+        },
+        {
+          "id": "agg_method",
+          "type": "Select",
+          "display": "Aggregation",
+          "desc": "Aggregation method",
+          "conditions": [],
+          "value": "correlation_pearson",
+          "options": [
+            {
+              "code": "correlation_pearson",
+              "display": "Pearson Correlation"
+            },
+            {
+              "code": "correlation_kendall",
+              "display": "Kendall Correlation"
+            },
+            {
+              "code": "correlation_spearman",
+              "display": "Spearman Correlation"
+            },
+            {
+              "code": "proportion",
+              "display": "Proportion"
+            }
+          ]
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 2,
+        "names": [
+          "lhs",
+          "rhs"
+        ]
+      }
+    },
+    {
       "type": "STL",
       "desc": "Seasonal-Trend decomposition (LOESS)",
       "display": "STL decomposition",
