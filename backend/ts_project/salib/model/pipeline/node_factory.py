@@ -8,6 +8,7 @@ from .nodes.transformers.multi_rolling_aggregate import MultiRollingAggregate
 from .nodes.transformers.stl import STL
 from .nodes.transformers.seasonal_decompose import SeasonalDecompose
 from .nodes.transformers.autoreg import AutoReg
+from .nodes.transformers.markov_autoreg import MarkovAutoReg
 from .nodes.transformers.alma import ALMA
 
 from .nodes.detectors.simple_threshold import SimpleThreshold
@@ -33,6 +34,7 @@ class NodeFactory:
             'STL': STL,
             'Seasonal decompose': SeasonalDecompose,
             'AutoRegression': AutoReg,
+            'MarkovAutoRegression': MarkovAutoReg,
             'ALMA': ALMA
         },
         'detector': {
