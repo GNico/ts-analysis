@@ -6,11 +6,13 @@ const defaultSettings = {
   name: '',
   description: '',
   client: '',
-  contexts: [],
-  tags: [],
-  interval: '1h',
-  start: null,
-  end: null,
+  data_options: [{
+    contexts: [],
+    tags: [],
+    interval: '1h',
+    start: null,
+    end: null,
+  }],
   model: [],
   saveId: undefined,
 }
@@ -78,22 +80,15 @@ const actions = {
                     store.commit('add_analysis', settings)
                     store.dispatch('setActiveAnalysis', settings.id)
                 })
-                .catch(error => console.log())
+                .catch(error => console.log(error.response.data))
     }, 
     saveAnalysis({commit, getters, dispatch}, {id, name, description}) {
         const settings = getters.getAnalysisById(id)
         const objectToSave = { 
             client: settings.client,
             name: name,
-            description: description,
-            data_options: { 
-                client: settings.client, 
-                tags: settings.tags, 
-                contexts: settings.contexts, 
-                interval: settings.interval,
-                start: settings.start,
-                end: settings.end,
-            },
+            description: description,          
+            data_options: settings.data_options,
             model: settings.model 
         }
         return  api.addNewAnalysis(objectToSave)
@@ -102,7 +97,7 @@ const actions = {
                     commit('update_analysis', {id, name, description, saveId})
                     dispatch("fetchAllAnalysis")
                 })
-                .catch(error => console.log(error)) 
+                .catch(error => console.log(error.response.data)) 
     },
     updateAnalysis({commit, getters, dispatch}, {id, name, description}) {
         const settings = getters.getAnalysisById(id)
@@ -110,14 +105,7 @@ const actions = {
             client: settings.client,
             name: name,
             description: description,
-            data_options: { 
-                client: settings.client, 
-                tags: settings.tags, 
-                contexts: settings.contexts, 
-                interval: settings.interval,
-                start: settings.start ? settings.start.toISOString() : null,
-                end:  settings.end ? settings.end.toISOString() : null,               
-            },
+            data_options: settings.data_options,           
             model: settings.model 
         }
         return  api.updateAnalysis(objectToSave, settings.saveId)
@@ -125,19 +113,19 @@ const actions = {
                     commit('update_analysis', {id, name, description})
                     dispatch("fetchAllAnalysis")
                 })
-                .catch(error => console.log(error))
+                .catch(error => console.log(error.response.data))
 
     },
     deleteAnalysis({dispatch}, id) {
         return  api.deleteAnalysis(id)
                 .then(response => dispatch("fetchAllAnalysis"))
-                .catch(error => console.log(error))
+                .catch(error => console.log(error.response.data))
     },
     deleteAnalysisList({dispatch}, idList) {
         console.log(idList)
         return  api.deleteAnalysisList(idList)
                 .then(response => dispatch("fetchAllAnalysis"))
-                .catch(error => console.log(error))
+                .catch(error => console.log(error.response.data))
     }, 
     createLocalAnalysis(store) {
         const newId = nanoid(5)

@@ -1,53 +1,78 @@
 from .node_factory import NodeFactory
 from .nodes.node_result import NodeResult
 from .nodes.aggregators.root import Root
+from .nodes.node_source import NodeRef
 
 class Pipeline:
 
-    def __init__(self, root_node):
-        self.root_node = root_node
-        self.series = None
+    def __init__(self, nodes):
+        self.nodes = nodes
+        self.node_reference_table = Pipeline.build_node_reference_table(nodes)
+        self.root_node = self.build_root_node(nodes)
 
-    def execute(self, series):
-        self.series = series
-        result = self.execute_node(self.root_node)
+    def execute(self, inputs):
+        result = self.execute_node(self.root_node, inputs)
         return result
 
-    def execute_node(self, node):
-        # If we have no sources we inject original series
+    def execute_node(self, node, inputs):
         if len(node.sources) == 0:
-            return node.execute([NodeResult(None, [], series=self.series)])
-        # Else we calculate recursively all inputs
+            raise ValueError("Invalid node %s with no sources" % node.id)
         else:
             node_input_results = []
-            for node_source in node.sources:
-                node_input_results.append(self.execute_node(node_source))
+            for node_source_ref in node.sources:
+                if node_source_ref.is_node_ref():
+                    source = self.resolve_node_reference(node_source_ref.ref)
+                    node_input_results.append(self.execute_node(source, inputs))
+                elif node_source_ref.is_input_ref():
+                    series = inputs[node_source_ref.ref]
+                    node_input_results.append(NodeResult(None, [], output_series=series))
+                else:
+                    raise ValueError("Invalid node %s source %s" % (node.id, node_source_ref))
+                
         node.validate_inputs(node_input_results)
         return node.execute(node_input_results)
 
+    def resolve_node_reference(self, reference):
+        return self.node_reference_table[reference]
+
     @staticmethod
     def from_json(obj):
-        reference_table = {}
         nodes = obj['nodes']
-        all_source_references = set()
+        all_nodes = [NodeFactory.from_json(node) for node in nodes]
+        return Pipeline(all_nodes)
+
+    def build_root_node(self, nodes):
+        all_node_references = set()
         for node in nodes:
-            actual_node = NodeFactory.from_json(node)
-            reference_table[actual_node.id] = actual_node
-            all_source_references.update(actual_node.sources)
-        root_node = Pipeline.build_root_node(reference_table.values(), all_source_references)
-        Pipeline.replace_node_references(reference_table, root_node)
-        return Pipeline(root_node)
-
-    @staticmethod
-    def replace_node_references(refs, node):
-        node.sources = [refs[source] for source in node.sources]
-        for source in node.sources:
-            Pipeline.replace_node_references(refs, source)
-
-    @staticmethod
-    def build_root_node(all_nodes, all_source_references):
+            self.validate_no_recursion_for(node)            
+            all_node_references.update([s.ref for s in node.node_sources()])
+        
         root = Root()
-        for node in all_nodes:
-            if node.id not in all_source_references:
-                root.add_source(node.id)
+        # Add nodes that are not referenced by anyone as source to root node
+        for node in nodes:
+            if node.id not in all_node_references:
+                root.add_source(NodeRef(node.id))
+
+
         return root
+
+    def validate_no_recursion_for(self, node):
+        try:
+            path = []
+            self.validate_no_recursion(node, path)
+        except ValueError as e:
+            raise ValueError("Found recursion in node %s, path: %s" % (node.id, path)) from e
+
+    def validate_no_recursion(self, node, nodes_seen):
+        nodes_seen.append(node.id)
+        for source in node.node_sources():
+            if source.ref in nodes_seen:
+                raise ValueError('Duplicate found %s' % source.ref)
+            self.validate_no_recursion(self.resolve_node_reference(source.ref), nodes_seen)
+
+    @staticmethod
+    def build_node_reference_table(nodes):
+        node_reference_table = {}
+        for node in nodes:
+            node_reference_table[node.id] = node
+        return node_reference_table

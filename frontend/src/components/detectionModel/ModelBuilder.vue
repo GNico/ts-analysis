@@ -1,5 +1,5 @@
 <template>
-<div>
+<div>  
   <div class="columns bordered-columns has-background-grey-dark">    
     <div class="column is-4 bordered-column" v-for="group in groups" :key="group">
       <PipeNodeList          
@@ -24,9 +24,28 @@
     </span>
   </div>
 
+  <div class="buttons">
+    <b-button 
+      type="is-info"
+      size="is-small"
+      icon-left="plus"
+      @click="addInput">
+      Add model input
+    </b-button>
+    <b-button 
+      type="is-info"
+      size="is-small"
+      icon-left="delete"
+      :disabled="!inputNodes.length"
+      @click="removeInput">
+      Remove model input
+    </b-button>
+  </div>
+
   <GraphDataProvider :nodes="nodes" @validation="validationMessages = $event" >
-    <LayeredGraphChart slot-scope="{chartNodes, chartEdges}" :nodes="chartNodes" :edges="chartEdges"/>
+    <LayeredGraphChart slot-scope="{chartNodes, chartEdges}" :nodes="chartNodes" :edges="chartEdges" :centered="true" />
   </GraphDataProvider>
+
 </div>
 </template>
 
@@ -34,10 +53,9 @@
 <script>
 import PipeNodeList from "./PipeNodeList"
 import cloneDeep from "lodash/cloneDeep";
-import { customAlphabet } from 'nanoid'
-
 import GraphDataProvider from "./GraphDataProvider"
 import LayeredGraphChart from "./LayeredGraphChart"
+import { customAlphabet } from 'nanoid'
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQLRSTUVWXYZ', 3)
 
@@ -60,11 +78,36 @@ export default {
     },
     groups() {
       return Object.keys(this.nodeTypes)
+    },    
+    inputNodes() {
+      return this.nodes.filter(elem => elem.group == "input")
     }
   },
-  methods: {
-    createNode({type, group}) {
+  methods: {  
+    addInput() {
       let modelCopy = cloneDeep(this.nodes)
+      let newNode = this.getNewInputNode()
+      modelCopy.push(newNode)
+      this.updateModel(modelCopy)
+    },
+    removeInput() {
+      let inputNumber = this.inputNodes.length
+      this.deleteNode(inputNumber.toString())
+    },
+    getNewInputNode() {
+      let inputNumber = this.inputNodes.length + 1
+      let newNode = {
+        id: inputNumber.toString(),
+        type: 'input',
+        group: 'input',
+        sources: [],
+        debug: true,
+        display: 'Input',
+        desc: '',
+      }
+      return newNode
+    },
+    generateNewNodeId() {
       let newid = nanoid()
       let found = true
       while (found) {
@@ -73,10 +116,14 @@ export default {
           newid = nanoid()
         }
       }
+      return newid
+    },
+    createNode({type, group}) {
+      let modelCopy = cloneDeep(this.nodes)
       let definition = this.nodeTypes[group].find(elem => elem.type === type)
       if (definition) {
         let newNode = {
-          id: newid,
+          id: this.generateNewNodeId(),
           type: type,
           group: group,
           sources: [],
@@ -95,9 +142,12 @@ export default {
         }
         newNode['paramsData'] = paramsData
         modelCopy.push(newNode)
+        //add an input if needed
+        if (!this.inputNodes.length)
+          modelCopy.push(this.getNewInputNode())
         this.updateModel(modelCopy)
       }
-    },
+    },   
     updateNodeParams(event) {
       let modelCopy = cloneDeep(this.nodes)
       let nodeIndex = modelCopy.findIndex(elem => elem.id === event.id)
@@ -123,7 +173,6 @@ export default {
     deleteNode(id) {
       let modelCopy = cloneDeep(this.nodes)
       for (var i = modelCopy.length - 1; i >= 0; i--) {
-        console.log(modelCopy[i])
         if (modelCopy[i].id === id) {
           modelCopy.splice(i, 1)
         } else {

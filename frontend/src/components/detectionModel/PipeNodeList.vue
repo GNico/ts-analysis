@@ -13,7 +13,7 @@
         <b-button
           class="is-outlined"
           label="Add Node" 
-          type="is-info" 
+          type="is-info"
           size="is-small"/>
       </template>
 

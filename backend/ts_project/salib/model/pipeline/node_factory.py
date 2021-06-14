@@ -4,6 +4,7 @@ from .nodes.transformers.std_normalize import StdNormalize
 from .nodes.transformers.shift import Shift
 from .nodes.transformers.identity import Identity
 from .nodes.transformers.rolling_aggregate import RollingAggregate
+from .nodes.transformers.multi_rolling_aggregate import MultiRollingAggregate
 from .nodes.transformers.stl import STL
 from .nodes.transformers.seasonal_decompose import SeasonalDecompose
 from .nodes.transformers.autoreg import AutoReg
@@ -16,6 +17,8 @@ from .nodes.detectors.quantile import Quantile
 from .nodes.aggregators.union import Union
 from .nodes.aggregators.intersect import Intersect
 
+from .nodes.node_source import NodeSourceParser
+
 class NodeFactory:
 
     NODE_TYPES = {
@@ -26,6 +29,7 @@ class NodeFactory:
             'EMA': EMA,
             'Difference': Difference,
             'RollingAggregate': RollingAggregate,
+            'MultiRollingAggregate': MultiRollingAggregate,
             'STL': STL,
             'Seasonal decompose': SeasonalDecompose,
             'AutoRegression': AutoReg,
@@ -106,9 +110,7 @@ class NodeFactory:
             if 'sources' in obj.keys():
                 sources = obj['sources']
                 for source in sources:
-                    builder.add_source(source)
-            if obj.get('debug') is True:
-                builder.set_debug(True)
+                    builder.add_source(NodeSourceParser.parse(source))
             return builder.build()
         except Exception as e:
             raise RuntimeError('Error parsing node `' + str(obj) + '`') from e
@@ -121,9 +123,6 @@ class NodeFactory:
             value = None
         self.node.set_param_value(id, value)
         return self
-
-    def set_debug(self, value):
-        self.node.set_debug(value)
 
     def add_source(self, source):
         self.node.add_source(source)

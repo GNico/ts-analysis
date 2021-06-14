@@ -87,11 +87,7 @@ const actions = {
         dispatch('updateOptions', {id: settings.id, ...defaultOptions})
         return  api.getAnomalies({
                     client: settings.client,
-                    tags: settings.tags,
-                    contexts: settings.contexts,                    
-                    interval: settings.interval,
-                    start: settings.start,
-                    end: settings.end,
+                    data_options: settings.data_options,                    
                     model: settings.model
                 })
                 .then(response => {    
@@ -100,7 +96,6 @@ const actions = {
                 .catch(error => { 
                     if (error.response) {
                         commit('add_results', {id: settings.id, loading: false, results: {}, error: "An error occurred while processing the request"})
-                        console.log(error)
                     } else if (error.request) {
                         commit('add_results', {id: settings.id, loading: false, results: {}, error: "The server could not be reached"})
                     } else {
@@ -115,6 +110,7 @@ const actions = {
             .then(response => {
                 if (response.data.state == 'success')
                     commit('add_results', {id: results.id, loading: false, taskId: response.data.task_id, results: response.data.result, error: '' })
+                    console.log(response.data.result)
                 if (response.data.state == 'failed')
                     commit('add_results', {id: results.id, loading: false, taskId: response.data.task_id, results: {}, error: response.data.error })
             })

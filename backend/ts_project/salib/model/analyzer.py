@@ -2,11 +2,11 @@ from .analysis import Analysis
 
 class Analyzer:
 
-    def __init__(self, pipeline, config={}):
-        self.anomaly_pipeline = pipeline
-        self.config = config
+    def __init__(self, pipeline, debug):
+        self.pipeline = pipeline
+        self.debug = debug
 
-    def analyze(self, series):
-        result = self.anomaly_pipeline.execute(series)
+    def analyze(self, inputs):
+        result = self.pipeline.execute(inputs)
         anomalies = result.anomalies
-        return Analysis(series, result, anomalies)
+        return Analysis(inputs, result, anomalies, self.debug)

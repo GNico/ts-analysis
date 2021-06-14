@@ -146,16 +146,40 @@ class TestAggregators(unittest.TestCase):
     def case(self, node, fst_anomalies, snd_anomalies):
         self.maxDiff = None
 
+
         fst_node = Node('fst')
         snd_node = Node('snd')
         
         [a.set_source_node(fst_node) for a in fst_anomalies]
         [a.set_source_node(snd_node) for a in snd_anomalies]
 
-        fst_input = NodeResult(None, None, anomalies=fst_anomalies)
-        snd_input = NodeResult(None, None, anomalies=snd_anomalies)
+        fst_series = Series.from_array([
+            [0, 0],
+            [1, 0],
+            [2, 0],
+            [3, 0],
+            [4, 0],
+            [5, 0],
+            [6, 0]
+        ], 1, 's')
+
+        snd_series = Series.from_array([
+            [0, 0],
+            [1, 0],
+            [2, 0],
+            [3, 0],
+            [4, 0],
+            [5, 0],
+            [6, 0]
+        ], 1, 's')
+
+        fst_input = NodeResult(None, None, output_series=fst_series, anomalies=fst_anomalies)
+        snd_input = NodeResult(None, None, output_series=snd_series, anomalies=snd_anomalies)
         
         result = node.execute([fst_input, snd_input])
+
+        expected_display_series = {'input_1': fst_series, 'input_2': snd_series}
+        self.assertEqual(expected_display_series, result.display_series())
         return result.anomalies
 
     def case_anomaly_wise(self, node, fst_anomalies, snd_anomalies, expected_output):

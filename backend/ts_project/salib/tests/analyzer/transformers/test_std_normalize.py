@@ -7,6 +7,7 @@ from model.pipeline.pipeline import Pipeline
 from model.pipeline.node_factory import NodeFactory
 from model.test.test_series_builder import TestSeriesBuilder
 from model.test.testcase import TestCase
+from model.pipeline.nodes.node_source import InputRef
 
 from model.utils import timestamp_to_epoch
 
@@ -16,7 +17,8 @@ class TestStdNormalize(unittest.TestCase):
         series = self.build_triangle()
         self.assertEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0], series.as_list())
         
-        factory = NodeFactory.transformer('test', 'StdNormalize')
+        factory = NodeFactory.transformer('std_normalize', 'StdNormalize')
+        factory.add_source(InputRef('input'))
         stdnormalize = factory.build()
 
         self.case(series, stdnormalize, 
@@ -42,12 +44,15 @@ class TestStdNormalize(unittest.TestCase):
             -1.5270292013639366])
 
     def case(self, series, node, expected_series):
-        pipeline = Pipeline(node)
-        analyzer = Analyzer(pipeline=pipeline)
-        analysis = analyzer.analyze(series)
+        pipeline = Pipeline([node])
+        analyzer = Analyzer(pipeline=pipeline, debug=False)
+        inputs = {
+            'input': series
+        }
+        analysis = analyzer.analyze(inputs)
         result = analysis.result_for_node(node.id)
 
-        self.assertEqual(expected_series, result.series.as_list())
+        self.assertEqual(expected_series, result.output_series.as_list())
 
     def build_triangle(self):
         sb_up = TestSeriesBuilder.linear(10, 0, 1)

@@ -10,31 +10,44 @@ from ..salib.model.pipeline.pipeline import Pipeline
 from ..salib.model.pipeline.node_factory import NodeFactory
 from ..adapters import SalibModelAdapter
 
+import cProfile, pstats, io
 
-def run_analysis(data, model):
+def run_analysis(client, inputs_data, model):
     salib_model = SalibModelAdapter.toSalib(model)
     pipeline = Pipeline.from_json(salib_model)
-    analyzer = Analyzer(pipeline=pipeline)
+    analyzer = Analyzer(pipeline=pipeline, debug=True)
 
-    data_series = services.get_series( 
-        client_name=data.get('client', ''), 
-        contexts=data.get('contexts', []), 
-        start=data.get('start', ''),  
-        end=data.get('end', ''),  
-        tags=data.get('tags', []),             
-        interval=data.get('interval', '1h'))
-    dates = [pd.to_datetime(item[0], unit="ms") for item in data_series]
-    count  = [item[1] for item in data_series]
-    ts = pd.Series(count, index=dates)
-    series = Series(ts)
+    salib_inputs = {}
+    for index, input_data in enumerate(inputs_data): 
+        data_series = services.get_series( 
+            client_name=client, 
+            contexts=input_data.get('contexts', []), 
+            start=input_data.get('start', ''),  
+            end=input_data.get('end', ''),  
+            tags=input_data.get('tags', []),             
+            interval=input_data.get('interval', '1h'))
+        dates = [pd.to_datetime(item[0], unit="ms") for item in data_series]
+        count  = [item[1] for item in data_series]
+        ts = pd.Series(count, index=dates)
+        #input id is just the order in the array
+        salib_inputs[str(index+1)] = Series(ts)
 
-    return  analyzer.analyze(series)
+    return  analyzer.analyze(salib_inputs)
+
 
 
 @shared_task(bind=True)
 def perform_live_analysis(self, data):
-    analysis_results = run_analysis(data, data['model'])
+    pr = cProfile.Profile()
+    pr.enable()
+    analysis_results = run_analysis(data['client'], data['data_options'], data['model'])
     output_json = analysis_results.output_format()
+    pr.disable()
+    s = io.StringIO()
+    sortby = 'cumulative'
+    ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+    ps.print_stats()
+    print(s.getvalue())
     return output_json
 
 

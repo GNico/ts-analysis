@@ -14,10 +14,10 @@ class NodeTransformer(Node):
     def execute(self, inputs):
         new_pdseries = self.transform_and_validate(inputs)
         new_series = Series(new_pdseries)
-        return NodeResult(self, inputs=inputs, series=new_series)
+        return NodeResult(self, inputs=inputs, output_series=new_series)
 
     def transform_and_validate(self, inputs):
-        pdseriess = [i.series for i in inputs]
+        pdseriess = [i.output_series for i in inputs]
         new_pdseries = self.transform(pdseriess)
         with pd.option_context('mode.use_inf_as_na', True):
             new_pdseries.dropna(inplace=True)

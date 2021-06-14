@@ -7,7 +7,7 @@
       <LayeredGraphChart 
         ref="graphChart"
         slot-scope="{chartNodes, chartEdges}" 
-        :nodes="chartNodes" 
+        :nodes="chartNodes"
         :edges="chartEdges" 
         :selectable="true" 
         :centered="false" 
@@ -22,15 +22,14 @@
   </div>
 
   <div v-else>
-    <div v-for="item in Object.keys(formattedResults)">
+    <div v-for="item in Object.keys(results)">
       <DebugNodeResult 
         class="item-section" 
-        :series="formattedResults[item]['series']" 
-        :anomalies="formattedResults[item]['anomalies']"
+        :series="results[item]['series']" 
+        :anomalies="results[item]['anomalies']"
         @updateRange="updateRange"
         :extremes="extremes"
-        :node="getNode(item)">       
-      </DebugNodeResult>
+        :node="getNode(item)"/>       
     </div>
   </div>
 </div>
@@ -38,7 +37,6 @@
 
 
 <script>
-
 import api from "../../api/repository";
 import DebugNodeResult from "./DebugNodeResult"
 import GraphDataProvider from "../detectionModel/GraphDataProvider"
@@ -73,54 +71,22 @@ export default {
     },
     loadingResults() {
       return this.activeResults.loading
-    },   
-    formattedSelectedNodes() {
-      let filtered = this.selectedNodes.filter(item => { return (item !== 'start' && item !== 'end')})
-      if (filtered.length != this.selectedNodes.length) {
-        filtered.push("_Root")
-      }
-      return filtered
-    },
-    formattedResults() {
-      let formatted = {}
-      this.selectedNodesOrder.forEach(nodeId => {
-        if (nodeId === 'start') {
-          if (this.results.hasOwnProperty("_Root")) {
-            let startNode = { series: this.results["_Root"].series }
-            formatted[nodeId] = startNode
-          }
-        } else if (nodeId === 'end') {
-          if (this.results.hasOwnProperty("_Root")) {
-            formatted[nodeId] = this.results["_Root"]
-          }
-        } else if (this.results.hasOwnProperty(nodeId)) {
-          formatted[nodeId] = this.results[nodeId]
-        }
-      })
-      return formatted
-    },
+    },     
     isSelected() {
       return this.selectedNodes.length > 0
     }
-
   },
   methods: {
     getNodesResults() {
       this.selectedNodesOrder = [ ...this.selectedNodes ]
-      if (!this.formattedSelectedNodes.length) {
+      if (!this.selectedNodes.length) {
         this.results = {}
         return
       }
-      api.getResults(this.activeResults.taskId, {nodes: this.formattedSelectedNodes})
+      api.getResults(this.activeResults.taskId, {nodes: this.selectedNodes})
       .then(response => {
-        this.results = response.data.node_results
+        this.results = this.formatResults(response.data.result)
         this.error = ''
-
-        Object.keys(this.results).forEach(elem => {
-          if (this.results[elem].hasOwnProperty('anomalies')) {
-            this.results[elem].anomalies = this.addIdToAnomalies(this.results[elem].anomalies)
-          }
-        })
       })
       .catch(error => {
         if (error.response) {
@@ -132,8 +98,34 @@ export default {
         }
       })
     },
+    formatResults(result) {
+      let formatted = {}
+      this.selectedNodesOrder.forEach(nodeId => {       
+        if (!isNaN(parseInt(nodeId))) { //numeric id = is input
+          formatted[nodeId] = {
+            series: {
+              nodeId: result.series[nodeId]
+            },
+            anomalies: [],
+          }
+        } else if (nodeId === 'end') {
+          formatted[nodeId] = { 
+            series: result.series, 
+            anomalies: this.addIdToAnomalies(result.anomalies)
+          }
+        } else if (result.debug_nodes[nodeId]) {
+          formatted[nodeId] = { 
+            series: result.debug_nodes[nodeId].series,
+            anomalies: this.addIdToAnomalies(result.debug_nodes[nodeId].anomalies)
+          }
+        }
+      })
+      return formatted
+    },
     getNode(id) {
-      if (id === 'start') return { display: 'Input data'}
+      if (!isNaN(parseInt(id))) {
+        return {display: 'Input ' + id}
+      }
       if (id === 'end') return {display: 'Result'}
       return this.model.find(item => item.id == id)
     },

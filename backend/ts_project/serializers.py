@@ -24,18 +24,19 @@ class AnalysisSettingsSerializer(serializers.ModelSerializer):
 #serializer for performing live analysis requests
 class AnalysisSerializer(serializers.Serializer):
     client = serializers.CharField(allow_blank=False)
-    tags = serializers.ListField(child=serializers.CharField(), required=False, allow_empty=True, min_length=None, max_length=None)
-    contexts = serializers.ListField(child=serializers.CharField(), required=False, allow_empty=True, min_length=None, max_length=None)
-    start = serializers.DateTimeField(required=False, allow_null=True)
-    end = serializers.DateTimeField(required=False, allow_null=True)
-    interval = serializers.RegexField(regex='^[0-9]+[mhd]$', allow_blank=True, required=False)
+    data_options = serializers.JSONField()
+   # tags = serializers.ListField(child=serializers.CharField(), required=False, allow_empty=True, min_length=None, max_length=None)
+   # contexts = serializers.ListField(child=serializers.CharField(), required=False, allow_empty=True, min_length=None, max_length=None)
+   # start = serializers.DateTimeField(required=False, allow_null=True)
+   # end = serializers.DateTimeField(required=False, allow_null=True)
+   # interval = serializers.RegexField(regex='^[0-9]+[mhd]$', allow_blank=True, required=False)
     model = serializers.JSONField()
 
-    def validate_start(self, value):
-        data = self.get_initial()
-        if data.get('end') and data.get('start') and (data['start'] > data['end']):
-            raise serializers.ValidationError("Start date must be before end date")
-        return value
+   # def validate_start(self, value):
+   #     data = self.get_initial()
+   #     if data.get('end') and data.get('start') and (data['start'] > data['end']):
+   #         raise serializers.ValidationError("Start date must be before end date")
+   #     return value
 
 
 class PeriodicAnalysisSerializer(serializers.ModelSerializer):

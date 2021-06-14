@@ -12,7 +12,7 @@ class SimpleThreshold(NodeDetector):
         self.add_param(Float('upper', 'Upper', 'Upper bound'))
 
     def anomalies(self, input):
-        return NodeDetector.pointwise_consecutive(self.valid_threshold, input.series)
+        return NodeDetector.pointwise_consecutive(self.valid_threshold, input.output_series)
 
     def valid_threshold(self, val):
         lower, upper, inside, strict = self.all_params()

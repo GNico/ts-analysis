@@ -88,7 +88,6 @@ import BarItemButton from '../components/inputs/BarItemButton';
 import SettingsTab from '../components/analysis/SettingsTab';
 import ResultsTab from "../components/analysis/ResultsTab";
 import DebugTab from "../components/analysis/DebugTab";
-
 import ModalLoadAnalysis from "../components/analysis/ModalLoadAnalysis"
 import ModalSaveAnalysis from "../components/analysis/ModalSaveAnalysis"
 

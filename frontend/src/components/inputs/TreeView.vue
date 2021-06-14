@@ -9,7 +9,11 @@
           {{ items.name }} 
       </b-checkbox>
       <button class="transparent-button" @click="toggle">
-        <b-icon :icon="isOpen ? 'chevron-up' : 'chevron-down'" size="is-small"  v-if="isParent"></b-icon> 
+        <b-icon 
+          v-if="isParent"
+          type="is-link"
+          :icon="isOpen ? 'chevron-up' : 'chevron-down'" 
+          size="is-small"/> 
       </button>
     </div>
 

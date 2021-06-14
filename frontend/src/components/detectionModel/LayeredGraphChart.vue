@@ -39,16 +39,31 @@ export default {
     }
   },
   computed: {
+    renamedNodes() {  //add prefix to nodes id to avoid ids starting with number
+      var renamed = []
+      this.nodes.forEach(node => {
+        let nodeCopy = { ...node }
+        nodeCopy.id = this.addIdPrefix(nodeCopy.id)
+        renamed.push(nodeCopy)
+      })
+      return renamed
+    },
     cursor() {
       return this.selectable ? 'cursor: pointer;' : ''
     },
   },
   methods: {
+    addIdPrefix(id) {
+      return "N" + id 
+    },
+    removeIdPrefix(id) {
+      return id.substring(1);
+    },
     createLayout() {
       this.g = new dagreD3.graphlib.Graph().setGraph({})
       this.g.graph().rankDir = 'LR';
       // Add nodes
-      this.nodes.forEach((item, index) => {
+      this.renamedNodes.forEach((item, index) => {
         item.rx = item.ry = 5;
         this.g.setNode(item.id, item);
         if (this.selectedNodes.includes(item.id)) {
@@ -61,7 +76,7 @@ export default {
       });
       // Link relationship
       this.edges.forEach(item => {
-        this.g.setEdge(item.source, item.target, {
+        this.g.setEdge(this.addIdPrefix(item.source), this.addIdPrefix(item.target), {
           label: item.label,
           style: "stroke: lightblue; fill: none; stroke-width: 1px",
           arrowheadStyle: "fill: lightblue; stroke: lightblue;",
@@ -147,7 +162,7 @@ export default {
         this.createLayout()
         this.drawChart()
       }     
-    }
+    },    
   },
   created() {
     window.addEventListener("resize", this.resizeHandler)
@@ -166,7 +181,11 @@ export default {
       this.drawChart()
     },
     selectedNodes() {
-      this.$emit('selected', this.selectedNodes)
+      var nodesWithoutPrefix = []
+      this.selectedNodes.forEach(nodeId => {
+        nodesWithoutPrefix.push(this.removeIdPrefix(nodeId))
+      })
+      this.$emit('selected', nodesWithoutPrefix)
     }
   },
 };
