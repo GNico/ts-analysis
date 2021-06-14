@@ -10,7 +10,7 @@ from ..salib.model.pipeline.pipeline import Pipeline
 from ..salib.model.pipeline.node_factory import NodeFactory
 from ..adapters import SalibModelAdapter
 
-
+import cProfile, pstats, io
 
 def run_analysis(client, inputs_data, model):
     salib_model = SalibModelAdapter.toSalib(model)
@@ -38,8 +38,16 @@ def run_analysis(client, inputs_data, model):
 
 @shared_task(bind=True)
 def perform_live_analysis(self, data):
+    pr = cProfile.Profile()
+    pr.enable()
     analysis_results = run_analysis(data['client'], data['data_options'], data['model'])
     output_json = analysis_results.output_format()
+    pr.disable()
+    s = io.StringIO()
+    sortby = 'cumulative'
+    ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+    ps.print_stats()
+    print(s.getvalue())
     return output_json
 
 
