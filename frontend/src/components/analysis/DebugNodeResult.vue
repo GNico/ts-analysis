@@ -105,7 +105,7 @@ export default {
     return {
       loading: false,
       activeAnomalyId: '',
-      showMinMax: false,
+      showMinMax: true,
     }
   },
   computed: {

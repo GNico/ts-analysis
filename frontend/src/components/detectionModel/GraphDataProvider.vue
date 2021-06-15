@@ -38,9 +38,8 @@ export default {
           label: elem.display + ' (' + elem.id + ')'
         })
       })
-      //start and end nodes
+      //end node
       if (nodes.length > 0) {
-       // nodes.push({id: 'start', label: 'Input data'})
         nodes.push({id: 'end', label: 'Result'})
       }
       return nodes
@@ -50,14 +49,9 @@ export default {
       Object.keys(this.bidirectionalNodes).forEach(elemId => {     
         let elem = this.bidirectionalNodes[elemId] 
         if (!elem.target || elem.target.length == 0) {
-          if (elem.group == 'detector' || elem.group == 'aggregator') 
-            edges.push({source: elem.id, target: 'end'})          
+          edges.push({source: elem.id, target: 'end'})          
         }
-        if (!elem.source || elem.source.length == 0) {
-          if (elem.group == 'transformer' || elem.group == 'detector') 
-            console.log("nothing")
-           // edges.push({source: 'start', target: elem.id})
-        } else {
+        if (elem.source || elem.source.length > 0) {        
           elem.source.forEach(sourceId => {
             edges.push({source: sourceId, target: elem.id})
           })
