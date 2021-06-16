@@ -84,6 +84,7 @@ def perform_periodic_analysis(self, id):
     for anomaly in analysis_results['anomalies']:
         incident = Incident.objects.create(
             periodic_analysis=periodic_analysis,
+            client=periodic_analysis.analysis.client.name,
             start=datetime.fromtimestamp(anomaly['from']/1000.0, tz=timezone.utc),
             end=datetime.fromtimestamp(anomaly['to']/1000.0, tz=timezone.utc),
             score=anomaly['score'],

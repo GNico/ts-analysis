@@ -135,6 +135,7 @@ class Incident(models.Model):
         CLOSED = 'Closed'
 
     periodic_analysis = models.ForeignKey(PeriodicAnalysis, on_delete=models.CASCADE, related_name="incidents")
+    client = models.CharField(max_length=50, blank=True)
     state = models.CharField(max_length=10, choices=State.choices, default=State.OPEN)
     start = models.DateTimeField() 
     end = models.DateTimeField() 

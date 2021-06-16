@@ -25,11 +25,6 @@ class AnalysisSettingsSerializer(serializers.ModelSerializer):
 class AnalysisSerializer(serializers.Serializer):
     client = serializers.CharField(allow_blank=False)
     data_options = serializers.JSONField()
-   # tags = serializers.ListField(child=serializers.CharField(), required=False, allow_empty=True, min_length=None, max_length=None)
-   # contexts = serializers.ListField(child=serializers.CharField(), required=False, allow_empty=True, min_length=None, max_length=None)
-   # start = serializers.DateTimeField(required=False, allow_null=True)
-   # end = serializers.DateTimeField(required=False, allow_null=True)
-   # interval = serializers.RegexField(regex='^[0-9]+[mhd]$', allow_blank=True, required=False)
     model = serializers.JSONField()
 
    # def validate_start(self, value):
@@ -78,13 +73,23 @@ class IncidentSerializer(serializers.ModelSerializer):
     series = serializers.SerializerMethodField()
 
     def get_series(self, obj):
-        options = obj.periodic_analysis.analysis.data_options
-        data = services.get_series(options['client'], options['start'], options['end'], options['contexts'], options['tags'], options['interval'])
-        return data
+        series_data = {}
+        inputs_data = obj.periodic_analysis.analysis.data_options
+        for index, input_data in enumerate(inputs_data):
+            s = services.get_series( 
+                client_name=obj.client, 
+                contexts=input_data.get('contexts', []), 
+                start=input_data.get('start', ''),  
+                end=input_data.get('end', ''),  
+                tags=input_data.get('tags', []),             
+                interval=input_data.get('interval', '1h'))
+         #   s = services.get_series(obj.client, options['start'], options['end'], options['contexts'], options['tags'], options['interval'])
+            series_data[str(index+1)] = s
+        return series_data
 
     class Meta:
         model = Incident
-        fields = ['id', 'state', 'score', 'start', 'end', 'desc', 'series']
+        fields = ['id', 'state', 'client', 'score', 'start', 'end', 'desc', 'series']
 
 
 class IncidentListSerializer(serializers.ModelSerializer):
@@ -101,4 +106,4 @@ class IncidentListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Incident
-        fields = ['id', 'state', 'score', 'start', 'end', 'desc', 'analysis_name', 'monitor']
+        fields = ['id', 'state', 'client', 'score', 'start', 'end', 'desc', 'analysis_name', 'monitor']

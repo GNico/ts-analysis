@@ -32,6 +32,8 @@
 <script>
 import VueDraggableResizable from 'vue-draggable-resizable'
 import BaseChart from '@/components/BaseChart'
+import {  multiseriesTooltipFormatter } from '@/utils/helpers'
+
 
 export default {
   components: { VueDraggableResizable, BaseChart },
@@ -47,11 +49,29 @@ export default {
       height: 500,
       x: 0,
       y: 0,      
+      tooltipFormatter: multiseriesTooltipFormatter
     }
   },
   computed: {
     chartData() {
-      return [ {data: this.incident.series}]
+      var cdata = []
+      var seriesIds = Object.keys(this.incident.series)
+        seriesIds.forEach(seriesId => {
+          cdata.push({
+            name: 'Input ' + seriesId,
+            type: 'line',
+            data: this.incident.series[seriesId],
+            zIndex: 2,
+            fillOpacity: 1,
+            enableMouseTracking: true,
+            states: {
+              hover: {
+                lineWidthPlus: 0
+              }
+            },
+          })
+        })
+      return cdata
     },
     chartIncident() {
       return [{ 

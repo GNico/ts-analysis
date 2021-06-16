@@ -53,14 +53,14 @@
 
     <b-table-column field="state" label="State"  width="5%" sortable v-slot="props"  cell-class="is-clickable">
       <span class="tag is-small" :class="props.row.state=='Open' ? 'is-success' : 'is-warning'">{{ props.row.state }}</span>     
-    </b-table-column>
-    <b-table-column field="score" label="Score" width="5%" sortable v-slot="props"  cell-class="is-clickable">
-      <span>{{ props.row.score }}</span>     
-    </b-table-column>
-    <b-table-column field="monitor" label="Monitor name" width="30%" sortable v-slot="props"  cell-class="is-clickable">
+    </b-table-column>  
+    <b-table-column field="client" label="Client" width="20%" sortable v-slot="props"  cell-class="is-clickable">
+      {{ props.row.client }}       
+    </b-table-column>  
+    <b-table-column field="monitor" label="Monitor name" width="20%" sortable v-slot="props"  cell-class="is-clickable">
       {{ props.row.monitor }}       
     </b-table-column>
-    <b-table-column field="detector" label="Detector name" width="30%" sortable v-slot="props"  cell-class="is-clickable">
+    <b-table-column field="detector" label="Detector name" width="20%" sortable v-slot="props"  cell-class="is-clickable">
       {{ props.row.analysis_name }}       
     </b-table-column>
     <b-table-column field="start" label="Start" sortable v-slot="props" centered cell-class="is-clickable">
@@ -68,7 +68,10 @@
     </b-table-column>
     <b-table-column field="end" label="End" sortable v-slot="props" centered cell-class="is-clickable">
       {{ formatDate(props.row.end) }}
-    </b-table-column>        
+    </b-table-column>
+    <b-table-column field="score" label="Score" width="5%" sortable v-slot="props"  cell-class="is-clickable">
+      <span>{{ props.row.score }}</span>     
+    </b-table-column>       
   </b-table>
 </div>
 </template>
