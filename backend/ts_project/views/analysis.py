@@ -38,9 +38,11 @@ class AnalysisResultView(APIView):
                     "task_id": id, 
                     "state": "success", 
                     "result": final_result
-                })     
-
-                       
+                })                            
         elif task.state == 'FAILED':
-            return Response({"task_id": id, "state": "failed", "error": "An error occurred while performing the analysis"}) 
+            return Response({
+                "task_id": id, 
+                "state": "failed", 
+                "error": "An error occurred while performing the analysis"
+            }) 
 

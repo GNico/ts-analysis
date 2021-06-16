@@ -35,7 +35,6 @@ def run_analysis(client, inputs_data, model):
     return  analyzer.analyze(salib_inputs)
 
 
-
 @shared_task(bind=True)
 def perform_live_analysis(self, data):
     pr = cProfile.Profile()
@@ -56,19 +55,20 @@ def perform_periodic_analysis(self, id):
     periodic_analysis = PeriodicAnalysis.objects.get(id=id)
     analysis_settings = periodic_analysis.analysis
 
-    data = analysis_settings.data_options
+    inputs_data = analysis_settings.data_options
     now = datetime.now(timezone.utc)
 
-    #force end of data to current datetime
-    data['start'] = ''
-    data['end'] = now.isoformat()[:-9] + 'Z' 
+    #override start and end dates
+    for input_data in inputs_data:
+        input_data['start'] = ''
+        input_data['end'] = now.isoformat()[:-9] + 'Z'     
 
     print('''Running analysis with ID:  {analysis_id}, interval {interval} and relevant period {relevant}'''.format(
         analysis_id=periodic_analysis.analysis_id, 
         interval=periodic_analysis.time_interval, 
         relevant=periodic_analysis.relevant_period))
 
-    analysis_results = run_analysis(data, analysis_settings.model).output_format()
+    analysis_results = run_analysis(analysis_settings.client, inputs_data, analysis_settings.model).output_format()
 
     periodic_analysis.last_run = now 
     periodic_analysis.save()
@@ -87,6 +87,5 @@ def perform_periodic_analysis(self, id):
             start=datetime.fromtimestamp(anomaly['from']/1000.0, tz=timezone.utc),
             end=datetime.fromtimestamp(anomaly['to']/1000.0, tz=timezone.utc),
             score=anomaly['score'],
-            desc=anomaly['desc']
-        )
+            desc=anomaly['desc'])
 
