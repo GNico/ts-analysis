@@ -1,30 +1,30 @@
 <template>
 <div>
-<VueDraggableResizable :w="1000" :h="500" :z="999" 
-  :handles="['br']"
-  @dragging="onDrag" 
-  @resizing="onResize" 
-  :drag-handle="'.drag'"
-  :parent="false" >
-  <div class="card" :style="{height: '100%'}">
-    <header class="card-header drag">
-      <p class="card-header-title">
-        {{incident.monitor}} → {{incident.analysis_name}}
-      </p>
-      <button class="transparent-button"  @click="$emit('close')">
-        <b-icon icon="close" type="is-primary"></b-icon>
-      </button>
-    </header>
-    <div class="card-content" >
-      <div class="content" >
-        <BaseChart 
-          :seriesData="chartData" 
-          :bands="chartIncident"
-          :style="myStyles"/>
+  <VueDraggableResizable :w="1000" :h="500" :z="999" 
+    :handles="['br']"
+    @dragging="onDrag" 
+    @resizing="onResize" 
+    :drag-handle="'.drag'"
+    :parent="false" >
+    <div class="card" :style="{height: '100%'}">
+      <header class="card-header drag">
+        <p class="card-header-title">
+          {{incident.monitor}} → {{incident.analysis_name}}
+        </p>
+        <button class="transparent-button"  @click="$emit('close')">
+          <b-icon icon="close" type="is-primary"></b-icon>
+        </button>
+      </header>
+      <div class="card-content" >
+        <div class="content" >
+          <BaseChart 
+            :seriesData="chartData" 
+            :bands="chartIncident"
+            :style="myStyles"/>
+        </div>
       </div>
     </div>
-  </div>
-</VueDraggableResizable>
+  </VueDraggableResizable>
 </div>
 </template>
 

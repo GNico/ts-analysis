@@ -7,11 +7,11 @@ from ..serializers import IncidentListSerializer, IncidentSerializer
 from .. import services
 
 from django.http import Http404
-
+from django.db.models import Q
 
 class IncidentsListView(APIView):
     def get(self, request):
-        all_incidents = Incident.objects.all()
+        all_incidents = Incident.objects.filter(self._build_filter_query(request.query_params))
         serializer = IncidentListSerializer(all_incidents, many=True)
         return Response(serializer.data)
 
@@ -26,6 +26,22 @@ class IncidentsListView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def _build_filter_query(self, params):  
+        query = Q()
+        client = params.get('client', '')
+        monitor = params.get('monitor', '')
+        detector = params.get('detector', '')
+        state = params.get('state', '')
+        if client:
+            query.add(Q(client__icontains=client), Q.AND)
+        if monitor: 
+            query.add(Q(periodic_analysis__monitor__name__icontains=monitor), Q.AND)
+        if detector:
+            query.add(Q(periodic_analysis__analysis__name__icontains=detector), Q.AND)
+        if state: 
+            query.add(Q(state=state), Q.AND)
+        return query
 
     def _bulk_update(self, request):
         update_ids = request.data.get('ids', [])
@@ -56,7 +72,6 @@ class IncidentDetailView(APIView):
         incident = self.get_object(incident_id)
         #data_options = incident.periodic_analysis.analysis.data_options
         serializer = IncidentSerializer(incident)
-      
         return Response(serializer.data)
 
     def put(self, request, incident_id):

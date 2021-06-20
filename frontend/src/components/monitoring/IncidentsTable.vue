@@ -3,13 +3,8 @@
   <div class="columns is-marginless mb-4">
     <div class="column is-6-mobile is-5-widescreen is-4-fullhd  is-paddingless">
       <b-field grouped>
-          <b-input expanded placeholder="Search..." size="is-small"></b-input>
-          <p class="control">
-            <a class="button is-primary is-small">
-              <b-icon size="is-small" icon="filter-variant"></b-icon>
-              <span class="has-text-weight-semibold">Filters</span>
-            </a>
-          </p>
+        <b-input v-model="searchValue" expanded placeholder="Search..." size="is-small"/>        
+        <IncidentsFilters @apply="filterData"/>
       </b-field>
     </div>
     <div class="column is-paddingless">
@@ -39,7 +34,7 @@
   </div>
 
   <b-table 
-    :data="allIncidents" 
+    :data="filteredIncidents" 
     sticky-header      
     selectable
     :selected.sync="selected"
@@ -80,11 +75,15 @@
 <script>
 import api from '@/api/repository'
 import { formatDate } from '@/utils/helpers'
+import IncidentsFilters from '@/components/monitoring/IncidentsFilters'
 
 export default {
+  components: { IncidentsFilters },
   data() {
     return {
+      client: 'test',
       allIncidents: [],
+      incidentsFilters: {},
       checked: [],
       selected: undefined,
       error: '',
@@ -94,12 +93,20 @@ export default {
         'Mark as open',
         'Delete incident',       
       ],
+      searchValue: '',
     }
   },
   computed: {
     checkedIds() {
       return this.checked.map(elem => elem.id)
     },
+    filteredIncidents() {
+      var term = this.searchValue.toLowerCase()
+      return this.allIncidents.filter(elem => 
+        elem.client.toLowerCase().includes(term) || 
+        elem.monitor.toLowerCase().includes(term) ||
+        elem.analysis_name.toLowerCase().includes(term))
+    }
   },
   methods: {
     openIncident(incident) {
@@ -109,7 +116,7 @@ export default {
       return formatDate(date)
     },
     fetchIncidents() {
-      return  api.getAllIncidents()
+      return  api.getAllIncidents(this.incidentsFilters)
               .then(response => {
                 this.error = ''
                 this.allIncidents = response.data
@@ -144,6 +151,10 @@ export default {
           this.fetchIncidents()
         })
       })
+    },
+    filterData(filters) {
+      this.incidentsFilters = filters
+      this.fetchIncidents()
     },
   },
   created() {

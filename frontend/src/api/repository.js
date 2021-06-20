@@ -215,8 +215,8 @@ export default {
         return repository.delete("/notification-channels/" + id + "/")
     },
     //incidents
-    getAllIncidents() {
-        return repository.get("/incidents/")
+    getAllIncidents(filters) {        
+        return repository.get("/incidents/", {params: removeEmpty(filters)})
     },
     updateIncidentsList(ids, options) {
         return repository.post("/incidents/?update", {ids: ids, ...options})

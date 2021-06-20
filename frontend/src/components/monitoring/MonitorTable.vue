@@ -2,7 +2,7 @@
   <div class="p-5"> 
     <div class="columns is-marginless mb-4">
       <div class="column is-6-mobile is-5-widescreen is-4-fullhd  is-paddingless">
-        <b-input expanded placeholder="Search..." size="is-small"></b-input>        
+        <b-input v-model="searchValue" expanded placeholder="Search..." size="is-small"></b-input>        
       </div>
 
       <div class="column is-paddingless">
@@ -28,7 +28,7 @@
     </div>
 
     <b-table 
-      :data="allMonitors" 
+      :data="filteredMonitors" 
       sticky-header      
       selectable
       hoverable
@@ -68,12 +68,17 @@ export default {
       allMonitors: [],
       error: '',      
       creatingMonitor: false,
+      searchValue: ''
     }
   },
   computed: {   
     savedAnalysis() {
       return this.$store.state.analysis.all
     },
+    filteredMonitors() {
+      var term = this.searchValue.toLowerCase()
+      return this.allMonitors.filter(elem => elem.name.toLowerCase().includes(term))
+    }
   },
   methods: {
     fetchMonitors() {

@@ -3,8 +3,7 @@
   :position="position"
   append-to-body
   trap-focus
-  @active-change="active = $event"
->
+  @active-change="active = $event">
   <template #trigger>
     <a class="button is-info is-small" :class="{ 'is-outlined': !active }">
       <span class="icon"><i class="mdi mdi-filter-variant"></i></span>
@@ -17,8 +16,7 @@
     aria-role="menu-item"
     :focusable="false"
     custom
-    paddingless
-  >
+    paddingless>
     <div class="modal-card" style="max-width:400px; border-radius: 0.4em">    
       <section class="modal-card-body">
         <b-field horizontal label="Min Duration">
