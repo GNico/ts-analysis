@@ -21,6 +21,23 @@ from .nodes.node_source import NodeSourceParser
 
 class NodeFactory:
 
+    def __init__(self, node_id, group, type):
+        self.node = NodeFactory.base_node(node_id, group, type)
+
+    def set_param_value(self, id, value):
+        if value == '':
+            value = None
+        self.node.set_param_value(id, value)
+        return self
+
+    def add_source(self, source):
+        self.node.add_source(source)
+        return self
+
+    def build(self):
+        self.node.validate()
+        return self.node
+
     NODE_TYPES = {
         'transformer': {
             'StdNormalize': StdNormalize,
@@ -47,10 +64,12 @@ class NodeFactory:
     }
 
     @staticmethod
-    def base_node(id, group, type):
+    def base_node(node_id, group, type):
         if group in NodeFactory.NODE_TYPES.keys():
             if type in NodeFactory.NODE_TYPES[group].keys():
-                return NodeFactory.NODE_TYPES[group][type](id)
+                constructor = NodeFactory.NODE_TYPES[group][type]
+                new_node = constructor(node_id)
+                return new_node
             else:
                 raise Exception('Invalid node type ' + type)
         else:
@@ -114,20 +133,3 @@ class NodeFactory:
             return builder.build()
         except Exception as e:
             raise RuntimeError('Error parsing node `' + str(obj) + '`') from e
-
-    def __init__(self, id, group, type):
-        self.node = NodeFactory.base_node(id, group, type)
-
-    def set_param_value(self, id, value):
-        if value == '':
-            value = None
-        self.node.set_param_value(id, value)
-        return self
-
-    def add_source(self, source):
-        self.node.add_source(source)
-        return self
-
-    def build(self):
-        self.node.validate()
-        return self.node

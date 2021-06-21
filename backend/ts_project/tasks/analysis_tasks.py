@@ -11,6 +11,7 @@ from ..salib.model.pipeline.node_factory import NodeFactory
 from ..adapters import SalibModelAdapter
 
 import cProfile, pstats, io
+import json
 
 def run_analysis(client, inputs_data, model):
     salib_model = SalibModelAdapter.toSalib(model)

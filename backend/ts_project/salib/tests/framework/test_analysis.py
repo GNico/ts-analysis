@@ -28,7 +28,7 @@ class TestAnalysis(unittest.TestCase):
 
         pipeline = Pipeline([node])
         analyzer = Analyzer(pipeline=pipeline, debug=True)
-        analysis = analyzer.analyze({'input':series})
+        analysis = analyzer.analyze({'input': series})
 
         expected = {
             "anomalies": [],

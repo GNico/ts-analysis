@@ -8,8 +8,9 @@ class Quantile(NodeDetector):
         self.add_required_param(BoundedFloat('high', 'Quantile upper', 'Quantile above which we consider anomaly (0-1) - leave empty for no limit', 0, 1, False, 0.9))
         self.add_required_param(BoundedFloat('low', 'Quantile lower', 'Quantile below which we consider anomaly (0-1) - leave empty for no limit', 0, 1, False, 0.1))
 
-    def anomalies(self, input):
-        abs_low, abs_high = self.get_thresholds(input.series)
+    def anomalies(self, input_series):
+        # WIP, TODO
+        abs_low, abs_high = self.get_thresholds(input_series)
         return NodeDetector.from_filtered_values(input.series, filtered_series)
 
     def get_thresholds(self, series):

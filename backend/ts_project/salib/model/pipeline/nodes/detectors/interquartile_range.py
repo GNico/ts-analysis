@@ -7,9 +7,10 @@ class InterQuartileRange(NodeDetector):
         super().__init__(id)
         self.add_required_param(Float('scale', 'Range scale factor', 'Factor used to determine the bound of normal range (betweeen Q1-c*IQR and Q3+c*IQR)', 0.3))
 
-    def anomalies(self, input):
-        abs_low, abs_high = self.get_thresholds(input.series)
-        return NodeDetector.pointwise_consecutive(self.valid_threshold, input.series)
+    def anomalies(self, input_series):
+        # WIP, TODO
+        abs_low, abs_high = self.get_thresholds(input_series)
+        return NodeDetector.pointwise_consecutive(self.valid_threshold, input_series)
 
     def get_thresholds(self, series):
         c = self.get_param('scale').value

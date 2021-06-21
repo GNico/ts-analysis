@@ -1,0 +1,72 @@
+{
+  "nodes": [
+    {
+      "id": "qnn",
+      "type": "MultiRollingAggregate",
+      "group": "transformer",
+      "debug": true,
+      "display": "Multi Rolling Aggregate",
+      "desc": "Multi Rolling aggregate",
+      "params": [
+        {
+          "id": "window",
+          "value": "12h"
+        },
+        {
+          "id": "center",
+          "value": false
+        },
+        {
+          "id": "min_periods",
+          "value": 0
+        },
+        {
+          "id": "agg_method",
+          "value": "proportion"
+        }
+      ],
+      "sources": [
+        {
+          "type": "input",
+          "ref": "1"
+        },
+        {
+          "type": "input",
+          "ref": "2"
+        }
+      ]
+    },
+    {
+      "id": "eKR",
+      "type": "SimpleThreshold",
+      "group": "detector",
+      "debug": true,
+      "display": "Simple Threshold",
+      "desc": "Detect values outside of bounds",
+      "params": [
+        {
+          "id": "inside",
+          "value": false
+        },
+        {
+          "id": "strict",
+          "value": false
+        },
+        {
+          "id": "lower",
+          "value": 0.1
+        },
+        {
+          "id": "upper",
+          "value": 0.8
+        }
+      ],
+      "sources": [
+        {
+          "type": "node",
+          "ref": "qnn"
+        }
+      ]
+    }
+  ]
+}

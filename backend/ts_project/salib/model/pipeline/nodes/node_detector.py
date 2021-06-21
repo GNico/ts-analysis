@@ -10,7 +10,7 @@ class NodeDetector(Node):
 
     def execute(self, inputs):
         input = inputs[0]
-        anomalies = self.anomalies(input)
+        anomalies = self.anomalies(input.find_output_series())
         for anomaly in anomalies:
             anomaly.set_source_node(self)
         return NodeResult(self, inputs=inputs, anomalies=anomalies)

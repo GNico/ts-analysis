@@ -44,11 +44,15 @@ class NodeResult:
                     idx += 1
                 return res
 
-    def all_sources(self, acc=[]):
+    def all_sources(self):
+        ret = []
+        self.all_sources_rec(ret)
+        return ret
+
+    def all_sources_rec(self, acc):
         for input in self.inputs:
             acc.append(input)
-            input.all_sources(acc)
-        return acc
+            input.all_sources_rec(acc)
 
     def find_node(self, id):
         if self.id == id:
