@@ -28,7 +28,7 @@ class SeriesSearch():
             }
         }
         response = es.search(index=index_pattern, size=0, body=query)
-        series_data = []
+        series_data = []    
         for element in response['aggregations']['interval_aggregation']['buckets']:
             series_data.append([element['key'], element['doc_count']])
         return series_data

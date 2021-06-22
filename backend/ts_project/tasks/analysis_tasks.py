@@ -27,7 +27,7 @@ def run_analysis(client, inputs_data, model):
             end=input_data.get('end', ''),  
             tags=input_data.get('tags', []),             
             interval=input_data.get('interval', '1h'))
-        dates = [pd.to_datetime(item[0], unit="ms") for item in data_series]
+        dates = [datetime.fromtimestamp(item[0]/1000) for item in data_series]
         count  = [item[1] for item in data_series]
         ts = pd.Series(count, index=dates)
         #input id is just the order in the array
