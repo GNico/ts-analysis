@@ -47,7 +47,7 @@
     :checked-rows.sync="checked">
 
     <b-table-column field="state" label="State"  width="5%" sortable v-slot="props"  cell-class="is-clickable">
-      <span class="tag is-small" :class="props.row.state=='Open' ? 'is-success' : 'is-warning'">{{ props.row.state }}</span>     
+      <span class="tag is-small" :class="props.row.state=='Open' ? 'is-success' : 'is-info'">{{ props.row.state }}</span>     
     </b-table-column>  
     <b-table-column field="client" label="Client" width="20%" sortable v-slot="props"  cell-class="is-clickable">
       {{ props.row.client }}       

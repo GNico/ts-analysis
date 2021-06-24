@@ -26,6 +26,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    uniqueSelect: {
+      type: Boolean,
+      default: false,
+    },
     centered: {
       type: Boolean,
       default: true,
@@ -87,6 +91,9 @@ export default {
     toggleSelected(nodeId) {
       let index = this.selectedNodes.findIndex(elem => elem == nodeId)
       if (index === -1) {
+        if (this.uniqueSelect) {
+          this.clearSelected()
+        }
         this.selectedNodes.push(nodeId)
         d3.select("#" + nodeId + ' rect').attr('style', 'fill: green; stroke: yellow;' + this.cursor) 
         d3.select("#" + nodeId + ' text').attr('style', 'fill: yellow;' + this.cursor) 

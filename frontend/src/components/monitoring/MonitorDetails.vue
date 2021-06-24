@@ -11,7 +11,7 @@
   />
   
   <ModalDetectorGraph
-    :model="modelData"
+    :analysisDetails="analysisDetails"
     :isActive="modelModalActive"
     @close="modelModalActive = false"
   />
@@ -71,7 +71,7 @@ export default {
       },
 
       modelModalActive: false,
-      modelData: [],
+      analysisDetails: {},
     }
   },
   computed: {
@@ -117,7 +117,7 @@ export default {
     },
     showGraph(data) {
       this.modelModalActive = true
-      this.modelData = data
+      this.analysisDetails = data
     },
     deleteNotification(id) {
       api.deleteNotificationChannel(id)

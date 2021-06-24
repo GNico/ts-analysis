@@ -71,6 +71,10 @@
                 {{options.alerts_enabled ? 'Enabled' : 'Disabled'}}
               </b-switch>
             </b-field>
+
+            <b-field horizontal label="Detection model">
+              <a @click="showGraph(detector.analysis_details.model)">Show</a>
+            </b-field>
             
             <b-field horizontal class="mt-5">
               <a class="button is-primary is-small has-text-weight-semibold" @click="updateOpts">
@@ -163,7 +167,7 @@ export default {
       this.$emit('editAnalysis', this.detector.analysis)
     },
     showGraph() {
-      this.$emit('showGraph', this.detector.analysis_details.model)
+      this.$emit('showGraph', this.detector.analysis_details)
     }
   },
   watch: {

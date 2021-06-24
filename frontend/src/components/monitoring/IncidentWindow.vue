@@ -32,7 +32,7 @@
 <script>
 import VueDraggableResizable from 'vue-draggable-resizable'
 import BaseChart from '@/components/BaseChart'
-import {  multiseriesTooltipFormatter } from '@/utils/helpers'
+import { multiseriesTooltipFormatter } from '@/utils/helpers'
 
 
 export default {
