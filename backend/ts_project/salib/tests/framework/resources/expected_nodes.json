@@ -419,7 +419,7 @@
           "desc": "Number of lags to use",
           "conditions": [],
           "value": 6,
-          "min": 0,
+          "min": 1,
           "max": null
         },
         {

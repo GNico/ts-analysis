@@ -12,7 +12,7 @@ class AutoReg(NodeTransformer):
         self.add_params()
 
     def add_params(self):
-        self.add_required_param(BoundedInt('lags', 'Lags', 'Number of lags to use', 0, None, 6))
+        self.add_required_param(BoundedInt('lags', 'Lags', 'Number of lags to use', 1, None, 6))
         self.add_required_param(String('period', 'Period', 'Expected seasonality in periods or time interval (eg: 12h). Empty or zero to ignore.', '0'))
 
     def get_params(self):

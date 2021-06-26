@@ -7,6 +7,7 @@ from ...params.string import String
 from ...params.select import Select, SelectOption
 from ...params.boolean import Boolean
 from ...params.int import BoundedInt
+from ....utils import timedelta_to_period
 
 class MultiRollingAggregate(NodeTransformer):
 
@@ -47,14 +48,14 @@ class MultiRollingAggregate(NodeTransformer):
         return 'Multi Rolling aggregate'
 
     def transform(self, seriess):
-        df = pd.DataFrame({
-            self.input_names[0]: seriess[0].pdseries,
-            self.input_names[1]: seriess[1].pdseries
-        })
-        return self.transform_df(df)
+        lhs, rhs = seriess[0], seriess[1]
+        MultiRollingAggregate.validate_input_steps_spans(lhs, rhs)
+        transformed_values = self.transform_values(lhs, rhs)
+        return pd.Series(transformed_values, index=lhs.pdseries.index)
 
-    def transform_df(self, df):
-        window, center, min_periods, agg = self.get_common_params()
+    def transform_values(self, lhs, rhs):
+        window_str, center, min_periods, agg = self.get_common_params()
+        window = timedelta_to_period(window_str, lhs.step())
 
         if agg == 'proportion':
             rolling_func = MultiRollingAggregate.func_proportion
@@ -67,38 +68,49 @@ class MultiRollingAggregate(NodeTransformer):
         else:
             raise ValueError('Invalid aggregation method: ' + agg)
 
-        rolling = df.rolling(
-            window=window,
-            center=center,
-            min_periods=min_periods
-        )
-
-        rolling = rolling.apply(rolling_func, kwargs={'df':df}, raw=False)['lhs']
-        return rolling
-
-    @staticmethod
-    def func_proportion(window, df):
-        lhs = df.loc[window.index, 'lhs']
-        rhs = df.loc[window.index, 'rhs']
-        return lhs.sum() / rhs.sum()
+        return NodeTransformer.rolling_apply_2input(
+                    lhs.pdseries.values,
+                    rhs.pdseries.values,
+                    rolling_func,
+                    window,
+                    center,
+                    min_periods
+                )
 
     @staticmethod
-    def func_correlation(window, df, method):
-        lhs = df.loc[window.index, 'lhs']
-        rhs = df.loc[window.index, 'rhs']
+    def func_proportion(lhs, rhs):
+        rhs_sum = sum(rhs)
+        if rhs_sum == 0:
+            return np.nan
+        else:
+            return sum(lhs) / rhs_sum
+
+    @staticmethod
+    def func_correlation(lhs, rhs, method):
+        lhs = pd.Series(lhs)
+        rhs = pd.Series(rhs)
         if len(lhs) > 1 and len(rhs) > 1:
             return lhs.corr(rhs, method=method)
         else:
             return np.nan
 
     @staticmethod
-    def func_correlation_pearson(window, df):
-        return MultiRollingAggregate.func_correlation(window, df, 'pearson')
+    def func_correlation_pearson(lhs, rhs):
+        return MultiRollingAggregate.func_correlation(lhs, rhs, 'pearson')
 
     @staticmethod
-    def func_correlation_kendall(window, df):
-        return MultiRollingAggregate.func_correlation(window, df, 'kendall')
+    def func_correlation_kendall(lhs, rhs):
+        return MultiRollingAggregate.func_correlation(lhs, rhs, 'kendall')
 
     @staticmethod
-    def func_correlation_spearman(window, df):
-        return MultiRollingAggregate.func_correlation(window, df, 'spearman')
+    def func_correlation_spearman(lhs, rhs):
+        return MultiRollingAggregate.func_correlation(lhs, rhs, 'spearman')
+
+    @staticmethod
+    def validate_input_steps_spans(lhs, rhs):
+        if lhs.step() != rhs.step():
+            err_vars = (lhs.step(), rhs.step())
+            raise ValueError('Inputs must have same step interval: lhs: %s != rhs: %s' % err_vars)
+        if lhs.span() != rhs.span():
+            err_vars = (lhs.start, lhs.end, rhs.start, rhs.end)
+            raise ValueError('Inputs must have same span: lhs: %s-%s != rhs: %s-%s' % err_vars)

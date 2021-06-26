@@ -14,6 +14,10 @@ class BoundedFloat(Param):
         if not isinstance(strict, tuple):
             strict = (strict,strict)
         self.strict_min, self.strict_max = strict
+        if self.min is None:
+            self.strict_min = None
+        if self.max is None:
+            self.strict_max = None
 
     def validate(self):
         if self.min is not None:
