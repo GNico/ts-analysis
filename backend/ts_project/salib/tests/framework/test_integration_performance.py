@@ -18,12 +18,15 @@ class TestIntegrationPerformance(unittest.TestCase):
         input1 = Series.from_array(self.load_json('input1'), interval=3600, unit='ms')
         input2 = Series.from_array(self.load_json('input2'), interval=3600, unit='ms')
         
-        # pr = cProfile.Profile()
-        # pr.enable()
 
         analyzer = Analyzer(pipeline, True)
         result = analyzer.analyze({'1': input1, '2': input2})
         
+        # pr = cProfile.Profile()
+        # pr.enable()
+
+        actual_output = result.output_format()
+
         # pr.disable()
         # pr.dump_stats('output.prof')
         # s = io.StringIO()
@@ -31,8 +34,6 @@ class TestIntegrationPerformance(unittest.TestCase):
         # ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
         # ps.print_stats()
         # print(s.getvalue())
-
-        actual_output = result.output_format()
         expected_output = self.load_json('expected_output')
         self.assertEqual(expected_output, actual_output)
 
