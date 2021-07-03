@@ -11,7 +11,6 @@ from .nodes.transformers.autoreg import AutoReg
 from .nodes.transformers.alma import ALMA
 
 from .nodes.detectors.simple_threshold import SimpleThreshold
-from .nodes.detectors.interquartile_range import InterQuartileRange
 from .nodes.detectors.quantile import Quantile
 
 from .nodes.aggregators.union import Union
@@ -54,8 +53,7 @@ class NodeFactory:
         },
         'detector': {
             'SimpleThreshold': SimpleThreshold,
-            'Quantile': Quantile,
-            'InterQuartileRange': InterQuartileRange
+            'Quantile': Quantile
         },
         'aggregator': {
             'Union': Union,
