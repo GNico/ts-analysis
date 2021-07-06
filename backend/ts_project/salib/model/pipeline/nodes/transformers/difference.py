@@ -34,7 +34,7 @@ class Difference(BinaryMathTransformer):
         if metric == 'l1':
             return abs(lhs - rhs)
         if metric == 'rel_diff':
-            rmetriceturn (lhs - rhs) / rhs
+            return (lhs - rhs) / rhs
         if metric == 'abs_rel_diff':
             return abs(lhs - rhs) / rhs
 

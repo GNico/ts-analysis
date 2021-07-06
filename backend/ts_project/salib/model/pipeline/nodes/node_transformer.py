@@ -30,6 +30,18 @@ class NodeTransformer(Node):
         raise Exception('Unimplemented transform() method for NodeTransformer')
 
     @staticmethod
+    def rolling_apply_1input(input, func, window_size, center, min_periods):
+        result = []
+        for i in range(0, len(lhs)):
+            input_slice = NodeTransformer.window_slice(input, i, window_size, center)
+            if len(input_slice) < min_periods:
+                new_entry = np.nan
+            else:
+                new_entry = func(input_slice)
+            result.append(new_entry)
+        return result
+
+    @staticmethod
     def rolling_apply_2input(lhs, rhs, func, window_size, center, min_periods):
         result = []
         for i in range(0, len(lhs)):
