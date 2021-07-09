@@ -23,16 +23,16 @@
       <div class="mb-1">
         <span class="has-text-grey-lighter has-text-weight-semibold">Tags:</span> 
         <b-taglist v-if="nodeDetails.tags.length > 0">
-          <b-tag v-for="tag in nodeDetails.tags" type="is-dark">{{tag}}</b-tag>
+          <b-tag v-for="tag in nodeDetails.tags" class="has-background-grey-darker">{{tag}}</b-tag>
         </b-taglist>
-        <b-tag v-else type="is-dark" size="is-small">All</b-tag>
+        <span v-else>All</span>
       </div>
       <div class="mb-1">
         <span class="has-text-grey-lighter has-text-weight-semibold">Contexts:</span> 
         <b-taglist v-if="nodeDetails.contexts.length > 0">
-          <b-tag v-for="context in nodeDetails.contexts" type="is-dark">{{context}}</b-tag>
+          <b-tag v-for="context in nodeDetails.contexts" class="has-background-grey-darker">{{context}}</b-tag>
         </b-taglist>
-        <b-tag v-else type="is-dark" size="is-small">All</b-tag>
+        <span v-else>All</span>
       </div>      
       <div>
         <span class="has-text-grey-lighter has-text-weight-semibold">Interval:</span>

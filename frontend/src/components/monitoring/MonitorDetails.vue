@@ -19,9 +19,9 @@
   <div class="title">{{ monitor.name }}</div>
   <b-tabs type="is-medium"  :animated="false"  destroy-on-hide>
     <b-tab-item label="Detectors" icon="alarm-light" value="Detectors">
-      <div class="is-flex is-justify-content-space-between">
-        <b-input placeholder="Search"> </b-input>
-        <a class="button is-primary" @click="loadModalActive = !loadModalActive">
+      <div class="is-flex is-justify-content-space-between mb-2">
+        <b-input placeholder="Search" size="is-small"> </b-input>
+        <a class="button is-primary is-small" @click="loadModalActive = !loadModalActive">
           <b-icon icon="playlist-plus"></b-icon>
           <span class="has-text-weight-semibold">Add detector</span>
         </a>
