@@ -49,10 +49,12 @@ class AutoRegression(NodeTransformer):
         # Debug info
         if debug:
             nlags = min(len(pdseries) // 2 - 1, 40)
+            acf_result = stattools.acf(pdseries, nlags=nlags, fft=True)
             pacf_result = stattools.pacf(pdseries, nlags=nlags, method='ols')
             debug_info = {
                 "summary": result.summary(),
                 "offset_start": offset_start,
+                "acf": acf_result.tolist(),
                 "pacf": pacf_result.tolist()
             }
         else:

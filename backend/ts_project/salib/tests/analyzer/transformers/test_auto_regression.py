@@ -19,16 +19,17 @@ class TestAutoRegression(unittest.TestCase):
         factory = NodeFactory.transformer('test', 'AutoRegression')
         factory.set_param_value('p', '1')
         factory.set_param_value('d', 1)
+        # factory.set_param_value('q', '3')
         ar = factory.build()
 
         result, debug_info = ar.transform([series], True)
-
+        # print(debug_info)
         expected_series = [0] * 8
         actual_series = list(result.values)
         for i in range(0, len(expected_series)):
             self.assertAlmostEqual(expected_series[i], actual_series[i], 2)
         # With debug info
-        self.assertEqual(set(['summary', 'pacf', 'offset_start']), set(debug_info.keys()))
+        self.assertEqual(set(['summary', 'acf', 'pacf', 'offset_start']), set(debug_info.keys()))
 
         # No debug info
         result, debug_info = ar.transform([series], False)
