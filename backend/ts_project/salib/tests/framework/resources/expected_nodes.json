@@ -37,7 +37,32 @@
       "type": "Identity",
       "desc": "Identity - apply no transformation",
       "display": "Identity",
-      "params": [],
+      "params": [
+        {
+          "id": "adf_test",
+          "type": "Boolean",
+          "display": "ADF test",
+          "desc": "Include Augmented Dicky-Fuller test",
+          "conditions": [],
+          "value": true
+        },
+        {
+          "id": "acf",
+          "type": "Boolean",
+          "display": "ACF",
+          "desc": "Autocorrelation function",
+          "conditions": [],
+          "value": true
+        },
+        {
+          "id": "pacf",
+          "type": "Boolean",
+          "display": "PACF",
+          "desc": "Partial autocorrelation function",
+          "conditions": [],
+          "value": true
+        }
+      ],
       "inputs": {
         "num_required_inputs": 1,
         "names": [
