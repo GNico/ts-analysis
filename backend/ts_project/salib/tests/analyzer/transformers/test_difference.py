@@ -9,7 +9,6 @@ from model.test.test_series_builder import TestSeriesBuilder
 from model.test.testcase import TestCase
 
 
-# TODO add more tests
 class TestDifference(unittest.TestCase):
 
     def test_base_substraction(self):

@@ -1,18 +1,17 @@
 import statsmodels.tsa.ar_model as ar_model
 
 from ..node_transformer import NodeTransformer
-from ...params.int import BoundedInt
 from ...params.string import String
 from ....utils import timedelta_to_period
 
-class AutoReg(NodeTransformer):
+class AutoRegression(NodeTransformer):
 
     def __init__(self, id):
         super().__init__(id)
         self.add_params()
 
     def add_params(self):
-        self.add_required_param(BoundedInt('lags', 'Lags', 'Number of lags to use', 1, None, 6))
+        self.add_required_param(String('lags', 'Lags', 'Number of lags to use or period', '7d'))
         self.add_required_param(String('period', 'Period', 'Expected seasonality in periods or time interval (eg: 12h). Empty or zero to ignore.', '0'))
 
     def get_params(self):
@@ -24,16 +23,17 @@ class AutoReg(NodeTransformer):
         series = seriess[0]
         pdseries = series.pdseries
         period, lags = self.get_params()
+        calc_lags = timedelta_to_period(lags, series.step())
         if period == '0' or period == '':
-            ar = ar_model.AutoReg(pdseries, trend='n', lags=lags)
+            ar = ar_model.AutoReg(pdseries, lags=calc_lags, seasonal=False, trend='n', old_names=False)
         else:
             calc_period = timedelta_to_period(period, series.step())
-            ar = ar_model.AutoReg(pdseries, seasonal=True, lags=lags, period=calc_period)
+            ar = ar_model.AutoReg(pdseries, lags=calc_lags, seasonal=True, period=calc_period, old_names=False)
         result = ar.fit()
         return result.resid
 
     def __str__(self):
-        return "AutoReg(" + str(self.get_params()) + ")[" + self.id + "]"
+        return "AutoRegression(" + str(self.get_params()) + ")[" + self.id + "]"
 
     def display(self):
         return 'Auto-Regression'

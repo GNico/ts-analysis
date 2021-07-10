@@ -414,13 +414,11 @@
       "params": [
         {
           "id": "lags",
-          "type": "BoundedInt",
+          "type": "String",
           "display": "Lags",
-          "desc": "Number of lags to use",
+          "desc": "Number of lags to use or period",
           "conditions": [],
-          "value": 6,
-          "min": 1,
-          "max": null
+          "value": "7d"
         },
         {
           "id": "period",
