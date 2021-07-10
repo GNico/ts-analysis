@@ -24,18 +24,23 @@ class Difference(BinaryMathTransformer):
     def desc(self):
         return 'Difference operator'
 
-    def transform(self, seriess):
+    def transform(self, seriess, debug):
         lhs = seriess[0].pdseries
         rhs = seriess[1].pdseries
 
         metric = self.get_param('metric').value
-        if metric == 'sub':
-            return lhs - rhs
-        if metric == 'l1':
-            return abs(lhs - rhs)
-        if metric == 'rel_diff':
-            return (lhs - rhs) / rhs
-        if metric == 'abs_rel_diff':
-            return abs(lhs - rhs) / rhs
 
-        raise ValueError('Invalid metric option')
+        result = None
+        if metric == 'sub':
+            result = lhs - rhs
+        if metric == 'l1':
+            result = abs(lhs - rhs)
+        if metric == 'rel_diff':
+            result = (lhs - rhs) / rhs
+        if metric == 'abs_rel_diff':
+            result = abs(lhs - rhs) / rhs
+
+        if result is not None:
+            return (result, {})
+        else:
+            raise ValueError('Invalid metric option')

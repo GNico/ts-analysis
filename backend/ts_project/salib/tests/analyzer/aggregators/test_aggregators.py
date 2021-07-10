@@ -176,7 +176,7 @@ class TestAggregators(unittest.TestCase):
         fst_input = NodeResult(None, None, output_series=fst_series, anomalies=fst_anomalies)
         snd_input = NodeResult(None, None, output_series=snd_series, anomalies=snd_anomalies)
         
-        result = node.execute([fst_input, snd_input])
+        result = node.execute([fst_input, snd_input], False)
 
         expected_display_series = {'input_1': fst_series, 'input_2': snd_series}
         self.assertEqual(expected_display_series, result.display_series())

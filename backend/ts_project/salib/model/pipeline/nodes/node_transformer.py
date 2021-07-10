@@ -11,22 +11,22 @@ class NodeTransformer(Node):
         super().__init__(id)
         super().set_input_names(['input'])
 
-    def execute(self, inputs):
-        new_pdseries = self.transform_and_validate(inputs)
+    def execute(self, inputs, debug):
+        new_pdseries, debug_info = self.transform_and_validate(inputs, debug)
         new_series = Series(new_pdseries)
-        return NodeResult(self, inputs=inputs, output_series=new_series)
+        return NodeResult(self, inputs=inputs, output_series=new_series, debug_info=debug_info)
 
-    def transform_and_validate(self, inputs):
+    def transform_and_validate(self, inputs, debug):
         pdseriess = [i.output_series for i in inputs]
-        new_pdseries = self.transform(pdseriess)
+        (new_pdseries, debug_info) = self.transform(pdseriess, debug)
         with pd.option_context('mode.use_inf_as_na', True):
             new_pdseries.dropna(inplace=True)
         inf_timestamps = list(new_pdseries[np.isinf(new_pdseries)].index)
         if len(inf_timestamps) > 0:
             raise ValueError('Found inf values from %s at: %s' % (self.id, inf_timestamps))
-        return new_pdseries
+        return (new_pdseries, debug_info)
 
-    def transform(self, seriess):
+    def transform(self, seriess, debug):
         raise Exception('Unimplemented transform() method for NodeTransformer')
 
     @staticmethod

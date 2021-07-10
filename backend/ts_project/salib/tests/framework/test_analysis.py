@@ -35,6 +35,7 @@ class TestAnalysis(unittest.TestCase):
             "debug_nodes": {
                 "test_node": {
                     "anomalies": [],
+                    "debug_info": {},
                     "series": {
                         "output": [
                             [0, 0.0],

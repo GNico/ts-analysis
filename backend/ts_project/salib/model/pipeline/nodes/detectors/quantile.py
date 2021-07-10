@@ -8,12 +8,12 @@ class Quantile(NodeDetector):
         self.add_param(BoundedFloat('high', 'Quantile upper %', 'Quantile above which we consider anomaly (%) - leave empty for no limit', 0, 100, False, 90))
         self.add_param(BoundedFloat('low', 'Quantile lower %', 'Quantile below which we consider anomaly (%) - leave empty for no limit', 0, 100, False, 0))
 
-    def anomalies(self, input_series):
+    def anomalies(self, input_series, debug):
         lo_bound, hi_bound = self.compute_thresholds(input_series)
         def predicate(val):
             return (hi_bound is not None and val > hi_bound) or (lo_bound is not None and val < lo_bound)
         # import pdb; pdb.set_trace()
-        return NodeDetector.pointwise_consecutive(predicate, input_series)
+        return (NodeDetector.pointwise_consecutive(predicate, input_series), {})
 
     def compute_thresholds(self, series):
         s = series.pdseries

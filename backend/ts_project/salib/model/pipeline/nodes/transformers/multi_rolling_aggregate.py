@@ -47,11 +47,11 @@ class MultiRollingAggregate(NodeTransformer):
     def desc(self):
         return 'Multi Rolling aggregate'
 
-    def transform(self, seriess):
+    def transform(self, seriess, debug):
         lhs, rhs = seriess[0], seriess[1]
         MultiRollingAggregate.validate_input_steps_spans(lhs, rhs)
         transformed_values = self.transform_values(lhs, rhs)
-        return pd.Series(transformed_values, index=lhs.pdseries.index)
+        return (pd.Series(transformed_values, index=lhs.pdseries.index), {})
 
     def transform_values(self, lhs, rhs):
         window_str, center, min_periods, agg = self.get_common_params()

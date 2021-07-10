@@ -10,11 +10,11 @@ class Pipeline:
         self.node_reference_table = Pipeline.build_node_reference_table(nodes)
         self.root_node = self.build_root_node(nodes)
 
-    def execute(self, inputs):
-        result = self.execute_node(self.root_node, inputs)
+    def execute(self, inputs, debug):
+        result = self.execute_node(self.root_node, inputs, debug)
         return result
 
-    def execute_node(self, node, inputs):
+    def execute_node(self, node, inputs, debug):
         if len(node.sources) == 0:
             raise ValueError("Invalid node %s with no sources" % node.id)
         else:
@@ -22,7 +22,7 @@ class Pipeline:
             for node_source_ref in node.sources:
                 if node_source_ref.is_node_ref():
                     source = self.resolve_node_reference(node_source_ref.ref)
-                    node_input_results.append(self.execute_node(source, inputs))
+                    node_input_results.append(self.execute_node(source, inputs, debug))
                 elif node_source_ref.is_input_ref():
                     series = inputs[node_source_ref.ref]
                     node_input_results.append(NodeResult(None, [], output_series=series))
@@ -30,7 +30,7 @@ class Pipeline:
                     raise ValueError("Invalid node %s source %s" % (node.id, node_source_ref))
                 
         node.validate_inputs(node_input_results)
-        return node.execute(node_input_results)
+        return node.execute(node_input_results, debug)
 
     def resolve_node_reference(self, reference):
         return self.node_reference_table[reference]

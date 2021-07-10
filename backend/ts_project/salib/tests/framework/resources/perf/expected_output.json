@@ -103000,7 +103000,8 @@
           "desc": null,
           "source_node": "eKR"
         }
-      ]
+      ],
+      "debug_info": {}
     },
     "qnn": {
       "series": {
@@ -137331,7 +137332,8 @@
           ]
         ]
       },
-      "anomalies": []
+      "anomalies": [],
+      "debug_info": {}
     }
   }
 }

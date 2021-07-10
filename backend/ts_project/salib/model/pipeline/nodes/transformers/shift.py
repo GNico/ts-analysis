@@ -11,7 +11,7 @@ class Shift(NodeTransformer):
         self.add_required_param(String('delta', 'Time delta', 'Time delta to shift (eg: 1h)', '12h'))
 
 
-    def transform(self, seriess):
+    def transform(self, seriess, debug):
         series = seriess[0]
         pdseries = series.pdseries
         calc_shift = timedelta_to_period(self.delta(), series.step(), validate=False)
@@ -24,7 +24,7 @@ class Shift(NodeTransformer):
         ]
         s_shifted = s_shifted.sort_index()
         s_shifted.name = pdseries.name
-        return s_shifted
+        return (s_shifted, {})
 
     def delta(self):
         return self.get_param('delta').value

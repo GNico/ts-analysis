@@ -12,13 +12,13 @@ class ALMA(NodeTransformer):
         super().__init__(id)
         self.add_required_param(String('window', 'Window', 'Window size in periods or time interval (eg: 12h)', '12h'))
 
-    def transform(self, seriess):
+    def transform(self, seriess, debug):
         series = seriess[0]
         pdseries = series.pdseries
         window = self.window(series.step())
         self._alma_weights = self.alma_weights(window=window)
         alma = pdseries.rolling(window=window).apply(self.calculate_alma, args=(window,), raw=False).dropna()
-        return pd.Series(alma, name=f'alma')
+        return (pd.Series(alma, name=f'alma'), {})
 
     def calculate_alma(self, s, window):
         weights = self._alma_weights

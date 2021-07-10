@@ -1,4 +1,5 @@
 import statsmodels.tsa.arima.model as ar_model
+import statsmodels.tsa.stattools as stattools
 
 from ..node_transformer import NodeTransformer
 from ...params.int import BoundedInt
@@ -32,7 +33,7 @@ class AutoRegression(NodeTransformer):
         m = self.get_param('m').value
         return (p, d, q, P, D, Q, m)
 
-    def transform(self, seriess):
+    def transform(self, seriess, debug):
         series = seriess[0]
         pdseries = series.pdseries
 
@@ -43,10 +44,22 @@ class AutoRegression(NodeTransformer):
 
         ar = ar_model.ARIMA(pdseries, order=order, seasonal_order=seasonal_order, enforce_stationarity=False, enforce_invertibility=False, trend=None)
         result = ar.fit()
-        # print(result.summary())
-        # Drop first p elements
         offset_start = max(sum(order), sum(seasonal_order))
-        return result.resid[offset_start:]
+        
+        # Debug info
+        if debug:
+            nlags = min(len(pdseries) // 2 - 1, 40)
+            pacf_result = stattools.pacf(pdseries, nlags=nlags, method='ols')
+            debug_info = {
+                "summary": result.summary(),
+                "offset_start": offset_start,
+                "pacf": pacf_result.tolist()
+            }
+        else:
+            debug_info = {}
+        # Drop offset_start elements
+        
+        return (result.resid[offset_start:], debug_info)
 
     def __str__(self):
         return "AutoRegression(" + str(self.get_params()) + ")[" + self.id + "]"

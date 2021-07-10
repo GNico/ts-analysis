@@ -28,21 +28,22 @@ class SeasonalDecompose(NodeTransformer):
         two_sided = self.get_param('two_sided').value
         return (output, period, two_sided)
 
-    def transform(self, seriess):
+    def transform(self, seriess, debug):
         series = seriess[0]
         pdseries = series.pdseries
         output, period, two_sided = self.get_params()
         calc_period = timedelta_to_period(period, series.step())
-        result = sm.seasonal_decompose(pdseries, period=calc_period, two_sided=two_sided, model='additive', filt=None, extrapolate_trend=0)
+        model = sm.seasonal_decompose(pdseries, period=calc_period, two_sided=two_sided, model='additive', filt=None, extrapolate_trend=0)
+        result = None
         if output == 'resid':
-            return result.resid
+            result = model.resid
         elif output == 'trend':
-            return result.trend
+            result = model.trend
         elif output == 'seasonal':
-            return result.seasonal
+            result = model.seasonal
         else:
             raise ValueError('Invalid output: ' + output)
-        return result
+        return (result, {})
 
     def __str__(self):
         return "SeasonalDecompose(" + str(self.get_params()) + ")[" + self.id + "]"

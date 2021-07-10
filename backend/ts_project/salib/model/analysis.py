@@ -38,10 +38,7 @@ class Analysis:
 
             for debug_node in all_sources:
                 if debug_node.id is not None:
-                    debug_nodes_output[debug_node.id] = {
-                        "series": {k: v.output_format() for k, v in debug_node.display_series().items()},
-                        "anomalies": list(map(lambda a: a.output_format(), debug_node.anomalies))
-                    }
+                    debug_nodes_output[debug_node.id] = debug_node.output_format()
 
             result["debug_nodes"] = debug_nodes_output
 

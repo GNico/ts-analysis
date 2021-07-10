@@ -18,7 +18,7 @@ class Intersect(Node):
         strictness.add_condition(ParamEqualsValue('resolution', 'anomaly'))
         self.add_param(strictness)
 
-    def execute(self, inputs):
+    def execute(self, inputs, debug):
         if len(inputs) == 1:
             all_anomalies = inputs.anomalies
         else:

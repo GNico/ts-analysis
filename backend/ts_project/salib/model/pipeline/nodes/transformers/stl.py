@@ -28,22 +28,23 @@ class STL(NodeTransformer):
         robust = self.get_param('robust').value
         return (output, period, robust)
 
-    def transform(self, seriess):
+    def transform(self, seriess, debug):
         series = seriess[0]
         pdseries = series.pdseries
         output, period, robust = self.get_params()
         calc_period = timedelta_to_period(period, series.step())
         stl = sm.STL(pdseries, seasonal=STL.adapt_period(calc_period), robust=robust)
-        result = stl.fit()
+        model = stl.fit()
+        result = None
         if output == 'resid':
-            return result.resid
+            result = model.resid
         elif output == 'trend':
-            return result.trend
+            result = model.trend
         elif output == 'seasonal':
-            return result.seasonal
+            result = model.seasonal
         else:
             raise ValueError('Invalid output: ' + output)
-        return result
+        return (result, {})
 
     @staticmethod
     def adapt_period(period):

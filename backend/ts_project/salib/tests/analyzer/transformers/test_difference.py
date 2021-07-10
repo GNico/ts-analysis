@@ -19,7 +19,7 @@ class TestDifference(unittest.TestCase):
         factory.set_param_value('metric', 'sub')
         diff = factory.build()
 
-        result = diff.transform([series1, series2])
+        result, debug_info = diff.transform([series1, series2], False)
 
         expected_series = [-1] * 10
         self.assertEqual(expected_series, list(result.values))

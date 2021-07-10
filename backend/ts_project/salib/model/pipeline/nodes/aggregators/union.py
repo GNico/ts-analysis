@@ -6,7 +6,7 @@ class Union(Node):
     def __init__(self, id):
         super().__init__(id)
 
-    def execute(self, inputs):
+    def execute(self, inputs, debug):
         or_anomalies = []
         for i in inputs:
             or_anomalies.extend(i.anomalies)

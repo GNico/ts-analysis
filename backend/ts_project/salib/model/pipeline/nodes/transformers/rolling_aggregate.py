@@ -58,10 +58,10 @@ class RollingAggregate(NodeTransformer):
     def desc(self):
         return 'Rolling aggregate'
 
-    def transform(self, seriess):
-        return self.transform_pdseries(seriess[0].pdseries)
+    def transform(self, seriess, debug):
+        return self.transform_pdseries(seriess[0].pdseries, debug)
 
-    def transform_pdseries(self, s):
+    def transform_pdseries(self, s, debug):
         window, center, min_periods, agg = self.get_common_params()
 
         rolling = s.rolling(
@@ -98,4 +98,4 @@ class RollingAggregate(NodeTransformer):
             raise ValueError('Invalid aggregation method: ' + agg)
 
         s_rolling.name = s.name
-        return s_rolling
+        return (s_rolling, {})

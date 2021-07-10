@@ -7,6 +7,6 @@ class Analyzer:
         self.debug = debug
 
     def analyze(self, inputs):
-        result = self.pipeline.execute(inputs)
+        result = self.pipeline.execute(inputs, self.debug)
         anomalies = result.anomalies
         return Analysis(inputs, result, anomalies, self.debug)

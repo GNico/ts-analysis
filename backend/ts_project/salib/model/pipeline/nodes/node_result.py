@@ -1,6 +1,6 @@
 class NodeResult:
 
-    def __init__(self, source_node, inputs, output_series=None, anomalies=[]):
+    def __init__(self, source_node, inputs, output_series=None, anomalies=[], debug_info={}):
         self.node = source_node
         if self.node is None:
             self.id = None
@@ -9,6 +9,7 @@ class NodeResult:
         self.output_series = output_series
         self.anomalies = anomalies
         self.inputs = inputs
+        self.debug_info = debug_info
 
     def set_output_series(self, output_series):
         self.output_series = output_series
@@ -43,6 +44,13 @@ class NodeResult:
                     res[input_names[idx]] = input.find_output_series()
                     idx += 1
                 return res
+
+    def output_format(self):
+        return {
+            "series": {k: v.output_format() for k, v in self.display_series().items()},
+            "anomalies": list(map(lambda a: a.output_format(), self.anomalies)),
+            "debug_info": {} if self.debug_info is None else {k: str(v) for k, v in self.debug_info.items()}
+        }
 
     def all_sources(self):
         ret = []

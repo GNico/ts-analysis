@@ -19,14 +19,20 @@ class TestAutoRegression(unittest.TestCase):
         factory = NodeFactory.transformer('test', 'AutoRegression')
         factory.set_param_value('p', '1')
         factory.set_param_value('d', 1)
-        diff = factory.build()
+        ar = factory.build()
 
-        result = diff.transform([series])
+        result, debug_info = ar.transform([series], True)
 
         expected_series = [0] * 8
         actual_series = list(result.values)
         for i in range(0, len(expected_series)):
             self.assertAlmostEqual(expected_series[i], actual_series[i], 2)
+        # With debug info
+        self.assertEqual(set(['summary', 'pacf', 'offset_start']), set(debug_info.keys()))
+
+        # No debug info
+        result, debug_info = ar.transform([series], False)
+        self.assertEqual([], list(debug_info.keys()))
 
     def test_seesaw(self):
         series = Series.from_array([
@@ -40,9 +46,9 @@ class TestAutoRegression(unittest.TestCase):
 
         factory = NodeFactory.transformer('test', 'AutoRegression')
         factory.set_param_value('p', '1')
-        diff = factory.build()
+        ar = factory.build()
 
-        result = diff.transform([series])
+        result, debug_info = ar.transform([series], True)
 
         expected_series = [0] * 5
         actual_series = list(result.values)

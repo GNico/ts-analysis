@@ -5,9 +5,9 @@ class Identity(NodeTransformer):
     def __init__(self, id):
         super().__init__(id)
 
-    def transform(self, seriess):
+    def transform(self, seriess, debug):
         pdseries = seriess[0].pdseries
-        return pdseries
+        return (pdseries, {})
 
     def __str__(self):
         return "Identity[" + self.id + "]"

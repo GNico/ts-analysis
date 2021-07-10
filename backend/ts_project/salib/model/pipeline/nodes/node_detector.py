@@ -8,14 +8,14 @@ class NodeDetector(Node):
         super().__init__(id)
         super().set_input_names(['input'])
 
-    def execute(self, inputs):
+    def execute(self, inputs, debug):
         input = inputs[0]
-        anomalies = self.anomalies(input.find_output_series())
+        anomalies, debug_info = self.anomalies(input.find_output_series(), debug)
         for anomaly in anomalies:
             anomaly.set_source_node(self)
-        return NodeResult(self, inputs=inputs, anomalies=anomalies)
+        return NodeResult(self, inputs=inputs, anomalies=anomalies, debug_info=debug_info)
 
-    def anomalies(self, series):
+    def anomalies(self, series, debug):
         raise Exception('Unimplemented anomalies method for NodeDetector')
 
     @staticmethod
