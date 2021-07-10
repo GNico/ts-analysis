@@ -17,7 +17,7 @@ class TestAutoRegression(unittest.TestCase):
 
         factory = NodeFactory.transformer('test', 'AutoRegression')
         factory.set_param_value('p', '1')
-        factory.set_param_value('d', '1')
+        factory.set_param_value('d', 1)
         diff = factory.build()
 
         result = diff.transform([series])

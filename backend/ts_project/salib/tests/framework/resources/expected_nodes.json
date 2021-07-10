@@ -422,11 +422,13 @@
         },
         {
           "id": "d",
-          "type": "String",
+          "type": "BoundedInt",
           "display": "d",
-          "desc": "Differencing",
+          "desc": "Differencing degree",
           "conditions": [],
-          "value": "0"
+          "value": 0,
+          "min": 0,
+          "max": null
         },
         {
           "id": "q",
@@ -446,11 +448,13 @@
         },
         {
           "id": "D",
-          "type": "String",
+          "type": "BoundedInt",
           "display": "D",
-          "desc": "Seasonal differencing",
+          "desc": "Seasonal differencing degree",
           "conditions": [],
-          "value": "0"
+          "value": 0,
+          "min": 0,
+          "max": null
         },
         {
           "id": "Q",

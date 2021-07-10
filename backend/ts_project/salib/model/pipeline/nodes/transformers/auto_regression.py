@@ -1,6 +1,7 @@
 import statsmodels.tsa.arima.model as ar_model
 
 from ..node_transformer import NodeTransformer
+from ...params.int import BoundedInt
 from ...params.string import String
 from ....utils import timedelta_to_period
 
@@ -12,11 +13,11 @@ class AutoRegression(NodeTransformer):
 
     def add_params(self):
         self.add_required_param(String('p', 'p', 'AR order', '7d'))
-        self.add_param(String('d', 'd', 'Differencing', '0'))
+        self.add_param(BoundedInt('d', 'd', 'Differencing degree', 0, None, 0))
         self.add_param(String('q', 'q', 'MA order', '0'))
 
         self.add_param(String('P', 'P', 'Seasonal AR order', '0'))
-        self.add_param(String('D', 'D', 'Seasonal differencing', '0'))
+        self.add_param(BoundedInt('D', 'D', 'Seasonal differencing degree', 0, None, 0))
         self.add_param(String('Q', 'Q', 'Seasonal MA order', '0'))
 
         self.add_param(String('m', 'm', 'Season length', '0'))
