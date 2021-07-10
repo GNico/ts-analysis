@@ -32,9 +32,13 @@ class GARCH(NodeTransformer):
 
         # Debug info
         if debug:
+            nlags = min(len(pdseries) // 2 - 1, 40)
+            acf_result = stattools.acf(pdseries**2, nlags=nlags, fft=True)
+            pacf_result = stattools.pacf(pdseries**2, nlags=nlags, method='ols')
             debug_info = {
-                "summary": result.summary()
-            }
+                "summary": result.summary(),
+                "acf": acf_result.tolist(),
+                "pacf": pacf_result.tolist()}
         else:
             debug_info = {}
         # Drop offset_start elements
