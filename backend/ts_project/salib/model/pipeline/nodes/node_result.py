@@ -49,7 +49,7 @@ class NodeResult:
         return {
             "series": {k: v.output_format() for k, v in self.display_series().items()},
             "anomalies": list(map(lambda a: a.output_format(), self.anomalies)),
-            "debug_info": {} if self.debug_info is None else {k: str(v) for k, v in self.debug_info.items()}
+            "debug_info": {} if self.debug_info is None else {k: v for k, v in self.debug_info.items()}
         }
 
     def all_sources(self):
