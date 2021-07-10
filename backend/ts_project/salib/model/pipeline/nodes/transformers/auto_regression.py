@@ -41,7 +41,7 @@ class AutoRegression(NodeTransformer):
         order = tuple(map(lambda param: timedelta_to_period(param, series.step()), (p, d, q)))
         seasonal_order = tuple(map(lambda param: timedelta_to_period(param, series.step()), (P, D, Q, m)))
 
-        ar = ar_model.ARIMA(pdseries, order=order, seasonal_order=seasonal_order, enforce_stationarity=False, enforce_invertibility=False, trend='n')
+        ar = ar_model.ARIMA(pdseries, order=order, seasonal_order=seasonal_order, enforce_stationarity=False, enforce_invertibility=False, trend=None)
         result = ar.fit()
         # print(result.summary())
         # Drop first p elements
