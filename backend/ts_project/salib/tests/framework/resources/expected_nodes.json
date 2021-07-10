@@ -409,22 +409,62 @@
     },
     {
       "type": "AutoRegression",
-      "desc": "Auto-regression with lags & seasonality",
+      "desc": "SARIMA model, with lags & seasonality. Inputs can be in periods or interval length",
       "display": "Auto-Regression",
       "params": [
         {
-          "id": "lags",
+          "id": "p",
           "type": "String",
-          "display": "Lags",
-          "desc": "Number of lags to use or period",
+          "display": "p",
+          "desc": "AR order",
           "conditions": [],
           "value": "7d"
         },
         {
-          "id": "period",
+          "id": "d",
           "type": "String",
-          "display": "Period",
-          "desc": "Expected seasonality in periods or time interval (eg: 12h). Empty or zero to ignore.",
+          "display": "d",
+          "desc": "Differencing",
+          "conditions": [],
+          "value": "0"
+        },
+        {
+          "id": "q",
+          "type": "String",
+          "display": "q",
+          "desc": "MA order",
+          "conditions": [],
+          "value": "0"
+        },
+        {
+          "id": "P",
+          "type": "String",
+          "display": "P",
+          "desc": "Seasonal AR order",
+          "conditions": [],
+          "value": "0"
+        },
+        {
+          "id": "D",
+          "type": "String",
+          "display": "D",
+          "desc": "Seasonal differencing",
+          "conditions": [],
+          "value": "0"
+        },
+        {
+          "id": "Q",
+          "type": "String",
+          "display": "Q",
+          "desc": "Seasonal MA order",
+          "conditions": [],
+          "value": "0"
+        },
+        {
+          "id": "m",
+          "type": "String",
+          "display": "m",
+          "desc": "Season length",
           "conditions": [],
           "value": "0"
         }

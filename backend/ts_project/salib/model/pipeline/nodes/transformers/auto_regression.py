@@ -1,4 +1,4 @@
-import statsmodels.tsa.ar_model as ar_model
+import statsmodels.tsa.arima.model as ar_model
 
 from ..node_transformer import NodeTransformer
 from ...params.string import String
@@ -11,26 +11,41 @@ class AutoRegression(NodeTransformer):
         self.add_params()
 
     def add_params(self):
-        self.add_required_param(String('lags', 'Lags', 'Number of lags to use or period', '7d'))
-        self.add_required_param(String('period', 'Period', 'Expected seasonality in periods or time interval (eg: 12h). Empty or zero to ignore.', '0'))
+        self.add_required_param(String('p', 'p', 'AR order', '7d'))
+        self.add_param(String('d', 'd', 'Differencing', '0'))
+        self.add_param(String('q', 'q', 'MA order', '0'))
+
+        self.add_param(String('P', 'P', 'Seasonal AR order', '0'))
+        self.add_param(String('D', 'D', 'Seasonal differencing', '0'))
+        self.add_param(String('Q', 'Q', 'Seasonal MA order', '0'))
+
+        self.add_param(String('m', 'm', 'Season length', '0'))
 
     def get_params(self):
-        period = self.get_param('period').value
-        lags = self.get_param('lags').value
-        return (period, lags)
+        p = self.get_param('p').value
+        d = self.get_param('d').value
+        q = self.get_param('q').value
+        P = self.get_param('P').value
+        D = self.get_param('D').value
+        Q = self.get_param('Q').value
+        m = self.get_param('m').value
+        return (p, d, q, P, D, Q, m)
 
     def transform(self, seriess):
         series = seriess[0]
         pdseries = series.pdseries
-        period, lags = self.get_params()
-        calc_lags = timedelta_to_period(lags, series.step())
-        if period == '0' or period == '':
-            ar = ar_model.AutoReg(pdseries, lags=calc_lags, seasonal=False, trend='n', old_names=False)
-        else:
-            calc_period = timedelta_to_period(period, series.step())
-            ar = ar_model.AutoReg(pdseries, lags=calc_lags, seasonal=True, period=calc_period, old_names=False)
+
+        p, d, q, P, D, Q, m = self.get_params()
+
+        order = tuple(map(lambda param: timedelta_to_period(param, series.step()), (p, d, q)))
+        seasonal_order = tuple(map(lambda param: timedelta_to_period(param, series.step()), (P, D, Q, m)))
+
+        ar = ar_model.ARIMA(pdseries, order=order, seasonal_order=seasonal_order, enforce_stationarity=False, enforce_invertibility=False, trend='n')
         result = ar.fit()
-        return result.resid
+        # print(result.summary())
+        # Drop first p elements
+        offset_start = max(sum(order), sum(seasonal_order))
+        return result.resid[offset_start:]
 
     def __str__(self):
         return "AutoRegression(" + str(self.get_params()) + ")[" + self.id + "]"
@@ -39,4 +54,4 @@ class AutoRegression(NodeTransformer):
         return 'Auto-Regression'
 
     def desc(self):
-        return 'Auto-regression with lags & seasonality'
+        return 'SARIMA model, with lags & seasonality. Inputs can be in periods or interval length'

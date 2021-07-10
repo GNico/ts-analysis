@@ -16,14 +16,13 @@ class TestAutoRegression(unittest.TestCase):
         series = TestSeriesBuilder.linear(10, 0, 1).build()
 
         factory = NodeFactory.transformer('test', 'AutoRegression')
-        factory.set_param_value('lags', '2')
-        factory.set_param_value('period', '0')
+        factory.set_param_value('p', '1')
+        factory.set_param_value('d', '1')
         diff = factory.build()
 
         result = diff.transform([series])
 
         expected_series = [0] * 8
         actual_series = list(result.values)
-        self.assertEqual(len(expected_series), len(actual_series))
         for i in range(0, len(expected_series)):
-            self.assertAlmostEqual(expected_series[i], actual_series[i])
+            self.assertAlmostEqual(expected_series[i], actual_series[i], 2)
