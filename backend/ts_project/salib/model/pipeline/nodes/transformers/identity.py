@@ -2,15 +2,17 @@ import statsmodels.tsa.stattools as stattools
 
 from ..node_transformer import NodeTransformer
 from ...params.boolean import Boolean
-        
+from ...params.int import BoundedInt
+
 class Identity(NodeTransformer):
 
     def __init__(self, id):
         super().__init__(id)
         self.add_required_param(Boolean('adf_test', 'ADF test', 'Include Augmented Dicky-Fuller test', True))
         self.add_required_param(Boolean('acf', 'ACF', 'Autocorrelation function', True))
+        self.add_param(BoundedInt('acf_lags', 'ACF max lags', 'ACF max lags', 0, None, 10))
         self.add_required_param(Boolean('pacf', 'PACF', 'Partial autocorrelation function', True))
-
+        self.add_param(BoundedInt('pacf_lags', 'PACF max lags', 'PACF max lags', 0, None, 10))
         
     def transform(self, seriess, debug):
         pdseries = seriess[0].pdseries
@@ -31,14 +33,22 @@ class Identity(NodeTransformer):
             debug_info[prefix + ': ' + k] = v
 
     def acf(self, pdseries):
-        nlags = min(len(pdseries) // 2 - 1, 40)
+        nlags = min(len(pdseries) // 2 - 1, self.get_param('acf_lags').value)
         acf_result = stattools.acf(pdseries, nlags=nlags, fft=True)
-        return {'lag_correlations': acf_result.tolist()}
+        coeffs = acf_result.tolist()
+        acf_plot = []
+        for i in range(len(coeffs)):
+            acf_plot.append([i, coeffs[i]])
+        return {'lag_correlations': acf_plot}
 
     def pacf(self, pdseries):
-        nlags = min(len(pdseries) // 2 - 1, 40)
+        nlags = min(len(pdseries) // 2 - 1, self.get_param('pacf_lags').value)
         pacf_result = stattools.pacf(pdseries, nlags=nlags, method='ols')
-        return {'lag_correlations': pacf_result.tolist()}
+        coeffs = pacf_result.tolist()
+        pacf_plot = []
+        for i in range(len(coeffs)):
+            pacf_plot.append([i, coeffs[i]])
+        return {'lag_correlations': pacf_plot}
 
     def adf_test(self, pdseries):
         debug_info = {}
