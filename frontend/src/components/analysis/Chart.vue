@@ -10,7 +10,8 @@
   @crosshairMove="syncCrosshairs"
   :crosshair="crosshair"
   :syncCrosshairEnabled="syncCrosshairEnabled"
-  :tooltipFormatter="tooltipFormatter"/>
+  :tooltipFormatter="tooltipFormatter"
+  :tickInterval="tickInterval"/>
 </template>
 
 
@@ -42,6 +43,10 @@ export default {
     showMinMax: {
       type: Boolean,
       default: false,
+    },
+    axisInterval: {
+      type: String,
+      default: '',
     },
     loading: {
       type: Boolean,
@@ -83,6 +88,26 @@ export default {
         max: this.range.end
       }
     }, 
+    tickInterval() {
+      var tickNumber = null
+      switch (this.axisInterval) {
+        case "month":
+          tickNumber = 28*24*3600*1000
+          break
+        case "week":
+          tickNumber = 7*24*3600*1000
+          break
+        case "day": 
+          tickNumber = 24*3600*1000
+          break
+        case "hour":
+          tickNumber = 3600*1000
+        default:
+          tickNumber = null
+          break
+      }
+      return tickNumber
+    },
     chartData() {
       var cdata = []
       var seriesIds = Object.keys(this.seriesData)
@@ -98,7 +123,7 @@ export default {
           name: 'Average',
           type: 'line',
           data: this.seriesData[seriesIds[0]],
-          zIndex: 2,
+          zIndex: 3,
           fillOpacity: 1,
           enableMouseTracking: true,
           color: this.seriesColor,
@@ -113,7 +138,7 @@ export default {
             name: 'Range',
             type: 'arearange',
             data: this.toArearangeData(this.seriesData[seriesIds[0]]),
-            zIndex: 1,
+            zIndex: 2,
             color: this.seriesColor,
             fillOpacity: 0.3,
             enableMouseTracking: true,
@@ -132,7 +157,7 @@ export default {
             name: seriesId,
             type: 'line',
             data: this.seriesData[seriesId],
-            zIndex: 2,
+            zIndex: 3,
             fillOpacity: 1,
             enableMouseTracking: true,
             states: {

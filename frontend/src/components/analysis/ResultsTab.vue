@@ -26,6 +26,7 @@
           :loading="loading"
           :activeAnomaly="activeAnomaly"
           :showMinMax="activeOptions.showMinMax"
+          :axisInterval="activeOptions.axisInterval"
           @changeActive="updateOptions({activeAnomalyId: $event})"
           @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" />
       </div>

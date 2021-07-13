@@ -1,9 +1,8 @@
 <template>
 <div v-else class="columns" :style="{height: height + 50 + 'px'}">
   <div class="column main-content" :style="{height: height + 'px'}">
-    <div class="section-header ">
-      <b-dropdown
-        trap-focus>
+    <div class="is-flex is-justify-content-space-between mb-2 is-align-items-center ">
+      <b-dropdown trap-focus>
         <template #trigger>            
           <a class="is-flex is-align-items-center has-text-white">
             <span><strong>{{node.display}}</strong></span>
@@ -30,9 +29,25 @@
         </b-dropdown-item>
       </b-dropdown>
       
-      <b-checkbox v-model="showMinMax">
-        <strong class="has-text-white">Show min and max values</strong>
-      </b-checkbox>
+      <div class="is-flex is-align-items-center">              
+        <b-dropdown  class="header-item" aria-role="list" v-model="axisInterval">
+            <template #trigger>
+              <a class="is-flex is-align-items-center has-text-grey">
+                <span><strong>Axis interval: {{axisInterval}}</strong></span>
+                <b-icon icon="menu-down"></b-icon>
+              </a>
+            </template>
+            <b-dropdown-item aria-role="listitem" value="auto">auto</b-dropdown-item>
+            <b-dropdown-item aria-role="listitem" value="month">month</b-dropdown-item>
+            <b-dropdown-item aria-role="listitem" value="week">week</b-dropdown-item>
+            <b-dropdown-item aria-role="listitem" value="day">day</b-dropdown-item>
+            <b-dropdown-item aria-role="listitem" value="hour">hour</b-dropdown-item>
+        </b-dropdown>   
+        <b-checkbox v-model="showMinMax">
+          <strong class="has-text-grey">Show min and max values</strong>
+        </b-checkbox>   
+      </div>
+      
     </div>
 
     <Chart     
@@ -45,6 +60,7 @@
       :range="extremes"
       :syncCrosshairEnabled="true"
       :showMinMax="showMinMax"
+      :axisInterval="axisInterval"
       @changeActive="activeAnomalyId = $event"
       @updateRange="updateRange"
     />
@@ -52,7 +68,7 @@
 
   <div class="column is-4" :style="{height: height + 'px'}">     
     <template v-if="anomalies.length">
-      <div class="section-header has-text-white">
+      <div class="mb-2 has-text-white">
         <div> <strong class="has-text-white"> Anomalies</strong></div>
       </div>
 
@@ -106,6 +122,7 @@ export default {
       loading: false,
       activeAnomalyId: '',
       showMinMax: true,
+      axisInterval: 'auto',
     }
   },
   computed: {
@@ -130,11 +147,9 @@ export default {
   height: inherit;
 }
 
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
-  align-items: center;
-  height: 30px;
+.header-item {
+  border-right: 1px solid;
+  padding-right: 0.75rem;
+  margin-right: 0.75rem;
 }
 </style>

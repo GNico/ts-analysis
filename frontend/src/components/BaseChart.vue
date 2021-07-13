@@ -67,6 +67,10 @@ export default {
     tooltipFormatter: {
       type: Function,
       default: undefined
+    },
+    tickInterval: {
+      type: Number, 
+      default: null,
     }
   },
   data () {
@@ -195,6 +199,8 @@ export default {
           allowDecimals: false,
           ordinal: false,
           gridLineWidth: 0, 
+          tickInterval: this.tickInterval,
+         // tickInterval: 28*24*3600*1000,
           crosshair: {
             color: 'gray',
             dashStyle: 'shortdot',            

@@ -41,7 +41,7 @@
 
           <b-field horizontal label="Score threshold" >
             <b-slider :value="scoreThreshold" @input="update('scoreThreshold', $event)" lazy></b-slider>
-          </b-field>
+          </b-field>        
 
           <b-field horizontal label="">
             <b-checkbox :value="showSeries" @input="update('showSeries', $event)">
@@ -59,6 +59,16 @@
             <b-checkbox :value="showTrend" @input="update('showTrend', $event)">
               <strong class="has-text-white">Show trend</strong>
             </b-checkbox>        
+          </b-field>
+
+          <b-field horizontal label="Axis interval">
+            <b-select :value="axisInterval" @input="update('axisInterval', $event)" size="is-small">
+              <option value="">auto</option>
+              <option value="month">month</option>
+              <option value="week">week</option>
+              <option value="day">day</option>
+              <option value="hour">hour</option>
+            </b-select>
           </b-field>
         </section>
       </div>
@@ -100,6 +110,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    axisInterval: {
+      type: String,
+      default: ''
+    }
   },
   data() {
     return {
@@ -125,7 +139,7 @@ export default {
             break
           default:
             break
-          }
+        }
         minDurationTime = parseInt(numbers[0]) *  ms 
       }
       this.$emit('update', {minDuration: value, minDurationTime: minDurationTime})
