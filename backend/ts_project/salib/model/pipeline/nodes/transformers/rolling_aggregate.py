@@ -50,7 +50,7 @@ class RollingAggregate(NodeTransformer):
         return ','.join(map(lambda p: str(p), self.get_common_params()))
 
     def __str__(self):
-        return "RollingAggregate(" + self.str_common_params(self) + ")[" + self.id + "]"
+        return "RollingAggregate(" + self.str_common_params() + ")[" + self.id + "]"
 
     def display(self):
         return 'Rolling Aggregate'

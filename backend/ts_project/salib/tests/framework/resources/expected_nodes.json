@@ -466,6 +466,24 @@
           "value": "7d"
         },
         {
+          "id": "output",
+          "type": "Select",
+          "display": "Output",
+          "desc": "Model output",
+          "conditions": [],
+          "value": "predicted",
+          "options": [
+            {
+              "code": "predicted",
+              "display": "Predicted"
+            },
+            {
+              "code": "resid",
+              "display": "Residual"
+            }
+          ]
+        },
+        {
           "id": "d",
           "type": "BoundedInt",
           "display": "d",

@@ -1,3 +1,5 @@
+import logging
+
 from .node_factory import NodeFactory
 from .nodes.node_result import NodeResult
 from .nodes.aggregators.root import Root
@@ -15,6 +17,7 @@ class Pipeline:
         return result
 
     def execute_node(self, node, inputs, debug):
+        logging.info('Executing node %s' % node)
         if len(node.sources) == 0:
             raise ValueError("Invalid node %s with no sources" % node.id)
         else:

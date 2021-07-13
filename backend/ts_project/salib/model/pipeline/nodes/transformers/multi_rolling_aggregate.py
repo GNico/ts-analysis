@@ -39,7 +39,7 @@ class MultiRollingAggregate(NodeTransformer):
         return ','.join(map(lambda p: str(p), self.get_common_params()))
 
     def __str__(self):
-        return "MultiRollingAggregate(" + self.str_common_params(self) + ")[" + self.id + "]"
+        return "MultiRollingAggregate(" + self.str_common_params() + ")[" + self.id + "]"
 
     def display(self):
         return 'Multi Rolling Aggregate'

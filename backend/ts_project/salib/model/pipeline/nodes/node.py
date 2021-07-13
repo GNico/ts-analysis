@@ -1,11 +1,12 @@
+from collections import OrderedDict
 import copy
 
 class Node:
 
     def __init__(self, id):
         self.id = id
-        self.params = {}
-        self.required_params = {}
+        self.required_params = OrderedDict()
+        self.params = OrderedDict()
         self.sources = []
         self.input_names = []
 
