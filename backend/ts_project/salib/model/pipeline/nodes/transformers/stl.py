@@ -18,7 +18,7 @@ class STL(NodeTransformer):
             SelectOption("seasonal", "Seasonality"),
             SelectOption("resid", "Residual"),
         ]
-        self.add_required_param(Select('output', 'Output', 'STL output', output_options, output_options[0].code))        
+        self.add_required_param(Select('output', 'Output', 'STL output', output_options, output_options[0].code))
         self.add_required_param(String('period', 'Period', 'Expected seasonality in periods or time interval (eg: 12h)', '7d'))
         self.add_required_param(Boolean('robust', 'Robust', 'Tolerate larger errors using LOWESS', True))
 

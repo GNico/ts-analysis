@@ -1,5 +1,3 @@
-import pandas as pd
-
 from .binary_math_transformer import BinaryMathTransformer
 from ...params.select import Select, SelectOption
 

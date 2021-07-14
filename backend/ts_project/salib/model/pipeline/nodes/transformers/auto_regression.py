@@ -78,7 +78,7 @@ class AutoRegression(NodeTransformer):
         else:
             raise ValueError('Invalid output: ' + output)
 
-        print(model.summary())
+        # print(model.summary())
         return (result[offset_start:], debug_info)
 
     def __str__(self):

@@ -1,11 +1,13 @@
 from .nodes.transformers.ema import EMA
 from .nodes.transformers.difference import Difference
+from .nodes.transformers.divide import Divide
 from .nodes.transformers.std_normalize import StdNormalize
 from .nodes.transformers.shift import Shift
 from .nodes.transformers.identity import Identity
 from .nodes.transformers.rolling_aggregate import RollingAggregate
 from .nodes.transformers.multi_rolling_aggregate import MultiRollingAggregate
 from .nodes.transformers.stl import STL
+from .nodes.transformers.CF_filter import CFFilter
 from .nodes.transformers.seasonal_decompose import SeasonalDecompose
 from .nodes.transformers.auto_regression import AutoRegression
 from .nodes.transformers.garch import GARCH
@@ -45,13 +47,15 @@ class NodeFactory:
             'Identity': Identity,
             'EMA': EMA,
             'Difference': Difference,
+            'Divide': Divide,
             'RollingAggregate': RollingAggregate,
             'MultiRollingAggregate': MultiRollingAggregate,
             'STL': STL,
             'Seasonal decompose': SeasonalDecompose,
             'AutoRegression': AutoRegression,
             'ALMA': ALMA,
-            'GARCH': GARCH
+            'GARCH': GARCH,
+            'CFFilter': CFFilter
         },
         'detector': {
             'SimpleThreshold': SimpleThreshold,
