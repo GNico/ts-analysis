@@ -467,8 +467,55 @@
     },
     {
       "type": "AutoRegression",
-      "desc": "SARIMA model, with lags & seasonality. Inputs can be in periods or interval length",
+      "desc": "Simple SAR model, with lags & seasonality. Fast implementation of SARIMA.",
       "display": "Auto-Regression",
+      "params": [
+        {
+          "id": "lags",
+          "type": "String",
+          "display": "#Lags",
+          "desc": "Lags, in period (eg 12h) or count",
+          "conditions": [],
+          "value": "7d"
+        },
+        {
+          "id": "period",
+          "type": "String",
+          "display": "Period",
+          "desc": "Seasonality in period (eg 12h) or count. Leave empty for none.",
+          "conditions": [],
+          "value": ""
+        },
+        {
+          "id": "output",
+          "type": "Select",
+          "display": "Output",
+          "desc": "Model output",
+          "conditions": [],
+          "value": "predicted",
+          "options": [
+            {
+              "code": "predicted",
+              "display": "Predicted"
+            },
+            {
+              "code": "resid",
+              "display": "Residual"
+            }
+          ]
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
+      "type": "SARIMA",
+      "desc": "SARIMA model, with lags & seasonality. Inputs can be in periods or interval length",
+      "display": "SARIMA",
       "params": [
         {
           "id": "p",

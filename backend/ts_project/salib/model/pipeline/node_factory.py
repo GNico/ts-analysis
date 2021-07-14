@@ -10,6 +10,7 @@ from .nodes.transformers.stl import STL
 from .nodes.transformers.CF_filter import CFFilter
 from .nodes.transformers.seasonal_decompose import SeasonalDecompose
 from .nodes.transformers.auto_regression import AutoRegression
+from .nodes.transformers.sarima import SARIMA
 from .nodes.transformers.garch import GARCH
 from .nodes.transformers.alma import ALMA
 
@@ -53,6 +54,7 @@ class NodeFactory:
             'STL': STL,
             'Seasonal decompose': SeasonalDecompose,
             'AutoRegression': AutoRegression,
+            'SARIMA': SARIMA,
             'ALMA': ALMA,
             'GARCH': GARCH,
             'CFFilter': CFFilter

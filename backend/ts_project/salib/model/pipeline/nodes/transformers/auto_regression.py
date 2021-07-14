@@ -1,8 +1,7 @@
-import statsmodels.tsa.arima.model as ar_model
+from statsmodels.tsa.ar_model import AutoReg
 import statsmodels.tsa.stattools as stattools
 
 from ..node_transformer import NodeTransformer
-from ...params.int import BoundedInt
 from ...params.select import Select, SelectOption
 from ...params.string import String
 from ....utils import timedelta_to_period
@@ -14,46 +13,32 @@ class AutoRegression(NodeTransformer):
         self.add_params()
 
     def add_params(self):
-        self.add_required_param(String('p', 'p', 'AR order', '7d'))
-        self.add_param(BoundedInt('d', 'd', 'Differencing degree', 0, None, 0))
-        self.add_param(String('q', 'q', 'MA order', '0'))
-
-        self.add_param(String('P', 'P', 'Seasonal AR order', '0'))
-        self.add_param(BoundedInt('D', 'D', 'Seasonal differencing degree', 0, None, 0))
-        self.add_param(String('Q', 'Q', 'Seasonal MA order', '0'))
-
-        self.add_param(String('m', 'm', 'Season length', '0'))
-
+        self.add_required_param(String('lags', '#Lags', 'Lags, in period (eg 12h) or count', '7d'))
+        self.add_required_param(String('period', 'Period', 'Seasonality in period (eg 12h) or count. Leave empty for none.', ''))
         output_options = [
             SelectOption("predicted", "Predicted"),
             SelectOption("resid", "Residual"),
         ]
-        self.add_required_param(Select('output', 'Output', 'Model output', output_options, output_options[0].code))        
-
+        self.add_required_param(Select('output', 'Output', 'Model output', output_options, output_options[0].code))
 
     def get_params(self):
-        p = self.get_param('p').value
-        d = self.get_param('d').value
-        q = self.get_param('q').value
-        P = self.get_param('P').value
-        D = self.get_param('D').value
-        Q = self.get_param('Q').value
-        m = self.get_param('m').value
+        lags = self.get_param('lags').value
+        period = self.get_param('period').value
         output = self.get_param('output').value
-        return (p, d, q, P, D, Q, m, output)
+        return (lags, period, output)
 
     def transform(self, seriess, debug):
         series = seriess[0]
         pdseries = series.pdseries
 
-        p, d, q, P, D, Q, m, output = self.get_params()
+        lags, period, output = self.get_params()
 
-        order = tuple(map(lambda param: timedelta_to_period(param, series.step()), (p, d, q)))
-        seasonal_order = tuple(map(lambda param: timedelta_to_period(param, series.step()), (P, D, Q, m)))
+        calc_lags = timedelta_to_period(lags, series.step())
+        calc_period = timedelta_to_period(period, series.step()) if period is not None else None
+        include_seasonal = calc_period is not None
 
-        ar = ar_model.ARIMA(pdseries, order=order, seasonal_order=seasonal_order, enforce_stationarity=False, enforce_invertibility=False, trend=None)
+        ar = AutoReg(pdseries, lags=calc_lags, seasonal=include_seasonal, period=calc_period, old_names=False)
         model = ar.fit()
-        offset_start = max(sum(order), sum(seasonal_order))
         
         # Debug info
         if debug:
@@ -62,13 +47,11 @@ class AutoRegression(NodeTransformer):
             pacf_result = stattools.pacf(pdseries, nlags=nlags, method='ols')
             debug_info = {
                 "summary": str(model.summary()),
-                "offset_start": offset_start,
                 "acf": acf_result.tolist(),
                 "pacf": pacf_result.tolist()
             }
         else:
             debug_info = {}
-        # Drop offset_start elements
         
         result = None
         if output == 'predicted':
@@ -79,7 +62,7 @@ class AutoRegression(NodeTransformer):
             raise ValueError('Invalid output: ' + output)
 
         # print(model.summary())
-        return (result[offset_start:], debug_info)
+        return (result, debug_info)
 
     def __str__(self):
         return "AutoRegression" + str(self.get_params()) + "[" + self.id + "]"
@@ -88,4 +71,4 @@ class AutoRegression(NodeTransformer):
         return 'Auto-Regression'
 
     def desc(self):
-        return 'SARIMA model, with lags & seasonality. Inputs can be in periods or interval length'
+        return 'Simple SAR model, with lags & seasonality. Fast implementation of SARIMA.'

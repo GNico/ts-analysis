@@ -11,12 +11,12 @@ from model.test.test_series_builder import TestSeriesBuilder
 from model.test.testcase import TestCase
 
 
-class TestAutoRegression(unittest.TestCase):
+class TestSARIMA(unittest.TestCase):
 
     def test_linear_series_lags(self):
         series = TestSeriesBuilder.linear(10, 0, 1).build()
 
-        factory = NodeFactory.transformer('test', 'AutoRegression')
+        factory = NodeFactory.transformer('test', 'SARIMA')
         factory.set_param_value('p', '1')
         factory.set_param_value('d', 1)
         # factory.set_param_value('q', '3')
@@ -39,7 +39,7 @@ class TestAutoRegression(unittest.TestCase):
     def test_linear_series_lags_fitted(self):
         series = TestSeriesBuilder.linear(10, 0, 1).build()
 
-        factory = NodeFactory.transformer('test', 'AutoRegression')
+        factory = NodeFactory.transformer('test', 'SARIMA')
         factory.set_param_value('p', '1')
         factory.set_param_value('d', 1)
         # factory.set_param_value('q', '3')
@@ -69,7 +69,7 @@ class TestAutoRegression(unittest.TestCase):
             [5, -1]
             ], 1)
 
-        factory = NodeFactory.transformer('test', 'AutoRegression')
+        factory = NodeFactory.transformer('test', 'SARIMA')
         factory.set_param_value('p', '1')
         factory.set_param_value('output', 'resid')
         ar = factory.build()
