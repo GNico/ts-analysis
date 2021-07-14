@@ -43,7 +43,7 @@ class CFFilter(NodeTransformer):
         return (result, {})
 
     def __str__(self):
-        return "CFFilter(" + str(self.get_params()) + ")[" + self.id + "]"
+        return "CFFilter" + str(self.get_params()) + "[" + self.id + "]"
 
     def display(self):
         return 'CFFilter decomposition'

@@ -36,7 +36,7 @@ class GARCH(NodeTransformer):
             acf_result = stattools.acf(pdseries**2, nlags=nlags, fft=True)
             pacf_result = stattools.pacf(pdseries**2, nlags=nlags, method='ols')
             debug_info = {
-                "summary": result.summary(),
+                "summary": str(result.summary()),
                 "acf": acf_result.tolist(),
                 "pacf": pacf_result.tolist()}
         else:
@@ -46,7 +46,7 @@ class GARCH(NodeTransformer):
         return (result.resid, debug_info)
 
     def __str__(self):
-        return "GARCH(" + str(self.get_params()) + ")[" + self.id + "]"
+        return "GARCH" + str(self.get_params()) + "[" + self.id + "]"
 
     def display(self):
         return 'GARCH'

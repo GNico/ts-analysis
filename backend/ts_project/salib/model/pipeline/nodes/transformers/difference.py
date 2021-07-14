@@ -14,7 +14,7 @@ class Difference(BinaryMathTransformer):
         self.add_required_param(Select('metric', 'Difference metric', 'Difference metric between window values', operators, operators[0].code))
 
     def __str__(self):
-        return 'Difference[' + self.id + ']'
+        return 'Difference(' + ','.join(map(str, self.sources)) + ')[' + self.id + ']'
 
     def display(self):
         return 'Difference'

@@ -82,7 +82,7 @@ class AutoRegression(NodeTransformer):
         return (result[offset_start:], debug_info)
 
     def __str__(self):
-        return "AutoRegression(" + str(self.get_params()) + ")[" + self.id + "]"
+        return "AutoRegression" + str(self.get_params()) + "[" + self.id + "]"
 
     def display(self):
         return 'Auto-Regression'

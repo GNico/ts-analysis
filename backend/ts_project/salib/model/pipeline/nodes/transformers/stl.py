@@ -52,7 +52,7 @@ class STL(NodeTransformer):
         return period + ((period + 1) % 2)
 
     def __str__(self):
-        return "STL(" + str(self.get_params()) + ")[" + self.id + "]"
+        return "STL" + str(self.get_params()) + "[" + self.id + "]"
 
     def display(self):
         return 'STL decomposition'

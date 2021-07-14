@@ -7,7 +7,7 @@ class Divide(BinaryMathTransformer):
         super().__init__(id)
 
     def __str__(self):
-        return 'Divide[' + self.id + ']'
+        return 'Divide(' + ','.join(map(str, self.sources)) + ')[' + self.id + ']'
 
     def display(self):
         return 'Divide'

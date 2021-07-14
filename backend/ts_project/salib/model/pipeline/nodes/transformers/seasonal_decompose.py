@@ -46,7 +46,7 @@ class SeasonalDecompose(NodeTransformer):
         return (result, {})
 
     def __str__(self):
-        return "SeasonalDecompose(" + str(self.get_params()) + ")[" + self.id + "]"
+        return "SeasonalDecompose" + str(self.get_params()) + "[" + self.id + "]"
 
     def display(self):
         return 'Seasonal decomposition'
