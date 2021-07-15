@@ -1,7 +1,6 @@
 <template>
 
 <b-table 
-  class='scrollable'
   v-if="!isEmpty"
   :data="anomalies" 
   :selected="selected"      
@@ -88,8 +87,3 @@ export default {
 }
 </script>
 
-<style>
-.scrollable {
-  overflow-y: auto;
-}
-</style>

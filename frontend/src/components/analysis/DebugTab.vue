@@ -123,9 +123,7 @@ export default {
       return formatted
     },
     getNode(id) {
-      if (!isNaN(parseInt(id))) {
-        return {display: 'Input ' + id}
-      }
+      if (!isNaN(parseInt(id))) return {display: 'Input ' + id}
       if (id === 'end') return {display: 'Result'}
       return this.model.find(item => item.id == id)
     },
