@@ -23,14 +23,14 @@
       <div class="mb-1">
         <span class="has-text-grey-lighter has-text-weight-semibold">Tags:</span> 
         <b-taglist v-if="nodeDetails.tags.length > 0">
-          <b-tag v-for="tag in nodeDetails.tags" class="has-background-grey-darker">{{tag}}</b-tag>
+          <b-tag v-for="tag in nodeDetails.tags" :key="tag" class="has-background-grey-darker">{{tag}}</b-tag>
         </b-taglist>
         <span v-else>All</span>
       </div>
       <div class="mb-1">
         <span class="has-text-grey-lighter has-text-weight-semibold">Contexts:</span> 
         <b-taglist v-if="nodeDetails.contexts.length > 0">
-          <b-tag v-for="context in nodeDetails.contexts" class="has-background-grey-darker">{{context}}</b-tag>
+          <b-tag v-for="context in nodeDetails.contexts" :key="context" class="has-background-grey-darker">{{context}}</b-tag>
         </b-taglist>
         <span v-else>All</span>
       </div>      
@@ -44,7 +44,7 @@
       <div class="has-text-grey-lighter has-text-weight-semibold">Description</div>
       <div class="ml-4 mb-1">{{nodeDetails.desc}}</div>
       <div class="has-text-grey-lighter has-text-weight-semibold">Parameters</div>
-      <div v-for="param in Object.keys(nodeDetails.paramsData)" class="ml-4">
+      <div v-for="param in Object.keys(nodeDetails.paramsData)" :key="param" class="ml-4">
         <span> <b>{{param}}:</b> {{nodeDetails.paramsData[param]}} </span>
       </div>
      

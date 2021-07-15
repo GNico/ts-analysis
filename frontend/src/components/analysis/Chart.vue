@@ -1,5 +1,6 @@
 <template>
 <BaseChart 
+  :style="{height: 'inherit'}"
   :seriesData="chartData" 
   :bands="anomalies"
   :activeBand="activeAnomaly"

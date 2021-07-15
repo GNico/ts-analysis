@@ -91,6 +91,5 @@ export default {
 <style>
 .scrollable {
   overflow-y: auto;
-  height: inherit;
 }
 </style>

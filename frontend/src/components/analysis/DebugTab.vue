@@ -25,8 +25,7 @@
     <div v-for="item in Object.keys(results)">
       <DebugNodeResult 
         class="item-section" 
-        :series="results[item]['series']" 
-        :anomalies="results[item]['anomalies']"
+        :result="results[item]"               
         @updateRange="updateRange"
         :extremes="extremes"
         :node="getNode(item)"/>       
@@ -108,15 +107,16 @@ export default {
             },
             anomalies: [],
           }
-        } else if (nodeId === 'end') {
+        } else if (nodeId === 'end') {  //end node
           formatted[nodeId] = { 
             series: result.series, 
             anomalies: this.addIdToAnomalies(result.anomalies)
           }
-        } else if (result.debug_nodes[nodeId]) {
+        } else if (result.debug_nodes[nodeId]) {  //regular node
           formatted[nodeId] = { 
             series: result.debug_nodes[nodeId].series,
-            anomalies: this.addIdToAnomalies(result.debug_nodes[nodeId].anomalies)
+            anomalies: this.addIdToAnomalies(result.debug_nodes[nodeId].anomalies),
+            debug_info: result.debug_nodes[nodeId].debug_info
           }
         }
       })
@@ -156,9 +156,8 @@ export default {
 
 <style>
 .item-section {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  margin-top: 0.75rem;
+  border-top: 2px solid rgba(255,255,255,0.1);
 }
 
 </style>
