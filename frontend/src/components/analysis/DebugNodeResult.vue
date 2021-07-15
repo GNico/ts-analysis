@@ -1,33 +1,18 @@
 <template>
-<div class="columns" :style="{height: height + 'px'}">
+<div  class="columns" :style="expanded ? {height: height + 'px'} : ''">
+  <a v-if="!expanded" class="is-flex is-align-items-center m-3 has-text-white" @click="expanded = !expanded">
+    <b-icon icon="menu-right"></b-icon>
+    <span><strong>{{node.display}}</strong></span>
+  </a>
+
+  <template v-else>
   <div class="column chart-column is-flex is-flex-direction-column">
-    <div class="is-flex is-justify-content-space-between mb-2 is-align-items-center ">
+    <div class="is-flex is-justify-content-space-between mb-2 is-align-items-center">
       <!--header left section-->
-      <b-dropdown trap-focus>
-        <template #trigger>            
-          <a class="is-flex is-align-items-center has-text-white">
-            <span><strong>{{node.display}}</strong></span>
-            <b-icon v-if="node.paramsData" icon="menu-down"></b-icon>
-          </a>
-        </template>
-        <b-dropdown-item
-          v-if="node.paramsData"
-          aria-role="menu-item"
-          :focusable="false"
-          custom
-          paddingless>
-            <div class="modal-card" style="max-width:300px;">
-                <section class="modal-card-body">
-                  <div> {{node.desc}} </div>
-                  <hr class="param-separator">
-                  <div> Parameters: </div>
-                  <div v-for="entry in Object.entries(node.paramsData)" :label="entry[0]" class="ml-4">
-                    <span> {{entry[0]}}: {{entry[1]}} </span>
-                  </div>
-                </section>                            
-            </div>
-        </b-dropdown-item>
-      </b-dropdown>
+      <a class="is-flex is-align-items-center has-text-white" @click="expanded = !expanded">
+        <b-icon icon="menu-down"></b-icon>
+        <span><strong>{{node.display}}</strong></span>
+      </a>
       
       <!--header right section-->
       <div class="is-flex is-align-items-center">              
@@ -69,19 +54,19 @@
   <div class="column is-4 is-flex is-flex-direction-column" :style="{height: height + 'px'}">     
     <!--tabs headers-->  
     <div class="mb-2 is-flex">
-      <div class="mr-4 is-clickable" @click="selectedTab = 0" v-if="!isEmpty(node.paramsData)"> 
-        <strong :class="activeTab == 0 ? 'has-text-white' : ''"> Node details </strong> 
+      <div class="mr-4 is-clickable" @click="selectedTab = 1" v-if="!isEmpty(node.paramsData)"> 
+        <strong :class="activeTab == 1 ? 'has-text-white' : ''"> Node details </strong> 
       </div>
-      <div class="mr-4 is-clickable" @click="selectedTab = 1" v-if="anomalies && anomalies.length">
-        <strong :class="activeTab == 1 ? 'has-text-white' : ''"> Anomalies </strong>
+      <div class="mr-4 is-clickable" @click="selectedTab = 2" v-if="anomalies && anomalies.length">
+        <strong :class="activeTab == 2 ? 'has-text-white' : ''"> Anomalies </strong>
       </div>
-      <div class="mr-4 is-clickable" @click="selectedTab = 2" v-if="debug_info">
-        <strong :class="activeTab == 2 ? 'has-text-white' : ''"> Debug info </strong>
+      <div class="mr-4 is-clickable" @click="selectedTab = 3" v-if="debug_info">
+        <strong :class="activeTab == 3 ? 'has-text-white' : ''"> Debug info </strong>
       </div>
     </div>
 
     <!--tabs content-->  
-    <div v-if="!isEmpty(node.paramsData) && activeTab == 0" class="is-flex-grow-1 scrollable">
+    <div v-if="!isEmpty(node.paramsData) && activeTab == 1" class="is-flex-grow-1 scrollable">
       <div class="mt-2 has-text-grey-light"> Name: </div>
       <div class="ml-4 mb-2"> {{node.display}} </div>
       <div class="mt-2 has-text-grey-light"> Description: </div>
@@ -92,14 +77,14 @@
       </div>
     </div>
 
-    <AnomaliesTable v-else-if="activeTab == 1 && !isEmpty(anomalies)"
+    <AnomaliesTable v-else-if="activeTab == 2 && !isEmpty(anomalies)"
       class="is-flex-grow-1 scrollable"
       id="anom-table"
       :anomalies="anomalies"
       :activeAnomaly="activeAnomalyId"
       @changeActive="activeAnomalyId = $event"/> 
 
-    <div v-else-if="activeTab == 2 && !isEmpty(debug_info)" class="is-flex-grow-1 scrollable" >
+    <div v-else-if="activeTab == 3 && !isEmpty(debug_info)" class="is-flex-grow-1 scrollable" >
       <div v-for="(value, key) in debug_info">
         <span class="has-text-grey-light">{{key}}:</span> 
 
@@ -114,10 +99,9 @@
         
       </div>
     </div>
+    </template>
   </div>
 </div> 
-  
-
 </template>
 
 <script>
@@ -153,6 +137,7 @@ export default {
       showMinMax: true,
       axisInterval: 'auto',
       selectedTab: null,
+      expanded: true,
     }
   },
   computed: {
@@ -166,12 +151,12 @@ export default {
       return this.result.debug_info
     },
     activeTab() {
-      var active = 0 
+      var active = 1 
       if (!this.selectedTab) {
         if (!this.isEmpty(this.anomalies)) {
-          active = 1 
+          active = 2 
         } else if (!this.isEmpty(this.debug_info)) {
-          active = 2
+          active = 3
         }
       } else {
         active = this.selectedTab
@@ -211,5 +196,6 @@ export default {
 .scrollable {
   overflow-y: auto;
 }
+
 
 </style>
