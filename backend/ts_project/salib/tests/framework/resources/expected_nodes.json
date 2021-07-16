@@ -55,12 +55,32 @@
           "value": true
         },
         {
+          "id": "acf_lags",
+          "type": "BoundedInt",
+          "display": "ACF lags",
+          "desc": "ACF max lags",
+          "conditions": [],
+          "value": 10,
+          "min": 0,
+          "max": null
+        },
+        {
           "id": "pacf",
           "type": "Boolean",
           "display": "PACF",
           "desc": "Partial autocorrelation function",
           "conditions": [],
           "value": true
+        },
+        {
+          "id": "pacf_lags",
+          "type": "BoundedInt",
+          "display": "PACF lags",
+          "desc": "PACF max lags",
+          "conditions": [],
+          "value": 10,
+          "min": 0,
+          "max": null
         },
         {
           "id": "mean",
@@ -77,26 +97,6 @@
           "desc": "Series standard deviation",
           "conditions": [],
           "value": true
-        },
-        {
-          "id": "acf_lags",
-          "type": "BoundedInt",
-          "display": "ACF max lags",
-          "desc": "ACF max lags",
-          "conditions": [],
-          "value": 10,
-          "min": 0,
-          "max": null
-        },
-        {
-          "id": "pacf_lags",
-          "type": "BoundedInt",
-          "display": "PACF max lags",
-          "desc": "PACF max lags",
-          "conditions": [],
-          "value": 10,
-          "min": 0,
-          "max": null
         }
       ],
       "inputs": {

@@ -10,9 +10,9 @@ class Identity(NodeTransformer):
         super().__init__(id)
         self.add_required_param(Boolean('adf_test', 'ADF test', 'Include Augmented Dicky-Fuller test', True))
         self.add_required_param(Boolean('acf', 'ACF', 'Autocorrelation function', True))
-        self.add_param(BoundedInt('acf_lags', 'ACF max lags', 'ACF max lags', 0, None, 10))
+        self.add_required_param(BoundedInt('acf_lags', 'ACF lags', 'ACF max lags', 0, None, 10))
         self.add_required_param(Boolean('pacf', 'PACF', 'Partial autocorrelation function', True))
-        self.add_param(BoundedInt('pacf_lags', 'PACF max lags', 'PACF max lags', 0, None, 10))
+        self.add_required_param(BoundedInt('pacf_lags', 'PACF lags', 'PACF max lags', 0, None, 10))
         self.add_required_param(Boolean('mean', 'Mean', 'Series mean', True))
         self.add_required_param(Boolean('stddev', 'Std. deviation', 'Series standard deviation', True))
         
