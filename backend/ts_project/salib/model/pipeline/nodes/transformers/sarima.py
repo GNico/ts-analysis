@@ -54,17 +54,12 @@ class SARIMA(NodeTransformer):
         ar = ar_model.ARIMA(pdseries, order=order, seasonal_order=seasonal_order, enforce_stationarity=False, enforce_invertibility=False, trend=None)
         model = ar.fit()
         offset_start = max(sum(order), sum(seasonal_order))
-        
+
         # Debug info
         if debug:
-            nlags = min(len(pdseries) // 2 - 1, 40)
-            acf_result = stattools.acf(pdseries, nlags=nlags, fft=True)
-            pacf_result = stattools.pacf(pdseries, nlags=nlags, method='ols')
             debug_info = {
                 "summary": str(model.summary()),
                 "offset_start": offset_start,
-                "acf": acf_result.tolist(),
-                "pacf": pacf_result.tolist()
             }
         else:
             debug_info = {}

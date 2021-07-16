@@ -13,6 +13,8 @@ class Identity(NodeTransformer):
         self.add_param(BoundedInt('acf_lags', 'ACF max lags', 'ACF max lags', 0, None, 10))
         self.add_required_param(Boolean('pacf', 'PACF', 'Partial autocorrelation function', True))
         self.add_param(BoundedInt('pacf_lags', 'PACF max lags', 'PACF max lags', 0, None, 10))
+        self.add_required_param(Boolean('mean', 'Mean', 'Series mean', True))
+        self.add_required_param(Boolean('stddev', 'Std. deviation', 'Series standard deviation', True))
         
     def transform(self, seriess, debug):
         pdseries = seriess[0].pdseries
@@ -24,6 +26,10 @@ class Identity(NodeTransformer):
                 self.update_debug_info(debug_info, 'ACF', self.acf(pdseries))
             if self.get_param('pacf').value:
                 self.update_debug_info(debug_info, 'PACF', self.pacf(pdseries))
+            if self.get_param('mean').value:
+                debug_info['Mean'] = pdseries.mean()
+            if self.get_param('stddev').value:
+                debug_info['Std. dev.'] = pdseries.std()
         else:
             debug_info = {}    
         return (pdseries, debug_info)
@@ -67,7 +73,7 @@ class Identity(NodeTransformer):
         return "Identity[" + self.id + "]"
 
     def display(self):
-        return 'Identity'
+        return 'Identity/probe'
 
     def desc(self):
-        return 'Identity - apply no transformation'
+        return 'Identity - no transformation. Use to probe series.'

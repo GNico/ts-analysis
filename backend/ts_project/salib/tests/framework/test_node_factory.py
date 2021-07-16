@@ -8,12 +8,12 @@ from model.pipeline.node_factory import NodeFactory
 
 class TestNodeFactory(unittest.TestCase):
     def test_node_list(self):
-        self.maxDiff = None
+        actual = NodeFactory.nodes_list()
         dir = os.path.dirname(__file__)
         expected_file = os.path.join(dir, 'resources/expected_nodes.json')
+        # print(json.dumps(actual, indent=2), file=open(expected_file, 'w'))
         expected = json.loads(Path(expected_file).read_text())
-        actual = NodeFactory.nodes_list()
-        # print(json.dumps(actual))
+        self.maxDiff = None
         self.assertEqual(expected, actual)
 
     def test_parsing(self):

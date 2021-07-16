@@ -29,7 +29,7 @@ class TestAutoregression(unittest.TestCase):
         for i in range(0, len(expected_series)):
             self.assertAlmostEqual(expected_series[i], actual_series[i], 2)
         # With debug info
-        self.assertEqual(set(['summary', 'acf', 'pacf']), set(debug_info.keys()))
+        self.assertEqual(set(['summary']), set(debug_info.keys()))
 
         # No debug info
         result, debug_info = ar.transform([series], False)
@@ -51,7 +51,7 @@ class TestAutoregression(unittest.TestCase):
         for i in range(0, len(expected_series)):
             self.assertAlmostEqual(expected_series[i], actual_series[i], 2)
         # With debug info
-        self.assertEqual(set(['summary', 'acf', 'pacf']), set(debug_info.keys()))
+        self.assertEqual(set(['summary']), set(debug_info.keys()))
 
         # No debug info
         result, debug_info = ar.transform([series], False)

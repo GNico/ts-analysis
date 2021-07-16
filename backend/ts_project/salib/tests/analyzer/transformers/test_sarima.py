@@ -30,7 +30,7 @@ class TestSARIMA(unittest.TestCase):
         for i in range(0, len(expected_series)):
             self.assertAlmostEqual(expected_series[i], actual_series[i], 2)
         # With debug info
-        self.assertEqual(set(['summary', 'acf', 'pacf', 'offset_start']), set(debug_info.keys()))
+        self.assertEqual(set(['summary', 'offset_start']), set(debug_info.keys()))
 
         # No debug info
         result, debug_info = ar.transform([series], False)
@@ -53,7 +53,7 @@ class TestSARIMA(unittest.TestCase):
         for i in range(0, len(expected_series)):
             self.assertAlmostEqual(expected_series[i], actual_series[i], 2)
         # With debug info
-        self.assertEqual(set(['summary', 'acf', 'pacf', 'offset_start']), set(debug_info.keys()))
+        self.assertEqual(set(['summary', 'offset_start']), set(debug_info.keys()))
 
         # No debug info
         result, debug_info = ar.transform([series], False)

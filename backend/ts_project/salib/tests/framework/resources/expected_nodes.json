@@ -35,8 +35,8 @@
     },
     {
       "type": "Identity",
-      "desc": "Identity - apply no transformation",
-      "display": "Identity",
+      "desc": "Identity - no transformation. Use to probe series.",
+      "display": "Identity/probe",
       "params": [
         {
           "id": "adf_test",
@@ -59,6 +59,22 @@
           "type": "Boolean",
           "display": "PACF",
           "desc": "Partial autocorrelation function",
+          "conditions": [],
+          "value": true
+        },
+        {
+          "id": "mean",
+          "type": "Boolean",
+          "display": "Mean",
+          "desc": "Series mean",
+          "conditions": [],
+          "value": true
+        },
+        {
+          "id": "stddev",
+          "type": "Boolean",
+          "display": "Std. deviation",
+          "desc": "Series standard deviation",
           "conditions": [],
           "value": true
         },
