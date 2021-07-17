@@ -44,9 +44,13 @@ class NodeTransformer(Node):
     @staticmethod
     def rolling_apply_2input(lhs, rhs, func, window_size, center, min_periods):
         result = []
-        for i in range(0, len(lhs)):
-            lhs_slice = NodeTransformer.window_slice(lhs, i, window_size, center)
-            rhs_slice = NodeTransformer.window_slice(rhs, i, window_size, center)
+        rhs_len = len(rhs)
+        lhs_len = len(lhs)
+        start_offset_lhs = (lhs_len - rhs_len) if lhs_len > rhs_len else 0
+        start_offset_rhs = (rhs_len - lhs_len) if rhs_len > lhs_len else 0
+        for i in range(0, min(rhs_len, lhs_len)):
+            lhs_slice = NodeTransformer.window_slice(lhs, i+start_offset_lhs, window_size, center)
+            rhs_slice = NodeTransformer.window_slice(rhs, i+start_offset_rhs, window_size, center)
             if len(lhs_slice) < min_periods:
                 new_entry = np.nan
             else:

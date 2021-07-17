@@ -51,7 +51,8 @@ class MultiRollingAggregate(NodeTransformer):
         lhs, rhs = seriess[0], seriess[1]
         MultiRollingAggregate.validate_input_steps_spans(lhs, rhs)
         transformed_values = self.transform_values(lhs, rhs)
-        return (pd.Series(transformed_values, index=lhs.pdseries.index), {})
+        new_index = lhs.pdseries.index if lhs.span() < rhs.span() else rhs.pdseries.index
+        return (pd.Series(transformed_values, index=new_index), {})
 
     def transform_values(self, lhs, rhs):
         window_str, center, min_periods, agg = self.get_common_params()
@@ -111,6 +112,5 @@ class MultiRollingAggregate(NodeTransformer):
         if lhs.step() != rhs.step():
             err_vars = (lhs.step(), rhs.step())
             raise ValueError('Inputs must have same step interval: lhs: %s != rhs: %s' % err_vars)
-        if lhs.span() != rhs.span():
-            err_vars = (lhs.start, lhs.end, rhs.start, rhs.end)
-            raise ValueError('Inputs must have same span: lhs: %s-%s != rhs: %s-%s' % err_vars)
+        if lhs.end != rhs.end:
+            raise ValueError('Inputs must have same ending date: lhs: %s != rhs: %s' % (lhs.end, rhs.end))
