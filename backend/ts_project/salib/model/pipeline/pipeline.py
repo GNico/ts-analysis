@@ -40,7 +40,7 @@ class Pipeline:
                         node_input_results.append(NodeResult(None, [], output_series=series))
                     else:
                         raise ValueError("Invalid node %s source %s" % (node.id, node_source_ref))
-                    
+
                 logging.info('Executing node: %s' % node)
                 start_time = timeit.default_timer()
                 node.validate_inputs(node_input_results)
