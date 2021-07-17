@@ -47,7 +47,7 @@ class Pipeline:
     def build_root_node(self, nodes):
         all_node_references = set()
         for node in nodes:
-            self.validate_no_recursion_for(node)            
+            self.validate_no_recursion_for(node)
             all_node_references.update([s.ref for s in node.node_sources()])
         
         root = Root()
@@ -56,22 +56,22 @@ class Pipeline:
             if node.id not in all_node_references:
                 root.add_source(NodeRef(node.id))
 
-
+        self.validate_no_recursion_for(root)
         return root
 
     def validate_no_recursion_for(self, node):
         try:
             path = []
-            self.validate_no_recursion(node, path)
+            self.validate_no_recursion(node, path, node)
         except ValueError as e:
             raise ValueError("Found recursion in node %s, path: %s" % (node.id, path)) from e
 
-    def validate_no_recursion(self, node, nodes_seen):
-        nodes_seen.append(node.id)
+    def validate_no_recursion(self, node, path, start_node):
+        path.append(node.id)
         for source in node.node_sources():
-            if source.ref in nodes_seen:
-                raise ValueError('Duplicate found %s' % source.ref)
-            self.validate_no_recursion(self.resolve_node_reference(source.ref), nodes_seen)
+            if source.ref == start_node.id:
+                raise ValueError('Found starting node while traversing: %s' % start_node.id)
+            self.validate_no_recursion(self.resolve_node_reference(source.ref), path, start_node)
 
     @staticmethod
     def build_node_reference_table(nodes):
