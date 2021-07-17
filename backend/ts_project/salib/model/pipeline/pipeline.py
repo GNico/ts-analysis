@@ -1,4 +1,5 @@
 import logging
+import timeit
 
 from .node_factory import NodeFactory
 from .nodes.node_result import NodeResult
@@ -13,27 +14,41 @@ class Pipeline:
         self.root_node = self.build_root_node(nodes)
 
     def execute(self, inputs, debug):
-        result = self.execute_node(self.root_node, inputs, debug)
+        logging.info('Pipeline execution started')
+        start_time = timeit.default_timer()
+        execution_results = {}
+        result = self.execute_node(self.root_node, inputs, debug, execution_results)
+        execution_time = timeit.default_timer() - start_time
+        logging.info('Pipeline execution completed: %s nodes executed (%.2fs)' % (len(execution_results), execution_time))
         return result
 
-    def execute_node(self, node, inputs, debug):
-        logging.info('Executing node %s' % node)
+    def execute_node(self, node, inputs, debug, execution_results):
         if len(node.sources) == 0:
             raise ValueError("Invalid node %s with no sources" % node.id)
         else:
-            node_input_results = []
-            for node_source_ref in node.sources:
-                if node_source_ref.is_node_ref():
-                    source = self.resolve_node_reference(node_source_ref.ref)
-                    node_input_results.append(self.execute_node(source, inputs, debug))
-                elif node_source_ref.is_input_ref():
-                    series = inputs[node_source_ref.ref]
-                    node_input_results.append(NodeResult(None, [], output_series=series))
-                else:
-                    raise ValueError("Invalid node %s source %s" % (node.id, node_source_ref))
-                
-        node.validate_inputs(node_input_results)
-        return node.execute(node_input_results, debug)
+            if node.id in execution_results:
+                logging.info('Node result from cache %s' % node)
+                return execution_results[node.id]
+            else:
+                node_input_results = []
+                for node_source_ref in node.sources:
+                    if node_source_ref.is_node_ref():
+                        source = self.resolve_node_reference(node_source_ref.ref)
+                        node_input_results.append(self.execute_node(source, inputs, debug, execution_results))
+                    elif node_source_ref.is_input_ref():
+                        series = inputs[node_source_ref.ref]
+                        node_input_results.append(NodeResult(None, [], output_series=series))
+                    else:
+                        raise ValueError("Invalid node %s source %s" % (node.id, node_source_ref))
+                    
+                logging.info('Executing node: %s' % node)
+                start_time = timeit.default_timer()
+                node.validate_inputs(node_input_results)
+                node_result = node.execute(node_input_results, debug)
+                execution_time = timeit.default_timer() - start_time
+                logging.info('Node %s execution completed (%.2fs)' % (node, execution_time))
+                execution_results[node.id] = node_result
+                return node_result
 
     def resolve_node_reference(self, reference):
         return self.node_reference_table[reference]
