@@ -88,19 +88,16 @@
       <div v-for="(value, key) in debug_info">
         <span class="has-text-grey-light">{{key}}:</span> 
 
-        <span v-if="!key.includes('lag_correlations')"> {{value}} </span>
-          <AutoCorrChart 
-            v-else
-            :style="{height:'200px'}"
-            :title="key"
-            :data="value"
-          />
-        </div>
-        
-      </div>
+        <span class="param-text" v-if="!key.includes('lag_correlations')"> {{value}} </span>
+        <AutoCorrChart 
+          v-else
+          :style="{height:'200px'}"
+          :title="key"
+          :data="value"/>
+      </div>      
     </div>
-    </template>
   </div>
+  </template>
 </div> 
 </template>
 
@@ -148,6 +145,7 @@ export default {
       return this.result.anomalies
     },
     debug_info() {
+      console.log(this.result.debug_info)
       return this.result.debug_info
     },
     activeTab() {
@@ -195,6 +193,12 @@ export default {
 
 .scrollable {
   overflow-y: auto;
+}
+
+.param-text {
+  white-space: pre;
+  font-family: monospace;
+  font-size: 0.65vw;  /*magic number to make text adjust to container*/
 }
 
 

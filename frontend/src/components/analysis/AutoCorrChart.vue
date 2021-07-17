@@ -44,8 +44,9 @@ export default {
         title: '',
         yAxis: {
           title: false,
-          max: 1,
-          min: -1,
+          endOnTick: false,
+          //max: 1,
+          //min: -1,
         },
         series: [{
           name: this.title,
