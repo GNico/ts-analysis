@@ -411,6 +411,14 @@
           "value": "7d"
         },
         {
+          "id": "seasonal_smoother",
+          "type": "String",
+          "display": "Seasonal smoother",
+          "desc": "Seasonal smoother in periods or time interval (eg: 12h)",
+          "conditions": [],
+          "value": "1d"
+        },
+        {
           "id": "robust",
           "type": "Boolean",
           "display": "Robust",

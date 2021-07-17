@@ -20,20 +20,23 @@ class STL(NodeTransformer):
         ]
         self.add_required_param(Select('output', 'Output', 'STL output', output_options, output_options[0].code))
         self.add_required_param(String('period', 'Period', 'Expected seasonality in periods or time interval (eg: 12h)', '7d'))
+        self.add_required_param(String('seasonal_smoother', 'Seasonal smoother', 'Seasonal smoother in periods or time interval (eg: 12h)', '1d'))
         self.add_required_param(Boolean('robust', 'Robust', 'Tolerate larger errors using LOWESS', True))
 
     def get_params(self):
         output = self.get_param('output').value
         period = self.get_param('period').value
         robust = self.get_param('robust').value
-        return (output, period, robust)
+        seasonal_smoother = self.get_param('seasonal_smoother').value
+        return (output, period, seasonal_smoother, robust)
 
     def transform(self, seriess, debug):
         series = seriess[0]
         pdseries = series.pdseries
-        output, period, robust = self.get_params()
+        output, period, seasonal_smoother, robust = self.get_params()
         calc_period = timedelta_to_period(period, series.step())
-        stl = sm.STL(pdseries, seasonal=STL.adapt_period(calc_period), robust=robust)
+        calc_seasonal_smoother = timedelta_to_period(seasonal_smoother, series.step())
+        stl = sm.STL(pdseries, period=calc_period, seasonal=STL.adapt_odd(calc_seasonal_smoother), robust=robust)
         model = stl.fit()
         result = None
         if output == 'resid':
@@ -47,9 +50,9 @@ class STL(NodeTransformer):
         return (result, {})
 
     @staticmethod
-    def adapt_period(period):
-        # Add 1 if period is odd
-        return period + ((period + 1) % 2)
+    def adapt_odd(n):
+        # Add 1 if n is odd
+        return n + ((n + 1) % 2)
 
     def __str__(self):
         return "STL" + str(self.get_params()) + "[" + self.id + "]"
