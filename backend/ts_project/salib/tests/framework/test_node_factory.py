@@ -11,6 +11,7 @@ class TestNodeFactory(unittest.TestCase):
         actual = NodeFactory.nodes_list()
         dir = os.path.dirname(__file__)
         expected_file = os.path.join(dir, 'resources/expected_nodes.json')
+        # Uncomment to fix test
         # print(json.dumps(actual, indent=2), file=open(expected_file, 'w'))
         expected = json.loads(Path(expected_file).read_text())
         self.maxDiff = None

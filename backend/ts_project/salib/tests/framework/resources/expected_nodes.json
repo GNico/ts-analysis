@@ -39,50 +39,6 @@
       "display": "Identity/probe",
       "params": [
         {
-          "id": "adf_test",
-          "type": "Boolean",
-          "display": "ADF test",
-          "desc": "Include Augmented Dicky-Fuller test",
-          "conditions": [],
-          "value": true
-        },
-        {
-          "id": "acf",
-          "type": "Boolean",
-          "display": "ACF",
-          "desc": "Autocorrelation function",
-          "conditions": [],
-          "value": true
-        },
-        {
-          "id": "acf_lags",
-          "type": "BoundedInt",
-          "display": "ACF lags",
-          "desc": "ACF max lags",
-          "conditions": [],
-          "value": 10,
-          "min": 0,
-          "max": null
-        },
-        {
-          "id": "pacf",
-          "type": "Boolean",
-          "display": "PACF",
-          "desc": "Partial autocorrelation function",
-          "conditions": [],
-          "value": true
-        },
-        {
-          "id": "pacf_lags",
-          "type": "BoundedInt",
-          "display": "PACF lags",
-          "desc": "PACF max lags",
-          "conditions": [],
-          "value": 10,
-          "min": 0,
-          "max": null
-        },
-        {
           "id": "mean",
           "type": "Boolean",
           "display": "Mean",
@@ -97,6 +53,46 @@
           "desc": "Series standard deviation",
           "conditions": [],
           "value": true
+        },
+        {
+          "id": "adf_test",
+          "type": "Boolean",
+          "display": "ADF test",
+          "desc": "Augmented Dicky-Fuller test",
+          "conditions": [],
+          "value": true
+        },
+        {
+          "id": "acf",
+          "type": "Boolean",
+          "display": "ACF",
+          "desc": "Autocorrelation function",
+          "conditions": [],
+          "value": true
+        },
+        {
+          "id": "acf_lags",
+          "type": "String",
+          "display": "ACF lags",
+          "desc": "ACF max lags",
+          "conditions": [],
+          "value": "7d"
+        },
+        {
+          "id": "pacf",
+          "type": "Boolean",
+          "display": "PACF",
+          "desc": "Partial autocorrelation function",
+          "conditions": [],
+          "value": true
+        },
+        {
+          "id": "pacf_lags",
+          "type": "String",
+          "display": "PACF lags",
+          "desc": "PACF max lags",
+          "conditions": [],
+          "value": "7d"
         }
       ],
       "inputs": {

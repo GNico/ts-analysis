@@ -2,34 +2,36 @@ import statsmodels.tsa.stattools as stattools
 
 from ..node_transformer import NodeTransformer
 from ...params.boolean import Boolean
-from ...params.int import BoundedInt
+from ...params.string import String
+from ....utils import timedelta_to_period
 
 class Identity(NodeTransformer):
 
     def __init__(self, id):
         super().__init__(id)
-        self.add_required_param(Boolean('adf_test', 'ADF test', 'Include Augmented Dicky-Fuller test', True))
-        self.add_required_param(Boolean('acf', 'ACF', 'Autocorrelation function', True))
-        self.add_required_param(BoundedInt('acf_lags', 'ACF lags', 'ACF max lags', 0, None, 10))
-        self.add_required_param(Boolean('pacf', 'PACF', 'Partial autocorrelation function', True))
-        self.add_required_param(BoundedInt('pacf_lags', 'PACF lags', 'PACF max lags', 0, None, 10))
         self.add_required_param(Boolean('mean', 'Mean', 'Series mean', True))
         self.add_required_param(Boolean('stddev', 'Std. deviation', 'Series standard deviation', True))
+        self.add_required_param(Boolean('adf_test', 'ADF test', 'Augmented Dicky-Fuller test', True))
+        self.add_required_param(Boolean('acf', 'ACF', 'Autocorrelation function', True))
+        self.add_required_param(String('acf_lags', 'ACF lags', 'ACF max lags', '7d'))
+        self.add_required_param(Boolean('pacf', 'PACF', 'Partial autocorrelation function', True))
+        self.add_required_param(String('pacf_lags', 'PACF lags', 'PACF max lags', '7d'))
         
     def transform(self, seriess, debug):
-        pdseries = seriess[0].pdseries
+        series = seriess[0]
+        pdseries = series.pdseries
         if debug:
             debug_info = {}
-            if self.get_param('adf_test').value:
-                self.update_debug_info(debug_info, 'ADF', self.adf_test(pdseries))
-            if self.get_param('acf').value:
-                self.update_debug_info(debug_info, 'ACF', self.acf(pdseries))
-            if self.get_param('pacf').value:
-                self.update_debug_info(debug_info, 'PACF', self.pacf(pdseries))
             if self.get_param('mean').value:
                 debug_info['Mean'] = pdseries.mean()
             if self.get_param('stddev').value:
                 debug_info['Std. dev.'] = pdseries.std()
+            if self.get_param('acf').value:
+                self.update_debug_info(debug_info, 'ACF', self.acf(series))
+            if self.get_param('pacf').value:
+                self.update_debug_info(debug_info, 'PACF', self.pacf(series))
+            if self.get_param('adf_test').value:
+                self.update_debug_info(debug_info, 'ADF', self.adf_test(pdseries))
         else:
             debug_info = {}    
         return (pdseries, debug_info)
@@ -38,21 +40,25 @@ class Identity(NodeTransformer):
         for k, v in to_merge.items():
             debug_info[prefix + ': ' + k] = v
 
-    def acf(self, pdseries):
-        nlags = min(len(pdseries) // 2 - 1, self.get_param('acf_lags').value)
+    def acf(self, series):
+        pdseries = series.pdseries
+        calc_lags = timedelta_to_period(self.get_param('acf_lags').value, series.step())
+        nlags = min(len(pdseries) // 2 - 1, calc_lags)
         acf_result = stattools.acf(pdseries, nlags=nlags, fft=True)
         coeffs = acf_result.tolist()
         acf_plot = []
-        for i in range(len(coeffs)):
+        for i in range(1, len(coeffs)):
             acf_plot.append([i, coeffs[i]])
         return {'lag_correlations': acf_plot}
 
-    def pacf(self, pdseries):
-        nlags = min(len(pdseries) // 2 - 1, self.get_param('pacf_lags').value)
+    def pacf(self, series):
+        pdseries = series.pdseries
+        calc_lags = timedelta_to_period(self.get_param('pacf_lags').value, series.step())
+        nlags = min(len(pdseries) // 2 - 1, calc_lags)
         pacf_result = stattools.pacf(pdseries, nlags=nlags, method='ols')
         coeffs = pacf_result.tolist()
         pacf_plot = []
-        for i in range(len(coeffs)):
+        for i in range(1, len(coeffs)):
             pacf_plot.append([i, coeffs[i]])
         return {'lag_correlations': pacf_plot}
 
