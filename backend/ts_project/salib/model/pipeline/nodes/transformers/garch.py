@@ -13,8 +13,8 @@ class GARCH(NodeTransformer):
         self.add_params()
 
     def add_params(self):
-        self.add_required_param(String('p', 'p', 'Lag order of errors', '7d'))
-        self.add_param(String('q', 'q', 'Lag order of lagged volatility', '0'))
+        self.add_required_param(String('p', 'p', 'Lag order of series²', '7d'))
+        self.add_required_param(String('q', 'q', 'Lag order of volatility', '7d'))
 
     def get_params(self):
         p = self.get_param('p').value
@@ -27,23 +27,19 @@ class GARCH(NodeTransformer):
 
         p, q = self.get_params()
         calc_p, calc_q = tuple(map(lambda param: timedelta_to_period(param, series.step()), (p, q)))
-        ar = arch_model(pdseries, p=calc_p, q=calc_q)
-        result = ar.fit()
+        ar = arch_model(pdseries, p=calc_p, q=calc_q, rescale=True)
+        model = ar.fit()
 
         # Debug info
         if debug:
-            nlags = min(len(pdseries) // 2 - 1, 40)
-            acf_result = stattools.acf(pdseries**2, nlags=nlags, fft=True)
-            pacf_result = stattools.pacf(pdseries**2, nlags=nlags, method='ols')
             debug_info = {
-                "summary": str(result.summary()),
-                "acf": acf_result.tolist(),
-                "pacf": pacf_result.tolist()}
+                "summary": str(model.summary()),
+            }
         else:
             debug_info = {}
         # Drop offset_start elements
         
-        return (result.resid, debug_info)
+        return (model.resid, debug_info)
 
     def __str__(self):
         return "GARCH" + str(self.get_params()) + "[" + self.id + "]"
@@ -52,4 +48,4 @@ class GARCH(NodeTransformer):
         return 'GARCH'
 
     def desc(self):
-        return 'Generalized ARCH model for volatility modeling. Inputs can be in periods or interval length'
+        return 'Generalized ARCH model for volatility modeling. Inputs can be in periods or interval length.'

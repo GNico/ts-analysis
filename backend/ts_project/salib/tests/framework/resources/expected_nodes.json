@@ -642,14 +642,14 @@
     },
     {
       "type": "GARCH",
-      "desc": "Generalized ARCH model for volatility modeling. Inputs can be in periods or interval length",
+      "desc": "Generalized ARCH model for volatility modeling. Inputs can be in periods or interval length.",
       "display": "GARCH",
       "params": [
         {
           "id": "p",
           "type": "String",
           "display": "p",
-          "desc": "Lag order of errors",
+          "desc": "Lag order of series\u00b2",
           "conditions": [],
           "value": "7d"
         },
@@ -657,9 +657,9 @@
           "id": "q",
           "type": "String",
           "display": "q",
-          "desc": "Lag order of lagged volatility",
+          "desc": "Lag order of volatility",
           "conditions": [],
-          "value": "0"
+          "value": "7d"
         }
       ],
       "inputs": {
