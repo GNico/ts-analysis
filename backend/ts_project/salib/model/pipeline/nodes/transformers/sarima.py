@@ -2,6 +2,8 @@ import statsmodels.tsa.arima.model as ar_model
 import statsmodels.tsa.stattools as stattools
 
 from ..node_transformer import NodeTransformer
+from ...params.boolean import Boolean
+from ...params.condition.param_equals_value import ParamEqualsValue
 from ...params.int import BoundedInt
 from ...params.select import Select, SelectOption
 from ...params.string import String
@@ -18,15 +20,26 @@ class SARIMA(NodeTransformer):
         self.add_param(BoundedInt('d', 'd', 'Differencing degree', 0, None, 0))
         self.add_param(String('q', 'q', 'MA order', '0'))
 
-        self.add_param(String('P', 'P', 'Seasonal AR order', '0'))
-        self.add_param(BoundedInt('D', 'D', 'Seasonal differencing degree', 0, None, 0))
-        self.add_param(String('Q', 'Q', 'Seasonal MA order', '0'))
+        self.add_required_param(Boolean('seasonal', 'Seasonal', 'Seasonal components', False))
 
-        self.add_param(String('m', 'm', 'Season length', '0'))
+        seasonal_p = String('P', 'P', 'Seasonal AR order', '0')
+        seasonal_p.add_condition(ParamEqualsValue('seasonal', True))
+        self.add_param(seasonal_p)
+
+        seasonal_d = BoundedInt('D', 'D', 'Seasonal differencing degree', 0, None, 0)
+        seasonal_d.add_condition(ParamEqualsValue('seasonal', True))
+        self.add_param(seasonal_d)
+        seasonal_q = String('Q', 'Q', 'Seasonal MA order', '0')
+        seasonal_q.add_condition(ParamEqualsValue('seasonal', True))
+        self.add_param(seasonal_q)
+
+        seasonal_m = String('m', 'm', 'Season length', '0')
+        seasonal_m.add_condition(ParamEqualsValue('seasonal', True))
+        self.add_param(seasonal_m)
 
         output_options = [
-            SelectOption("predicted", "Predicted"),
             SelectOption("resid", "Residual"),
+            SelectOption("predicted", "Predicted"),
         ]
         self.add_required_param(Select('output', 'Output', 'Model output', output_options, output_options[0].code))
 

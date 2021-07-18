@@ -1,11 +1,13 @@
+import numpy as np
+
 from ..node_transformer import NodeTransformer
 
 from ...params.string import String
 from ...params.select import Select, SelectOption
 from ...params.boolean import Boolean
-from ...params.int import BoundedInt
 from ...params.float import BoundedFloat
 from ...params.condition.param_equals_value import ParamEqualsValue
+from ....utils import timedelta_to_period
 
 class RollingAggregate(NodeTransformer):
 
@@ -19,7 +21,7 @@ class RollingAggregate(NodeTransformer):
     def add_common_params(self):
         self.add_required_param(String('window', 'Window', 'Window size in time interval (eg: 12h)', '12h'))
         self.add_required_param(Boolean('center', 'Center', 'Center aggregation window around value', False))
-        self.add_required_param(BoundedInt('min_periods', 'Min. periods', 'Min number of periods', 0, None, 0))
+        self.add_required_param(String('min_periods', 'Min. periods', 'Min number of periods (eg: 12h). Leave empty for window size.', ''))
         agg_method_options = [
             SelectOption("mean", "Mean"),
             SelectOption("median", "Median"),
@@ -59,15 +61,20 @@ class RollingAggregate(NodeTransformer):
         return 'Rolling aggregate'
 
     def transform(self, seriess, debug):
-        return self.transform_pdseries(seriess[0].pdseries, debug)
+        return self.transform_pdseries(seriess[0].pdseries, seriess[0].step(), debug)
 
-    def transform_pdseries(self, s, debug):
+    def transform_pdseries(self, s, step, debug):
         window, center, min_periods, agg = self.get_common_params()
+        calc_window = timedelta_to_period(window, step)
+        if min_periods is None:
+            calc_min_periods = calc_window
+        else:
+            calc_min_periods = timedelta_to_period(min_periods, step)
 
         rolling = s.rolling(
-            window=window,
+            window=calc_window,
             center=center,
-            min_periods=min_periods
+            min_periods=calc_min_periods
         )
 
         if agg in [

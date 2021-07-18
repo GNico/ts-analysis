@@ -203,13 +203,11 @@
         },
         {
           "id": "min_periods",
-          "type": "BoundedInt",
+          "type": "String",
           "display": "Min. periods",
-          "desc": "Min number of periods",
+          "desc": "Min number of periods (eg: 12h). Leave empty for window size.",
           "conditions": [],
-          "value": 0,
-          "min": 0,
-          "max": null
+          "value": ""
         },
         {
           "id": "agg_method",
@@ -332,13 +330,11 @@
         },
         {
           "id": "min_periods",
-          "type": "BoundedInt",
+          "type": "String",
           "display": "Min. periods",
-          "desc": "Min number of periods",
+          "desc": "Min number of periods (eg: 12h). Leave empty for window size.",
           "conditions": [],
-          "value": 0,
-          "min": 0,
-          "max": null
+          "value": ""
         },
         {
           "id": "agg_method",
@@ -564,11 +560,27 @@
           "value": "0"
         },
         {
+          "id": "seasonal",
+          "type": "Boolean",
+          "display": "Seasonal",
+          "desc": "Seasonal components",
+          "conditions": [],
+          "value": false
+        },
+        {
           "id": "P",
           "type": "String",
           "display": "P",
           "desc": "Seasonal AR order",
-          "conditions": [],
+          "conditions": [
+            {
+              "type": "param_equals_value",
+              "args": {
+                "param": "seasonal",
+                "value": true
+              }
+            }
+          ],
           "value": "0"
         },
         {
@@ -576,7 +588,15 @@
           "type": "BoundedInt",
           "display": "D",
           "desc": "Seasonal differencing degree",
-          "conditions": [],
+          "conditions": [
+            {
+              "type": "param_equals_value",
+              "args": {
+                "param": "seasonal",
+                "value": true
+              }
+            }
+          ],
           "value": 0,
           "min": 0,
           "max": null
@@ -586,7 +606,15 @@
           "type": "String",
           "display": "Q",
           "desc": "Seasonal MA order",
-          "conditions": [],
+          "conditions": [
+            {
+              "type": "param_equals_value",
+              "args": {
+                "param": "seasonal",
+                "value": true
+              }
+            }
+          ],
           "value": "0"
         },
         {
@@ -594,7 +622,15 @@
           "type": "String",
           "display": "m",
           "desc": "Season length",
-          "conditions": [],
+          "conditions": [
+            {
+              "type": "param_equals_value",
+              "args": {
+                "param": "seasonal",
+                "value": true
+              }
+            }
+          ],
           "value": "0"
         },
         {
@@ -603,15 +639,15 @@
           "display": "Output",
           "desc": "Model output",
           "conditions": [],
-          "value": "predicted",
+          "value": "resid",
           "options": [
-            {
-              "code": "predicted",
-              "display": "Predicted"
-            },
             {
               "code": "resid",
               "display": "Residual"
+            },
+            {
+              "code": "predicted",
+              "display": "Predicted"
             }
           ]
         }

@@ -6,7 +6,6 @@ from ..node_transformer import NodeTransformer
 from ...params.string import String
 from ...params.select import Select, SelectOption
 from ...params.boolean import Boolean
-from ...params.int import BoundedInt
 from ....utils import timedelta_to_period
 
 class MultiRollingAggregate(NodeTransformer):
@@ -19,7 +18,7 @@ class MultiRollingAggregate(NodeTransformer):
     def add_common_params(self):
         self.add_required_param(String('window', 'Window', 'Window size in time interval (eg: 12h)', '12h'))
         self.add_required_param(Boolean('center', 'Center', 'Center aggregation window around value', False))
-        self.add_required_param(BoundedInt('min_periods', 'Min. periods', 'Min number of periods', 0, None, 0))
+        self.add_required_param(String('min_periods', 'Min. periods', 'Min number of periods (eg: 12h). Leave empty for window size.', ''))
         agg_method_options = [
             SelectOption("correlation_pearson", "Pearson Correlation"),
             SelectOption("correlation_kendall", "Kendall Correlation"),
@@ -56,7 +55,13 @@ class MultiRollingAggregate(NodeTransformer):
 
     def transform_values(self, lhs, rhs):
         window_str, center, min_periods, agg = self.get_common_params()
+
         window = timedelta_to_period(window_str, lhs.step())
+
+        if min_periods is None:
+            calc_min_periods = window
+        else:
+            calc_min_periods = timedelta_to_period(min_periods, lhs.step())
 
         if agg == 'proportion':
             rolling_func = MultiRollingAggregate.func_proportion
@@ -75,7 +80,7 @@ class MultiRollingAggregate(NodeTransformer):
                     rolling_func,
                     window,
                     center,
-                    min_periods
+                    calc_min_periods
                 )
 
     @staticmethod
