@@ -4,7 +4,7 @@ import statsmodels.tsa.stattools as stattools
 from ..node_transformer import NodeTransformer
 from ...params.select import Select, SelectOption
 from ...params.string import String
-from ....utils import timedelta_to_period
+from ....utils import timedelta_to_period, lags_range_timedelta_to_period
 
 class AutoRegression(NodeTransformer):
 
@@ -16,8 +16,8 @@ class AutoRegression(NodeTransformer):
         self.add_required_param(String('lags', '#Lags', 'Lags, in period (eg 12h) or count', '7d'))
         self.add_required_param(String('period', 'Period', 'Seasonality in period (eg 12h) or count. Leave empty for none.', ''))
         output_options = [
-            SelectOption("predicted", "Predicted"),
             SelectOption("resid", "Residual"),
+            SelectOption("predicted", "Predicted"),
         ]
         self.add_required_param(Select('output', 'Output', 'Model output', output_options, output_options[0].code))
 
@@ -33,7 +33,7 @@ class AutoRegression(NodeTransformer):
 
         lags, period, output = self.get_params()
 
-        calc_lags = timedelta_to_period(lags, series.step())
+        calc_lags = lags_range_timedelta_to_period(lags, series.step())
         calc_period = timedelta_to_period(period, series.step()) if period is not None else None
         include_seasonal = calc_period is not None
 

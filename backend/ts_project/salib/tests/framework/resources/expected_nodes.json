@@ -512,15 +512,15 @@
           "display": "Output",
           "desc": "Model output",
           "conditions": [],
-          "value": "predicted",
+          "value": "resid",
           "options": [
-            {
-              "code": "predicted",
-              "display": "Predicted"
-            },
             {
               "code": "resid",
               "display": "Residual"
+            },
+            {
+              "code": "predicted",
+              "display": "Predicted"
             }
           ]
         }
@@ -544,24 +544,6 @@
           "desc": "AR order",
           "conditions": [],
           "value": "7d"
-        },
-        {
-          "id": "output",
-          "type": "Select",
-          "display": "Output",
-          "desc": "Model output",
-          "conditions": [],
-          "value": "predicted",
-          "options": [
-            {
-              "code": "predicted",
-              "display": "Predicted"
-            },
-            {
-              "code": "resid",
-              "display": "Residual"
-            }
-          ]
         },
         {
           "id": "d",
@@ -614,6 +596,24 @@
           "desc": "Season length",
           "conditions": [],
           "value": "0"
+        },
+        {
+          "id": "output",
+          "type": "Select",
+          "display": "Output",
+          "desc": "Model output",
+          "conditions": [],
+          "value": "predicted",
+          "options": [
+            {
+              "code": "predicted",
+              "display": "Predicted"
+            },
+            {
+              "code": "resid",
+              "display": "Residual"
+            }
+          ]
         }
       ],
       "inputs": {

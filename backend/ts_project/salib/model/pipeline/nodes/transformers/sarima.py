@@ -5,7 +5,7 @@ from ..node_transformer import NodeTransformer
 from ...params.int import BoundedInt
 from ...params.select import Select, SelectOption
 from ...params.string import String
-from ....utils import timedelta_to_period
+from ....utils import timedelta_to_period, lags_range_timedelta_to_period
 
 class SARIMA(NodeTransformer):
 
@@ -48,12 +48,16 @@ class SARIMA(NodeTransformer):
 
         p, d, q, P, D, Q, m, output = self.get_params()
 
-        order = tuple(map(lambda param: timedelta_to_period(param, series.step()), (p, d, q)))
-        seasonal_order = tuple(map(lambda param: timedelta_to_period(param, series.step()), (P, D, Q, m)))
+        calc_p, calc_q = tuple(map(lambda param: lags_range_timedelta_to_period(param, series.step()), (p, q)))
+        calc_P, calc_Q = tuple(map(lambda param: lags_range_timedelta_to_period(param, series.step()), (P, Q)))
+        calc_m = timedelta_to_period(m, series.step())
+
+        order = (calc_p, d, calc_q)
+        seasonal_order = (calc_P, D, calc_Q, calc_m)
 
         ar = ar_model.ARIMA(pdseries, order=order, seasonal_order=seasonal_order, enforce_stationarity=False, enforce_invertibility=False, trend=None)
         model = ar.fit()
-        offset_start = max(sum(order), sum(seasonal_order))
+        offset_start = max(sum([max(calc_p), d, max(calc_q)]), sum([max(calc_P), D, max(calc_Q)]))
 
         # Debug info
         if debug:

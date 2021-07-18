@@ -13,6 +13,7 @@ class BoundedInt(Param):
         self.max = max
 
     def validate(self):
+        super().validate()
         if (self.min is not None and self.value < self.min) or (self.max is not None and self.value > self.max):
             raise Exception('Invalid range for bounded int, ' + self.value + 
                             ' is not within range [' + self.min + ', ' + self.max +']')

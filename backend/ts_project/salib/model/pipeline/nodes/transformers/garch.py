@@ -4,7 +4,7 @@ import statsmodels.tsa.stattools as stattools
 from ..node_transformer import NodeTransformer
 from ...params.int import BoundedInt
 from ...params.string import String
-from ....utils import timedelta_to_period
+from ....utils import timedelta_to_period, lags_range_timedelta_to_period
 
 class GARCH(NodeTransformer):
 
@@ -26,7 +26,7 @@ class GARCH(NodeTransformer):
         pdseries = series.pdseries
 
         p, q = self.get_params()
-        calc_p, calc_q = tuple(map(lambda param: timedelta_to_period(param, series.step()), (p, q)))
+        calc_p, calc_q = tuple(map(lambda param: lags_range_timedelta_to_period(param, series.step()), (p, q)))
         ar = arch_model(pdseries, p=calc_p, q=calc_q, rescale=True)
         model = ar.fit()
 

@@ -5,8 +5,8 @@ class Node:
 
     def __init__(self, id):
         self.id = id
-        self.required_params = OrderedDict()
         self.params = OrderedDict()
+        self.required_params = set()
         self.sources = []
         self.input_names = []
 
@@ -35,7 +35,8 @@ class Node:
         self.params[param.id] = param
 
     def add_required_param(self, param):
-        self.required_params[param.id] = param
+        self.add_param(param)
+        self.required_params.add(param.id)
 
     def set_param(self, param):
         self.params[param.id] = param
@@ -68,25 +69,18 @@ class Node:
     def get_param(self, id):
         if id in self.params: 
             return self.params[id]
-        elif id in self.required_params:
-            return self.required_params[id]
         else:
             raise Exception('Invalid param ' + id)
 
     def params_definition(self):
         output = []
-        for id, param in self.required_params.items():
-            output.append(param.definition())
         for id, param in self.params.items():
             output.append(param.definition())
         return output
 
     def validate(self):
-        for required_param in self.required_params.values():
-            if required_param.id not in self.params:
-                raise Exception('Missing required param ' + required_param.id)
-            if required_param.type != self.params[required_param.id].type:
-                raise Exception('Invalid type for ' + required_param.id + ', expected ' + required_param.type + 
-                                ' but was ' + self.params[required_param.id].type)
+        for required_param in self.required_params:
+            if required_param not in self.params:
+                raise Exception('Missing required param ' + required_param)
         for param in self.params.values():
             param.validate()

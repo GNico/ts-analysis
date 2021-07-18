@@ -20,6 +20,7 @@ class BoundedFloat(Param):
             self.strict_max = None
 
     def validate(self):
+        super().validate()
         if self.min is not None:
             if self.strict_min:
                 if self.value <= self.min:

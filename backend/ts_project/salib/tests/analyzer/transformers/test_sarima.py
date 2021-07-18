@@ -24,7 +24,6 @@ class TestSARIMA(unittest.TestCase):
         ar = factory.build()
 
         result, debug_info = ar.transform([series], True)
-        # print(debug_info)
         expected_series = [0] * 8
         actual_series = list(result.values)
         for i in range(0, len(expected_series)):
