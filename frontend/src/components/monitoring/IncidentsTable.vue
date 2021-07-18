@@ -9,7 +9,7 @@
     </div>
     <div class="column is-paddingless">
       <div class="is-flex is-align-items-center has-text-right is-justify-content-flex-end">
-        <span class="mr-2">On selected:</span> 
+        <span class="mr-2 is-unselectable">On selected:</span> 
         <div class="field has-addons">
           <p class="control">
             <a class="button is-small is-primary" @click="performAction">{{currentAction}}</a>
@@ -46,25 +46,25 @@
     :custom-is-checked="(a,b)=> a.id === b.id"
     :checked-rows.sync="checked">
 
-    <b-table-column field="state" label="State"  width="5%" sortable v-slot="props"  cell-class="is-clickable">
+    <b-table-column field="state" label="State"  width="5%" sortable v-slot="props"  cell-class="is-clickable is-unselectable">
       <span class="tag is-small" :class="props.row.state=='Open' ? 'is-success' : 'is-info'">{{ props.row.state }}</span>     
     </b-table-column>  
-    <b-table-column field="client" label="Client" width="20%" sortable v-slot="props"  cell-class="is-clickable">
+    <b-table-column field="client" label="Client" width="20%" sortable v-slot="props"  cell-class="is-clickable is-unselectable">
       {{ props.row.client }}       
     </b-table-column>  
-    <b-table-column field="monitor" label="Monitor name" width="20%" sortable v-slot="props"  cell-class="is-clickable">
+    <b-table-column field="monitor" label="Monitor name" width="20%" sortable v-slot="props"  cell-class="is-clickable is-unselectable">
       {{ props.row.monitor }}       
     </b-table-column>
-    <b-table-column field="detector" label="Detector name" width="20%" sortable v-slot="props"  cell-class="is-clickable">
+    <b-table-column field="detector" label="Detector name" width="20%" sortable v-slot="props"  cell-class="is-clickable is-unselectable">
       {{ props.row.analysis_name }}       
     </b-table-column>
-    <b-table-column field="start" label="Start" sortable v-slot="props" centered cell-class="is-clickable">
+    <b-table-column field="start" label="Start" sortable v-slot="props" centered cell-class="is-clickable is-unselectable">
       {{ formatDate(props.row.start) }}
     </b-table-column>
-    <b-table-column field="end" label="End" sortable v-slot="props" centered cell-class="is-clickable">
+    <b-table-column field="end" label="End" sortable v-slot="props" centered cell-class="is-clickable is-unselectable">
       {{ formatDate(props.row.end) }}
     </b-table-column>
-    <b-table-column field="score" label="Score" width="5%" sortable v-slot="props"  cell-class="is-clickable">
+    <b-table-column field="score" label="Score" width="5%" sortable v-slot="props"  cell-class="is-clickable is-unselectable">
       <span>{{ props.row.score }}</span>     
     </b-table-column>       
   </b-table>

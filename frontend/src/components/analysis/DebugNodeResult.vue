@@ -200,6 +200,4 @@ export default {
   font-family: monospace;
   font-size: 0.65vw;  /*magic number to make text adjust to container*/
 }
-
-
 </style>

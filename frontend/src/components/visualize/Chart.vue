@@ -1,5 +1,4 @@
 <template>
-
 <div class="fill-height-or-more">
   <BaseChart v-for="panel in chartSeriesData" 
     :key="panel.id"
@@ -21,12 +20,9 @@
 
 
 <script>
-import BaseChart from "../BaseChart";
+import BaseChart from "@/components/BaseChart";
 import debounce from "lodash/debounce";
-
 import { multiseriesTooltipFormatter } from '../../utils/helpers'
-
-
 
 export default {
   components: { BaseChart },

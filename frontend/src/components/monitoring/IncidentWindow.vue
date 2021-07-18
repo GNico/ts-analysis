@@ -1,11 +1,12 @@
 <template>
-<div>
+<div class="full-page-container">
   <VueDraggableResizable :w="1000" :h="500" :z="999" 
     :handles="['br']"
     @dragging="onDrag" 
     @resizing="onResize" 
+    @resizestop="forceRerender"
     :drag-handle="'.drag'"
-    :parent="false" >
+    :parent="true" >
     <div class="card" :style="{height: '100%'}">
       <header class="card-header drag">
         <p class="card-header-title">
@@ -15,12 +16,18 @@
           <b-icon icon="close" type="is-primary"></b-icon>
         </button>
       </header>
-      <div class="card-content" >
-        <div class="content" >
-          <BaseChart 
-            :seriesData="chartData" 
-            :bands="chartIncident"
-            :style="myStyles"/>
+      <div class="card-content " >
+        <div class="columns is-paddingless ">
+          <div class="column is-8">
+            <BaseChart 
+              :key="chartKey"
+              :seriesData="chartData" 
+              :bands="chartIncident"
+              :style="myStyles"/>
+          </div>
+          <div class="column">
+            EXTRA DATA
+          </div>
         </div>
       </div>
     </div>
@@ -45,6 +52,7 @@ export default {
   },
   data() {
     return {
+      chartKey: 0,
       width: 1000,
       height: 500,
       x: 0,
@@ -82,11 +90,12 @@ export default {
     },
     myStyles () {
       let h = this.height - 100
-      let w = this.width - 50
+      let w = this.width
       return {
         height: `${h}px`,
-        width: `${w}px`,
+        width: `calc((${w}px - 3.75rem)* 2/3)`,
       }
+
     }
   },
   methods: {
@@ -99,10 +108,23 @@ export default {
     onDrag: function (x, y) {
       this.x = x
       this.y = y
-    }
+    },
+    forceRerender() {
+      this.chartKey += 1;
+    },
   },
   created() {
   }
 }
 
 </script>
+
+<style>
+.full-page-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width:  100vw;
+}
+</style>
