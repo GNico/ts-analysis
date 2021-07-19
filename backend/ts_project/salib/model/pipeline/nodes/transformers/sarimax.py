@@ -1,4 +1,6 @@
-import statsmodels.tsa.arima.model as ar_model
+import numpy as np
+
+import statsmodels.tsa.statespace.sarimax as sarimax
 import statsmodels.tsa.stattools as stattools
 
 from ..node_transformer import NodeTransformer
@@ -9,10 +11,11 @@ from ...params.select import Select, SelectOption
 from ...params.string import String
 from ....utils import timedelta_to_period, lags_range_timedelta_to_period
 
-class SARIMA(NodeTransformer):
+class SARIMAX(NodeTransformer):
 
     def __init__(self, id):
         super().__init__(id)
+        self.set_input_names([])
         self.add_params()
 
     def add_params(self):
@@ -33,9 +36,9 @@ class SARIMA(NodeTransformer):
         seasonal_q.add_condition(ParamEqualsValue('seasonal', True))
         self.add_param(seasonal_q)
 
-        seasonal_m = String('m', 'm', 'Season length', '0')
-        seasonal_m.add_condition(ParamEqualsValue('seasonal', True))
-        self.add_param(seasonal_m)
+        seasonal_s = String('s', 's', 'Season length', '0')
+        seasonal_s.add_condition(ParamEqualsValue('seasonal', True))
+        self.add_param(seasonal_s)
 
         output_options = [
             SelectOption("resid", "Residual"),
@@ -51,31 +54,40 @@ class SARIMA(NodeTransformer):
         P = self.get_param('P').value
         D = self.get_param('D').value
         Q = self.get_param('Q').value
-        m = self.get_param('m').value
+        s = self.get_param('s').value
         output = self.get_param('output').value
-        return (p, d, q, P, D, Q, m, output)
+        return (p, d, q, P, D, Q, s, output)
 
     def transform(self, seriess, debug):
         series = seriess[0]
         pdseries = series.pdseries
+        exog = np.transpose([s.pdseries.tolist() for s in seriess[1:]]) if len(seriess) > 1 else None
 
-        p, d, q, P, D, Q, m, output = self.get_params()
+        p, d, q, P, D, Q, s, output = self.get_params()
 
         calc_p, calc_q = tuple(map(lambda param: lags_range_timedelta_to_period(param, series.step()), (p, q)))
         calc_P, calc_Q = tuple(map(lambda param: lags_range_timedelta_to_period(param, series.step()), (P, Q)))
-        calc_m = timedelta_to_period(m, series.step())
+        calc_s = timedelta_to_period(s, series.step())
 
         order = (calc_p, d, calc_q)
-        seasonal_order = (calc_P, D, calc_Q, calc_m)
+        seasonal_order = (calc_P, D, calc_Q, calc_s)
 
-        ar = ar_model.ARIMA(pdseries, order=order, seasonal_order=seasonal_order, enforce_stationarity=False, enforce_invertibility=False, trend=None)
-        model = ar.fit()
+        model = sarimax.SARIMAX(
+            pdseries,
+            exog=exog,
+            order=order,
+            seasonal_order=seasonal_order,
+            enforce_stationarity=False,
+            enforce_invertibility=False,
+            trend=None,
+        )
+        model_fit = model.fit(disp=False)
         offset_start = max(sum([max(calc_p), d, max(calc_q)]), sum([max(calc_P), D, max(calc_Q)]))
 
         # Debug info
         if debug:
             debug_info = {
-                "summary": str(model.summary()),
+                "summary": str(model_fit.summary()),
                 "offset_start": offset_start,
             }
         else:
@@ -84,20 +96,19 @@ class SARIMA(NodeTransformer):
         
         result = None
         if output == 'predicted':
-            result = model.fittedvalues
+            result = model_fit.fittedvalues
         elif output == 'resid':
-            result = model.resid
+            result = model_fit.resid
         else:
             raise ValueError('Invalid output: ' + output)
 
-        # print(model.summary())
         return (result[offset_start:], debug_info)
 
     def __str__(self):
-        return "SARIMA" + str(self.get_params()) + "[" + self.id + "]"
+        return "SARIMAX" + str(self.get_params()) + "[" + self.id + "]"
 
     def display(self):
-        return 'SARIMA'
+        return 'SARIMAX'
 
     def desc(self):
-        return 'SARIMA model, with lags & seasonality. Inputs can be in periods or interval length'
+        return 'SARIMAX model, with lags, seasonality and exogenous series. Inputs can be in periods or interval length.'
