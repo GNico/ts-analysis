@@ -4,19 +4,24 @@ from ..node_transformer import NodeTransformer
 from ...params.boolean import Boolean
 from ...params.string import String
 from ....utils import timedelta_to_period
+from ...params.condition.param_equals_value import ParamEqualsValue
 
 class Identity(NodeTransformer):
 
     def __init__(self, id):
         super().__init__(id)
-        self.add_required_param(Boolean('mean', 'Mean', 'Series mean', True))
-        self.add_required_param(Boolean('stddev', 'Std. deviation', 'Series standard deviation', True))
-        self.add_required_param(Boolean('adf_test', 'ADF test', 'Augmented Dicky-Fuller test', True))
-        self.add_required_param(Boolean('acf', 'ACF', 'Autocorrelation function', True))
-        self.add_required_param(String('acf_lags', 'ACF lags', 'ACF max lags', '7d'))
-        self.add_required_param(Boolean('pacf', 'PACF', 'Partial autocorrelation function', True))
-        self.add_required_param(String('pacf_lags', 'PACF lags', 'PACF max lags', '7d'))
-        
+        self.add_required_param(Boolean('mean', 'Mean', 'Series mean', False))
+        self.add_required_param(Boolean('stddev', 'Std. deviation', 'Series standard deviation', False))
+        self.add_required_param(Boolean('adf_test', 'ADF test', 'Augmented Dicky-Fuller test', False))
+        self.add_required_param(Boolean('acf', 'ACF', 'Autocorrelation function', False))
+        acf_lags = String('acf_lags', 'ACF lags', 'ACF max lags', '7d')
+        acf_lags.add_condition(ParamEqualsValue('acf', False))
+        self.add_required_param(acf_lags)
+        self.add_required_param(Boolean('pacf', 'PACF', 'Partial autocorrelation function', False))
+        pacf_lags = String('pacf_lags', 'PACF lags', 'PACF max lags', '7d')
+        pacf_lags.add_condition(ParamEqualsValue('pacf', False))
+        self.add_required_param(pacf_lags)
+
     def transform(self, seriess, debug):
         series = seriess[0]
         pdseries = series.pdseries

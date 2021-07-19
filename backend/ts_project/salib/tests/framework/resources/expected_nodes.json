@@ -44,7 +44,7 @@
           "display": "Mean",
           "desc": "Series mean",
           "conditions": [],
-          "value": true
+          "value": false
         },
         {
           "id": "stddev",
@@ -52,7 +52,7 @@
           "display": "Std. deviation",
           "desc": "Series standard deviation",
           "conditions": [],
-          "value": true
+          "value": false
         },
         {
           "id": "adf_test",
@@ -60,7 +60,7 @@
           "display": "ADF test",
           "desc": "Augmented Dicky-Fuller test",
           "conditions": [],
-          "value": true
+          "value": false
         },
         {
           "id": "acf",
@@ -68,14 +68,22 @@
           "display": "ACF",
           "desc": "Autocorrelation function",
           "conditions": [],
-          "value": true
+          "value": false
         },
         {
           "id": "acf_lags",
           "type": "String",
           "display": "ACF lags",
           "desc": "ACF max lags",
-          "conditions": [],
+          "conditions": [
+            {
+              "type": "param_equals_value",
+              "args": {
+                "param": "acf",
+                "value": false
+              }
+            }
+          ],
           "value": "7d"
         },
         {
@@ -84,14 +92,22 @@
           "display": "PACF",
           "desc": "Partial autocorrelation function",
           "conditions": [],
-          "value": true
+          "value": false
         },
         {
           "id": "pacf_lags",
           "type": "String",
           "display": "PACF lags",
           "desc": "PACF max lags",
-          "conditions": [],
+          "conditions": [
+            {
+              "type": "param_equals_value",
+              "args": {
+                "param": "pacf",
+                "value": false
+              }
+            }
+          ],
           "value": "7d"
         }
       ],
