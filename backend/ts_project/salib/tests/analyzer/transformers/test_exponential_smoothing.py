@@ -15,13 +15,14 @@ class TestExponentialSmoothing(unittest.TestCase):
         
         factory = NodeFactory.transformer('test', 'ExponentialSmoothing')
         factory.set_param_value('span', '4')
+        factory.set_param_value('min_periods', '')
         factory.set_param_value('agg_method', 'mean')
         factory.add_source(InputRef('input'))
         ewma = factory.build()
         expected_debug_info = {
             'alpha': 0.4
         }
-        self.case(ewma, [0.00, 0.625, 1.326, 2.095, 2.487, 2.283, 1.755, 1.041], expected_debug_info)
+        self.case(ewma, [2.095, 2.487, 2.283, 1.755, 1.041], expected_debug_info)
 
     def case(self, node, expected_series, debug_info):
         series = self.build_triangle()

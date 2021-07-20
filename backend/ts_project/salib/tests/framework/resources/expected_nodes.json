@@ -132,6 +132,14 @@
           "value": "12h"
         },
         {
+          "id": "min_periods",
+          "type": "String",
+          "display": "Min. periods",
+          "desc": "Min number of periods (eg: 12h). Leave empty for window size.",
+          "conditions": [],
+          "value": ""
+        },
+        {
           "id": "agg_method",
           "type": "Select",
           "display": "Aggregation",

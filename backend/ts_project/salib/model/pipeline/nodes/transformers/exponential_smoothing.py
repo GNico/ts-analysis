@@ -10,6 +10,7 @@ class ExponentialSmoothing(NodeTransformer):
     def __init__(self, id):
         super().__init__(id)
         self.add_required_param(String('span', 'Span', 'Span size in time interval (eg: 12h)', '12h'))
+        self.add_required_param(String('min_periods', 'Min. periods', 'Min number of periods (eg: 12h). Leave empty for window size.', ''))
         agg_method_options = [
             SelectOption("mean", "Mean"),
             SelectOption("std", "Sample standard dev."),
@@ -21,10 +22,16 @@ class ExponentialSmoothing(NodeTransformer):
         series = seriess[0]
         pdseries = series.pdseries
         
-        span, agg_method = self.get_params()
-        calc_span = timedelta_to_period(span, series.step())
-        
-        ema = pdseries.ewm(span=calc_span)
+        span, min_periods, agg_method = self.get_params()
+        step = series.step()
+
+        calc_span = timedelta_to_period(span, step)
+
+        if min_periods is None:
+            calc_min_periods = calc_span
+        else:
+            calc_min_periods = timedelta_to_period(min_periods, step)
+        ema = pdseries.ewm(span=calc_span, min_periods=calc_min_periods)
         
         if agg_method == 'mean':
             ema = ema.mean()
@@ -43,8 +50,9 @@ class ExponentialSmoothing(NodeTransformer):
 
     def get_params(self):
         span = self.get_param('span').value
+        min_periods = self.get_param('min_periods').value
         agg_method = self.get_param('agg_method').value
-        return (span, agg_method)
+        return (span, min_periods, agg_method)
 
     def __str__(self):
         return "ExponentialSmoothing(" + str(self.get_params()) + ")[" + self.id + "]"
