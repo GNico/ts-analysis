@@ -119,21 +119,39 @@
       }
     },
     {
-      "type": "EMA",
-      "desc": "Exponential moving average with decay rate",
-      "display": "Exponential moving average",
+      "type": "ExponentialSmoothing",
+      "desc": "Exponential smoothing with decay rate",
+      "display": "Exponential smoothing",
       "params": [
         {
-          "id": "decay",
-          "type": "BoundedFloat",
-          "display": "Decay",
-          "desc": "Decay rate",
+          "id": "span",
+          "type": "String",
+          "display": "Span",
+          "desc": "Span size in time interval (eg: 12h)",
           "conditions": [],
-          "value": 0.9,
-          "min": 0,
-          "max": 1,
-          "strict_min": false,
-          "strict_max": false
+          "value": "12h"
+        },
+        {
+          "id": "agg_method",
+          "type": "Select",
+          "display": "Aggregation",
+          "desc": "Aggregation method",
+          "conditions": [],
+          "value": "mean",
+          "options": [
+            {
+              "code": "mean",
+              "display": "Mean"
+            },
+            {
+              "code": "std",
+              "display": "Sample standard dev."
+            },
+            {
+              "code": "var",
+              "display": "Sample variance"
+            }
+          ]
         }
       ],
       "inputs": {

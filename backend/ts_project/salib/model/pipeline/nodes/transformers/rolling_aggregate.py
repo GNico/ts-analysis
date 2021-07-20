@@ -39,7 +39,7 @@ class RollingAggregate(NodeTransformer):
             SelectOption("skew", "Sample skewness"),
             SelectOption("kurt", "Sample kurtosis")
         ]
-        self.add_required_param(Select('agg_method', 'Aggregation', 'Aggregation method', agg_method_options, agg_method_options[0].code))        
+        self.add_required_param(Select('agg_method', 'Aggregation', 'Aggregation method', agg_method_options, agg_method_options[0].code))
 
     def get_common_params(self):
         window = self.get_param('window').value
