@@ -140,6 +140,14 @@
           "value": ""
         },
         {
+          "id": "recursive",
+          "type": "Boolean",
+          "display": "Recursive",
+          "desc": "Calculate recursively using all past values (vs fixed window size)",
+          "conditions": [],
+          "value": true
+        },
+        {
           "id": "agg_method",
           "type": "Select",
           "display": "Aggregation",

@@ -16,6 +16,7 @@ class TestExponentialSmoothing(unittest.TestCase):
         factory = NodeFactory.transformer('test', 'ExponentialSmoothing')
         factory.set_param_value('span', '4')
         factory.set_param_value('min_periods', '')
+        factory.set_param_value('recursive', False)
         factory.set_param_value('agg_method', 'mean')
         factory.add_source(InputRef('input'))
         ewma = factory.build()

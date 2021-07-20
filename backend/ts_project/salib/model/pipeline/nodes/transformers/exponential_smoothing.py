@@ -2,6 +2,7 @@ from ..node_transformer import NodeTransformer
 
 from ...params.string import String
 from ...params.select import Select, SelectOption
+from ...params.boolean import Boolean
 
 from ....utils import timedelta_to_period
 
@@ -11,6 +12,7 @@ class ExponentialSmoothing(NodeTransformer):
         super().__init__(id)
         self.add_required_param(String('span', 'Span', 'Span size in time interval (eg: 12h)', '12h'))
         self.add_required_param(String('min_periods', 'Min. periods', 'Min number of periods (eg: 12h). Leave empty for window size.', ''))
+        self.add_required_param(Boolean('recursive', 'Recursive', 'Calculate recursively using all past values (vs fixed window size)', True))
         agg_method_options = [
             SelectOption("mean", "Mean"),
             SelectOption("std", "Sample standard dev."),
@@ -22,7 +24,7 @@ class ExponentialSmoothing(NodeTransformer):
         series = seriess[0]
         pdseries = series.pdseries
         
-        span, min_periods, agg_method = self.get_params()
+        span, min_periods, recursive, agg_method = self.get_params()
         step = series.step()
 
         calc_span = timedelta_to_period(span, step)
@@ -31,7 +33,7 @@ class ExponentialSmoothing(NodeTransformer):
             calc_min_periods = calc_span
         else:
             calc_min_periods = timedelta_to_period(min_periods, step)
-        ema = pdseries.ewm(span=calc_span, min_periods=calc_min_periods)
+        ema = pdseries.ewm(span=calc_span, adjust=(not recursive), min_periods=calc_min_periods)
         
         if agg_method == 'mean':
             ema = ema.mean()
@@ -51,8 +53,9 @@ class ExponentialSmoothing(NodeTransformer):
     def get_params(self):
         span = self.get_param('span').value
         min_periods = self.get_param('min_periods').value
+        recursive = self.get_param('recursive').value
         agg_method = self.get_param('agg_method').value
-        return (span, min_periods, agg_method)
+        return (span, min_periods, recursive, agg_method)
 
     def __str__(self):
         return "ExponentialSmoothing(" + str(self.get_params()) + ")[" + self.id + "]"
