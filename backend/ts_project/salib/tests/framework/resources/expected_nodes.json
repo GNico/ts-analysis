@@ -756,53 +756,6 @@
           "input"
         ]
       }
-    },
-    {
-      "type": "CFFilter",
-      "desc": "Seasonal-Trend decomposition (LOESS)",
-      "display": "CFFilter decomposition",
-      "params": [
-        {
-          "id": "output",
-          "type": "Select",
-          "display": "Output",
-          "desc": "Output",
-          "conditions": [],
-          "value": "trend",
-          "options": [
-            {
-              "code": "trend",
-              "display": "Trend"
-            },
-            {
-              "code": "seasonal",
-              "display": "Seasonality"
-            }
-          ]
-        },
-        {
-          "id": "period_min",
-          "type": "String",
-          "display": "Period Min",
-          "desc": "Min expected seasonality in periods or time interval (eg: 12h)",
-          "conditions": [],
-          "value": "7d"
-        },
-        {
-          "id": "period_max",
-          "type": "String",
-          "display": "Period Max",
-          "desc": "Max expected seasonality in periods or time interval (eg: 12h)",
-          "conditions": [],
-          "value": "7d"
-        }
-      ],
-      "inputs": {
-        "num_required_inputs": 1,
-        "names": [
-          "input"
-        ]
-      }
     }
   ],
   "detector": [
