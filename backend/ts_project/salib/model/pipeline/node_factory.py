@@ -1,3 +1,5 @@
+from .nodes.transformers.clamp import Clamp
+from .nodes.transformers.rescale import Rescale
 from .nodes.transformers.exponential_smoothing import ExponentialSmoothing
 from .nodes.transformers.difference import Difference
 from .nodes.transformers.divide import Divide
@@ -42,6 +44,8 @@ class NodeFactory:
 
     NODE_TYPES = {
         'transformer': {
+            'Clamp': Clamp,
+            'Rescale': Rescale,
             'StdNormalize': StdNormalize,
             'Shift': Shift,
             'Identity': Identity,

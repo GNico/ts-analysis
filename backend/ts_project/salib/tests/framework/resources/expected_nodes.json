@@ -1,6 +1,64 @@
 {
   "transformer": [
     {
+      "type": "Clamp",
+      "desc": "Assigns values outside boundary to boundary values",
+      "display": "Clamp",
+      "params": [
+        {
+          "id": "lower",
+          "type": "Float",
+          "display": "Lower",
+          "desc": "Lower bound",
+          "conditions": [],
+          "value": 0.0
+        },
+        {
+          "id": "upper",
+          "type": "Float",
+          "display": "Upper",
+          "desc": "Upper bound",
+          "conditions": [],
+          "value": 1.0
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
+      "type": "Rescale",
+      "desc": "Rescale data to given min-max values",
+      "display": "Rescale",
+      "params": [
+        {
+          "id": "lower",
+          "type": "Float",
+          "display": "Lower",
+          "desc": "Lower bound",
+          "conditions": [],
+          "value": 0.0
+        },
+        {
+          "id": "upper",
+          "type": "Float",
+          "display": "Upper",
+          "desc": "Upper bound",
+          "conditions": [],
+          "value": 1.0
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
       "type": "StdNormalize",
       "desc": "Normalize data such that mean = 0 and std dev = 1",
       "display": "Standard normalization",
@@ -810,10 +868,10 @@
       "display": "Quantile",
       "params": [
         {
-          "id": "high",
+          "id": "upper",
           "type": "BoundedFloat",
           "display": "Quantile upper %",
-          "desc": "Quantile above which we consider anomaly (%) - leave empty for no limit",
+          "desc": "Quantile upper bound (%) - leave empty for no limit",
           "conditions": [],
           "value": 90,
           "min": 0,
@@ -822,16 +880,32 @@
           "strict_max": false
         },
         {
-          "id": "low",
+          "id": "lower",
           "type": "BoundedFloat",
           "display": "Quantile lower %",
-          "desc": "Quantile below which we consider anomaly (%) - leave empty for no limit",
+          "desc": "Quantile lower bound (%) - leave empty for no limit",
           "conditions": [],
           "value": 0,
           "min": 0,
           "max": 100,
           "strict_min": false,
           "strict_max": false
+        },
+        {
+          "id": "inside",
+          "type": "Boolean",
+          "display": "Inside",
+          "desc": "If true, value must be within bounds",
+          "conditions": [],
+          "value": false
+        },
+        {
+          "id": "strict",
+          "type": "Boolean",
+          "display": "Strict",
+          "desc": "Strict comparison on bounds",
+          "conditions": [],
+          "value": true
         }
       ],
       "inputs": {

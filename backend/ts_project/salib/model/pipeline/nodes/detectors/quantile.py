@@ -1,42 +1,47 @@
 from ..node_detector import NodeDetector
 from ...params.float import BoundedFloat
+from ...params.boolean import Boolean
+from .simple_threshold import SimpleThreshold
 
 class Quantile(NodeDetector):
 
     def __init__(self, id):
         super().__init__(id)
-        self.add_param(BoundedFloat('high', 'Quantile upper %', 'Quantile above which we consider anomaly (%) - leave empty for no limit', 0, 100, False, 90))
-        self.add_param(BoundedFloat('low', 'Quantile lower %', 'Quantile below which we consider anomaly (%) - leave empty for no limit', 0, 100, False, 0))
+        self.add_param(BoundedFloat('upper', 'Quantile upper %', 'Quantile upper bound (%) - leave empty for no limit', 0, 100, False, 90))
+        self.add_param(BoundedFloat('lower', 'Quantile lower %', 'Quantile lower bound (%) - leave empty for no limit', 0, 100, False, 0))
+        self.add_required_param(Boolean('inside', 'Inside', 'If true, value must be within bounds', False))
+        self.add_required_param(Boolean('strict', 'Strict', 'Strict comparison on bounds', True))
 
     def anomalies(self, input_series, debug):
-        lo_bound, hi_bound = self.compute_thresholds(input_series)
-        def predicate(val):
-            return (hi_bound is not None and val > hi_bound) or (lo_bound is not None and val < lo_bound)
-        # import pdb; pdb.set_trace()
-        return (NodeDetector.pointwise_consecutive(predicate, input_series), {})
+        lower, upper, inside, strict = self.get_params()
 
-    def compute_thresholds(self, series):
+        lo_bound, hi_bound = self.compute_thresholds(input_series, lower, upper)
+
+        anomaly_score = SimpleThreshold.threshold_func(inside, strict, lo_bound, hi_bound)
+        return (NodeDetector.pointwise_consecutive(anomaly_score, input_series), {})
+
+    def compute_thresholds(self, series, lower, upper):
         s = series.pdseries
         if s.count() == 0:
             raise RuntimeError("Series does not have enough values")
         
-        low, high = self.get_param_values()
-        if high is not None:
-            high = s.quantile(high*0.01)
-        if low is not None:
-            low = s.quantile(low*0.01)
-        return (low, high)
+        if lower is not None:
+            lower = s.quantile(lower*0.01)
+        if upper is not None:
+            upper = s.quantile(upper*0.01)
 
-    def valid_threshold(self, abs_low, abs_high, val):
-        return val > abs_high or val < abs_low
+        return (lower, upper)
 
-    def get_param_values(self):
-        high = self.get_param('high').value
-        low = self.get_param('low').value
-        return low, high
+    def get_params(self):
+        lower = self.get_param('lower').value
+        upper = self.get_param('upper').value
+        inside = self.get_param('inside').value
+        strict = self.get_param('strict').value
+        return (lower, upper, inside, strict)
 
     def __str__(self):
-        return "Quantile(%s,%s)[%s]" % (self.get_param_values() + (self.id,))
+        get_params = [str(x) for x in self.get_params()] + [self.id]
+        return "Quantile(%s,%s,%s,%s)[%s]" % tuple(get_params)
 
     def display(self):
         return 'Quantile'
