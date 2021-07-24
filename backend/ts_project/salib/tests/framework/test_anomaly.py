@@ -1,4 +1,5 @@
 import unittest
+import numpy as np
 
 from model.anomaly import Anomaly
 from model.series import Series
@@ -47,17 +48,63 @@ class TestAnomaly(unittest.TestCase):
         self.assertEqual([a1, a2, a3, a4], sorted(anomalies))
 
     def test_output_format(self):
-        anomaly = Anomaly.from_epoch(self.series, 1, 2, 1.0, 'awesome')
-        anomaly.set_source_node(Node('test_node'))
-        expected = {
+        all_ids = [
+            'e4faf6ec4da15ed9a37f75d7bcc55d12',
+            'cb1eda751f67ae1b5d0ae2bd69f20531',
+            '5e1160651d9bf60d7136c193530e4c12',
+            '9ab7768778c2eafba90943ca14e2b970',
+            '0d78b95e849701520c5b38d7cbdecf58',
+        ]
+        self.assertEqual(len(all_ids), len(np.unique(all_ids)))
+        self.output_format_case(1, 2, 1.0, 'test_node', [], {
+            'id': all_ids.pop(),
             'from': 1000,
             'to': 2000,
             'score': 1.0,
-            'desc': 'awesome',
+            'source_anomalies': [],
             'source_node': 'test_node'
-        }
+        })
+        self.output_format_case(1, 1, 1.0, 'test_node', [], {
+            'id': all_ids.pop(),
+            'from': 1000,
+            'to': 1000,
+            'score': 1.0,
+            'source_anomalies': [],
+            'source_node': 'test_node'
+        })
+        self.output_format_case(1, 2, 0.0, 'test_node', [], {
+            'id': all_ids.pop(),
+            'from': 1000,
+            'to': 2000,
+            'score': 0.0,
+            'source_anomalies': [],
+            'source_node': 'test_node'
+        })
+        self.output_format_case(1, 2, 1.0, 'other_node', [], {
+            'id': all_ids.pop(),
+            'from': 1000,
+            'to': 2000,
+            'score': 1.0,
+            'source_anomalies': [],
+            'source_node': 'other_node'
+        })
+        source_anomaly = Anomaly.from_epoch(self.series, 1, 2, 1.0)
+        source_anomaly.set_source_node(Node('other_node'))
+        self.output_format_case(1, 2, 1.0, 'test_node', [source_anomaly], {
+            'id': all_ids.pop(),
+            'from': 1000,
+            'to': 2000,
+            'score': 1.0,
+            'source_anomalies': ['cb1eda751f67ae1b5d0ae2bd69f20531'],
+            'source_node': 'test_node'
+        })
+
+    def output_format_case(self, start, end, score, source_node_id, source_anomalies, expected):
+        anomaly = Anomaly.from_epoch(None, start, end, score)
+        anomaly.set_source_node(Node(source_node_id))
+        anomaly.set_source_anomalies(source_anomalies)
         self.assertEqual(expected, anomaly.output_format())
 
     def test_epoch_span(self):
-        anomaly = Anomaly.from_epoch(self.series, 1, 2, 1.0, 'awesome')
+        anomaly = Anomaly.from_epoch(self.series, 1, 2, 1.0)
         self.assertEqual((1, 2), anomaly.epoch_span_secs())
