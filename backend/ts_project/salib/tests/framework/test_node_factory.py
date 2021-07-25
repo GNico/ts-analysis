@@ -7,6 +7,7 @@ from model.pipeline.node_factory import NodeFactory
 
 
 class TestNodeFactory(unittest.TestCase):
+
     def test_node_list(self):
         actual = NodeFactory.nodes_list()
         dir = os.path.dirname(__file__)

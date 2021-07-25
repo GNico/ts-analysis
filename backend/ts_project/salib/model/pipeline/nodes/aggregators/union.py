@@ -13,7 +13,7 @@ class Union(Node):
         return NodeResult(self, inputs=inputs, anomalies=or_anomalies)
 
     def __str__(self):
-        return 'Union(' + ','.join(map(str, self.sources)) + ')'
+        return 'Union(' + ','.join(map(str, self.sources)) + ')[' + self.id + ']'
 
     def desc(self):
         return 'Combine all anomalies from sources'

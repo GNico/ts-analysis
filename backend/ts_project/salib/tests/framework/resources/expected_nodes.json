@@ -971,6 +971,25 @@
         "num_required_inputs": null,
         "names": []
       }
+    },
+    {
+      "type": "Slack",
+      "desc": "Extend anomalies and combine",
+      "display": "Slack",
+      "params": [
+        {
+          "id": "slack",
+          "type": "String",
+          "display": "Slack",
+          "desc": "Anomaly extension: can be interval, period or %",
+          "conditions": [],
+          "value": "25%"
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": null,
+        "names": []
+      }
     }
   ]
 }

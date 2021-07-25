@@ -64,7 +64,7 @@ class TestPipeline(unittest.TestCase):
         self.assertEqual('_Root(Node[1])', str(pipeline.root_node))
         self.assertEqual(1, len(pipeline.root_node.sources))
         or_node = pipeline.resolve_node_reference(pipeline.root_node.sources[0].ref)
-        self.assertEqual('Union(Node[2],Node[3])', str(or_node))
+        self.assertEqual('Union(Node[2],Node[3])[1]', str(or_node))
         self.assertEqual(2, len(or_node.sources))
         self.assertEqual('Node[2]', str(or_node.sources[0]))
         self.assertEqual('Node[3]', str(or_node.sources[1]))

@@ -32,7 +32,7 @@ class Intersect(Node):
         if resolution == 'anomaly':
             return self.anomaly_wise_join(lhss, rhss)
         elif resolution == 'temporal':
-            return self.temporal_join(lhss, rhss)
+            return self._temporal_join(lhss, rhss)
         else:
             raise ValueError("Invalid resolution, must be one of " + str(self.get_param('resolution').options))
 
@@ -51,7 +51,11 @@ class Intersect(Node):
                         result.append(rhs)
         return list(set(result)) # Remove duplicates
 
-    def temporal_join(self, lhss, rhss):
+    def _temporal_join(self, lhss, rhss):
+        return Intersect.temporal_join(self, lhss, rhss)
+
+    @staticmethod
+    def temporal_join(source_node, lhss, rhss):
         result = []
         for lhs in lhss:
             for rhs in rhss:
@@ -59,7 +63,7 @@ class Intersect(Node):
                     score = Intersect.combined_scores(lhs, rhs)
                     new_anomaly = Anomaly(lhs.start, lhs.end, score)
                     new_anomaly.set_source_anomalies([lhs, rhs])
-                    new_anomaly.set_source_node(self)
+                    new_anomaly.set_source_node(source_node)
                     result.append(new_anomaly)
                 else:
                     fst, snd = sorted((lhs,rhs))
@@ -68,7 +72,7 @@ class Intersect(Node):
                         score = Intersect.combined_scores(lhs, rhs)
                         new_anomaly = Anomaly(snd.start, snd.end, score)
                         new_anomaly.set_source_anomalies([lhs, rhs])
-                        new_anomaly.set_source_node(self)
+                        new_anomaly.set_source_node(source_node)
                         result.append(new_anomaly)
                     # Partial inclusion
                     elif fst.end >= snd.start and fst.end <= snd.end:
@@ -78,7 +82,7 @@ class Intersect(Node):
                         if new_start < new_end:
                             new_anomaly = Anomaly(new_start, fst.end, score)
                             new_anomaly.set_source_anomalies([lhs, rhs])
-                            new_anomaly.set_source_node(self)
+                            new_anomaly.set_source_node(source_node)
                             result.append(new_anomaly)
 
 
@@ -89,7 +93,7 @@ class Intersect(Node):
         return (lhs.score + rhs.score)/2
 
     def __str__(self):
-        return 'Intersect(' + ','.join([s.ref for s in self.sources]) + ')[' + self.get_param('resolution').value + ']'
+        return 'Intersect(' + ','.join([s.ref for s in self.sources]) + ')[' + self.id + ']'
 
     def desc(self):
         return 'Combine and merge overlapping anomalies from sources'
