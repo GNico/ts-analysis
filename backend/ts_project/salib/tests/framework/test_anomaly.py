@@ -17,22 +17,22 @@ class TestAnomaly(unittest.TestCase):
                         1)
 
     def test_equality(self):
-        a = Anomaly.from_epoch(self.series, 1, 2, 1.0)
-        b = Anomaly.from_epoch(self.series, 1, 2, 1.0)
+        a = Anomaly.from_epoch(1, 2, 1.0)
+        b = Anomaly.from_epoch(1, 2, 1.0)
         self.assertEqual(a, b)
         self.assertEqual(hash(a), hash(b))
 
     def test_inequality(self):
-        a = Anomaly.from_epoch(self.series, 1, 2, 1.0)
-        b = Anomaly.from_epoch(self.series, 2, 3, 1.0)
+        a = Anomaly.from_epoch(1, 2, 1.0)
+        b = Anomaly.from_epoch(2, 3, 1.0)
         self.assertNotEqual(a, b)
         self.assertNotEqual(hash(a), hash(b))
 
     def test_set_elements(self):
-        a1 = Anomaly.from_epoch(self.series, 1, 2, 1.0)
-        a2 = Anomaly.from_epoch(self.series, 1, 2, 1.0)
-        a3 = Anomaly.from_epoch(self.series, 2, 3, 1.0)
-        a4 = Anomaly.from_epoch(self.series, 3, 4, 1.0)
+        a1 = Anomaly.from_epoch(1, 2, 1.0)
+        a2 = Anomaly.from_epoch(1, 2, 1.0)
+        a3 = Anomaly.from_epoch(2, 3, 1.0)
+        a4 = Anomaly.from_epoch(3, 4, 1.0)
         s = set([a1, a3])
         self.assertTrue(a1 in s)
         self.assertTrue(a2 in s)
@@ -40,10 +40,10 @@ class TestAnomaly(unittest.TestCase):
         self.assertFalse(a4 in s)
 
     def test_ordering(self):
-        a1 = Anomaly.from_epoch(self.series, 1, 2, 1.0)
-        a2 = Anomaly.from_epoch(self.series, 1, 3, 1.0)
-        a3 = Anomaly.from_epoch(self.series, 3, 4, 1.0)
-        a4 = Anomaly.from_epoch(self.series, 4, 5, 1.0)
+        a1 = Anomaly.from_epoch(1, 2, 1.0)
+        a2 = Anomaly.from_epoch(1, 3, 1.0)
+        a3 = Anomaly.from_epoch(3, 4, 1.0)
+        a4 = Anomaly.from_epoch(4, 5, 1.0)
         anomalies = [a3, a4, a2, a1]
         self.assertEqual([a1, a2, a3, a4], sorted(anomalies))
 
@@ -88,7 +88,7 @@ class TestAnomaly(unittest.TestCase):
             'source_anomalies': [],
             'source_node': 'other_node'
         })
-        source_anomaly = Anomaly.from_epoch(self.series, 1, 2, 1.0)
+        source_anomaly = Anomaly.from_epoch(1, 2, 1.0)
         source_anomaly.set_source_node(Node('other_node'))
         self.output_format_case(1, 2, 1.0, 'test_node', [source_anomaly], {
             'id': all_ids.pop(),
@@ -100,11 +100,11 @@ class TestAnomaly(unittest.TestCase):
         })
 
     def output_format_case(self, start, end, score, source_node_id, source_anomalies, expected):
-        anomaly = Anomaly.from_epoch(None, start, end, score)
+        anomaly = Anomaly.from_epoch(start, end, score)
         anomaly.set_source_node(Node(source_node_id))
         anomaly.set_source_anomalies(source_anomalies)
         self.assertEqual(expected, anomaly.output_format())
 
     def test_epoch_span(self):
-        anomaly = Anomaly.from_epoch(self.series, 1, 2, 1.0)
+        anomaly = Anomaly.from_epoch(1, 2, 1.0)
         self.assertEqual((1, 2), anomaly.epoch_span_secs())

@@ -43,14 +43,14 @@ class NodeDetector(Node):
             else:
                 if current_start is not None:
                     avg_score = current_score_sum / current_consecutive_count
-                    anomaly = Anomaly(series, current_start, elem[0], avg_score)
+                    anomaly = Anomaly(current_start, elem[0], avg_score)
                     anomalies.append(anomaly)
                     current_start = None
 
 
         if current_start is not None:
             avg_score = current_score_sum / current_consecutive_count
-            anomaly = Anomaly(series, current_start, series.end_bound(), avg_score)
+            anomaly = Anomaly(current_start, series.end_bound(), avg_score)
             anomalies.append(anomaly)
 
         return anomalies

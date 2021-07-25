@@ -52,13 +52,12 @@ class Intersect(Node):
         return list(set(result)) # Remove duplicates
 
     def temporal_join(self, lhss, rhss):
-        # TODO consider issue with taking lhs series
         result = []
         for lhs in lhss:
             for rhs in rhss:
                 if lhs.start == rhs.start and lhs.end == rhs.end:
                     score = Intersect.combined_scores(lhs, rhs)
-                    new_anomaly = Anomaly(lhs.series, lhs.start, lhs.end, score)
+                    new_anomaly = Anomaly(lhs.start, lhs.end, score)
                     new_anomaly.set_source_anomalies([lhs, rhs])
                     new_anomaly.set_source_node(self)
                     result.append(new_anomaly)
@@ -67,7 +66,7 @@ class Intersect(Node):
                     # Total inclusion
                     if snd.start >= fst.start and snd.end <= fst.end:
                         score = Intersect.combined_scores(lhs, rhs)
-                        new_anomaly = Anomaly(lhs.series, snd.start, snd.end, score)
+                        new_anomaly = Anomaly(snd.start, snd.end, score)
                         new_anomaly.set_source_anomalies([lhs, rhs])
                         new_anomaly.set_source_node(self)
                         result.append(new_anomaly)
@@ -77,7 +76,7 @@ class Intersect(Node):
                         new_start = snd.start
                         new_end = fst.end
                         if new_start < new_end:
-                            new_anomaly = Anomaly(lhs.series, new_start, fst.end, score)
+                            new_anomaly = Anomaly(new_start, fst.end, score)
                             new_anomaly.set_source_anomalies([lhs, rhs])
                             new_anomaly.set_source_node(self)
                             result.append(new_anomaly)
