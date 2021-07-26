@@ -51,6 +51,16 @@ def perform_live_analysis(self, data):
     return output_json
 
 
+
+def update_incidents(old_incidents, new_incidents):
+    new_incidents_map = OrderedDict((x['start'], x) for x in new_incidents)
+    for old_inc in old_incidents:
+        new_inc = new_incidents_map.get(old_inc.start, None)
+        if new_inc:
+            new_inc['state'] = old_inc.state
+    return list(new_incidents_map.values())
+
+
 @shared_task(bind=True, name="periodic_analysis")
 def perform_periodic_analysis(self, id):
     periodic_analysis = PeriodicAnalysis.objects.get(id=id)
@@ -64,30 +74,32 @@ def perform_periodic_analysis(self, id):
         input_data['start'] = ''
         input_data['end'] = now.isoformat()[:-9] + 'Z'     
 
-    print('''Running analysis with ID:  {analysis_id}, interval {interval} and relevant period {relevant}'''.format(
-        analysis_id=periodic_analysis.analysis_id, 
-        interval=periodic_analysis.time_interval, 
-        relevant=periodic_analysis.relevant_period))
-
     analysis_results = run_analysis(analysis_settings.client, inputs_data, analysis_settings.model).output_format()
 
     periodic_analysis.last_run = now 
     periodic_analysis.save()
 
     #save results
-    results = Results.objects.create(
-        periodic_analysis=periodic_analysis, 
-        anomalies=analysis_results['anomalies'],
-        run_datetime=now)
+   # results = Results.objects.update_or_create(
+   #     periodic_analysis=periodic_analysis, 
+   #     defaults={
+   #         'periodic_analysis': periodic_analysis,
+   #         'anomalies': analysis_results['anomalies'],
+   #         'run_datetime': now})
 
-    #create incidents (remove old for now)
-    Incident.objects.filter(periodic_analysis=periodic_analysis).delete()
-    for anomaly in analysis_results['anomalies']:
-        incident = Incident.objects.create(
-            periodic_analysis=periodic_analysis,
-            client=periodic_analysis.analysis.client.name,
-            start=datetime.fromtimestamp(anomaly['from']/1000.0, tz=timezone.utc),
-            end=datetime.fromtimestamp(anomaly['to']/1000.0, tz=timezone.utc),
-            score=anomaly['score'],
-            desc=anomaly['desc'])
+    #update incidents
+    old_incidents = Incident.objects.filter(periodic_analysis=periodic_analysis)
+    new_incidents = [{
+        'periodic_analysis': periodic_analysis,
+        'client': periodic_analysis.analysis.client.name,
+        'start': datetime.fromtimestamp(anomaly['from']/1000.0, tz=timezone.utc),
+        'end': datetime.fromtimestamp(anomaly['to']/1000.0, tz=timezone.utc),
+        'state': Incident.State.OPEN,
+        'score': anomaly['score'],
+        'desc': anomaly['desc']
+    } for anomaly in analysis_results['anomalies']]
 
+    updated_incidents = update_incidents(old_incidents, new_incidents)
+    old_incidents.delete()
+    for incident_data in updated_incidents:
+        Incident.objects.create(**incident_data) 

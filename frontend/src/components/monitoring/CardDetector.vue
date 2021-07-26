@@ -28,89 +28,87 @@
     </div>        
   </header>
   <div class="card-content p-4" v-show="expanded">
-    <b-tabs type="is-boxed" vertical :animated="false">
+    <b-tabs 
+      type="is-boxed"        
+      :animated="false"
+      destroy-on-hide>
 
       <!--DETECTOR SETTINGS-->
-      <b-tab-item label="Detector settings">
-        <div class="columns">
-          <div class="column is-12-mobile is-10-desktop is-8-widescreen is-6-fullhd">
-            <b-field horizontal label="Execution interval">   
-            <!--  <template #label>
-                Execution interval
+      <b-tab-item label="Settings">
+        <div class="columns">   
+          <div class="column is-8-mobile is-6-desktop is-5-widescreen is-3-fullhd">
+            <div class="is-flex mb-3">
+              <div class="has-text-grey-lighter has-text-weight-bold field-label is-normal">
+                Execution frequency 
                 <b-tooltip type="is-info" label="Amount of time that passes between analysis executions">
                   <b-icon size="is-small" icon="help-circle-outline"></b-icon>
                 </b-tooltip>
-              </template>    -->       
+              </div>  
               <b-input 
-              v-model="options.time_interval"
-              size="is-small" 
-              class="shorter-field"
-              type="text" 
-              pattern="^[0-9]+[mhd]$"/>
-            </b-field>                     
-            <b-field horizontal label="Relevant period">
-           <!--   <template #label>
-                Relevant period
-                <b-tooltip type="is-info" label="Incidents older than this parameter will be ignored">
+                v-model="options.time_interval"
+                size="is-small" 
+                class="shorter-field"
+                type="text" 
+                pattern="^[0-9]+[mhd]$"/>   
+            </div> 
+
+            <div class="is-flex mb-3">
+              <div class="has-text-grey-lighter has-text-weight-bold field-label is-normal">
+                Data time window
+                <b-tooltip type="is-info" label="Data prior to this period will not be taken into account">
                   <b-icon size="is-small" icon="help-circle-outline"></b-icon>
                 </b-tooltip>
-              </template> -->
+              </div>  
               <b-input 
-              size="is-small" 
-              class="shorter-field"
-              v-model="options.relevant_period"
-              type="text" 
-              pattern="^[0-9]+[mhd]$"/>
-            </b-field>
-            <b-field horizontal label="Notifications">
-              <b-switch 
+                size="is-small" 
+                class="shorter-field"
+                v-model="options.data_time_window"
+                type="text" 
+                pattern="^[0-9]+[mhd]$"/>   
+            </div> 
+
+            <div class="is-flex mb-3">
+              <div class="has-text-grey-lighter has-text-weight-bold field-label is-normal">
+                Anomaly time window
+                <b-tooltip type="is-info" label="Anomalies prior to this period will not be taken into account">
+                  <b-icon size="is-small" icon="help-circle-outline"></b-icon>
+                </b-tooltip>
+              </div>  
+              <b-input 
+                size="is-small" 
+                class="shorter-field"
+                v-model="options.anomaly_time_window"
+                type="text" 
+                pattern="^[0-9]+[mhd]$"/>   
+            </div>
+
+            <div class="is-flex mb-3 ml-5">
+              <div class="has-text-grey-lighter has-text-weight-bold field-label">
+                Notifications               
+              </div>  
+              <b-switch
+                class="shorter-field"
                 v-model="options.alerts_enabled" 
                 :rounded="false"
                 type="is-primary" 
                 passive-type="is-grey">
                 {{options.alerts_enabled ? 'Enabled' : 'Disabled'}}
-              </b-switch>
-            </b-field>
+              </b-switch>   
+            </div>   
 
-            <b-field horizontal label="Detection model">
-              <a @click="showGraph(detector.analysis_details.model)">Show</a>
-            </b-field>
-            
-            <b-field horizontal class="mt-5">
+            <div class="is-flex mt-5 is-justify-content-flex-end">
               <a class="button is-primary is-small has-text-weight-semibold" @click="updateOpts">
                 Save changes
               </a>
-            </b-field>                   
+            </div>                
+
           </div>
         </div>
       </b-tab-item> 
 
       <!--ANALYSIS SETTINGS-->
-      <b-tab-item label="Analysis settings">
-        <div class="columns">
-          <div class="column is-12-mobile is-10-desktop is-8-widescreen is-6-fullhd">
-            <b-field horizontal label="Client">
-              {{detector.analysis_details.client}}
-            </b-field>
-            <b-field horizontal label="Tags">
-              some tags?
-            </b-field>
-            <b-field horizontal label="Contexts">
-              some contexts?
-            </b-field>
-            <b-field horizontal label="Interval">
-              {{detector.analysis_details.data_options.interval}}
-            </b-field>
-            <b-field horizontal label="Detection model">
-              <a @click="showGraph(detector.analysis_details.model)">Show</a>
-            </b-field>
-            <b-field horizontal class="mt-5">
-              <a class="button is-primary is-small has-text-weight-semibold" @click="editAnalysis">
-                Edit settings
-              </a>
-            </b-field>                   
-          </div>
-        </div>
+      <b-tab-item label="Detection model">
+        <CardDetectorModelTab :analysisDetails="detector.analysis_details"/>                
       </b-tab-item>
 
       <!--RESULTS-->
@@ -123,8 +121,10 @@
 
 <script>
 import debounce from "lodash/debounce"
+import CardDetectorModelTab from '@/components/monitoring/CardDetectorModelTab'
 
 export default {
+  components: { CardDetectorModelTab },
   props: {
     detector: {
       type: Object,
@@ -133,7 +133,7 @@ export default {
   },
   data() {
     return {
-      expanded: true,
+      expanded: false,
       active: undefined,
       options: {
         alerts_enabled: undefined,
@@ -166,9 +166,6 @@ export default {
     editAnalysis() {
       this.$emit('editAnalysis', this.detector.analysis)
     },
-    showGraph() {
-      this.$emit('showGraph', this.detector.analysis_details)
-    }
   },
   watch: {
     detector: {

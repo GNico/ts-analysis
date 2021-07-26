@@ -72,8 +72,8 @@ class PeriodicAnalysis(models.Model):
     active = models.BooleanField(default=False)
     alerts_enabled = models.BooleanField(default=False)
     time_interval = models.TextField(default='1h')
-    relevant_period = models.TextField(default='1d')
-    #data period o algo asi indepiendente del from to del analysis
+    anomaly_time_window = models.TextField(default='')
+    data_time_window = models.TextField(default='')
     created = models.DateTimeField(auto_now_add=True)     
     last_run = models.DateTimeField(null=True)
 
@@ -142,3 +142,7 @@ class Incident(models.Model):
     score = models.DecimalField(max_digits=3, decimal_places=2, default=1.0)
     desc = models.TextField(null=True)
 
+    @property
+    def duration(self):
+        return int((self.end - self.start).total_seconds()) if (self.end and self.start) else None
+    

@@ -7,15 +7,8 @@
     @load="addItem"
     title="Select Analysis"
     :allowDelete="false"
-    confirmLabel="Create Detector"
-  />
+    confirmLabel="Create Detector"/>
   
-  <ModalDetectorGraph
-    :analysisDetails="analysisDetails"
-    :isActive="modelModalActive"
-    @close="modelModalActive = false"
-  />
-
   <div class="title">{{ monitor.name }}</div>
   <b-tabs type="is-medium"  :animated="false"  destroy-on-hide>
     <b-tab-item label="Detectors" icon="alarm-light" value="Detectors">
@@ -29,13 +22,12 @@
       
       <CardDetector 
         v-for="detector in monitor.detectors" 
+        ref="cardDetector"
         :key="detector.id"
         :detector="detector"
         @delete="deleteItem"
         @update="updateOpts(detector.id, $event)"
-        @editAnalysis="editAnalysis"
-        @showGraph="showGraph"
-      />
+        @editAnalysis="editAnalysis" />
     </b-tab-item>
 
     <b-tab-item label="Notification channels" icon="bell" value="Notifications">
@@ -52,12 +44,11 @@
 <script>
 import api from '@/api/repository'
 import ModalLoadAnalysis from '@/components/analysis/ModalLoadAnalysis'
-import ModalDetectorGraph from './ModalDetectorGraph'
 import CardDetector from './CardDetector'
 import MonitorNotifications from './MonitorNotifications'
 
 export default {
-  components: { ModalDetectorGraph, ModalLoadAnalysis, CardDetector, MonitorNotifications },
+  components: { ModalLoadAnalysis, CardDetector, MonitorNotifications },
   data() {
     return {
       loadModalActive: false,
@@ -69,9 +60,6 @@ export default {
         time_interval: undefined,
         incidents_period: undefined,
       },
-
-      modelModalActive: false,
-      analysisDetails: {},
     }
   },
   computed: {
@@ -82,22 +70,32 @@ export default {
   methods: {
     fetchData(monitorId) {
       this.loading = true
-      api.getMonitorDetails(monitorId)
-      .then(response => {
-        this.monitor = { ...response.data }
-      })
+      return  api.getMonitorDetails(monitorId)
+              .then(response => {
+                this.monitor = { ...response.data }
+                console.log("monitor")
+                console.log(this.monitor)
+              })
     },
     addItem(id) {
       api.addNewPeriodicAnalysis(this.monitor.id, id)
-      .then(response => {
-        this.fetchData(this.monitor.id)
+      .then(response => {        
+        this.fetchData(this.monitor.id).then(resp => {
+          this.expandDetector(response.data.id)
+        })
         this.$buefy.toast.open({
           message: "Detector created",
           type: 'is-success',
           duration: 2500,
-        })
+        })    
       })
       .catch(error => console.log(error))
+    },
+    expandDetector(id) {
+      this.$nextTick(() => {        
+        var elem = this.$refs.cardDetector.find(c => c.detector.id == id)
+        if (elem) elem.expanded = true         
+      })
     },
     deleteItem(id) {
       api.deletePeriodicAnalysis(this.monitor.id, id)
@@ -114,10 +112,6 @@ export default {
     editAnalysis(analysis) {
       //should switch to analysis page
       console.log(analysis)
-    },
-    showGraph(data) {
-      this.modelModalActive = true
-      this.analysisDetails = data
     },
     deleteNotification(id) {
       api.deleteNotificationChannel(id)

@@ -11,6 +11,7 @@
 import dagreD3 from "dagre-d3";
 import * as d3 from "d3";
 import debounce from "lodash/debounce";
+import { nanoid } from 'nanoid'
 
 export default {
   props: {
@@ -37,6 +38,7 @@ export default {
   },
   data() {
     return {
+      id: '',
       resizeHandler: debounce(this.refresh, 300),
       g: undefined,   
       selectedNodes: [],    
@@ -58,10 +60,10 @@ export default {
   },
   methods: {
     addIdPrefix(id) {
-      return "N" + id 
+      return "N" + this.id + id 
     },
     removeIdPrefix(id) {
-      return id.substring(1);
+      return id.substring(7);
     },
     createLayout() {
       this.g = new dagreD3.graphlib.Graph().setGraph({})
@@ -173,11 +175,18 @@ export default {
   },
   created() {
     window.addEventListener("resize", this.resizeHandler)
+    this.id = nanoid(6)
+
+    console.log('created')
   },
   mounted() {
     if (this.nodes.length) {
       this.refresh()
+      console.log("does refresh")
     }
+
+    console.log('mounted')
+
   },
   destroyed() {
     window.removeEventListener("resize", this.resizeHandler);

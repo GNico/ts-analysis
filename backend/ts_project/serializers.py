@@ -36,12 +36,14 @@ class AnalysisSerializer(serializers.Serializer):
 
 class PeriodicAnalysisSerializer(serializers.ModelSerializer):
     time_interval = serializers.RegexField(regex='^[0-9]+[smhd]$', allow_blank=False, required=False)
-    relevant_period = serializers.RegexField(regex='^[0-9]+[smhd]$', allow_blank=False, required=False)
+    data_time_window = serializers.RegexField(regex='^[0-9]+[smhd]$', allow_blank=True, default='')
+    anomaly_time_window = serializers.RegexField(regex='^[0-9]+[smhd]$', allow_blank=True, default='')
     analysis_details = AnalysisSettingsSerializer(read_only=True, source='analysis')
 
     class Meta:
         model = PeriodicAnalysis
-        fields = ['id', 'monitor', 'analysis', 'analysis_details', 'task', 'active', 'alerts_enabled', 'time_interval', 'relevant_period', 'created', 'last_run' ]
+        fields = ['id', 'monitor', 'analysis', 'analysis_details', 'task', 'active', 
+        'alerts_enabled', 'time_interval', 'data_time_window', 'anomaly_time_window', 'created', 'last_run' ]
 
 
 class NotificationChannelSerializer(serializers.ModelSerializer):
@@ -83,13 +85,12 @@ class IncidentSerializer(serializers.ModelSerializer):
                 end=input_data.get('end', ''),  
                 tags=input_data.get('tags', []),             
                 interval=input_data.get('interval', '1h'))
-         #   s = services.get_series(obj.client, options['start'], options['end'], options['contexts'], options['tags'], options['interval'])
             series_data[str(index+1)] = s
         return series_data
 
     class Meta:
         model = Incident
-        fields = ['id', 'state', 'client', 'score', 'start', 'end', 'desc', 'series']
+        fields = ['id', 'state', 'client', 'score', 'start', 'end', 'desc', 'series', 'duration']
 
 
 class IncidentListSerializer(serializers.ModelSerializer):
@@ -106,4 +107,4 @@ class IncidentListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Incident
-        fields = ['id', 'state', 'client', 'score', 'start', 'end', 'desc', 'analysis_name', 'monitor']
+        fields = ['id', 'state', 'client', 'score', 'start', 'end', 'desc', 'analysis_name', 'monitor', 'duration']
