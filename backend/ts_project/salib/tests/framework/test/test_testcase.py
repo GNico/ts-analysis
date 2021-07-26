@@ -24,9 +24,9 @@ class TestTestCase(unittest.TestCase):
         ], 1, 's')
 
         actual_anomalies = [
-            Anomaly.from_epoch(test_series, 1, 1, 1.0),
-            Anomaly.from_epoch(test_series, 2, 2, 1.0),
-            Anomaly.from_epoch(test_series, 4, 4, 1.0)
+            Anomaly.from_epoch(1, 1, 1.0),
+            Anomaly.from_epoch(2, 2, 1.0),
+            Anomaly.from_epoch(4, 4, 1.0)
         ]
 
         analyzer = MockAnalyzer(actual_anomalies)

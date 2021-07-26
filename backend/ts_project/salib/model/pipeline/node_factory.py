@@ -1,4 +1,6 @@
-from .nodes.transformers.ema import EMA
+from .nodes.transformers.clamp import Clamp
+from .nodes.transformers.rescale import Rescale
+from .nodes.transformers.exponential_smoothing import ExponentialSmoothing
 from .nodes.transformers.difference import Difference
 from .nodes.transformers.divide import Divide
 from .nodes.transformers.std_normalize import StdNormalize
@@ -7,7 +9,6 @@ from .nodes.transformers.identity import Identity
 from .nodes.transformers.rolling_aggregate import RollingAggregate
 from .nodes.transformers.multi_rolling_aggregate import MultiRollingAggregate
 from .nodes.transformers.stl import STL
-from .nodes.transformers.CF_filter import CFFilter
 from .nodes.transformers.seasonal_decompose import SeasonalDecompose
 from .nodes.transformers.auto_regression import AutoRegression
 from .nodes.transformers.sarimax import SARIMAX
@@ -43,10 +44,12 @@ class NodeFactory:
 
     NODE_TYPES = {
         'transformer': {
+            'Clamp': Clamp,
+            'Rescale': Rescale,
             'StdNormalize': StdNormalize,
             'Shift': Shift,
             'Identity': Identity,
-            'EMA': EMA,
+            'ExponentialSmoothing': ExponentialSmoothing,
             'Difference': Difference,
             'Divide': Divide,
             'RollingAggregate': RollingAggregate,
@@ -57,7 +60,6 @@ class NodeFactory:
             'SARIMAX': SARIMAX,
             'ALMA': ALMA,
             'GARCH': GARCH,
-            'CFFilter': CFFilter
         },
         'detector': {
             'SimpleThreshold': SimpleThreshold,

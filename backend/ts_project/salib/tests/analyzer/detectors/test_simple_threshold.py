@@ -14,7 +14,7 @@ from model.utils import timestamp_to_epoch
 
 class TestSimpleThreshold(unittest.TestCase):
 
-    def test_simple_threshold(self):
+    def test_simple_threshold_case_inside(self):
         factory = self.prepare_factory()
         factory.set_param_value('inside', True)
         factory.set_param_value('strict', False)
@@ -22,8 +22,9 @@ class TestSimpleThreshold(unittest.TestCase):
         factory.set_param_value('upper', 5)
         st = factory.build()
 
-        self.case(st, [[0, 6],[14, 20]])
+        self.case(st, [[0, 6, 1.0],[14, 20, 1.0]])
 
+    def test_simple_threshold_case_inside_strict(self):
         factory = self.prepare_factory()
         factory.set_param_value('inside', True)
         factory.set_param_value('strict', True)
@@ -31,8 +32,9 @@ class TestSimpleThreshold(unittest.TestCase):
         factory.set_param_value('upper', 5)
         st = factory.build()
 
-        self.case(st, [[1, 5],[15, 19]])
+        self.case(st, [[1, 5, 1.0],[15, 19, 1.0]])
 
+    def test_simple_threshold_case(self):
         factory = self.prepare_factory()
         factory.set_param_value('inside', False)
         factory.set_param_value('strict', False)
@@ -40,8 +42,9 @@ class TestSimpleThreshold(unittest.TestCase):
         factory.set_param_value('upper', 5)
         st = factory.build()
 
-        self.case(st, [[0, 1], [5, 15], [19, 20]])
+        self.case(st, [[0, 1, 0.0], [5, 15, 1.0], [19, 20, 0.0]])
 
+    def test_simple_threshold_case_strict(self):
         factory = self.prepare_factory()
         factory.set_param_value('inside', False)
         factory.set_param_value('strict', True)
@@ -49,9 +52,9 @@ class TestSimpleThreshold(unittest.TestCase):
         factory.set_param_value('upper', 5)
         st = factory.build()
 
-        self.case(st, [[6, 14]])
+        self.case(st, [[6, 14, 1.0]])
 
-    def test_simple_threshold_none_edges(self):
+    def test_simple_threshold_none_edges_strict(self):
         series = self.build_triangle()
         
         factory = self.prepare_factory()
@@ -61,8 +64,9 @@ class TestSimpleThreshold(unittest.TestCase):
         factory.set_param_value('upper', 5)
         st = factory.build()
 
-        self.case(st, [[6, 14]])
-        
+        self.case(st, [[6, 14, 1.0]])
+
+    def test_simple_threshold_none_edges_inside_strict(self):
         factory = self.prepare_factory()
         factory.set_param_value('inside', True)
         factory.set_param_value('strict', True)
@@ -70,7 +74,7 @@ class TestSimpleThreshold(unittest.TestCase):
         factory.set_param_value('upper', 5)
         st = factory.build()
 
-        self.case(st, [[0, 5], [15, 20]])
+        self.case(st, [[0, 5, 1.0], [15, 20, 1.0]])
 
     def prepare_factory(self):
         factory = NodeFactory.detector('test', 'SimpleThreshold')
@@ -88,10 +92,11 @@ class TestSimpleThreshold(unittest.TestCase):
             expected_anomaly = expected_anomalies[i]
             self.assertEqual({
                 'source_node': node.id,
-                'desc': None,
+                'id': anomalies[i].id(),
                 'from': expected_anomaly[0]*1000,
                 'to': expected_anomaly[1]*1000,
-                'score': 1.0
+                'score': expected_anomaly[2],
+                'source_anomalies': [],
             },anomalies[i].output_format())
         self.assertEqual(len(expected_anomalies), len(anomalies))
 

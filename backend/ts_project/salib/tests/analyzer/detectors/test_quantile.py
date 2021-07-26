@@ -16,44 +16,44 @@ class TestQuantile(unittest.TestCase):
 
     def test_quantile_case(self):
         factory = self.prepare_factory()
-        factory.set_param_value('high', 90)
-        factory.set_param_value('low', 10)
+        factory.set_param_value('upper', 90)
+        factory.set_param_value('lower', 10)
         st = factory.build()
 
         self.case(st, [[0, 1], [10, 11]])
 
         factory = self.prepare_factory()
-        factory.set_param_value('high', 100)
-        factory.set_param_value('low', 10)
+        factory.set_param_value('upper', 100)
+        factory.set_param_value('lower', 10)
         st = factory.build()
 
         self.case(st, [[0, 1]])
 
         factory = self.prepare_factory()
-        factory.set_param_value('high', 90)
-        factory.set_param_value('low', 0)
+        factory.set_param_value('upper', 90)
+        factory.set_param_value('lower', 0)
         st = factory.build()
 
         self.case(st, [[10, 11]])
 
         factory = self.prepare_factory()
-        factory.set_param_value('high', 100)
-        factory.set_param_value('low', 50)
+        factory.set_param_value('upper', 100)
+        factory.set_param_value('lower', 50)
         st = factory.build()
 
         self.case(st, [[0, 5]])
 
         factory = self.prepare_factory()
-        factory.set_param_value('high', 50)
-        factory.set_param_value('low', 0)
+        factory.set_param_value('upper', 50)
+        factory.set_param_value('lower', 0)
         st = factory.build()
 
         self.case(st, [[6, 11]])
 
     def test_quantile_edge_case(self):
         factory = self.prepare_factory()
-        factory.set_param_value('high', 100)
-        factory.set_param_value('low', 0)
+        factory.set_param_value('upper', 100)
+        factory.set_param_value('lower', 0)
         st = factory.build()
 
         self.case(st, [])
@@ -74,10 +74,11 @@ class TestQuantile(unittest.TestCase):
             expected_anomaly = expected_anomalies[i]
             self.assertEqual({
                 'source_node': node.id,
-                'desc': None,
+                'id': anomalies[i].id(),
                 'from': expected_anomaly[0]*1000,
                 'to': expected_anomaly[1]*1000,
-                'score': 1.0
+                'score': 1.0,
+                'source_anomalies': [],
             },anomalies[i].output_format())
         self.assertEqual(len(expected_anomalies), len(anomalies))
 

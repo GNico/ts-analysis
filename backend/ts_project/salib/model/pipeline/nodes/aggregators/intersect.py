@@ -52,31 +52,33 @@ class Intersect(Node):
         return list(set(result)) # Remove duplicates
 
     def temporal_join(self, lhss, rhss):
-        # TODO consider issue with taking lhs series
         result = []
         for lhs in lhss:
             for rhs in rhss:
                 if lhs.start == rhs.start and lhs.end == rhs.end:
                     score = Intersect.combined_scores(lhs, rhs)
-                    desc = Intersect.combined_desc(lhs, rhs)
-                    new_anomaly = Anomaly(lhs.series, lhs.start, lhs.end, score, desc)
+                    new_anomaly = Anomaly(lhs.start, lhs.end, score)
+                    new_anomaly.set_source_anomalies([lhs, rhs])
+                    new_anomaly.set_source_node(self)
                     result.append(new_anomaly)
                 else:
                     fst, snd = sorted((lhs,rhs))
                     # Total inclusion
                     if snd.start >= fst.start and snd.end <= fst.end:
                         score = Intersect.combined_scores(lhs, rhs)
-                        desc = Intersect.combined_desc(lhs, rhs)
-                        new_anomaly = Anomaly(lhs.series, snd.start, snd.end, score, desc)
+                        new_anomaly = Anomaly(snd.start, snd.end, score)
+                        new_anomaly.set_source_anomalies([lhs, rhs])
+                        new_anomaly.set_source_node(self)
                         result.append(new_anomaly)
                     # Partial inclusion
                     elif fst.end >= snd.start and fst.end <= snd.end:
                         score = Intersect.combined_scores(lhs, rhs)
-                        desc = Intersect.combined_desc(lhs, rhs)
                         new_start = snd.start
                         new_end = fst.end
                         if new_start < new_end:
-                            new_anomaly = Anomaly(lhs.series, new_start, fst.end, score, desc)
+                            new_anomaly = Anomaly(new_start, fst.end, score)
+                            new_anomaly.set_source_anomalies([lhs, rhs])
+                            new_anomaly.set_source_node(self)
                             result.append(new_anomaly)
 
 
@@ -84,14 +86,10 @@ class Intersect(Node):
 
     @staticmethod
     def combined_scores(lhs, rhs):
-        return max(lhs.score, rhs.score)
-
-    @staticmethod
-    def combined_desc(lhs, rhs):
-        return 'Intersecting(' + str(lhs.desc) + ',' + str(rhs.desc) + ')'
+        return (lhs.score + rhs.score)/2
 
     def __str__(self):
-        return 'Intersect(' + ','.join([s.id for s in self.sources]) + ')[' + self.get_param('resolution').value + ']'
+        return 'Intersect(' + ','.join([s.ref for s in self.sources]) + ')[' + self.get_param('resolution').value + ']'
 
     def desc(self):
         return 'Combine and merge overlapping anomalies from sources'

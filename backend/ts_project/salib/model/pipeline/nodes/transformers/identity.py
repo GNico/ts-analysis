@@ -15,11 +15,11 @@ class Identity(NodeTransformer):
         self.add_required_param(Boolean('adf_test', 'ADF test', 'Augmented Dicky-Fuller test', False))
         self.add_required_param(Boolean('acf', 'ACF', 'Autocorrelation function', False))
         acf_lags = String('acf_lags', 'ACF lags', 'ACF max lags', '7d')
-        acf_lags.add_condition(ParamEqualsValue('acf', False))
+        acf_lags.add_condition(ParamEqualsValue('acf', True))
         self.add_required_param(acf_lags)
         self.add_required_param(Boolean('pacf', 'PACF', 'Partial autocorrelation function', False))
         pacf_lags = String('pacf_lags', 'PACF lags', 'PACF max lags', '7d')
-        pacf_lags.add_condition(ParamEqualsValue('pacf', False))
+        pacf_lags.add_condition(ParamEqualsValue('pacf', True))
         self.add_required_param(pacf_lags)
 
     def transform(self, seriess, debug):

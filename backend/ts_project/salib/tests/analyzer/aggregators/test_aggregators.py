@@ -26,8 +26,8 @@ class TestAggregators(unittest.TestCase):
     def test_intersect_aggregator_temporal_no_overlap(self):
         intersect = Intersect('test')
         intersect.set_param_value('resolution', 'temporal')
-        fst = [Anomaly.from_epoch(series, 0, 2, 1.0)]
-        snd = [Anomaly.from_epoch(series, 2, 4, 1.0)]
+        fst = [Anomaly.from_epoch(0, 2, 1.0)]
+        snd = [Anomaly.from_epoch(2, 4, 1.0)]
         expected = []
         self.case_temporal(intersect, fst, snd, expected)
 
@@ -39,32 +39,32 @@ class TestAggregators(unittest.TestCase):
     def test_intersect_aggregator_temporal_some_overlap_pair_case1(self):
         intersect = Intersect('test')
         intersect.set_param_value('resolution', 'temporal')
-        fst = [Anomaly.from_epoch(series, 0, 2, 1.0)]
-        snd = [Anomaly.from_epoch(series, 1, 3, 1.0)]
+        fst = [Anomaly.from_epoch(0, 2, 1.0)]
+        snd = [Anomaly.from_epoch(1, 3, 1.0)]
         expected = [(1, 2)]
         self.case_temporal(intersect, fst, snd, expected)
 
     def test_intersect_aggregator_temporal_some_overlap_pair_case2(self):
         intersect = Intersect('test')
         intersect.set_param_value('resolution', 'temporal')
-        fst = [Anomaly.from_epoch(series, 1, 3, 1.0)]
-        snd = [Anomaly.from_epoch(series, 0, 2, 1.0)]
+        fst = [Anomaly.from_epoch(1, 3, 1.0)]
+        snd = [Anomaly.from_epoch(0, 2, 1.0)]
         expected = [(1, 2)]
         self.case_temporal(intersect, fst, snd, expected)
 
     def test_intersect_aggregator_temporal_some_overlap_pair_case3(self):
         intersect = Intersect('test')
         intersect.set_param_value('resolution', 'temporal')
-        fst = [Anomaly.from_epoch(series, 0, 4, 1.0)]
-        snd = [Anomaly.from_epoch(series, 1, 3, 1.0)]
+        fst = [Anomaly.from_epoch(0, 4, 1.0)]
+        snd = [Anomaly.from_epoch(1, 3, 1.0)]
         expected = [(1, 3)]
         self.case_temporal(intersect, fst, snd, expected)
 
     def test_intersect_aggregator_temporal_some_overlap_pair_case4(self):
         intersect = Intersect('test')
         intersect.set_param_value('resolution', 'temporal')
-        fst = [Anomaly.from_epoch(series, 1, 3, 1.0)]
-        snd = [Anomaly.from_epoch(series, 0, 4, 1.0)]
+        fst = [Anomaly.from_epoch(1, 3, 1.0)]
+        snd = [Anomaly.from_epoch(0, 4, 1.0)]
         expected = [(1, 3)]
         self.case_temporal(intersect, fst, snd, expected)
 
@@ -74,8 +74,8 @@ class TestAggregators(unittest.TestCase):
         intersect = Intersect('test')
         intersect.set_param_value('resolution', 'anomaly')
         intersect.set_param_value('strict', True)
-        fst = [Anomaly.from_epoch(series, 0, 2, 1.0)]
-        snd = [Anomaly.from_epoch(series, 2, 4, 1.0)]
+        fst = [Anomaly.from_epoch(0, 2, 1.0)]
+        snd = [Anomaly.from_epoch(2, 4, 1.0)]
         expected = []
         self.case_anomaly_wise(intersect, fst, snd, expected)
 
@@ -83,8 +83,8 @@ class TestAggregators(unittest.TestCase):
         intersect = Intersect('test')
         intersect.set_param_value('resolution', 'anomaly')
         intersect.set_param_value('strict', True)
-        fst = [Anomaly.from_epoch(series, 0, 2, 1.0)]
-        snd = [Anomaly.from_epoch(series, 1, 3, 1.0)]
+        fst = [Anomaly.from_epoch(0, 2, 1.0)]
+        snd = [Anomaly.from_epoch(1, 3, 1.0)]
         expected = []
         self.case_anomaly_wise(intersect, fst, snd, expected)
 
@@ -92,8 +92,8 @@ class TestAggregators(unittest.TestCase):
         intersect = Intersect('test')
         intersect.set_param_value('resolution', 'anomaly')
         intersect.set_param_value('strict', False)
-        a1 = Anomaly.from_epoch(series, 0, 2, 1.0)
-        a2 = Anomaly.from_epoch(series, 1, 3, 1.0)
+        a1 = Anomaly.from_epoch(0, 2, 1.0)
+        a2 = Anomaly.from_epoch(1, 3, 1.0)
         expected = [a1, a2]
         self.case_anomaly_wise(intersect, [a1], [a2], expected)
 
@@ -101,9 +101,9 @@ class TestAggregators(unittest.TestCase):
         intersect = Intersect('test')
         intersect.set_param_value('resolution', 'anomaly')
         intersect.set_param_value('strict', True)
-        a1 = Anomaly.from_epoch(series, 0, 2, 1.0)
-        a2 = Anomaly.from_epoch(series, 0, 2, 1.0)
-        a3 = Anomaly.from_epoch(series, 1, 3, 1.0)
+        a1 = Anomaly.from_epoch(0, 2, 1.0)
+        a2 = Anomaly.from_epoch(0, 2, 1.0)
+        a3 = Anomaly.from_epoch(1, 3, 1.0)
         expected = [a1, a2]
         self.case_anomaly_wise(intersect, [a1], [a2, a3], expected)
 
@@ -111,9 +111,9 @@ class TestAggregators(unittest.TestCase):
         intersect = Intersect('test')
         intersect.set_param_value('resolution', 'anomaly')
         intersect.set_param_value('strict', False)
-        a1 = Anomaly.from_epoch(series, 0, 2, 1.0)
-        a2 = Anomaly.from_epoch(series, 0, 2, 1.0)
-        a3 = Anomaly.from_epoch(series, 1, 3, 1.0)
+        a1 = Anomaly.from_epoch(0, 2, 1.0)
+        a2 = Anomaly.from_epoch(0, 2, 1.0)
+        a3 = Anomaly.from_epoch(1, 3, 1.0)
         expected = [a1, a2, a3]
         self.case_anomaly_wise(intersect, [a1], [a2, a3], expected)
 
@@ -121,9 +121,9 @@ class TestAggregators(unittest.TestCase):
         intersect = Intersect('test')
         intersect.set_param_value('resolution', 'anomaly')
         intersect.set_param_value('strict', False)
-        a1 = Anomaly.from_epoch(series, 0, 5, 1.0)
-        a2 = Anomaly.from_epoch(series, 2, 5, 1.0)
-        a3 = Anomaly.from_epoch(series, 2, 6, 1.0)
+        a1 = Anomaly.from_epoch(0, 5, 1.0)
+        a2 = Anomaly.from_epoch(2, 5, 1.0)
+        a3 = Anomaly.from_epoch(2, 6, 1.0)
         fst = [a1]
         snd = [a2, a3]
         expected = fst + snd
@@ -138,8 +138,8 @@ class TestAggregators(unittest.TestCase):
         self.case_anomaly_wise(Union('test'), [], [], [])
 
     def test_union_aggregator_base_case(self):
-        fst = [Anomaly.from_epoch(series, 0, 1, 1.0)]
-        snd = [Anomaly.from_epoch(series, 2, 4, 1.0)]
+        fst = [Anomaly.from_epoch(0, 1, 1.0)]
+        snd = [Anomaly.from_epoch(2, 4, 1.0)]
         expected = fst + snd
         self.case_anomaly_wise(Union('test'), fst, snd, expected)
 

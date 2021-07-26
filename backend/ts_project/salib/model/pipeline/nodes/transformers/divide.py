@@ -1,3 +1,5 @@
+import numpy as np
+
 from .binary_math_transformer import BinaryMathTransformer
 from ...params.select import Select, SelectOption
 
@@ -18,5 +20,5 @@ class Divide(BinaryMathTransformer):
     def transform(self, seriess, debug):
         lhs = seriess[0].pdseries
         rhs = seriess[1].pdseries
-        result = lhs / rhs
+        result = (lhs / rhs).replace([np.inf,-np.inf], 0).dropna()
         return (result, {})
