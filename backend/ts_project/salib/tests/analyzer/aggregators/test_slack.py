@@ -8,7 +8,7 @@ from model.pipeline.nodes.aggregators.slack import Slack
 
 class TestSlack(unittest.TestCase):
 
-    def test_slack_single_anomaly(self):
+    def test_slack_single_anomaly_no_min(self):
         intersect = Slack('test')
         intersect.set_param_value('slack', 100)
         intersect.set_param_value('min_span', '')
@@ -22,6 +22,63 @@ class TestSlack(unittest.TestCase):
                 'score': 1.0,
                 'source_anomalies': ['907118cc03fec0a8d2c575b1954afdc4'],
                 'source_node': 'test',
+            }
+        ]
+        expected_debug = {}
+        self.case(intersect, fst, snd, expected_anomalies, expected_debug)
+
+    def test_slack_single_anomaly_min_span(self):
+        intersect = Slack('test')
+        intersect.set_param_value('slack', 0)
+        intersect.set_param_value('min_span', '4')
+        fst = [Anomaly.from_epoch(1, 3, 1.0)]
+        snd = []
+        expected_anomalies = [
+            {
+                'id': 'c386a8dcb491be05ee22d597a568c6c5',
+                'from': 0,
+                'to': 4000,
+                'score': 1.0,
+                'source_anomalies': ['907118cc03fec0a8d2c575b1954afdc4'],
+                'source_node': 'test',
+            }
+        ]
+        expected_debug = {}
+        self.case(intersect, fst, snd, expected_anomalies, expected_debug)
+
+    def test_slack_single_anomaly_min_span_combine_same(self):
+        intersect = Slack('test')
+        intersect.set_param_value('slack', 0)
+        intersect.set_param_value('min_span', '4')
+        fst = [Anomaly.from_epoch(1, 3, 1.0), Anomaly.from_epoch(3, 5, 1.0)]
+        snd = []
+        expected_anomalies = [
+            {
+                'id': 'c386a8dcb491be05ee22d597a568c6c5',
+                'from': 0,
+                'to': 7000,
+                'score': 1.0,
+                'source_anomalies': ['907118cc03fec0a8d2c575b1954afdc4','907118cc03fec0a8d2c575b1954afdc4'],
+                'source_node': 'test',
+            }
+        ]
+        expected_debug = {}
+        self.case(intersect, fst, snd, expected_anomalies, expected_debug)
+
+    def test_slack_combine_test(self):
+        intersect = Slack('test')
+        intersect.set_param_value('slack', 0)
+        intersect.set_param_value('min_span', '')
+        fst = [Anomaly.from_epoch(1, 3, 1.0)]
+        snd = []
+        expected_anomalies = [
+            {
+                'id': '907118cc03fec0a8d2c575b1954afdc4',
+                'from': 1000,
+                'to': 3000,
+                'score': 1.0,
+                'source_anomalies': [],
+                'source_node': 'fst',
             }
         ]
         expected_debug = {}
