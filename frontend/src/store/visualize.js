@@ -204,9 +204,7 @@ const actions = {
             (seriesOptions.hasOwnProperty('tags') && !compareArrays(state.series[id].tags, seriesOptions.tags)) ||
             (seriesOptions.hasOwnProperty('contexts') && !compareArrays(state.series[id].contexts, seriesOptions.contexts))
         commit("update_series", seriesOptions)
-
         if (shouldFetchData) {
-            console.log("fetching data")
             dispatch("fetchData", id)
         }
     },

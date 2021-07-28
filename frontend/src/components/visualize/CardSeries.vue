@@ -112,6 +112,7 @@
     <div class="column is-6 pt-0">
       <TreeSelect 
         class="filters-box"
+        filterName="Filter by tag"
         rootName="All tags"
         :itemsTree="allTags"
         v-model="seriesOptions.tags" />
@@ -119,6 +120,7 @@
     <div class="column is-6 pt-0">
       <TreeSelect 
         class="filters-box"
+        filterName="Filter by context"
         rootName="All contexts"
         :itemsTree="allContexts"
         v-model="seriesOptions.contexts" />

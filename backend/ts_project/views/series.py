@@ -3,27 +3,42 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .. import services
 
+def filter_series_params(request):
+    tags = request.query_params.getlist('tags', [])
+    if ('tags' not in request.query_params):
+        tags = None
+    elif (request.query_params['tags'] == ''):
+        tags = []
+    contexts = request.query_params.getlist('contexts', [])
+    if ('contexts' not in request.query_params):
+        contexts = None
+    elif (request.query_params['contexts'] == ''):
+        contexts = []
+    return (tags, contexts)
+
 
 class SeriesView(APIView):
     def get(self, request, pk):
+        tags, contexts = filter_series_params(request)
         data = services.get_series( 
             client_name=pk, 
             start=request.query_params.get('start', ''),
             end=request.query_params.get('end', ''),
-            contexts=request.query_params.getlist('contexts', []),             
-            tags=request.query_params.getlist('tags', []),             
+            contexts=contexts,             
+            tags=tags,             
             interval=request.query_params.get('interval', '1h'))
         return Response(data)
 
 
 class TagCountView(APIView):
     def get(self, request, pk):
+        tags, contexts = filter_series_params(request)
         data = services.get_tags_count(
             client_name=pk, 
             start=request.query_params.get('start', ''),
             end=request.query_params.get('end', ''),
-            contexts=request.query_params.getlist('contexts', []),             
-            tags=request.query_params.getlist('tags', []),             
+            contexts=contexts,             
+            tags=tags,             
             size=request.query_params.get('size', 20))
         return Response(data)
 

@@ -78,8 +78,7 @@
     </div>
 
     <AnomaliesTable v-else-if="activeTab == 2 && !isEmpty(anomalies)"
-      class="is-flex-grow-1 scrollable"
-      id="anom-table"
+      :height="tableHeight"
       :anomalies="anomalies"
       :activeAnomaly="activeAnomalyId"
       @changeActive="activeAnomalyId = $event"/> 
@@ -145,7 +144,6 @@ export default {
       return this.result.anomalies
     },
     debug_info() {
-      console.log(this.result.debug_info)
       return this.result.debug_info
     },
     activeTab() {
@@ -160,7 +158,10 @@ export default {
         active = this.selectedTab
       }
       return active
-    }
+    },
+    tableHeight() {
+      return `calc(${this.height}px - 3.5rem)`
+    }   
   },
   methods: {
     updateRange(event) {

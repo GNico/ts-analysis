@@ -12,11 +12,9 @@
         </div>
 
         <AnomaliesTable        
-          id="anom-table"
           :anomalies="tableFilteredAnomalies"
           :activeAnomaly="activeAnomaly"
-          @changeActive="updateOptions({activeAnomalyId: $event})"
-          /> 
+          @changeActive="updateOptions({activeAnomalyId: $event})"/> 
       </div>
 
       <div class="column main-content">
@@ -47,7 +45,6 @@ export default {
     data() {
       return {
         polling: null,
-
       }       
     },
     computed: {

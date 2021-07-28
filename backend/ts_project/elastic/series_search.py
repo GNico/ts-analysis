@@ -1,15 +1,13 @@
 from elasticsearch.client import IndicesClient
-
 from .es_connection import es
 
-
 class SeriesSearch():
-
     def get_count(self, indexname):
         index_pattern = indexname + '-*'
         self.refresh(index_pattern)
         response = es.count(index=index_pattern)
         return response['count']
+
 
     def refresh(self, indexname):
         ic = IndicesClient(es)
@@ -121,26 +119,35 @@ class SeriesSearch():
         return requestedData
 
 
-        
     def _build_series_query(self, start='', end='', context=[], tags=[]):
         query = {
           "query": {
             "bool": {
-              "filter": []
+              "filter": [],
+              "must_not": [],
             }
           },
         }
         if start or end:
-            dict = {"range": {"@timestamp": {} }}
+            filter = {"range": {"@timestamp": {} }}
             if start:
-                dict['range']['@timestamp']['gte'] = start
+                filter['range']['@timestamp']['gte'] = start
             if end:
-                dict['range']['@timestamp']['lte'] = end
-            query['query']['bool']['filter'].append(dict)            
-        if tags:
-            dict = {"terms": {"tag.tree":  tags}}
-            query['query']['bool']['filter'].append(dict)
-        if context:
-            dict = {"terms": {"context":  context}}
-            query['query']['bool']['filter'].append(dict)
+                filter['range']['@timestamp']['lte'] = end
+            query['query']['bool']['filter'].append(filter)     
+
+        if tags is None:
+            exists = {"exists": {"field": "tag"}}
+            query['query']['bool']['must_not'].append(exists)
+        elif tags:  
+            filter = {"terms": {"tag.tree":  tags}}
+            query['query']['bool']['filter'].append(filter)
+
+        if context is None:
+            exists = {"exists": {"field": "context"}}
+            query['query']['bool']['must_not'].append(exists)
+        elif context:    
+            filter = {"terms": {"context":  context}}
+            query['query']['bool']['filter'].append(filter)
+
         return query

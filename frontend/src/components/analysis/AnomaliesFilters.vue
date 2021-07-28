@@ -40,7 +40,13 @@
           </b-field> 
 
           <b-field horizontal label="Score threshold" >
-            <b-slider :value="scoreThreshold" @input="update('scoreThreshold', $event)" lazy></b-slider>
+            <b-slider
+              :value="scoreThreshold" 
+              @input="update('scoreThreshold', $event)" 
+              lazy
+              :min="0"
+              :max="1"
+              :step="0.01"/>
           </b-field>        
 
           <b-field horizontal label="">

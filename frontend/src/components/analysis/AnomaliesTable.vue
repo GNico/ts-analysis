@@ -1,6 +1,7 @@
 <template>
 
 <b-table 
+  :style="{height: height}"
   v-if="!isEmpty"
   :data="anomalies" 
   :selected="selected"      
@@ -13,7 +14,7 @@
   @select="changeActiveAnomaly($event)">
 
   <b-table-column field="score" label="Score" sortable numeric v-slot="props">
-     <span class="tag is-info is-small">{{ props.row.score }}</span>
+     <span class="tag is-info is-small">1</span>
   </b-table-column>
 
   <b-table-column field="from" label="Start date" sortable centered v-slot="props">
@@ -51,7 +52,7 @@ export default {
     },
     height: {
       type: [ Number, String ],
-      default: undefined,
+      default: 'inherit',
     }
   },
   computed: {
@@ -87,3 +88,9 @@ export default {
 }
 </script>
 
+
+<style>
+.anom-table {
+  height: inherit;
+}
+</style>

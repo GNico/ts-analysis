@@ -1,12 +1,17 @@
 <template>
-<TreeView 
-  :items="fullTree" 
-  :displayItems="displayTree"
-  :value="normalizedValue" 
-  @input="normalizedInputEmit"
-  ref="rootnode"/>
+<div>
+  <b-checkbox v-model="apply"> 
+    {{filterName}}
+  </b-checkbox>  
+  <TreeView 
+    v-if="apply"
+    :items="fullTree" 
+    :displayItems="displayTree"
+    :value="normalizedValue" 
+    @input="normalizedInputEmit"
+    ref="rootnode"/>
+</div>
 </template>
-
 
 <script>    
 import TreeView from './TreeView.vue';
@@ -15,6 +20,10 @@ export default {
   name: "TreeSelect",
   components: { TreeView },
   props: {
+    filterName: {
+      type: String,
+      default: 'Apply filter'
+    },
     rootName: {
       type: String,
       default: 'All'
@@ -30,7 +39,7 @@ export default {
   },
   data () {
     return { 
-
+      apply: false
     }
   },
   computed: {

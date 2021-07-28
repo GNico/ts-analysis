@@ -50,8 +50,7 @@
         :range="range"
         :zoomEnabled="zoomEnabled"
         :tagsCount="tagsCount"
-        @tagsCountRequest="getTagsCount"
-        />
+        @tagsCountRequest="getTagsCount"/>
     </div>
   </section>  
 </div>
@@ -59,12 +58,11 @@
 
 
 <script>
-import Chart from '../components/visualize/Chart.vue';
-import ChartToolbar from '../components/visualize/ChartToolbar.vue';
-import LegendSeriesTag from '../components/visualize/LegendSeriesTag.vue';
-import CardSeries from '../components/visualize/CardSeries.vue';
-
-import api from "../api/repository";
+import Chart from '@/components/visualize/Chart.vue';
+import ChartToolbar from '@/components/visualize/ChartToolbar.vue';
+import LegendSeriesTag from '@/components/visualize/LegendSeriesTag.vue';
+import CardSeries from '@/components/visualize/CardSeries.vue';
+import api from "@/api/repository";
 import { nanoid } from 'nanoid'
 
 export default {
