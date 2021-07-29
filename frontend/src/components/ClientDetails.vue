@@ -71,10 +71,8 @@
 </template>
 
 
-
-
 <script>
-import { formatDate } from '../utils/helpers'
+import { formatDate } from '../utils/dateFormatter'
 
 export default {
   props: {

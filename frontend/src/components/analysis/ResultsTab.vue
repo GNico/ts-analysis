@@ -20,7 +20,7 @@
       <div class="column main-content">
         <Chart       
           :seriesData="seriesData"
-          :anomalies="anomalies"
+          :anomalies="chartFilteredAnomalies"
           :loading="loading"
           :activeAnomaly="activeAnomaly"
           :showMinMax="activeOptions.showMinMax"

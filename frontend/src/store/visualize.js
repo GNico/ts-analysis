@@ -1,25 +1,30 @@
 import api from "../api/repository";
 import { nanoid } from 'nanoid'
 import { DefaultChartSettings } from '../config/settings';
+import isEqual from 'lodash/isEqual'
+import pick from 'lodash/pick'
+import cloneDeep from 'lodash/cloneDeep'
 
 const colors = ['#f45b5b', '#90ee7e', '#7798BF', '#aaeeee', '#ff0066',
         '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee', '#2b908f']
 
 //returns a deep copy of the series object 
-function makeSeriesOptionsCopy(seriesOptions) {
+/*function makeSeriesOptionsCopy(seriesOptions) {
     let newSeriesOptions = { ...seriesOptions }
     if (newSeriesOptions.tags) 
         newSeriesOptions.tags = [ ...seriesOptions.tags ]
     if (newSeriesOptions.contexts)
         newSeriesOptions.contexts = [ ...seriesOptions.contexts ]
     return newSeriesOptions
-}
+} 
 
 function compareArrays(array1, array2) {
     return  array1 && array2 
             && (array1.length === array2.length) 
             && (array1.sort().every((value, index) => value === array2[index]))
 }
+
+*/
 
 const state = {
     series: {},
@@ -51,7 +56,8 @@ const getters = {
         return state.seriesIds.map(id => state.series[id].name)
     }, 
     getSeriesById: state => id => {
-        return (id && state.series.hasOwnProperty(id)) ? makeSeriesOptionsCopy(state.series[id]) : null
+        //return (id && state.series.hasOwnProperty(id)) ? makeSeriesOptionsCopy(state.series[id]) : null
+        return (id && state.series.hasOwnProperty(id)) ? cloneDeep(state.series[id]) : null
     },
     nextColor: state => {
         let index = state.seriesIds.length % colors.length 
@@ -163,7 +169,7 @@ const mutations = {
     },
     adjust_all_series_range(state) {
         if (state.range.start && state.range.end) {
-            state.allSeriesRange = state.range            
+            state.allSeriesRange = state.range
         } else {
             let axisMin = state.range.start
             let axisMax = state.range.end
@@ -189,7 +195,7 @@ const mutations = {
 
 const actions = {
     addSeries({commit, dispatch}, seriesOptions) {
-        let newSeriesOptions = makeSeriesOptionsCopy(seriesOptions)
+        let newSeriesOptions = cloneDeep(seriesOptions)
         const newId = nanoid()      
         newSeriesOptions.id = newId
         commit("add_series", newSeriesOptions)
@@ -198,11 +204,14 @@ const actions = {
     },
     updateSeries({commit, state, dispatch}, {id, seriesOptions} ) {
         seriesOptions.id = id
-        const shouldFetchData = 
+        const subset = pick(seriesOptions, ['interval', 'client', 'tags', 'contexts'])
+        const subset2 = pick(state.series[id], ['interval', 'client', 'tags', 'contexts'])
+        const shouldFetchData = !isEqual(subset, subset2)
+     /*   const shouldFetchData = 
             (seriesOptions.hasOwnProperty('interval') && (state.series[id].interval != seriesOptions.interval)) ||
             (seriesOptions.hasOwnProperty('client') && (state.series[id].client != seriesOptions.client)) ||
             (seriesOptions.hasOwnProperty('tags') && !compareArrays(state.series[id].tags, seriesOptions.tags)) ||
-            (seriesOptions.hasOwnProperty('contexts') && !compareArrays(state.series[id].contexts, seriesOptions.contexts))
+            (seriesOptions.hasOwnProperty('contexts') && !compareArrays(state.series[id].contexts, seriesOptions.contexts)) */
         commit("update_series", seriesOptions)
         if (shouldFetchData) {
             dispatch("fetchData", id)
@@ -215,8 +224,6 @@ const actions = {
                     name: seriesOptions.client,
                     tags: seriesOptions.tags,
                     contexts: seriesOptions.contexts,
-                    //tags: (seriesOptions.tags && seriesOptions.tags.length == 1 && seriesOptions.tags[0] == "root") ? [] : seriesOptions.tags,
-                    //contexts: (seriesOptions.contexts && seriesOptions.contexts.length == 1 && seriesOptions.contexts[0] == "root") ? [] : seriesOptions.contexts,
                     start: state.range.start ? state.range.start.toISOString() : null ,
                     end: state.range.end ? state.range.end.toISOString() : null,
                     interval: seriesOptions.interval})

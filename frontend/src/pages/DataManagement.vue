@@ -26,79 +26,74 @@
       detail-key="name"
       :show-detail-icon="false"
       striped>       
+      <b-table-column sortable field="name" label="Client" v-slot="props">
+        {{ props.row.name }}
+      </b-table-column>
 
-        <b-table-column sortable field="name" label="Client" v-slot="props">
-          {{ props.row.name }}
-        </b-table-column>
-
-        <b-table-column sortable field="count" label="Status" v-slot="props"
-          :td-attrs="(row) => ({
-            colspan: getRowProps(row).colspan,
-          })"
-        >
-          <span v-if="getRowProps(props.row).colspan == 1" class="tag" :class="getRowProps(props.row).classColor">
-            {{props.row.status}}
-          </span> 
-
-          <div v-else class="columns is-vcentered">
-            <div class="column is-3">
-              <span class="tag" :class="getRowProps(props.row).classColor">
-                {{ props.row.status }}
-              </span> 
-            </div>
-            <div class="column">
-              <b-progress type="is-info" size="is-large" :value="props.row.progress" show-value format="percent"></b-progress>
-            </div>
+      <b-table-column 
+        sortable 
+        field="count" 
+        label="Status" 
+        v-slot="props"
+        :td-attrs="(row) => ({colspan: getRowProps(row).colspan})">
+        <span v-if="getRowProps(props.row).colspan == 1" class="tag" :class="getRowProps(props.row).classColor">
+          {{props.row.status}}
+        </span> 
+        <div v-else class="columns is-vcentered">
+          <div class="column is-3">
+            <span class="tag" :class="getRowProps(props.row).classColor">
+              {{ props.row.status }}
+            </span> 
           </div>
-        </b-table-column>
+          <div class="column">
+            <b-progress type="is-info" size="is-large" :value="props.row.progress" show-value format="percent"></b-progress>
+          </div>
+        </div>
+      </b-table-column>
 
-        <b-table-column sortable field="created"  label="Created" v-slot="props"
-          :td-attrs="(row) => ({
-            class: getRowProps(row).colspan == 1 ? '' : 'is-hidden',
-          })"
-        >
-          {{ formatDate(props.row.created) }}
-        </b-table-column>
+      <b-table-column 
+        sortable field="created"  
+        label="Created" 
+        v-slot="props"
+        :td-attrs="(row) => ({class: getRowProps(row).colspan == 1 ? '' : 'is-hidden'})">
+        {{ formatDate(props.row.created) }}
+      </b-table-column>
 
-        <b-table-column sortable field="modified" label="Last modified" v-slot="props"
-          :td-attrs="(row) => ({
-            class: getRowProps(row).colspan == 1 ? '' : 'is-hidden',
-          })"
-        >
-          {{ formatDate(props.row.modified) }}
-        </b-table-column>    
+      <b-table-column 
+        sortable field="modified" 
+        label="Last modified" 
+        v-slot="props"
+        :td-attrs="(row) => ({class: getRowProps(row).colspan == 1 ? '' : 'is-hidden'})">
+        {{ formatDate(props.row.modified) }}
+      </b-table-column>    
 
-          
-        <b-table-column label="Action" v-slot="props"
-          :td-attrs="(row) => ({
-            class: getRowProps(row).colspan == 1 ? '' : 'is-hidden',
-          })"
-        >
-          <template v-if="props.row.status == 'Ready'">
-            <b-tooltip label="View details">
-              <button class="transparent-button" @click="toggleDetails(props.row.name)">
-                <b-icon icon="eye-outline" type="is-primary"></b-icon>
-              </button>
-            </b-tooltip>
-            <b-tooltip label="Edit">
-              <button class="transparent-button">
-                <b-icon icon="pencil" type="is-primary"></b-icon>
-              </button>
-            </b-tooltip>
-            <b-tooltip label="Settings">
-              <button class="transparent-button">
-                <b-icon icon="cog" type="is-primary"></b-icon>
-              </button>
-            </b-tooltip>
-          </template>
-          <b-tooltip label="Delete">
-            <button class="transparent-button" @click="confirmDelete(props.row.name)">
-              <b-icon icon="delete-forever" type="is-primary" size="is-samll"></b-icon>
+      <b-table-column 
+        label="Action" 
+        v-slot="props"
+        :td-attrs="(row) => ({class: getRowProps(row).colspan == 1 ? '' : 'is-hidden'})">
+        <template v-if="props.row.status == 'Ready'">
+          <b-tooltip label="View details">
+            <button class="transparent-button" @click="toggleDetails(props.row.name)">
+              <b-icon icon="eye-outline" type="is-primary"></b-icon>
             </button>
           </b-tooltip>
-        </b-table-column> 
-
-
+          <b-tooltip label="Edit">
+            <button class="transparent-button">
+              <b-icon icon="pencil" type="is-primary"></b-icon>
+            </button>
+          </b-tooltip>
+          <b-tooltip label="Settings">
+            <button class="transparent-button">
+              <b-icon icon="cog" type="is-primary"></b-icon>
+            </button>
+          </b-tooltip>
+        </template>
+        <b-tooltip label="Delete">
+          <button class="transparent-button" @click="confirmDelete(props.row.name)">
+            <b-icon icon="delete-forever" type="is-primary" size="is-samll"></b-icon>
+          </button>
+        </b-tooltip>
+      </b-table-column> 
 
       <!--Row details-->
       <template #detail="props">
@@ -111,11 +106,10 @@
 
 
 <script>
-import FormNewClient from '../components/FormNewClient'
-import ClientDetails from '../components/ClientDetails'
-import api from '../api/repository'
-import { formatDate } from '../utils/helpers'
-
+import FormNewClient from '@/components/FormNewClient'
+import ClientDetails from '@/components/ClientDetails'
+import api from '@/api/repository'
+import { formatDate } from '@/utils/dateFormatter'
 
 export default {
     components: {  FormNewClient, ClientDetails },

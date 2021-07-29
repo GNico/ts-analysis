@@ -58,7 +58,7 @@
 
 <script>
 import api from '@/api/repository'
-import { formatDateVerbose } from '@/utils/helpers'
+import { formatDateVerbose } from '@/utils/dateFormatter'
 import FormNewMonitor from '@/components/monitoring/FormNewMonitor'
 
 export default {

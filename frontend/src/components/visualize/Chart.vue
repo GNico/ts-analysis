@@ -22,7 +22,7 @@
 <script>
 import BaseChart from "@/components/BaseChart";
 import debounce from "lodash/debounce";
-import { multiseriesTooltipFormatter } from '../../utils/helpers'
+import { multiseriesTooltipFormatter } from '../../utils/tooltipFormatter'
 
 export default {
   components: { BaseChart },

@@ -39,7 +39,7 @@
     <Chart     
       class="is-flex-grow-1"
       :seriesData="series"
-      :anomalies="anomalies"
+      :anomalies="filteredAnomalies"
       :loading="loading"
       :activeAnomaly="activeAnomalyId"
       :range="extremes"
@@ -79,7 +79,7 @@
 
     <AnomaliesTable v-else-if="activeTab == 2 && !isEmpty(anomalies)"
       :height="tableHeight"
-      :anomalies="anomalies"
+      :anomalies="filteredAnomalies"
       :activeAnomaly="activeAnomalyId"
       @changeActive="activeAnomalyId = $event"/> 
 
@@ -143,6 +143,11 @@ export default {
     anomalies() {
       return this.result.anomalies
     },
+    filteredAnomalies() {
+      return this.anomalies.filter(elem =>           
+        (!this.extremes.start || parseInt(elem.from) > this.extremes.start)
+        && (!this.extremes.end || parseInt(elem.from) < this.extremes.end))
+    }, 
     debug_info() {
       return this.result.debug_info
     },

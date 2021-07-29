@@ -23,7 +23,7 @@
               :key="chartKey"
               :seriesData="chartData" 
               :bands="chartIncident"
-              :style="myStyles"/>
+              :style="chartDimensions"/>
           </div>
           <div class="column">
             EXTRA DATA
@@ -39,7 +39,7 @@
 <script>
 import VueDraggableResizable from 'vue-draggable-resizable'
 import BaseChart from '@/components/BaseChart'
-import { multiseriesTooltipFormatter } from '@/utils/helpers'
+import { multiseriesTooltipFormatter } from '@/utils/tooltipFormatter'
 
 
 export default {
@@ -88,14 +88,13 @@ export default {
         to: Date.parse(this.incident.end),
       }]
     },
-    myStyles () {
+    chartDimensions () {
       let h = this.height - 100
       let w = this.width
       return {
         height: `${h}px`,
         width: `calc((${w}px - 3.75rem)* 2/3)`,
       }
-
     }
   },
   methods: {

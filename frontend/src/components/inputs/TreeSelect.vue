@@ -1,10 +1,10 @@
 <template>
 <div>
-  <b-checkbox v-model="apply"> 
+  <b-checkbox :value="applyFilter" @input="$emit('update:applyFilter', $event)"> 
     {{filterName}}
   </b-checkbox>  
   <TreeView 
-    v-if="apply"
+    v-show="applyFilter"
     :items="fullTree" 
     :displayItems="displayTree"
     :value="normalizedValue" 
@@ -35,11 +35,14 @@ export default {
     value: {
       type: Array,
       required: false,
+    }, 
+    applyFilter: {
+      type: Boolean,
+      default: false,
     },
   },
   data () {
     return { 
-      apply: false
     }
   },
   computed: {

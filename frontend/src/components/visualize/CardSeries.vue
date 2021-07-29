@@ -114,6 +114,7 @@
         class="filters-box"
         filterName="Filter by tag"
         rootName="All tags"
+        :applyFilter.sync="seriesOptions.filterTags"
         :itemsTree="allTags"
         v-model="seriesOptions.tags" />
     </div>
@@ -122,6 +123,7 @@
         class="filters-box"
         filterName="Filter by context"
         rootName="All contexts"
+        :applyFilter.sync="seriesOptions.filterContexts"
         :itemsTree="allContexts"
         v-model="seriesOptions.contexts" />
     </div>
@@ -155,8 +157,10 @@ export default {
         name: '',
         interval: '1h',
         client: '',
-        contexts: [],
+        filterTags: false,
         tags: [],
+        filterContexts: false,
+        contexts: [],
         color: '',
         type: 'line',
         yAxis: -1,        

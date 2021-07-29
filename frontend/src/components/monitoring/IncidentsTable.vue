@@ -74,7 +74,7 @@
 
 <script>
 import api from '@/api/repository'
-import { formatDate } from '@/utils/helpers'
+import { formatDate } from '@/utils/dateFormatter'
 import IncidentsFilters from '@/components/monitoring/IncidentsFilters'
 
 export default {

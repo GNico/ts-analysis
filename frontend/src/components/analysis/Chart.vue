@@ -17,11 +17,11 @@
 
 
 <script>
-import { DefaultChartSettings } from '../../config/settings'
-import BaseChart from "../BaseChart"
+import { DefaultChartSettings } from '@/config/settings'
+import BaseChart from "@/components/BaseChart"
 import debounce from "lodash/debounce"
 import throttle from "lodash/throttle"
-import { analysisTooltipFormatter, multiseriesTooltipFormatter } from '../../utils/helpers'
+import { analysisTooltipFormatter, multiseriesTooltipFormatter } from '@/utils/tooltipFormatter'
 
 
 export default {
