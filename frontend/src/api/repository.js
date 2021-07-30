@@ -9,7 +9,7 @@ const repository = axios.create({
 })
 
 const removeEmpty = obj => {
-  Object.keys(obj).forEach((key) => (obj[key] == null || obj[key] === '') && delete obj[key]);
+  Object.keys(obj).forEach((key) => (!obj[key] || obj[key] === '') && delete obj[key]);
   return obj;
 }
 

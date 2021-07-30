@@ -222,8 +222,12 @@ const actions = {
         commit('set_loading', true)      
         return  api.getSeriesData({ 
                     name: seriesOptions.client,
-                    tags: seriesOptions.tags,
-                    contexts: seriesOptions.contexts,
+                    filterTags: seriesOptions.filterTags,
+                    tags: seriesOptions.filterTags ? seriesOptions.tags : null,
+                   // tags: seriesOptions.tags,
+                    filterContexts: seriesOptions.filterContexts,
+                    contexts: seriesOptions.filterContextsy ? seriesOptions.contexts : null,
+                   // contexts: seriesOptions.contexts,
                     start: state.range.start ? state.range.start.toISOString() : null ,
                     end: state.range.end ? state.range.end.toISOString() : null,
                     interval: seriesOptions.interval})
