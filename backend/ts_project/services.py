@@ -58,9 +58,9 @@ def get_client_details(client_name):
     return { 'data': series_data, 'range': series_range, 'total': total_events, 'lastEvents': last_events }
 
 
-def get_series(client_name, start, end, contexts, tags, interval):
+def get_series(client_name, start, end, contexts, tags, interval, filter_tags, filter_contexts):
     client = Client.objects.get(name=client_name)
-    return search.get_series(client.index_name, start, end, contexts, tags, interval)
+    return search.get_series(client.index_name, start, end, contexts, tags, interval, filter_tags, filter_contexts)
 
 
 def get_tags_count(client_name, start, end, contexts, tags, size):

@@ -14,9 +14,9 @@ class SeriesSearch():
         res = ic.refresh(indexname)
 
 
-    def get_series(self, indexname, start='', end='', context=[], tags=[], interval='1h'):
+    def get_series(self, indexname, start='', end='', context=[], tags=[], interval='1h', filter_tags=False, filter_contexts=False):
         index_pattern = indexname + '-*'
-        query = self._build_series_query(start, end, context, tags)
+        query = self._build_series_query(start, end, context, tags, filter_tags, filter_contexts)
         query["aggs"] = {
             "interval_aggregation": {
               "date_histogram": {
@@ -119,12 +119,13 @@ class SeriesSearch():
         return requestedData
 
 
-    def _build_series_query(self, start='', end='', context=[], tags=[]):
+    def _build_series_query(self, start='', end='', context=[], tags=[], filter_tags=False, filter_contexts=False):
         query = {
           "query": {
             "bool": {
-              "filter": [],
-              "must_not": [],
+              "filter": [],              
+              "must": [],
+              "must_not": []
             }
           },
         }
@@ -136,18 +137,27 @@ class SeriesSearch():
                 filter['range']['@timestamp']['lte'] = end
             query['query']['bool']['filter'].append(filter)     
 
-        if tags is None:
-            exists = {"exists": {"field": "tag"}}
-            query['query']['bool']['must_not'].append(exists)
-        elif tags:  
-            filter = {"terms": {"tag.tree":  tags}}
-            query['query']['bool']['filter'].append(filter)
-
-        if context is None:
-            exists = {"exists": {"field": "context"}}
-            query['query']['bool']['must_not'].append(exists)
-        elif context:    
-            filter = {"terms": {"context":  context}}
-            query['query']['bool']['filter'].append(filter)
+        exists = {"exists": {"field": "tag"}}
+        if filter_tags:
+            if tags is None:
+                #all docs with empty tag field
+                query['query']['bool']['must_not'].append(exists)                
+            elif tags:  
+                #all docs with field in tags list
+                filter = {"terms": {"tag.tree":  tags}}
+                query['query']['bool']['filter'].append(filter)
+            else:
+                #all docs with no empty tag field
+                query['query']['bool']['must'].append(exists)
+        
+        exists = {"exists": {"field": "context"}}
+        if filter_contexts:
+            if context is None:
+                query['query']['bool']['must_not'].append(exists)                
+            elif tags:  
+                filter = {"terms": {"context":  context}}
+                query['query']['bool']['filter'].append(filter)
+            else:
+                query['query']['bool']['must'].append(exists)
 
         return query
