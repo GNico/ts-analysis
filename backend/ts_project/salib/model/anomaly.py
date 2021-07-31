@@ -68,7 +68,7 @@ class Anomaly:
         self.source_anomalies = source_anomalies
 
     @staticmethod
-    def from_epoch(start, end, score):
+    def from_epoch(start, end, score=1.0):
         start_t = pd.Timestamp(start, unit='s')
         end_t = pd.Timestamp(end, unit='s')
         return Anomaly(start_t, end_t, score)

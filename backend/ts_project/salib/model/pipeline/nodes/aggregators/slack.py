@@ -31,11 +31,13 @@ class Slack(Node):
         return NodeResult(self, inputs=inputs, anomalies=new_anomalies, debug_info=debug_info)
 
     def join(self, all_anomalies, slack, min_span, debug):
+        all_anomalies_map = {}
         new_anomalies = []
         debug_info = {}
 
         side_slack = 0.01*(slack / 2)
         for anomaly in all_anomalies:
+            all_anomalies_map[anomaly.id()] = anomaly
             # Apply slack
             to_extend = anomaly.span() * side_slack
             new_anomaly = anomaly.copy()
@@ -54,23 +56,50 @@ class Slack(Node):
             new_anomalies.append(new_anomaly)
 
         # Combine
-        self.combine(new_anomalies)
+        new_anomalies = self.combine(new_anomalies)
 
         # Remove intermediate anomaly references
+        for anomaly in new_anomalies:
+            new_source_anomalies = []
+            for source_anomaly in anomaly.source_anomalies:
+                new_source_anomalies += Slack.original_anomaly_references(source_anomaly, all_anomalies_map)
+            new_source_anomalies = list(np.unique(new_source_anomalies))
+            anomaly.set_source_anomalies(new_source_anomalies)
 
         return new_anomalies, debug_info
 
+    @staticmethod
+    def original_anomaly_references(anomaly, original_anomalies_map):
+        result = []
+        if anomaly.id() in original_anomalies_map:
+            return [anomaly]
+        else:
+            return result + [Slack.original_anomaly_references(a, original_anomalies_map) for a in anomaly.source_anomalies]
+
     def combine(self, anomalies):
-        pass
+        if len(anomalies) <= 1:
+            return anomalies
+        else:
+            last_result = list(np.sort(anomalies))
+            while True:
+                new_result = []
+                for fst, snd in zip(last_result, last_result[1:]):
+                    new_result += self.combine_pair(fst, snd)
+                if new_result == last_result:
+                    break
+                else:
+                    last_result = new_result.copy()
+                    if len(last_result) == 1:
+                        break
+            return last_result
 
     def combine_pair(self, lhs, rhs):
-        result = []
         if lhs.start == rhs.start and lhs.end == rhs.end:
             score = Slack.combined_scores(lhs, rhs)
             new_anomaly = Anomaly(lhs.start, lhs.end, score)
             new_anomaly.set_source_anomalies([lhs, rhs])
             new_anomaly.set_source_node(self)
-            result = [new_anomaly]
+            return [new_anomaly]
         else:
             fst, snd = sorted((lhs,rhs))
             # Total inclusion
@@ -83,13 +112,15 @@ class Slack(Node):
             # Partial inclusion
             elif fst.end >= snd.start and fst.end <= snd.end:
                 score = Slack.combined_scores(lhs, rhs)
-                new_start = snd.start
-                new_end = fst.end
+                new_start = fst.start
+                new_end = snd.end
                 if new_start < new_end:
-                    new_anomaly = Anomaly(new_start, fst.end, score)
+                    new_anomaly = Anomaly(new_start, new_end, score)
                     new_anomaly.set_source_anomalies([lhs, rhs])
                     new_anomaly.set_source_node(self)
                     return [new_anomaly]
+                else:
+                    raise ValueError('Zero span anomaly?')
             else:
                 return [lhs, rhs]
 

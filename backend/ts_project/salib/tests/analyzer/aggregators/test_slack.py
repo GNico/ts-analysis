@@ -12,7 +12,7 @@ class TestSlack(unittest.TestCase):
         intersect = Slack('test')
         intersect.set_param_value('slack', 100)
         intersect.set_param_value('min_span', '')
-        fst = [Anomaly.from_epoch(1, 3, 1.0)]
+        fst = [Anomaly.from_epoch(1, 3)]
         snd = []
         expected_anomalies = [
             {
@@ -31,7 +31,7 @@ class TestSlack(unittest.TestCase):
         intersect = Slack('test')
         intersect.set_param_value('slack', 0)
         intersect.set_param_value('min_span', '4')
-        fst = [Anomaly.from_epoch(1, 3, 1.0)]
+        fst = [Anomaly.from_epoch(1, 3)]
         snd = []
         expected_anomalies = [
             {
@@ -50,26 +50,137 @@ class TestSlack(unittest.TestCase):
         intersect = Slack('test')
         intersect.set_param_value('slack', 0)
         intersect.set_param_value('min_span', '4')
-        fst = [Anomaly.from_epoch(1, 3, 1.0), Anomaly.from_epoch(3, 5, 1.0)]
+        fst = [Anomaly.from_epoch(1, 3), Anomaly.from_epoch(3, 5)]
         snd = []
         expected_anomalies = [
             {
-                'id': 'c386a8dcb491be05ee22d597a568c6c5',
+                'id': 'c3a73aa49c1e4c20b0fbed653cf17538',
                 'from': 0,
-                'to': 7000,
+                'to': 6000,
                 'score': 1.0,
-                'source_anomalies': ['907118cc03fec0a8d2c575b1954afdc4','907118cc03fec0a8d2c575b1954afdc4'],
+                'source_anomalies': ['907118cc03fec0a8d2c575b1954afdc4','1ee724e9a7a81b6036caa98a0928be3b'],
                 'source_node': 'test',
             }
         ]
         expected_debug = {}
         self.case(intersect, fst, snd, expected_anomalies, expected_debug)
 
-    def test_slack_combine_test(self):
+    def test_slack_single_anomaly_min_span_combine3_same(self):
+        intersect = Slack('test')
+        intersect.set_param_value('slack', 0)
+        intersect.set_param_value('min_span', '4')
+        fst = [Anomaly.from_epoch(1, 3), Anomaly.from_epoch(2, 4), Anomaly.from_epoch(3, 5)]
+        snd = []
+        expected_anomalies = [
+            {
+                'id': '6d23e36c49116cac5a689601aea01a4b',
+                'from': 0,
+                'to': 6000,
+                'score': 1.0,
+                'source_anomalies': [
+                    '907118cc03fec0a8d2c575b1954afdc4',
+                    'fae6500ecb59c1e6919c7ed915e3c9ea',
+                    '1ee724e9a7a81b6036caa98a0928be3b'
+                ],
+                'source_node': 'test',
+            }
+        ]
+        expected_debug = {}
+        self.case(intersect, fst, snd, expected_anomalies, expected_debug)
+
+    def test_slack_single_anomaly_min_span_combine3_same_no_modify(self):
         intersect = Slack('test')
         intersect.set_param_value('slack', 0)
         intersect.set_param_value('min_span', '')
-        fst = [Anomaly.from_epoch(1, 3, 1.0)]
+        fst = [Anomaly.from_epoch(1, 3), Anomaly.from_epoch(2, 4), Anomaly.from_epoch(3, 5)]
+        snd = []
+        expected_anomalies = [
+            {
+                'id': '6ce5c127caf55b9c597b8a7df7253587',
+                'from': 1000,
+                'to': 5000,
+                'score': 1.0,
+                'source_anomalies': [
+                    '907118cc03fec0a8d2c575b1954afdc4',
+                    'fae6500ecb59c1e6919c7ed915e3c9ea',
+                    '1ee724e9a7a81b6036caa98a0928be3b'
+                ],
+                'source_node': 'test',
+            }
+        ]
+        expected_debug = {}
+        self.case(intersect, fst, snd, expected_anomalies, expected_debug)
+
+    def test_slack_single_anomaly_min_span_combine_repeated_same(self):
+        intersect = Slack('test')
+        intersect.set_param_value('slack', 0)
+        intersect.set_param_value('min_span', '4')
+        fst = [Anomaly.from_epoch(1, 3), Anomaly.from_epoch(1, 3)]
+        snd = []
+        expected_anomalies = [
+            {
+                'id': 'c386a8dcb491be05ee22d597a568c6c5',
+                'from': 0,
+                'to': 4000,
+                'score': 1.0,
+                'source_anomalies': ['907118cc03fec0a8d2c575b1954afdc4'],
+                'source_node': 'test',
+            }
+        ]
+        expected_debug = {}
+        self.case(intersect, fst, snd, expected_anomalies, expected_debug)
+
+    def test_slack_single_anomaly_min_span_combine_diff(self):
+        intersect = Slack('test')
+        intersect.set_param_value('slack', 0)
+        intersect.set_param_value('min_span', '4')
+        fst = [Anomaly.from_epoch(1, 3)]
+        snd = [Anomaly.from_epoch(3, 5)]
+        expected_anomalies = [
+            {
+                'id': 'fdccae96bcc19b9b66343b183196a132',
+                'from': 0,
+                'to': 6000,
+                'score': 1.0,
+                'source_anomalies': ['907118cc03fec0a8d2c575b1954afdc4','00a3ef8b7bacb638bd304696a563e771'],
+                'source_node': 'test',
+            }
+        ]
+        expected_debug = {}
+        self.case(intersect, fst, snd, expected_anomalies, expected_debug)
+
+    def test_slack_single_anomaly_min_span_does_not_combine(self):
+        intersect = Slack('test')
+        intersect.set_param_value('slack', 0)
+        intersect.set_param_value('min_span', '4')
+        fst = [Anomaly.from_epoch(1, 3), Anomaly.from_epoch(10, 20)]
+        snd = []
+        expected_anomalies = [
+            {
+                'id': 'c386a8dcb491be05ee22d597a568c6c5',
+                'from': 0,
+                'to': 4000,
+                'score': 1.0,
+                'source_anomalies': ['907118cc03fec0a8d2c575b1954afdc4'],
+                'source_node': 'test',
+            },
+            {
+                'id': '3548387b8640052ccbcfc8f0fb4438e3',
+                'from': 10000,
+                'to': 20000,
+                'score': 1.0,
+                'source_anomalies': [],
+                'source_node': 'fst',
+            }
+        ]
+        expected_debug = {}
+        self.case(intersect, fst, snd, expected_anomalies, expected_debug)
+
+    def test_slack_edge_case_identity(self):
+        intersect = Slack('test')
+        intersect.set_param_value('slack', 0)
+        intersect.set_param_value('min_span', '')
+        fst = [Anomaly.from_epoch(1, 3)]
         snd = []
         expected_anomalies = [
             {
@@ -122,3 +233,9 @@ class TestSlack(unittest.TestCase):
         actual_anomalies = list(map(lambda a: a.output_format(), result.anomalies))
         self.assertEqual(expected_output, actual_anomalies)
         self.assertEqual(expected_debug, result.debug_info)
+        # Check no anomaly sources outside of original anomalies
+        all_anomaly_sources = set()
+        for anomaly in result.anomalies:
+            for source_anomaly in anomaly.source_anomalies:
+                all_anomaly_sources.add(source_anomaly)
+        self.assertEqual(set(), all_anomaly_sources - set(fst_anomalies + snd_anomalies))
