@@ -204,14 +204,9 @@ const actions = {
     },
     updateSeries({commit, state, dispatch}, {id, seriesOptions} ) {
         seriesOptions.id = id
-        const subset = pick(seriesOptions, ['interval', 'client', 'tags', 'contexts'])
-        const subset2 = pick(state.series[id], ['interval', 'client', 'tags', 'contexts'])
+        const subset = pick(seriesOptions, ['interval', 'client', 'tags', 'contexts', 'filterTags', 'filterContexts'])
+        const subset2 = pick(state.series[id], ['interval', 'client', 'tags', 'contexts', 'filterTags', 'filterContexts'])
         const shouldFetchData = !isEqual(subset, subset2)
-     /*   const shouldFetchData = 
-            (seriesOptions.hasOwnProperty('interval') && (state.series[id].interval != seriesOptions.interval)) ||
-            (seriesOptions.hasOwnProperty('client') && (state.series[id].client != seriesOptions.client)) ||
-            (seriesOptions.hasOwnProperty('tags') && !compareArrays(state.series[id].tags, seriesOptions.tags)) ||
-            (seriesOptions.hasOwnProperty('contexts') && !compareArrays(state.series[id].contexts, seriesOptions.contexts)) */
         commit("update_series", seriesOptions)
         if (shouldFetchData) {
             dispatch("fetchData", id)
@@ -224,10 +219,8 @@ const actions = {
                     name: seriesOptions.client,
                     filterTags: seriesOptions.filterTags,
                     tags: seriesOptions.filterTags ? seriesOptions.tags : null,
-                   // tags: seriesOptions.tags,
                     filterContexts: seriesOptions.filterContexts,
                     contexts: seriesOptions.filterContextsy ? seriesOptions.contexts : null,
-                   // contexts: seriesOptions.contexts,
                     start: state.range.start ? state.range.start.toISOString() : null ,
                     end: state.range.end ? state.range.end.toISOString() : null,
                     interval: seriesOptions.interval})

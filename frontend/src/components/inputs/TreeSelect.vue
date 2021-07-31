@@ -1,6 +1,6 @@
 <template>
 <div>
-  <b-checkbox :value="applyFilter" @input="$emit('update:applyFilter', $event)"> 
+  <b-checkbox :value="applyFilter" @input="$emit('filterCheck', $event)"> 
     {{filterName}}
   </b-checkbox>  
   <TreeView 
@@ -34,7 +34,7 @@ export default {
     },
     value: {
       type: Array,
-      required: false,
+      default: null,
     }, 
     applyFilter: {
       type: Boolean,
@@ -47,16 +47,7 @@ export default {
   },
   computed: {
     normalizedValue() {  
-     /* if (!this.value)
-        return []
-      else if (this.value.length == 0 )
-        return [ "root" ]
-      else return [ ...this.value ] */
-
-      if (!this.value)
-        return [ "root" ]
-      else if (this.value.length == 0 )
-        return []
+      if (!this.value) return [ "root" ]
       else return [ ...this.value ]
     },
     fullTree() {
@@ -68,13 +59,7 @@ export default {
   },
   methods: {
     normalizedInputEmit(values) {
-      /*let event = [ ...values ] 
-      if (values.length == 0) event = null
-      if (values.length == 1 && values[0] == "root") event = []
-      this.$emit('input', event) */
-
       let event = [ ...values ] 
-      if (values.length == 0) event = []
       if (values.length == 1 && values[0] == "root") event = null
       this.$emit('input', event) 
     }

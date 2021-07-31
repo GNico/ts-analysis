@@ -9,6 +9,8 @@ const defaultSettings = {
   data_options: [{
     contexts: [],
     tags: [],
+    filterTags: false,
+    filterContexts: false,
     interval: '1h',
     start: null,
     end: null,
@@ -122,7 +124,6 @@ const actions = {
                 .catch(error => console.log(error.response.data))
     },
     deleteAnalysisList({dispatch}, idList) {
-        console.log(idList)
         return  api.deleteAnalysisList(idList)
                 .then(response => dispatch("fetchAllAnalysis"))
                 .catch(error => console.log(error.response.data))

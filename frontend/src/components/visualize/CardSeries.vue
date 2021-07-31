@@ -116,16 +116,18 @@
         rootName="All tags"
         :applyFilter.sync="seriesOptions.filterTags"
         :itemsTree="allTags"
-        v-model="seriesOptions.tags" />
+        v-model="seriesOptions.tags" 
+        @filterCheck="seriesOptions.filterTags = $event"/>
     </div>
     <div class="column is-6 pt-0">
       <TreeSelect 
         class="filters-box"
         filterName="Filter by context"
         rootName="All contexts"
-        :applyFilter.sync="seriesOptions.filterContexts"
+        :applyFilter="seriesOptions.filterContexts"
         :itemsTree="allContexts"
-        v-model="seriesOptions.contexts" />
+        v-model="seriesOptions.contexts" 
+        @filterCheck="seriesOptions.filterContexts = $event"/>
     </div>
   </div>
 </ModalCard>

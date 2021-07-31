@@ -164,7 +164,9 @@ export default {
     addInput() {
       let dataOptionsCopy = cloneDeep(this.analysis.data_options)
       dataOptionsCopy.push({
+        filterContexts: false,
         contexts: [],
+        filterTags: false,
         tags: [],
         interval: '1h',
         start: null,

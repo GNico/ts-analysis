@@ -45,9 +45,9 @@ class SeriesSearch():
         return { 'start': min_val, 'end': max_val }
 
 
-    def get_tags_count(self, indexname, start='', end='', context=[], tags=[], size=3):
+    def get_tags_count(self, indexname, start='', end='', context=[], tags=[], size=3, filter_tags=False, filter_contexts=False):
         index_pattern = indexname + '-*'
-        query = self._build_series_query(start, end, context, tags)
+        query = self._build_series_query(start, end, context, tags, filter_tags, filter_contexts)
         total_docs = es.count(index=index_pattern, body=query)
         query["aggs"] = {
             "popular_tags": {
@@ -140,15 +140,15 @@ class SeriesSearch():
         exists = {"exists": {"field": "tag"}}
         if filter_tags:
             if tags is None:
-                #all docs with empty tag field
-                query['query']['bool']['must_not'].append(exists)                
+                #all docs with no empty tag field
+                query['query']['bool']['must'].append(exists)
             elif tags:  
                 #all docs with field in tags list
                 filter = {"terms": {"tag.tree":  tags}}
                 query['query']['bool']['filter'].append(filter)
             else:
-                #all docs with no empty tag field
-                query['query']['bool']['must'].append(exists)
+                #all docs with empty tag field
+                query['query']['bool']['must_not'].append(exists) 
         
         exists = {"exists": {"field": "context"}}
         if filter_contexts:

@@ -143,6 +143,8 @@ export default {
           name: series.client, 
           tags: series.tags,
           contexts: series.contexts,
+          filterTags: series.filterTags,
+          filterContexts: series.filterContexts,
           start: new Date(request.extremes.min).toISOString(),
           end: new Date(request.extremes.max).toISOString(),
         })

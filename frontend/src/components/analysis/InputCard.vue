@@ -27,20 +27,26 @@
         </b-field>
         <b-field horizontal label="Tags">
           <TreeSelect 
-            class="filters-box"
+            class="filters-box"s
             rootName="All tags"
+            filterName="Filter by tags"
             :itemsTree="tagOptions"
             :value="dataOptions.tags"
+            :applyFilter="dataOptions.filterTags"
             @input="updateAnalysis('tags', $event)"
+            @filterCheck="updateAnalysis('filterTags', $event)"
         />
         </b-field>
         <b-field horizontal label="Contexts">
           <TreeSelect 
             class="filters-box"
             rootName="All contexts"
+            filterName="Filter by contexts"
             :itemsTree="contextOptions"
             :value="dataOptions.contexts"
+            :applyFilter="dataOptions.filterContexts"
             @input="updateAnalysis('contexts', $event)"
+            @filterCheck="updateAnalysis('filterContexts', $event)"
         />
         </b-field>
         <b-field horizontal label="Interval">
@@ -147,9 +153,6 @@ export default {
     deleteInput() {
       this.$emit('delete', this.index)
     }
-  },
-  watch: { 
-    
   },
 } 
 

@@ -22,11 +22,13 @@ def run_analysis(client, inputs_data, model):
     for index, input_data in enumerate(inputs_data): 
         data_series = services.get_series( 
             client_name=client, 
-            contexts=input_data.get('contexts', []), 
+            contexts=input_data.get('contexts'), 
             start=input_data.get('start', ''),  
             end=input_data.get('end', ''),  
-            tags=input_data.get('tags', []),             
-            interval=input_data.get('interval', '1h'))
+            tags=input_data.get('tags'),             
+            interval=input_data.get('interval', '1h'),
+            filter_tags=input_data.get('filterTags', False),
+            filter_contexts=input_data.get('filterContexts', False))
         dates = [datetime.fromtimestamp(item[0]/1000) for item in data_series]
         count  = [item[1] for item in data_series]
         ts = pd.Series(count, index=dates)

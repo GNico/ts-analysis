@@ -63,9 +63,9 @@ def get_series(client_name, start, end, contexts, tags, interval, filter_tags, f
     return search.get_series(client.index_name, start, end, contexts, tags, interval, filter_tags, filter_contexts)
 
 
-def get_tags_count(client_name, start, end, contexts, tags, size):
+def get_tags_count(client_name, start, end, contexts, tags, size, filter_tags, filter_contexts):
     client = Client.objects.get(name=client_name)
-    return search.get_tags_count(client.index_name, start, end, contexts, tags, size)
+    return search.get_tags_count(client.index_name, start, end, contexts, tags, size, filter_tags, filter_contexts)
 
 
 def get_tags(client_name):
