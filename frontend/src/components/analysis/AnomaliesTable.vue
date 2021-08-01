@@ -1,5 +1,4 @@
 <template>
-
 <b-table 
   :style="{height: height}"
   v-if="!isEmpty"
@@ -14,32 +13,32 @@
   @select="changeActiveAnomaly($event)">
 
   <b-table-column field="score" label="Score" sortable numeric v-slot="props">
-     <span class="tag is-info is-small">1</span>
+    <span class="tag is-info is-small">{{ props.row.score.toFixed(2) }}</span>
   </b-table-column>
 
   <b-table-column field="from" label="Start date" sortable centered v-slot="props">
-    {{ new Date(props.row.from).toLocaleString('es-AR', {month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}) }}      
+    {{ formatDate(props.row.from) }}
   </b-table-column>
   
-  <b-table-column field="to" label="End date" sortable centered v-slot="props">
-    {{ new Date(props.row.to).toLocaleString('es-AR', {month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'}) }}
+  <b-table-column :custom-sort="sortDuration" label="Duration" sortable centered v-slot="props">
+    {{ getDurationStr(getDuration(props.row)) }}
   </b-table-column>
-
 
   <template #detail="props">
     <article :id="props.row.id" class="extra has-text-centered">                    
       <p>
-          <strong>{{ props.row.id }}</strong>
-          <br>
-          {{ props.row }}
+        <strong>{{ props.row.id }}</strong>
+        <br>
+        {{  props.row }}
       </p>
     </article>
   </template>
-  
 </b-table>
 </template>
 
+
 <script>
+import { timeRangeToString, formatDateVerbose } from '@/utils/dateFormatter';
 
 export default {
   props: {
@@ -78,12 +77,26 @@ export default {
     },
     isEmpty() {
       return (!this.anomalies || !this.anomalies.length)
-    }
+    }    
   },
   methods: {
     changeActiveAnomaly(event) {
       this.$emit('changeActive', event.id)
     },
+    formatDate(date) {
+      return formatDateVerbose(date)
+    },
+    getDuration(anom) {
+      return anom.to - anom.from
+    },
+    getDurationStr(timedelta) {
+      return timeRangeToString(timedelta)
+    },
+    sortDuration(a, b, isAsc) {
+      return isAsc 
+        ? this.getDuration(a) < this.getDuration(b)
+        : this.getDuration(a) > this.getDuration(b)
+    }
   }
 }
 </script>

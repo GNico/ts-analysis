@@ -143,7 +143,7 @@ export default {
     },
     updateAnalysis({prop, value, index}) {
       let updatedSettings = undefined
-      if (prop == 'client' || prop == 'model') {
+      if (prop === 'client' || prop === 'model') {
         updatedSettings = {id: this.analysis.id, [prop]: value }
         // reset tag and contexts if client changed
         if (prop == 'client' && value !=  this.analysis.client) {

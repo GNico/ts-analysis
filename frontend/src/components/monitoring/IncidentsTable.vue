@@ -59,10 +59,10 @@
       {{ props.row.analysis_name }}       
     </b-table-column>
     <b-table-column field="start" label="Start" sortable v-slot="props" centered cell-class="is-clickable is-unselectable">
-      {{ formatDate(props.row.start) }}
+      {{ formatDateVerbose(props.row.start) }}
     </b-table-column>
-    <b-table-column field="end" label="End" sortable v-slot="props" centered cell-class="is-clickable is-unselectable">
-      {{ formatDate(props.row.end) }}
+    <b-table-column :custom-sort="sortDuration" label="Duration" sortable v-slot="props" centered cell-class="is-clickable is-unselectable">
+      {{ getDurationStr(props.row.start, props.row.end) }}
     </b-table-column>
     <b-table-column field="score" label="Score" width="5%" sortable v-slot="props"  cell-class="is-clickable is-unselectable">
       <span>{{ props.row.score }}</span>     
@@ -74,7 +74,7 @@
 
 <script>
 import api from '@/api/repository'
-import { formatDate } from '@/utils/dateFormatter'
+import { formatDateVerbose, timeRangeToString } from '@/utils/dateFormatter'
 import IncidentsFilters from '@/components/monitoring/IncidentsFilters'
 
 export default {
@@ -112,8 +112,8 @@ export default {
     openIncident(incident) {
       this.$emit('select', incident)
     },
-    formatDate(date) {
-      return formatDate(date)
+    formatDateVerbose(date) {
+      return formatDateVerbose(date)
     },
     fetchIncidents() {
       return  api.getAllIncidents(this.incidentsFilters)
@@ -156,6 +156,16 @@ export default {
       this.incidentsFilters = filters
       this.fetchIncidents()
     },
+    getDurationStr(start, end) {
+      var e = new Date(end)
+      var s = new Date(start)     
+      return timeRangeToString(e - s)
+    },
+    sortDuration(a, b, isAsc) {
+      let dur1 = Date.parse(a.end) - Date.parse(a.start)
+      let dur2 = Date.parse(b.end) - Date.parse(b.start)
+      return isAsc ? dur1 < dur2 : dur1 > dur2
+    }
   },
   created() {
     this.fetchIncidents()

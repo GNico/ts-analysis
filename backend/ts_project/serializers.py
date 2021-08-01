@@ -84,7 +84,9 @@ class IncidentSerializer(serializers.ModelSerializer):
                 start=input_data.get('start', ''),  
                 end=input_data.get('end', ''),  
                 tags=input_data.get('tags', []),             
-                interval=input_data.get('interval', '1h'))
+                interval=input_data.get('interval', '1h'),
+                filter_tags=input_data.get('filter_tags', False),
+                filter_contexts=input_data.get('filter_contexts', False))
             series_data[str(index+1)] = s
         return series_data
 

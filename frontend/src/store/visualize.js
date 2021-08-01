@@ -8,24 +8,6 @@ import cloneDeep from 'lodash/cloneDeep'
 const colors = ['#f45b5b', '#90ee7e', '#7798BF', '#aaeeee', '#ff0066',
         '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee', '#2b908f']
 
-//returns a deep copy of the series object 
-/*function makeSeriesOptionsCopy(seriesOptions) {
-    let newSeriesOptions = { ...seriesOptions }
-    if (newSeriesOptions.tags) 
-        newSeriesOptions.tags = [ ...seriesOptions.tags ]
-    if (newSeriesOptions.contexts)
-        newSeriesOptions.contexts = [ ...seriesOptions.contexts ]
-    return newSeriesOptions
-} 
-
-function compareArrays(array1, array2) {
-    return  array1 && array2 
-            && (array1.length === array2.length) 
-            && (array1.sort().every((value, index) => value === array2[index]))
-}
-
-*/
-
 const state = {
     series: {},
     seriesIds: [],
@@ -56,7 +38,6 @@ const getters = {
         return state.seriesIds.map(id => state.series[id].name)
     }, 
     getSeriesById: state => id => {
-        //return (id && state.series.hasOwnProperty(id)) ? makeSeriesOptionsCopy(state.series[id]) : null
         return (id && state.series.hasOwnProperty(id)) ? cloneDeep(state.series[id]) : null
     },
     nextColor: state => {
