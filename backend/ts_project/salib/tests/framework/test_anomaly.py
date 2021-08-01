@@ -16,6 +16,18 @@ class TestAnomaly(unittest.TestCase):
                         [3, 0]],
                         1)
 
+    def test_copy(self):
+        a = Anomaly.from_epoch(1, 2, 1.0)
+        b = a.copy()
+        self.assertEqual(a, b)
+        self.assertEqual('132fe9c5a03d96f6b80b7484f87e3052', a.id())
+        self.assertEqual(a.id(), b.id())
+
+        b.set_source_anomalies([a])
+        self.assertEqual('dd5ef91f83a839b68b8a456b01eb45fe', b.id())
+        self.assertNotEqual(a.id(), b.id())
+        self.assertNotEqual(a, b)
+
     def test_equality(self):
         a = Anomaly.from_epoch(1, 2, 1.0)
         b = Anomaly.from_epoch(1, 2, 1.0)

@@ -19,6 +19,7 @@ from .nodes.detectors.simple_threshold import SimpleThreshold
 from .nodes.detectors.quantile import Quantile
 
 from .nodes.aggregators.union import Union
+from .nodes.aggregators.slack import Slack
 from .nodes.aggregators.intersect import Intersect
 
 from .nodes.node_source import NodeSourceParser
@@ -68,6 +69,7 @@ class NodeFactory:
         'aggregator': {
             'Union': Union,
             'Intersect': Intersect,
+            'Slack': Slack
         }
     }
 

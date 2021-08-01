@@ -89,7 +89,7 @@ class Intersect(Node):
         return (lhs.score + rhs.score)/2
 
     def __str__(self):
-        return 'Intersect(' + ','.join([s.ref for s in self.sources]) + ')[' + self.get_param('resolution').value + ']'
+        return 'Intersect(' + ','.join([s.ref for s in self.sources]) + ')[' + self.id + ']'
 
     def desc(self):
         return 'Combine and merge overlapping anomalies from sources'

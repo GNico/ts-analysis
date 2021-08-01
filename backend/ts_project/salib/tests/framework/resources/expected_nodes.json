@@ -971,6 +971,43 @@
         "num_required_inputs": null,
         "names": []
       }
+    },
+    {
+      "type": "Slack",
+      "desc": "Extend anomalies and combine",
+      "display": "Slack",
+      "params": [
+        {
+          "id": "slack",
+          "type": "BoundedInt",
+          "display": "Slack (%)",
+          "desc": "Anomaly extension as % of anomaly span",
+          "conditions": [],
+          "value": 25,
+          "min": 0,
+          "max": null
+        },
+        {
+          "id": "min_span",
+          "type": "String",
+          "display": "Min. span",
+          "desc": "Min. anomaly span to extend (intervals or period, ej '3h'. Leave empty to ignore.",
+          "conditions": [],
+          "value": ""
+        },
+        {
+          "id": "min_gap",
+          "type": "String",
+          "display": "Min. gap",
+          "desc": "Min. gap between anomalies (intervals or period, ej '3h'. Leave empty to ignore.",
+          "conditions": [],
+          "value": ""
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": null,
+        "names": []
+      }
     }
   ]
 }
