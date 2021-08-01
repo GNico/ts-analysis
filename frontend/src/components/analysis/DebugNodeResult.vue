@@ -87,8 +87,8 @@
       <div v-for="(value, key) in debug_info">
         <span class="has-text-grey-light">{{key}}:</span> 
 
-        <span class="param-text" v-if="!key.includes('lag_correlations')"> {{value}} </span>
-        <AutoCorrChart 
+        <span class="param-text" v-if="!key.includes('chart')"> {{value}} </span>
+        <DebugChart 
           v-else
           :style="{height:'200px'}"
           :title="key"
@@ -103,11 +103,11 @@
 <script>
 import AnomaliesTable from '@/components/analysis/AnomaliesTable'
 import Chart from '@/components/analysis/Chart'
-import AutoCorrChart from '@/components/analysis/AutoCorrChart'
+import DebugChart from '@/components/analysis/DebugChart'
 import isEmpty from "lodash/isEmpty";
 
 export default {
-  components: { AnomaliesTable, Chart, AutoCorrChart },
+  components: { AnomaliesTable, Chart, DebugChart },
   props: {
     result: {
       type: Object,

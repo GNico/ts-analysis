@@ -54,7 +54,7 @@ class Identity(NodeTransformer):
         acf_plot = []
         for i in range(1, len(coeffs)):
             acf_plot.append([i, coeffs[i]])
-        return {'lag_correlations': acf_plot}
+        return {'lag_correlations_chart': acf_plot}
 
     def pacf(self, series):
         pdseries = series.pdseries
@@ -65,7 +65,7 @@ class Identity(NodeTransformer):
         pacf_plot = []
         for i in range(1, len(coeffs)):
             pacf_plot.append([i, coeffs[i]])
-        return {'lag_correlations': pacf_plot}
+        return {'lag_correlations_chart': pacf_plot}
 
     def adf_test(self, pdseries):
         debug_info = {}
