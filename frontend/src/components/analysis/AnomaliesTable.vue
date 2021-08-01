@@ -13,7 +13,7 @@
   @select="changeActiveAnomaly($event)">
 
   <b-table-column field="score" label="Score" sortable numeric v-slot="props">
-    <span class="tag is-info is-small">{{ props.row.score.toFixed(2) }}</span>
+    <span class="tag is-info is-small">{{ (props.row.score * 100).toFixed(1) }}%</span>
   </b-table-column>
 
   <b-table-column field="from" label="Start date" sortable centered v-slot="props">
