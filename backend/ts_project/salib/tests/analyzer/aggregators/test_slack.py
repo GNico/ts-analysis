@@ -12,6 +12,7 @@ class TestSlack(unittest.TestCase):
         intersect = Slack('test')
         intersect.set_param_value('slack', 100)
         intersect.set_param_value('min_span', '')
+        intersect.set_param_value('min_gap', '')
         fst = [Anomaly.from_epoch(1, 3)]
         snd = []
         expected_anomalies = [
@@ -31,6 +32,7 @@ class TestSlack(unittest.TestCase):
         intersect = Slack('test')
         intersect.set_param_value('slack', 0)
         intersect.set_param_value('min_span', '4')
+        intersect.set_param_value('min_gap', '')
         fst = [Anomaly.from_epoch(1, 3)]
         snd = []
         expected_anomalies = [
@@ -50,6 +52,7 @@ class TestSlack(unittest.TestCase):
         intersect = Slack('test')
         intersect.set_param_value('slack', 0)
         intersect.set_param_value('min_span', '4')
+        intersect.set_param_value('min_gap', '')
         fst = [Anomaly.from_epoch(1, 3), Anomaly.from_epoch(3, 5)]
         snd = []
         expected_anomalies = [
@@ -69,6 +72,7 @@ class TestSlack(unittest.TestCase):
         intersect = Slack('test')
         intersect.set_param_value('slack', 0)
         intersect.set_param_value('min_span', '4')
+        intersect.set_param_value('min_gap', '')
         fst = [Anomaly.from_epoch(1, 3), Anomaly.from_epoch(2, 4), Anomaly.from_epoch(3, 5)]
         snd = []
         expected_anomalies = [
@@ -92,6 +96,7 @@ class TestSlack(unittest.TestCase):
         intersect = Slack('test')
         intersect.set_param_value('slack', 0)
         intersect.set_param_value('min_span', '')
+        intersect.set_param_value('min_gap', '')
         fst = [Anomaly.from_epoch(1, 3), Anomaly.from_epoch(2, 4), Anomaly.from_epoch(3, 5)]
         snd = []
         expected_anomalies = [
@@ -111,10 +116,34 @@ class TestSlack(unittest.TestCase):
         expected_debug = {}
         self.case(intersect, fst, snd, expected_anomalies, expected_debug)
 
-    def test_slack_single_anomaly_min_span_combine_repeated_same(self):
+    def test_slack_single_anomaly_min_span_combine3_min_gap_no_modify(self):
+        intersect = Slack('test')
+        intersect.set_param_value('slack', 0)
+        intersect.set_param_value('min_span', '')
+        intersect.set_param_value('min_gap', '2')
+        fst = [Anomaly.from_epoch(1, 3), Anomaly.from_epoch(3, 4)]
+        snd = []
+        expected_anomalies = [
+            {
+                'id': '4df66ed193a28317221ac37f78d0d7dc',
+                'from': 1000,
+                'to': 4000,
+                'score': 1.0,
+                'source_anomalies': [
+                    '907118cc03fec0a8d2c575b1954afdc4',
+                    '2258259e7e550cbe14d3f31b2172e150'
+                ],
+                'source_node': 'test',
+            }
+        ]
+        expected_debug = {}
+        self.case(intersect, fst, snd, expected_anomalies, expected_debug)
+
+    def test_slack_single_anomaly_min_span_combine_repeated_same_start_end(self):
         intersect = Slack('test')
         intersect.set_param_value('slack', 0)
         intersect.set_param_value('min_span', '4')
+        intersect.set_param_value('min_gap', '')
         fst = [Anomaly.from_epoch(1, 3), Anomaly.from_epoch(1, 3)]
         snd = []
         expected_anomalies = [
@@ -130,10 +159,31 @@ class TestSlack(unittest.TestCase):
         expected_debug = {}
         self.case(intersect, fst, snd, expected_anomalies, expected_debug)
 
+    def test_slack_single_anomaly_min_span_combine_repeated_same_end(self):
+        intersect = Slack('test')
+        intersect.set_param_value('slack', 0)
+        intersect.set_param_value('min_span', '')
+        intersect.set_param_value('min_gap', '')
+        fst = [Anomaly.from_epoch(1, 3), Anomaly.from_epoch(2, 3)]
+        snd = []
+        expected_anomalies = [
+            {
+                'id': '38d8163446902c87895ce84636452da2',
+                'from': 1000,
+                'to': 3000,
+                'score': 1.0,
+                'source_anomalies': ['907118cc03fec0a8d2c575b1954afdc4','3c7002f0fd6171fa486fb34a853becac'],
+                'source_node': 'test',
+            }
+        ]
+        expected_debug = {}
+        self.case(intersect, fst, snd, expected_anomalies, expected_debug)
+
     def test_slack_single_anomaly_min_span_combine_diff(self):
         intersect = Slack('test')
         intersect.set_param_value('slack', 0)
         intersect.set_param_value('min_span', '4')
+        intersect.set_param_value('min_gap', '')
         fst = [Anomaly.from_epoch(1, 3)]
         snd = [Anomaly.from_epoch(3, 5)]
         expected_anomalies = [
@@ -153,6 +203,7 @@ class TestSlack(unittest.TestCase):
         intersect = Slack('test')
         intersect.set_param_value('slack', 0)
         intersect.set_param_value('min_span', '4')
+        intersect.set_param_value('min_gap', '')
         fst = [Anomaly.from_epoch(1, 3), Anomaly.from_epoch(10, 20)]
         snd = []
         expected_anomalies = [

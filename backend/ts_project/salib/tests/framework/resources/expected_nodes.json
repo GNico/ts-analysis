@@ -994,6 +994,14 @@
           "desc": "Min. anomaly span to extend (intervals or period, ej '3h'. Leave empty to ignore.",
           "conditions": [],
           "value": ""
+        },
+        {
+          "id": "min_gap",
+          "type": "String",
+          "display": "Min. gap",
+          "desc": "Min. gap between anomalies (intervals or period, ej '3h'. Leave empty to ignore.",
+          "conditions": [],
+          "value": ""
         }
       ],
       "inputs": {
