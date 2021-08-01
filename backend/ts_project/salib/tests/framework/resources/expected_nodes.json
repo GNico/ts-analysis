@@ -254,7 +254,7 @@
             },
             {
               "code": "l1",
-              "display": "L1 distance metric (mod sum)"
+              "display": "L1 distance metric (mod sub)"
             },
             {
               "code": "rel_diff",

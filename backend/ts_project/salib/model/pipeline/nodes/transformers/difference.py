@@ -7,7 +7,7 @@ class Difference(BinaryMathTransformer):
         super().__init__(id)
         operators = [
             SelectOption('sub', 'Substract'),
-            SelectOption('l1', 'L1 distance metric (mod sum)'),
+            SelectOption('l1', 'L1 distance metric (mod sub)'),
             SelectOption('rel_diff', 'Relative difference'),
             SelectOption('abs_rel_diff', 'Absolute relative difference'),
         ]
