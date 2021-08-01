@@ -236,6 +236,53 @@
       }
     },
     {
+      "type": "ExponentialSmoothing",
+      "desc": "ExponentialSmoothing model with trend and (optional) seasonality",
+      "display": "Exponential Smoothing",
+      "params": [
+        {
+          "id": "damped_trend",
+          "type": "Boolean",
+          "display": "Damped trend",
+          "desc": "Damped trend",
+          "conditions": [],
+          "value": true
+        },
+        {
+          "id": "seasonal_length",
+          "type": "String",
+          "display": "Seasonal length",
+          "desc": "Season length (in intervals or period, eg. 3h). Leave empty for no seasonality.",
+          "conditions": [],
+          "value": "7d"
+        },
+        {
+          "id": "output",
+          "type": "Select",
+          "display": "Output",
+          "desc": "Model output",
+          "conditions": [],
+          "value": "resid",
+          "options": [
+            {
+              "code": "resid",
+              "display": "Residual"
+            },
+            {
+              "code": "predicted",
+              "display": "Predicted"
+            }
+          ]
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
       "type": "Difference",
       "desc": "Difference operator",
       "display": "Difference",
@@ -636,6 +683,63 @@
               "display": "Predicted"
             }
           ]
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
+      "type": "MarkovAutoRegression",
+      "desc": "Markov Auto-Regression with tunable regimes and AR/VAR order switching",
+      "display": "Markov Auto-Regression",
+      "params": [
+        {
+          "id": "lags",
+          "type": "String",
+          "display": "#Lags",
+          "desc": "Lags, in period (eg 12h) or count",
+          "conditions": [],
+          "value": "7d"
+        },
+        {
+          "id": "num_regimes",
+          "type": "BoundedInt",
+          "display": "# Regimes",
+          "desc": "Number of regimes",
+          "conditions": [],
+          "value": 2,
+          "min": 2,
+          "max": null
+        },
+        {
+          "id": "switching_ar",
+          "type": "Boolean",
+          "display": "Switching AR",
+          "desc": "Switching AR components",
+          "conditions": [],
+          "value": false
+        },
+        {
+          "id": "switching_var",
+          "type": "Boolean",
+          "display": "Switching var",
+          "desc": "Switching variance components",
+          "conditions": [],
+          "value": false
+        },
+        {
+          "id": "output_regime",
+          "type": "BoundedInt",
+          "display": "Regime output",
+          "desc": "Output probabilities from specified regime. Value must be [0, num_regimes)",
+          "conditions": [],
+          "value": 1,
+          "min": 0,
+          "max": null
         }
       ],
       "inputs": {

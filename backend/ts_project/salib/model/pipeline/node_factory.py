@@ -1,6 +1,7 @@
 from .nodes.transformers.clamp import Clamp
 from .nodes.transformers.rescale import Rescale
 from .nodes.transformers.exponential_moving_average import ExponentialMovingAverage
+from .nodes.transformers.exponential_smoothing import ExponentialSmoothing
 from .nodes.transformers.difference import Difference
 from .nodes.transformers.divide import Divide
 from .nodes.transformers.std_normalize import StdNormalize
@@ -11,6 +12,7 @@ from .nodes.transformers.multi_rolling_aggregate import MultiRollingAggregate
 from .nodes.transformers.stl import STL
 from .nodes.transformers.seasonal_decompose import SeasonalDecompose
 from .nodes.transformers.auto_regression import AutoRegression
+from .nodes.transformers.markov_auto_regression import MarkovAutoRegression
 from .nodes.transformers.sarimax import SARIMAX
 from .nodes.transformers.garch import GARCH
 from .nodes.transformers.alma import ALMA
@@ -51,6 +53,7 @@ class NodeFactory:
             'Shift': Shift,
             'Identity': Identity,
             'ExponentialMovingAverage': ExponentialMovingAverage,
+            'ExponentialSmoothing': ExponentialSmoothing,
             'Difference': Difference,
             'Divide': Divide,
             'RollingAggregate': RollingAggregate,
@@ -58,6 +61,7 @@ class NodeFactory:
             'STL': STL,
             'Seasonal decompose': SeasonalDecompose,
             'AutoRegression': AutoRegression,
+            'MarkovAutoRegression': MarkovAutoRegression,
             'SARIMAX': SARIMAX,
             'ALMA': ALMA,
             'GARCH': GARCH,
