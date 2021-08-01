@@ -177,9 +177,9 @@
       }
     },
     {
-      "type": "ExponentialSmoothing",
-      "desc": "Exponential smoothing with decay rate",
-      "display": "Exponential smoothing",
+      "type": "ExponentialMovingAverage",
+      "desc": "Exponential moving average with decay rate. Mean, var or std dev.",
+      "display": "Exponential moving average",
       "params": [
         {
           "id": "span",

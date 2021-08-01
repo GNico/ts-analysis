@@ -1,6 +1,6 @@
 from .nodes.transformers.clamp import Clamp
 from .nodes.transformers.rescale import Rescale
-from .nodes.transformers.exponential_smoothing import ExponentialSmoothing
+from .nodes.transformers.exponential_moving_average import ExponentialMovingAverage
 from .nodes.transformers.difference import Difference
 from .nodes.transformers.divide import Divide
 from .nodes.transformers.std_normalize import StdNormalize
@@ -50,7 +50,7 @@ class NodeFactory:
             'StdNormalize': StdNormalize,
             'Shift': Shift,
             'Identity': Identity,
-            'ExponentialSmoothing': ExponentialSmoothing,
+            'ExponentialMovingAverage': ExponentialMovingAverage,
             'Difference': Difference,
             'Divide': Divide,
             'RollingAggregate': RollingAggregate,

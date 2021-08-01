@@ -9,11 +9,11 @@ from model.pipeline.nodes.node_source import InputRef
 from model.test.test_series_builder import TestSeriesBuilder
 from model.test.testcase import TestCase
 
-class TestExponentialSmoothing(unittest.TestCase):
+class TestExponentialMovingAverage(unittest.TestCase):
 
-    def test_exponential_smoothing_mean(self):
+    def test_exponential_moving_average_mean(self):
         
-        factory = NodeFactory.transformer('test', 'ExponentialSmoothing')
+        factory = NodeFactory.transformer('test', 'ExponentialMovingAverage')
         factory.set_param_value('span', '4')
         factory.set_param_value('min_periods', '')
         factory.set_param_value('recursive', False)

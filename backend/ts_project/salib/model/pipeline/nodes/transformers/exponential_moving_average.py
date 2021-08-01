@@ -6,7 +6,7 @@ from ...params.boolean import Boolean
 
 from ....utils import timedelta_to_period
 
-class ExponentialSmoothing(NodeTransformer):
+class ExponentialMovingAverage(NodeTransformer):
 
     def __init__(self, id):
         super().__init__(id)
@@ -58,10 +58,10 @@ class ExponentialSmoothing(NodeTransformer):
         return (span, min_periods, recursive, agg_method)
 
     def __str__(self):
-        return "ExponentialSmoothing(" + str(self.get_params()) + ")[" + self.id + "]"
+        return "ExponentialMovingAverage(" + str(self.get_params()) + ")[" + self.id + "]"
 
     def display(self):
-        return 'Exponential smoothing'
+        return 'Exponential moving average'
 
     def desc(self):
-        return 'Exponential smoothing with decay rate'
+        return 'Exponential moving average with decay rate. Mean, var or std dev.'
