@@ -40,7 +40,7 @@ class FFTFilter(NodeTransformer):
         # Debug info
         if debug:
             fft_chart = []
-            for i in range(len(freqs)):
+            for i in range(0, len(freqs)//2):
                 fft_chart.append([freqs[i], PSD[i].real])
             debug_info = {
                 "fft_chart": fft_chart
@@ -48,7 +48,8 @@ class FFTFilter(NodeTransformer):
         else:
             debug_info = {}
 
-        indices = PSD > np.mean(PSD)
+        adj = 0.05
+        indices = ([True] * int(len(fhat)*adj)) + ([False] * int((len(fhat)+1)*(1-adj)))
         fhat = indices * fhat
         inverse_values = np.fft.ifft(fhat)
         output = pd.Series(inverse_values, index=pdseries.index)
