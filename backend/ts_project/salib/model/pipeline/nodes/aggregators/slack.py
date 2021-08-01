@@ -71,6 +71,11 @@ class Slack(Node):
             new_source_anomalies = list(np.unique(new_source_anomalies))
             anomaly.set_source_anomalies(new_source_anomalies)
 
+        # Debug info
+        debug_info['start_anomaly_count'] = len(all_anomalies)
+        debug_info['end_anomaly_count'] = len(new_anomalies)
+        debug_info['anomaly_count_diff'] = debug_info['end_anomaly_count'] - debug_info['start_anomaly_count']
+
         return new_anomalies, debug_info
 
     @staticmethod
@@ -159,7 +164,7 @@ class Slack(Node):
                     return new_anomaly
                 else:
                     raise ValueError('Zero span anomaly?')
-            elif min_gap is not None and (fst.end - snd.start) < min_gap:
+            elif min_gap is not None and (snd.start - fst.end) < min_gap:
                 score = Slack.combined_scores(lhs, rhs)
                 new_anomaly = Anomaly(fst.start, snd.end, score)
                 new_anomaly.set_source_anomalies([lhs, rhs])

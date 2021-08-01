@@ -25,7 +25,11 @@ class TestSlack(unittest.TestCase):
                 'source_node': 'test',
             }
         ]
-        expected_debug = {}
+        expected_debug = {
+            'anomaly_count_diff': 0,
+            'end_anomaly_count': 1,
+            'start_anomaly_count': 1
+        }
         self.case(intersect, fst, snd, expected_anomalies, expected_debug)
 
     def test_slack_single_anomaly_min_span(self):
@@ -45,7 +49,11 @@ class TestSlack(unittest.TestCase):
                 'source_node': 'test',
             }
         ]
-        expected_debug = {}
+        expected_debug = {
+            'anomaly_count_diff': 0,
+            'end_anomaly_count': 1,
+            'start_anomaly_count': 1
+        }
         self.case(intersect, fst, snd, expected_anomalies, expected_debug)
 
     def test_slack_single_anomaly_min_span_combine_same(self):
@@ -65,7 +73,11 @@ class TestSlack(unittest.TestCase):
                 'source_node': 'test',
             }
         ]
-        expected_debug = {}
+        expected_debug = {
+            'anomaly_count_diff': -1,
+            'end_anomaly_count': 1,
+            'start_anomaly_count': 2
+        }
         self.case(intersect, fst, snd, expected_anomalies, expected_debug)
 
     def test_slack_single_anomaly_min_span_combine3_same(self):
@@ -89,10 +101,14 @@ class TestSlack(unittest.TestCase):
                 'source_node': 'test',
             }
         ]
-        expected_debug = {}
+        expected_debug = {
+            'anomaly_count_diff': -2,
+            'end_anomaly_count': 1,
+            'start_anomaly_count': 3
+        }
         self.case(intersect, fst, snd, expected_anomalies, expected_debug)
 
-    def test_slack_single_anomaly_min_span_combine3_same_no_modify(self):
+    def test_slack_single_anomaly_min_span_combine3_same_modify(self):
         intersect = Slack('test')
         intersect.set_param_value('slack', 0)
         intersect.set_param_value('min_span', '')
@@ -113,10 +129,14 @@ class TestSlack(unittest.TestCase):
                 'source_node': 'test',
             }
         ]
-        expected_debug = {}
+        expected_debug = {
+            'anomaly_count_diff': -2,
+            'end_anomaly_count': 1,
+            'start_anomaly_count': 3
+        }
         self.case(intersect, fst, snd, expected_anomalies, expected_debug)
 
-    def test_slack_single_anomaly_min_span_combine3_min_gap_no_modify(self):
+    def test_slack_single_anomaly_combine2_min_gap_modify(self):
         intersect = Slack('test')
         intersect.set_param_value('slack', 0)
         intersect.set_param_value('min_span', '')
@@ -136,7 +156,43 @@ class TestSlack(unittest.TestCase):
                 'source_node': 'test',
             }
         ]
-        expected_debug = {}
+        expected_debug = {
+            'anomaly_count_diff': -1,
+            'end_anomaly_count': 1,
+            'start_anomaly_count': 2
+        }
+        self.case(intersect, fst, snd, expected_anomalies, expected_debug)
+
+    def test_slack_single_anomaly_combine2_min_gap_no_modify(self):
+        intersect = Slack('test')
+        intersect.set_param_value('slack', 0)
+        intersect.set_param_value('min_span', '')
+        intersect.set_param_value('min_gap', '2')
+        fst = [Anomaly.from_epoch(1, 3), Anomaly.from_epoch(5, 7)]
+        snd = []
+        expected_anomalies = [
+            {
+                'id': '907118cc03fec0a8d2c575b1954afdc4',
+                'from': 1000,
+                'to': 3000,
+                'score': 1.0,
+                'source_anomalies': [],
+                'source_node': 'fst',
+            },
+            {
+                'id': '39b7611a1843441315cda0b35edd070a',
+                'from': 5000,
+                'to': 7000,
+                'score': 1.0,
+                'source_anomalies': [],
+                'source_node': 'fst',
+            }
+        ]
+        expected_debug = {
+            'anomaly_count_diff': 0,
+            'end_anomaly_count': 2,
+            'start_anomaly_count': 2
+        }
         self.case(intersect, fst, snd, expected_anomalies, expected_debug)
 
     def test_slack_single_anomaly_min_span_combine_repeated_same_start_end(self):
@@ -156,7 +212,11 @@ class TestSlack(unittest.TestCase):
                 'source_node': 'test',
             }
         ]
-        expected_debug = {}
+        expected_debug = {
+            'anomaly_count_diff': -1,
+            'end_anomaly_count': 1,
+            'start_anomaly_count': 2
+        }
         self.case(intersect, fst, snd, expected_anomalies, expected_debug)
 
     def test_slack_single_anomaly_min_span_combine_repeated_same_end(self):
@@ -176,7 +236,11 @@ class TestSlack(unittest.TestCase):
                 'source_node': 'test',
             }
         ]
-        expected_debug = {}
+        expected_debug = {
+            'anomaly_count_diff': -1,
+            'end_anomaly_count': 1,
+            'start_anomaly_count': 2
+        }
         self.case(intersect, fst, snd, expected_anomalies, expected_debug)
 
     def test_slack_single_anomaly_min_span_combine_diff(self):
@@ -196,7 +260,11 @@ class TestSlack(unittest.TestCase):
                 'source_node': 'test',
             }
         ]
-        expected_debug = {}
+        expected_debug = {
+            'anomaly_count_diff': -1,
+            'end_anomaly_count': 1,
+            'start_anomaly_count': 2
+        }
         self.case(intersect, fst, snd, expected_anomalies, expected_debug)
 
     def test_slack_single_anomaly_min_span_does_not_combine(self):
@@ -224,7 +292,11 @@ class TestSlack(unittest.TestCase):
                 'source_node': 'fst',
             }
         ]
-        expected_debug = {}
+        expected_debug = {
+            'anomaly_count_diff': 0,
+            'end_anomaly_count': 2,
+            'start_anomaly_count': 2
+        }
         self.case(intersect, fst, snd, expected_anomalies, expected_debug)
 
     def test_slack_edge_case_identity(self):
@@ -243,7 +315,11 @@ class TestSlack(unittest.TestCase):
                 'source_node': 'fst',
             }
         ]
-        expected_debug = {}
+        expected_debug = {
+            'anomaly_count_diff': 0,
+            'end_anomaly_count': 1,
+            'start_anomaly_count': 1
+        }
         self.case(intersect, fst, snd, expected_anomalies, expected_debug)
 
     def case(self, node, fst_anomalies, snd_anomalies, expected_output, expected_debug):
