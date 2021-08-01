@@ -279,7 +279,16 @@
       "type": "Divide",
       "desc": "Divide operator",
       "display": "Divide",
-      "params": [],
+      "params": [
+        {
+          "id": "zero_div",
+          "type": "Int",
+          "display": "Zero div:",
+          "desc": "Value for division by zero. Empty to skip",
+          "conditions": [],
+          "value": 0
+        }
+      ],
       "inputs": {
         "num_required_inputs": 2,
         "names": [
