@@ -25,7 +25,7 @@
   </b-table-column>
 
   <template #detail="props">
-    <article :id="props.row.id">    
+    <article :id="props.row.id">
       <div class="is-flex">
         <div class="left-field has-text-right mr-5 has-text-weight-bold has-text-grey-light">
           ID
