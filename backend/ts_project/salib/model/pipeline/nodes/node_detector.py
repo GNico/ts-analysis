@@ -11,17 +11,21 @@ class NodeDetector(Node):
     def execute(self, inputs, debug):
         input = inputs[0]
         anomalies, debug_info = self.anomalies(input.find_output_series(), debug)
-
-        # Normalize and set source node
-        max_score = max([anomaly.score for anomaly in anomalies]) if len(anomalies) > 0 else None
-        for anomaly in anomalies:
-            anomaly.set_source_node(self)
-            if max_score > 0:
-                anomaly.score = anomaly.score / max_score
+        NodeDetector.normalize_anomalies(anomalies, self)
         return NodeResult(self, inputs=inputs, anomalies=anomalies, debug_info=debug_info)
 
     def anomalies(self, series, debug):
         raise Exception('Unimplemented anomalies method for NodeDetector')
+
+    @staticmethod
+    def normalize_anomalies(anomalies, node=None):
+        # Normalize and set source node
+        max_score = max([anomaly.score for anomaly in anomalies]) if len(anomalies) > 0 else None
+        for anomaly in anomalies:
+            if node is not None:
+                anomaly.set_source_node(node)
+            if max_score > 0:
+                anomaly.score = anomaly.score / max_score
 
     @staticmethod
     def pointwise_consecutive(anomaly_scoring, series):

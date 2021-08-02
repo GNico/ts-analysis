@@ -71,6 +71,18 @@
       }
     },
     {
+      "type": "AbsValue",
+      "desc": "Take the absolute value for series (modulo)",
+      "display": "Absolute value",
+      "params": [],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
       "type": "Shift",
       "desc": "Shift series in time by a fixed time delta",
       "display": "Time shift",
