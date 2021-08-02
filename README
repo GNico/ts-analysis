@@ -52,8 +52,8 @@ BACKEND
 
 -run Celery worker & beat in another terminal (activate venv first)
 	source venv/bin/activate
-	celery -A tsa worker --loglevel=info
-	celery -A tsa beat --loglevel=info
+	celery -A tsa worker --loglevel=info -E --time-limit 30
+	celery -A tsa beat --loglevel=info -E --time-limit 30
 
 -access
 	localhost:8000
