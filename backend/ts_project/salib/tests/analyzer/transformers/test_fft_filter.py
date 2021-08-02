@@ -19,7 +19,7 @@ class TestFFTFilter(unittest.TestCase):
         self.assertEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0], series.as_list())
         
         factory = NodeFactory.transformer('fft_filter', 'FFTFilter')
-        factory.set_param_value('cutoff', 50)
+        factory.set_param_value('cutoff', '50%')
         factory.set_param_value('output', 'resid')
         factory.add_source(InputRef('input'))
         fft_filter = factory.build()

@@ -554,13 +554,11 @@
       "params": [
         {
           "id": "cutoff",
-          "type": "BoundedInt",
-          "display": "Power cutoff %",
-          "desc": "Percentile cutoff for bandpass",
+          "type": "String",
+          "display": "Power cutoff",
+          "desc": "Power value or percentile cutoff for bandpass. Eg: 500 or 50%",
           "conditions": [],
-          "value": 95,
-          "min": 0,
-          "max": 100
+          "value": "95%"
         },
         {
           "id": "output",

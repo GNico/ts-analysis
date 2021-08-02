@@ -4,7 +4,7 @@ from scipy.fftpack import fft, ifft, fftfreq
 
 from ..node_transformer import NodeTransformer
 from ...params.select import Select, SelectOption
-from ...params.int import BoundedInt
+from ...params.string import String
 from ....utils import timedelta_to_period
 
 class FFTFilter(NodeTransformer):
@@ -14,7 +14,7 @@ class FFTFilter(NodeTransformer):
         self.add_params()
 
     def add_params(self):
-        self.add_required_param(BoundedInt('cutoff', 'Power cutoff %', 'Percentile cutoff for bandpass', 0, 100, 95))
+        self.add_required_param(String('cutoff', 'Power cutoff', 'Power value or percentile cutoff for bandpass. Eg: 500 or 50%', '95%'))
         output_options = [
             SelectOption("filtered", "Filtered"),
             SelectOption("resid", "Residual"),
@@ -35,11 +35,16 @@ class FFTFilter(NodeTransformer):
         fhat = fft(pdseries, n)
         freqs = fftfreq(n, 1)
         powers = np.abs(fhat)
-        power_quantile = np.percentile(powers, cutoff)
+
+        if cutoff[-1] == '%':
+            cutoff_value = np.percentile(powers, float(cutoff[:-1]))
+        else:
+            cutoff_value = float(cutoff)
+
         if output == 'filtered':
-            fhat[(powers>=power_quantile)] = 0
+            fhat[(powers>=cutoff_value)] = 0
         elif output == 'resid':
-            fhat[(powers<=power_quantile)] = 0
+            fhat[(powers<=cutoff_value)] = 0
         else:
             raise ValueError('Invalid output: ' + output)
         inverse_values = np.abs(ifft(fhat))
@@ -50,7 +55,7 @@ class FFTFilter(NodeTransformer):
                 fft_chart.append([freqs[i], powers[i]])
             debug_info = {
                 "fft_chart": fft_chart,
-                "power_cutoff": power_quantile,
+                "cutoff": cutoff_value,
             }
         else:
             debug_info = {}
