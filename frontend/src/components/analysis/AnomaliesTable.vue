@@ -17,7 +17,7 @@
   </b-table-column>
 
   <b-table-column field="from" label="Start date" sortable centered v-slot="props">
-    {{ formatDate(props.row.from) }}
+    {{ formatDateVerbose(props.row.from) }}
   </b-table-column>
   
   <b-table-column :custom-sort="sortDuration" label="Duration" sortable centered v-slot="props">
@@ -25,12 +25,65 @@
   </b-table-column>
 
   <template #detail="props">
-    <article :id="props.row.id" class="extra has-text-centered">                    
-      <p>
-        <strong>{{ props.row.id }}</strong>
-        <br>
-        {{  props.row }}
-      </p>
+    <article :id="props.row.id">    
+      <div class="is-flex">
+        <div class="left-field has-text-right mr-5 has-text-weight-bold has-text-grey-light">
+          ID
+        </div>
+        <div class="right-field has-text-left">
+          {{props.row.id}}
+        </div>
+      </div>
+
+      <div class="is-flex">
+        <div class="left-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
+          From
+        </div>
+        <div class="right-field has-text-left">
+          <strong>{{props.row.from}} </strong>({{formatDate(new Date(props.row.from))}}) 
+        </div>
+      </div>
+
+      <div class="is-flex">
+        <div class="left-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
+          To
+        </div>
+        <div class="right-field has-text-left">
+          <strong>{{props.row.to}} </strong>({{formatDate(new Date(props.row.to))}}) 
+        </div>
+      </div>
+
+      <div class="is-flex">
+        <div class="left-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
+          Score
+        </div>
+        <div class="right-field has-text-left">
+          {{props.row.score}}
+        </div>
+      </div>
+
+      <div class="is-flex">
+        <div class="left-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
+          Source node 
+        </div>
+        <div class="right-field has-text-left">
+          {{props.row.source_node}}
+        </div>
+      </div>
+
+      <div class="is-flex">
+        <div class="left-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
+          Source anoms
+        </div>
+        <div class="right-field has-text-left">
+          <template v-if="props.row.source_anomalies.length">
+            <div v-for="anom in props.row.source_anomalies">
+              anom
+            </div>
+          </template>
+          <span v-else>-</span>
+        </div>
+      </div>
     </article>
   </template>
 </b-table>
@@ -38,7 +91,7 @@
 
 
 <script>
-import { timeRangeToString, formatDateVerbose } from '@/utils/dateFormatter';
+import { timeRangeToString, formatDateVerbose, formatDate } from '@/utils/dateFormatter';
 
 export default {
   props: {
@@ -84,6 +137,9 @@ export default {
       this.$emit('changeActive', event.id)
     },
     formatDate(date) {
+      return formatDate(date)
+    },
+    formatDateVerbose(date) {
       return formatDateVerbose(date)
     },
     getDuration(anom) {
@@ -101,9 +157,13 @@ export default {
 }
 </script>
 
-
-<style>
-.anom-table {
-  height: inherit;
+<style scoped>
+.left-field {
+  flex: 1;
 }
+
+.right-field {
+  flex: 3;
+}
+
 </style>
