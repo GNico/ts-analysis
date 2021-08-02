@@ -52,8 +52,8 @@ export default {
   },
   data() {
     return {
-      name: '',
-      description: '',
+      name: this.analysis.name,
+      description: this.analysis.description,
     }
   },
   computed: {
