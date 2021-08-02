@@ -548,6 +548,47 @@
       }
     },
     {
+      "type": "FFTFilter",
+      "desc": "Fast Fourier Transform band pass filter",
+      "display": "FFT filter",
+      "params": [
+        {
+          "id": "cutoff",
+          "type": "BoundedInt",
+          "display": "Power cutoff %",
+          "desc": "Percentile cutoff for bandpass",
+          "conditions": [],
+          "value": 95,
+          "min": 0,
+          "max": 100
+        },
+        {
+          "id": "output",
+          "type": "Select",
+          "display": "Output",
+          "desc": "Output filtered signal or residuals",
+          "conditions": [],
+          "value": "filtered",
+          "options": [
+            {
+              "code": "filtered",
+              "display": "Filtered"
+            },
+            {
+              "code": "resid",
+              "display": "Residual"
+            }
+          ]
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
       "type": "STL",
       "desc": "Seasonal-Trend decomposition (LOESS)",
       "display": "STL decomposition",

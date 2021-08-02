@@ -19,34 +19,34 @@ class TestFFTFilter(unittest.TestCase):
         self.assertEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0], series.as_list())
         
         factory = NodeFactory.transformer('fft_filter', 'FFTFilter')
-        factory.set_param_value('inside', True)
-        factory.set_param_value('strict', True)
-        factory.set_param_value('lower', 0)
-        factory.set_param_value('upper', 5)
+        factory.set_param_value('cutoff', 50)
+        factory.set_param_value('output', 'resid')
         factory.add_source(InputRef('input'))
         fft_filter = factory.build()
 
         self.case(series, fft_filter, 
-            [-1.5270292013639366,
-            -1.1876893788386174,
-            -0.8483495563132981,
-            -0.5090097337879789,
-            -0.16966991126265962,
-            0.16966991126265962,
-            0.5090097337879789,
-            0.8483495563132981,
-            1.1876893788386174,
-            1.5270292013639366,
-            1.5270292013639366,
-            1.1876893788386174,
-            0.8483495563132981,
-            0.5090097337879789,
-            0.16966991126265962,
-            -0.16966991126265962,
-            -0.5090097337879789,
-            -0.8483495563132981,
-            -1.1876893788386174,
-            -1.5270292013639366])
+            [
+              0.002508563093691407,
+              0.9927198663527221,
+              2.0113390739957944,
+              2.9857119332223716,
+              4.015838444032453,
+              4.984161555967546,
+              6.014288066777628,
+              6.988660926004205,
+              8.00728013364728,
+              8.997491436906309,
+              8.99749143690631,
+              8.007280133647278,
+              6.988660926004206,
+              6.014288066777628,
+              4.984161555967547,
+              4.015838444032454,
+              2.985711933222371,
+              2.0113390739957935,
+              0.9927198663527218,
+              0.002508563093691407
+            ])
 
     def case(self, series, node, expected_series):
         pipeline = Pipeline([node])
@@ -56,7 +56,6 @@ class TestFFTFilter(unittest.TestCase):
         }
         analysis = analyzer.analyze(inputs)
         result = analysis.result_for_node(node.id)
-        print(json.dumps(result.debug_info, indent=2))
 
         self.assertEqual(expected_series, result.output_series.as_list())
 
