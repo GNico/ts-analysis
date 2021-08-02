@@ -2,6 +2,7 @@ import json
 import numpy as np
 
 from ..node import Node
+from ..node_detector import NodeDetector
 from ..node_result import NodeResult
 from ...params.int import BoundedInt
 from ...params.string import String
@@ -33,7 +34,7 @@ class Slack(Node):
             calc_min_gap = step * timedelta_to_period(min_gap, step)
 
         new_anomalies, debug_info = self.join(all_anomalies, slack, calc_min_span, calc_min_gap, debug)
-
+        NodeDetector.normalize_anomalies(new_anomalies)
         return NodeResult(self, inputs=inputs, anomalies=new_anomalies, debug_info=debug_info)
 
     def join(self, all_anomalies, slack, min_span, min_gap, debug):

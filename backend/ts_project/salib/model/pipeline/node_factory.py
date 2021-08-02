@@ -5,6 +5,7 @@ from .nodes.transformers.exponential_smoothing import ExponentialSmoothing
 from .nodes.transformers.difference import Difference
 from .nodes.transformers.divide import Divide
 from .nodes.transformers.std_normalize import StdNormalize
+from .nodes.transformers.abs_value import AbsValue
 from .nodes.transformers.shift import Shift
 from .nodes.transformers.identity import Identity
 from .nodes.transformers.rolling_aggregate import RollingAggregate
@@ -50,6 +51,7 @@ class NodeFactory:
             'Clamp': Clamp,
             'Rescale': Rescale,
             'StdNormalize': StdNormalize,
+            'AbsValue': AbsValue,
             'Shift': Shift,
             'Identity': Identity,
             'ExponentialMovingAverage': ExponentialMovingAverage,

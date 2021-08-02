@@ -66,7 +66,7 @@ class RollingAggregate(NodeTransformer):
     def transform_pdseries(self, s, step, debug):
         window, center, min_periods, agg = self.get_common_params()
         calc_window = timedelta_to_period(window, step)
-        if min_periods is None:
+        if min_periods is None or min_periods == '' or min_periods == 0:
             calc_min_periods = calc_window
         else:
             calc_min_periods = timedelta_to_period(min_periods, step)
