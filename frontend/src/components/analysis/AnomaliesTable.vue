@@ -64,7 +64,7 @@
 
       <div class="is-flex">
         <div class="left-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
-          Source node 
+          Node 
         </div>
         <div class="right-field has-text-left">
           {{props.row.source_node}}
@@ -73,12 +73,12 @@
 
       <div class="is-flex">
         <div class="left-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
-          Source anoms
+          Anomaly sources
         </div>
         <div class="right-field has-text-left">
           <template v-if="props.row.source_anomalies.length">
             <div v-for="anom in props.row.source_anomalies">
-              anom
+              {{anom}}
             </div>
           </template>
           <span v-else>-</span>
