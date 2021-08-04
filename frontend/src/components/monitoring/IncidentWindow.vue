@@ -16,14 +16,15 @@
           <b-icon icon="close" type="is-primary"></b-icon>
         </button>
       </header>
-      <div class="card-content " >
-        <div class="columns is-paddingless ">
+      <div class="card-content">
+        <div class="columns is-paddingless">
           <div class="column is-8">
             <BaseChart 
               :key="chartKey"
               :seriesData="chartData" 
               :bands="chartIncident"
-              :style="chartDimensions"/>
+              :style="chartDimensions"
+              :extremes="extremes ? extremes : {min: undefined, max:undefined}"/>
           </div>
           <div class="column">
             EXTRA DATA
@@ -57,7 +58,7 @@ export default {
       height: 500,
       x: 0,
       y: 0,      
-      tooltipFormatter: multiseriesTooltipFormatter
+      tooltipFormatter: multiseriesTooltipFormatter,
     }
   },
   computed: {
@@ -68,6 +69,7 @@ export default {
           cdata.push({
             name: 'Input ' + seriesId,
             type: 'line',
+            color: '#e7ec98',
             data: this.incident.series[seriesId],
             zIndex: 2,
             fillOpacity: 1,
@@ -95,6 +97,11 @@ export default {
         height: `${h}px`,
         width: `calc((${w}px - 3.75rem)* 2/3)`,
       }
+    },
+    extremes() {
+      var min = Date.parse(this.incident.start)
+      var max = Date.parse(this.incident.end)
+      return { min: min - 302400000 , max: max + 302400000 }
     }
   },
   methods: {

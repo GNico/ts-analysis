@@ -9,11 +9,13 @@
   :opened-detailed="openRows"
   detailed
   detail-key="id"
-  :show-detail-icon="false"
+  :show-detail-icon="false" 
   @select="changeActiveAnomaly($event)">
 
   <b-table-column field="score" label="Score" sortable numeric v-slot="props">
-    <span class="tag is-info is-small">{{ (props.row.score * 100).toFixed(1) }}%</span>
+    <span class="tag is-small" :style="getScoreTagStyle(props.row.score)">
+      {{ parseFloat((props.row.score * 100).toFixed(1)) }}%
+    </span>
   </b-table-column>
 
   <b-table-column field="from" label="Start date" sortable centered v-slot="props">
@@ -78,7 +80,7 @@
         <div class="right-field has-text-left">
           <template v-if="props.row.source_anomalies.length">
             <div v-for="anom in props.row.source_anomalies">
-              anom
+              {{anom}}
             </div>
           </template>
           <span v-else>-</span>
@@ -152,6 +154,15 @@ export default {
       return isAsc 
         ? this.getDuration(a) < this.getDuration(b)
         : this.getDuration(a) > this.getDuration(b)
+    },
+    getScoreTagStyle(score) {
+      if (score <= 0.33) {
+        return { 'background-color': 'dodgerblue', color: 'white', 'font-weight': 600}
+      } else if (score <= 0.66) {
+        return { 'background-color': 'royalblue', color: 'white', 'font-weight': 600}
+      } else {
+        return { 'background-color': '#005aff', color: 'white', 'font-weight': 600}
+      }
     }
   }
 }
@@ -165,5 +176,4 @@ export default {
 .right-field {
   flex: 3;
 }
-
 </style>

@@ -40,7 +40,7 @@ const timeRangeToString = function(timeRange) {
         if (hoursDiff > 0) textResult += hoursDiff.toString() + 'h '
         let hoursRemainder = daysRemainder % (1000 * 3600)
         if (hoursRemainder > 0 ) {
-            minsDiff = Math.floor(daysRemainder/ (1000 * 60))
+            minsDiff = Math.floor(hoursRemainder/ (1000 * 60))
             if (minsDiff > 0) textResult += minsDiff.toString() + 'm '
         }
     }

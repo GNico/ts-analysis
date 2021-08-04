@@ -65,7 +65,9 @@
       {{ getDurationStr(props.row.start, props.row.end) }}
     </b-table-column>
     <b-table-column field="score" label="Score" width="5%" sortable v-slot="props"  cell-class="is-clickable is-unselectable">
-      <span>{{ props.row.score }}</span>     
+      <span class="tag is-small" :style="getScoreTagStyle(props.row.score)">
+        {{ parseFloat((props.row.score * 100).toFixed(1)) }}%
+      </span>  
     </b-table-column>       
   </b-table>
 </div>
@@ -165,6 +167,15 @@ export default {
       let dur1 = Date.parse(a.end) - Date.parse(a.start)
       let dur2 = Date.parse(b.end) - Date.parse(b.start)
       return isAsc ? dur1 < dur2 : dur1 > dur2
+    },
+    getScoreTagStyle(score) {
+      if (score <= 0.33) {
+        return { 'background-color': 'dodgerblue', color: 'white', 'font-weight': 600}
+      } else if (score <= 0.66) {
+        return { 'background-color': 'royalblue', color: 'white', 'font-weight': 600}
+      } else {
+        return { 'background-color': '#005aff', color: 'white', 'font-weight': 600}
+      }
     }
   },
   created() {

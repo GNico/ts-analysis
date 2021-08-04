@@ -12,7 +12,6 @@
 
 
 <script>
-import { DefaultChartSettings } from '../config/settings.js'
 import { nanoid } from 'nanoid'
 import Highcharts from 'highcharts'
 
@@ -21,6 +20,19 @@ function sum(arr) {
     return s + res;
   }, 0);  
   return sum;
+}
+
+const defaultStyle = {
+  backgroundColor: 'transparent',
+  anomalyColor: 'rgba(255,0,0,0.8)',
+  anomalyArrowColor: 'yellow',
+  highlightedColor: 'rgba(173,216,230,0.3)', 
+  highlightedBorderColor: 'rgba(173,216,230,1)',
+  selectBandColor: 'rgba(0,0,0,0.5)',
+  lineWidth: 2,
+  marginTop: 0, 
+  marginBottom: 0,
+  marginLeft: 0
 }
 
 export default {
@@ -59,11 +71,7 @@ export default {
     loading: {
       type: Boolean,
       default: true
-    },
-    settings: {
-      type: Object,
-      default: () => { return {} }
-    },
+    },    
     tooltipFormatter: {
       type: Function,
       default: undefined
@@ -71,7 +79,11 @@ export default {
     tickInterval: {
       type: Number, 
       default: null,
-    }
+    },
+    styleSettings: {
+      type: Object,
+      default: () => { return {} }
+    },
   },
   data () {
     return {
@@ -83,28 +95,13 @@ export default {
   },
   computed: {
     normalizedSettings() {
-      return {
-        backgroundColor: this.settings.hasOwnProperty("backgroundColor") ? 
-          this.settings.backgroundColor : DefaultChartSettings.BACKGROUND_COLOR,
-        anomalyColor: this.settings.hasOwnProperty("anomalyColor") ? 
-          this.settings.anomalyColor : DefaultChartSettings.ANOMALY_COLOR,
-        anomalyArrowColor: this.settings.hasOwnProperty("anomalyArrowColor") ? 
-          this.settings.anomalyArrowColor : DefaultChartSettings.ANOMALY_ARROW_COLOR,
-        highlightedColor: this.settings.hasOwnProperty("highlightedColor") ? 
-          this.settings.highlightedColor : DefaultChartSettings.HIGHLIGHT_ANOMALY_COLOR,
-        highlightedBorderColor: this.settings.hasOwnProperty("highlightedBorderColor") ? 
-          this.settings.highlightedBorderColor : DefaultChartSettings.HIGHLIGHT_ANOMALY_BORDER_COLOR,
-        selectBandColor: this.settings.hasOwnProperty("selectBandColor") ? 
-          this.settings.selectBandColor : DefaultChartSettings.SELECTION_BAND_COLOR,
-        lineWidth: this.settings.hasOwnProperty("lineWidth") ? 
-          this.settings.lineWidth : DefaultChartSettings.LINE_WIDTH,
-        marginTop: this.settings.hasOwnProperty("marginTop") ? 
-          this.settings.marginTop : DefaultChartSettings.MARGIN_TOP,
-        marginBottom: this.settings.hasOwnProperty("marginBottom") ? 
-          this.settings.marginBottom : DefaultChartSettings.MARGIN_BOTTOM,
-        marginLeft: this.settings.hasOwnProperty("marginLeft") ? 
-          this.settings.marginLeft : DefaultChartSettings.MARGIN_LEFT,
+      var settings = { ...defaultStyle }
+      for (const key in this.styleSettings) {
+        if (settings.hasOwnProperty(key)) {
+          settings[key] = this.styleSettings[key]
+        }
       }
+      return settings
     },
     isEmpty() {
       return this.seriesData.length == 0
@@ -200,7 +197,6 @@ export default {
           ordinal: false,
           gridLineWidth: 0, 
           tickInterval: this.tickInterval,
-         // tickInterval: 28*24*3600*1000,
           crosshair: {
             color: 'gray',
             dashStyle: 'shortdot',            
@@ -306,11 +302,21 @@ export default {
       this.$emit('changeActiveBand', id)
     },
     setChartExtremes(min, max) {
+      var realMin = min 
+      var realMax = max       
       var chart = this.$refs.chart.chart
-      chart.xAxis[0].setExtremes(min, max, undefined, false, {trigger: 'sync'})
+      var dataMin = chart.xAxis[0].dataMin
+      var dataMax = chart.xAxis[0].dataMax
+      if (min < dataMin) {
+        realMin = dataMin
+      } 
+      if (max > dataMax) {
+        realMax = dataMax
+      }
+      chart.xAxis[0].setExtremes(realMin, realMax, undefined, false, {trigger: 'sync'})
       if (chart.resetZoomButton != undefined) { // force hide or show reset button 
-        if ((min == undefined || min == chart.xAxis[0].dataMin) && 
-            (max == undefined) || (max == chart.xAxis[0].dataMax)) {
+        if ((realMin == undefined || realMin == chart.xAxis[0].dataMin) && 
+            (realMax == undefined) || (realMax == chart.xAxis[0].dataMax)) {
           chart.resetZoomButton.hide()
         } else {
           chart.resetZoomButton.show()
@@ -425,10 +431,15 @@ export default {
     activeBand(newId) {
       this.drawArrows() 
     },
-    extremes(newVal, oldVal) {
-      if (newVal.min != oldVal.min || newVal.max != oldVal.max)
-        this.setChartExtremes(newVal.min, newVal.max)
-    },
+    extremes: {
+      immediate: true,
+      handler(newVal, oldVal) {
+        if (!oldVal || (newVal.min != oldVal.min || newVal.max != oldVal.max))
+          this.$nextTick(function() { 
+            this.setChartExtremes(newVal.min, newVal.max)
+          })
+        } 
+    }, 
     loading() {
       if (this.loading) {
         this.$refs.chart.chart.showLoading()
