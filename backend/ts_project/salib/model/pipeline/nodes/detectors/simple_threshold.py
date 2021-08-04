@@ -6,10 +6,10 @@ class SimpleThreshold(NodeDetector):
 
     def __init__(self, id):
         super().__init__(id)
+        self.add_param(Float('upper', 'Upper', 'Upper bound'))
+        self.add_param(Float('lower', 'Lower', 'Lower bound'))
         self.add_required_param(Boolean('inside', 'Inside', 'If true, value must be within bounds', False))
         self.add_required_param(Boolean('strict', 'Strict', 'Strict comparison on bounds', False))
-        self.add_param(Float('lower', 'Lower', 'Lower bound'))
-        self.add_param(Float('upper', 'Upper', 'Upper bound'))
 
     def anomalies(self, input_series, debug):
         return (NodeDetector.pointwise_consecutive(self.anomaly_threshold(), input_series), {})

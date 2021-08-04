@@ -15,6 +15,9 @@ EXPECTED_KEYS = set([
         'Std. dev.',
         'ADF: Critical Value (10%)',
         'ADF: Critical Value (1%)',
+        'Normality: rejection p-value',
+        'Histogram: chart',
+        'Cum. Histogram: chart',
         'ACF: lag_correlations_chart',
         'PACF: lag_correlations_chart',
         'ADF: Test Statistic',
@@ -29,13 +32,18 @@ class TestIdentity(unittest.TestCase):
         series = TestSeriesBuilder.linear(10, 0, 1).build()
 
         factory = NodeFactory.transformer('test', 'Identity')
+        factory.set_param_value('mean', True)
+        factory.set_param_value('stddev', True)
         factory.set_param_value('adf_test', True)
+        factory.set_param_value('normality_test', True)
+        factory.set_param_value('histogram', True)
+        factory.set_param_value('histogram_bins', 10)
+        factory.set_param_value('cum_histogram', True)
+        factory.set_param_value('cum_histogram_bins', 10)
         factory.set_param_value('acf', True)
         factory.set_param_value('acf_lags', 10)
         factory.set_param_value('pacf', True)
         factory.set_param_value('pacf_lags', 10)
-        factory.set_param_value('mean', True)
-        factory.set_param_value('stddev', True)
         identity = factory.build()
 
         result, debug_info = identity.transform([series], True)

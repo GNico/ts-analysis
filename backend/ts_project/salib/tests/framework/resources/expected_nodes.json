@@ -133,6 +133,66 @@
           "value": false
         },
         {
+          "id": "normality_test",
+          "type": "Boolean",
+          "display": "Normal test",
+          "desc": "Normality test",
+          "conditions": [],
+          "value": false
+        },
+        {
+          "id": "histogram",
+          "type": "Boolean",
+          "display": "Histogram",
+          "desc": "Histogram plot",
+          "conditions": [],
+          "value": false
+        },
+        {
+          "id": "histogram_bins",
+          "type": "BoundedInt",
+          "display": "Histogram bins",
+          "desc": "Number of equal spaced bins in histogram",
+          "conditions": [
+            {
+              "type": "param_equals_value",
+              "args": {
+                "param": "histogram",
+                "value": true
+              }
+            }
+          ],
+          "value": 25,
+          "min": 2,
+          "max": null
+        },
+        {
+          "id": "cum_histogram",
+          "type": "Boolean",
+          "display": "Cum. Histogram",
+          "desc": "Cumulative histogram plot",
+          "conditions": [],
+          "value": false
+        },
+        {
+          "id": "cum_histogram_bins",
+          "type": "BoundedInt",
+          "display": "Cum. Histogram bins",
+          "desc": "Number of equal spaced bins in cumulative histogram",
+          "conditions": [
+            {
+              "type": "param_equals_value",
+              "args": {
+                "param": "cum_histogram",
+                "value": true
+              }
+            }
+          ],
+          "value": 25,
+          "min": 2,
+          "max": null
+        },
+        {
           "id": "acf",
           "type": "Boolean",
           "display": "ACF",
@@ -331,6 +391,53 @@
         "names": [
           "left",
           "right"
+        ]
+      }
+    },
+    {
+      "type": "Derivative",
+      "desc": "Derivative operator",
+      "display": "Derivative",
+      "params": [
+        {
+          "id": "lag",
+          "type": "String",
+          "display": "Lag",
+          "desc": "Lag to apply (eg: 1h, 10)",
+          "conditions": [],
+          "value": "12h"
+        },
+        {
+          "id": "metric",
+          "type": "Select",
+          "display": "Difference metric",
+          "desc": "Difference metric between window values",
+          "conditions": [],
+          "value": "sub",
+          "options": [
+            {
+              "code": "sub",
+              "display": "Substract"
+            },
+            {
+              "code": "l1",
+              "display": "L1 distance metric (mod sub)"
+            },
+            {
+              "code": "rel_diff",
+              "display": "Relative difference"
+            },
+            {
+              "code": "abs_rel_diff",
+              "display": "Absolute relative difference"
+            }
+          ]
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
         ]
       }
     },
@@ -987,6 +1094,22 @@
       "display": "Simple Threshold",
       "params": [
         {
+          "id": "upper",
+          "type": "Float",
+          "display": "Upper",
+          "desc": "Upper bound",
+          "conditions": [],
+          "value": null
+        },
+        {
+          "id": "lower",
+          "type": "Float",
+          "display": "Lower",
+          "desc": "Lower bound",
+          "conditions": [],
+          "value": null
+        },
+        {
           "id": "inside",
           "type": "Boolean",
           "display": "Inside",
@@ -1001,22 +1124,6 @@
           "desc": "Strict comparison on bounds",
           "conditions": [],
           "value": false
-        },
-        {
-          "id": "lower",
-          "type": "Float",
-          "display": "Lower",
-          "desc": "Lower bound",
-          "conditions": [],
-          "value": null
-        },
-        {
-          "id": "upper",
-          "type": "Float",
-          "display": "Upper",
-          "desc": "Upper bound",
-          "conditions": [],
-          "value": null
         }
       ],
       "inputs": {
