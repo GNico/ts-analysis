@@ -1,8 +1,11 @@
 from celery import shared_task
-from ..models import PeriodicAnalysis, Results, Incident
-
 import pandas as pd
 from datetime import datetime, timezone
+import traceback
+# import cProfile, pstats, io
+# import json
+
+from ..models import PeriodicAnalysis, Results, Incident
 from .. import services
 from ..salib.model.series import Series
 from ..salib.model.analyzer import Analyzer
@@ -10,8 +13,6 @@ from ..salib.model.pipeline.pipeline import Pipeline
 from ..salib.model.pipeline.node_factory import NodeFactory
 from ..adapters import SalibModelAdapter
 
-import cProfile, pstats, io
-import json
 
 def run_analysis(client, inputs_data, model):
     salib_model = SalibModelAdapter.toSalib(model)
@@ -42,8 +43,14 @@ def run_analysis(client, inputs_data, model):
 def perform_live_analysis(self, data):
     # pr = cProfile.Profile()
     # pr.enable()
-    analysis_results = run_analysis(data['client'], data['data_options'], data['model'])
-    output_json = analysis_results.output_format()
+    try:
+        analysis_results = run_analysis(data['client'], data['data_options'], data['model'])
+        output_json = analysis_results.output_format()
+    except Exception as e:
+        stack = traceback.format_exc()
+        output_json = {
+            'error': traceback.format_exc()
+        }
     # pr.disable()
     # s = io.StringIO()
     # sortby = 'cumulative'

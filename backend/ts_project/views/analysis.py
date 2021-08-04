@@ -23,6 +23,12 @@ class AnalysisResultView(APIView):
             return Response({"task_id": id, "state": "pending"})
         elif task.state == 'SUCCESS':
             res = task.result
+            if 'error' in res:
+                return Response({
+                    "task_id": id,
+                    "state": "failed",
+                    "error": res['error']
+                })
             nodes = request.query_params.getlist('nodes', [])           
             if (nodes):
                 node_results = { k: res['debug_nodes'].get(k, None) for k in nodes}
