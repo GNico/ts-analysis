@@ -3,7 +3,7 @@
   <div v-if="loading" class="is-size-5 has-text-centered"><i class="mdi mdi-loading icn-spinner"></i> Performing analysis</div>
 
   <template v-else>
-    <div v-if="error" class="is-size-5 has-text-centered"><b-icon type="is-danger" icon="alert" size="is-small"/> {{error}}</div>
+    <div v-if="error" class="is-size-5 has-text-centered error-text"><b-icon type="is-danger" icon="alert" size="is-small"/> {{error}}</div>
     <div v-else class="columns is-fullheight">
       <div class="column is-4 side-menu is-hidden-mobile">        
         <div class="table-header has-text-white">
@@ -152,6 +152,11 @@ export default {
   justify-content: space-between;
   margin-bottom: 0.5rem;
   align-items: center;
+}
+
+.error-text {
+  white-space: pre;
+  font-family: monospace;
 }
 
 

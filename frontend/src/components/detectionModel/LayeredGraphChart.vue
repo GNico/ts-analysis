@@ -209,17 +209,11 @@ export default {
   created() {
     window.addEventListener("resize", this.resizeHandler)
     this.id = nanoid(6)
-
-    console.log('created')
   },
   mounted() {
     if (this.nodes.length) {
       this.refresh()
-      console.log("does refresh")
     }
-
-    console.log('mounted')
-
   },
   destroyed() {
     window.removeEventListener("resize", this.resizeHandler);

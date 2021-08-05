@@ -61,12 +61,6 @@
             </b-checkbox>        
           </b-field>
 
-          <b-field horizontal label="">
-            <b-checkbox :value="showTrend" @input="update('showTrend', $event)">
-              <strong class="has-text-white">Show trend</strong>
-            </b-checkbox>        
-          </b-field>
-
           <b-field horizontal label="Axis interval">
             <b-select :value="axisInterval" @input="update('axisInterval', $event)" size="is-small">
               <option value="">auto</option>
@@ -111,10 +105,6 @@ export default {
     showMinMax: {
       type: Boolean,
       default: true,
-    },
-    showTrend: {
-      type: Boolean,
-      default: false,
     },
     axisInterval: {
       type: String,

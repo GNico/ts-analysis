@@ -17,7 +17,7 @@
     <b-button type="is-primary" label="Clear all" @click="clearSelected" :disabled="!isSelected"> </b-button>
   </div>
 
-  <div v-if="error" class="item-section error-section">
+  <div v-if="error" class="item-section">
     {{error}}
   </div>
 
@@ -156,11 +156,6 @@ export default {
 .item-section {
   margin-top: 0.75rem;
   border-top: 2px solid rgba(255,255,255,0.1);
-}
-
-.error-section {
-  white-space: pre;
-  font-family: monospace;
 }
 
 </style>
