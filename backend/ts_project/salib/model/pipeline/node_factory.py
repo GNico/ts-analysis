@@ -8,6 +8,7 @@ from .nodes.transformers.divide import Divide
 from .nodes.transformers.std_normalize import StdNormalize
 from .nodes.transformers.abs_value import AbsValue
 from .nodes.transformers.shift import Shift
+from .nodes.transformers.boxcox import BoxCox
 from .nodes.transformers.identity import Identity
 from .nodes.transformers.fft_filter import FFTFilter
 from .nodes.transformers.rolling_aggregate import RollingAggregate
@@ -64,6 +65,7 @@ class NodeFactory:
             'RollingAggregate': RollingAggregate,
             'MultiRollingAggregate': MultiRollingAggregate,
             'FFTFilter': FFTFilter,
+            'BoxCox': BoxCox,
             'STL': STL,
             'Seasonal decompose': SeasonalDecompose,
             'AutoRegression': AutoRegression,

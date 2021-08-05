@@ -694,6 +694,27 @@
       }
     },
     {
+      "type": "BoxCox",
+      "desc": "BoxCox transform with optional lambda",
+      "display": "BoxCox",
+      "params": [
+        {
+          "id": "lambda",
+          "type": "Float",
+          "display": "Lambda",
+          "desc": "Lambda power, leave empty to estimate.",
+          "conditions": [],
+          "value": null
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
       "type": "STL",
       "desc": "Seasonal-Trend decomposition (LOESS)",
       "display": "STL decomposition",
