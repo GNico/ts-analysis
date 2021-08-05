@@ -10,7 +10,8 @@
   detailed
   detail-key="id"
   :show-detail-icon="false" 
-  @select="changeActiveAnomaly($event)">
+  @click="changeActiveAnomaly($event)"
+>
 
   <b-table-column field="score" label="Score" sortable numeric v-slot="props">
     <span class="tag is-small" :style="getScoreTagStyle(props.row.score)">
@@ -136,7 +137,10 @@ export default {
   },
   methods: {
     changeActiveAnomaly(event) {
-      this.$emit('changeActive', event.id)
+      if (this.activeAnomaly === event.id) 
+        this.$emit('changeActive', undefined)
+      else 
+        this.$emit('changeActive', event.id)
     },
     formatDate(date) {
       return formatDate(date)

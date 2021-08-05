@@ -3,11 +3,11 @@ import VueRouter from 'vue-router'
 import Highcharts from 'highcharts'
 import HighchartsVue from 'highcharts-vue'
 import highchartsMore from 'highcharts/highcharts-more'
-import Boost from 'highcharts/modules/boost'
+//import Boost from 'highcharts/modules/boost'
 import stockInit from 'highcharts/modules/stock'
+import heatmap from 'highcharts/modules/heatmap'
 import router from './router/index'
 import store from './store/index'
-//import '@mdi/font/css/materialdesignicons.css'
 import Buefy from 'buefy'
 import App from './App.vue'
 
@@ -15,22 +15,18 @@ import App from './App.vue'
 Vue.use(HighchartsVue)
 Vue.use(VueRouter)
 Vue.use(Buefy)
-//Vue.use(Buefy, {defaultIconPack: 'fa'})
 stockInit(Highcharts)
+heatmap(Highcharts)
 highchartsMore(Highcharts)
-Boost(Highcharts)
-//dark theme for highcharts
-require('./assets/themes/dark-unica.js');
+//Boost(Highcharts)
+require('./assets/themes/dark-unica.js'); //dark theme for highcharts
 require('./assets/sass/main.scss');
 
-
 Highcharts.setOptions({
-    time: {
-        timezoneOffset: 3 * 60
-   }
+  time: {
+    timezoneOffset: 3 * 60
+ }
 });
-
-
 
 new Vue({
   el: '#app',

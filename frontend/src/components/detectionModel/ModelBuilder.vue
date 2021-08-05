@@ -1,16 +1,52 @@
 <template>
 <div>  
-  <div class="columns bordered-columns has-background-grey-dark">    
-    <div class="column is-4 bordered-column" v-for="group in groups" :key="group">
-      <PipeNodeList          
-        :group="group"
-        :nodesDefinition="nodeTypes[group]" 
-        :nodes="nodes" 
-        @newNode="createNode"
-        @nodeParamsUpdate="updateNodeParams"
-        @nodeSourceUpdate="updateNodeSource"
-        @nodeDelete="deleteNode"/>
+  <div class="columns bordered-columns">    
+    <div class="column is-6 is-paddingless">
+      <div class="p-3 bordered-column has-background-grey-dark" v-for="group in groups" :key="group">
+        <PipeNodeList          
+          :group="group"
+          :nodesDefinition="nodeTypes[group]" 
+          :nodes="nodes" 
+          @newNode="createNode"
+          @nodeParamsUpdate="updateNodeParams"
+          @nodeSourceUpdate="updateNodeSource"
+          @nodeDelete="deleteNode"/>
+      </div>
     </div>
+
+    <div class="column">
+      <div class="buttons">
+        <b-button 
+          type="is-info"
+          size="is-small"
+          icon-left="plus"
+          @click="addInput">
+          Add Input Node
+        </b-button>
+        <b-button 
+          type="is-info"
+          size="is-small"
+          icon-left="delete"
+          :disabled="!inputNodes.length"
+          @click="removeInput">
+          Remove Input Node
+        </b-button>
+      </div>
+
+      <GraphDataProvider :nodes="nodes" @validation="validationMessages = $event" >
+        <LayeredGraphChart 
+          slot-scope="{chartNodes, chartEdges}" 
+          :nodes="chartNodes" 
+          :edges="chartEdges" 
+          centered
+          :horizontal="false"
+          selectable
+          uniqueSelect
+          :selected="sharedState.openNode ? [sharedState.openNode] : []"
+          @selected="openNode"/>
+      </GraphDataProvider>
+    </div>
+
   </div>
 
   <div v-for="msg in validationMessages">  
@@ -24,27 +60,8 @@
     </span>
   </div>
 
-  <div class="buttons">
-    <b-button 
-      type="is-info"
-      size="is-small"
-      icon-left="plus"
-      @click="addInput">
-      Add model input
-    </b-button>
-    <b-button 
-      type="is-info"
-      size="is-small"
-      icon-left="delete"
-      :disabled="!inputNodes.length"
-      @click="removeInput">
-      Remove model input
-    </b-button>
-  </div>
 
-  <GraphDataProvider :nodes="nodes" @validation="validationMessages = $event" >
-    <LayeredGraphChart slot-scope="{chartNodes, chartEdges}" :nodes="chartNodes" :edges="chartEdges" :centered="true" />
-  </GraphDataProvider>
+  
 
 </div>
 </template>
@@ -67,9 +84,17 @@ export default {
       default: () => []
     }
   },
+  provide() {
+    return {
+      sharedState: this.sharedState
+    }
+  },
   data() {
     return {
       validationMessages: [],
+      sharedState: {
+        openNode: null
+      }
     }
   },
   computed: {
@@ -81,9 +106,16 @@ export default {
     },    
     inputNodes() {
       return this.nodes.filter(elem => elem.group == "input")
-    }
+    },
+
+
+
+
   },
   methods: {  
+    openNode(selected) {
+      this.sharedState.openNode = selected[0]
+    },
     addInput() {
       let modelCopy = cloneDeep(this.nodes)
       let newNode = this.getNewInputNode()
@@ -205,11 +237,11 @@ export default {
 
 .bordered-columns .bordered-column {
   border: 2px solid rgba(255,255,255,0.1);
-  border-left: 0;
+  border-top: 0;
 }
 
 .bordered-columns .bordered-column:first-child {
-  border-left: 2px solid rgba(255,255,255,0.1);
+  border-top: 2px solid rgba(255,255,255,0.1);
 }
 
 </style>

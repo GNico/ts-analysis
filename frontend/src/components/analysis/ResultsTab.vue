@@ -27,6 +27,10 @@
           :axisInterval="activeOptions.axisInterval"
           @changeActive="updateOptions({activeAnomalyId: $event})"
           @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" />
+
+ 
+      <!--  <Subcharts :anomalies="chartFilteredAnomalies"/> -->
+
       </div>
     </div>  
   </template>
@@ -39,9 +43,10 @@ import Chart from './Chart.vue';
 import AnomaliesTable from './AnomaliesTable.vue';
 import AnomaliesFilters from './AnomaliesFilters.vue'
 import debounce from "lodash/debounce";
+import Subcharts from "./Subcharts"
 
 export default {
-    components: { Chart, AnomaliesTable, AnomaliesFilters },
+    components: { Chart, AnomaliesTable, AnomaliesFilters, Subcharts },
     data() {
       return {
         polling: null,

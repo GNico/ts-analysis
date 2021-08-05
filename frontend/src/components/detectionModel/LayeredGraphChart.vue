@@ -8,10 +8,12 @@
 </template>
 
 <script>
-import dagreD3 from "dagre-d3";
-import * as d3 from "d3";
-import debounce from "lodash/debounce";
+import dagreD3 from 'dagre-d3'
+import * as d3 from 'd3'
 import { nanoid } from 'nanoid'
+import debounce from 'lodash/debounce'
+import isEqual from 'lodash/isEqual'
+import sortBy from 'lodash/sortBy'
 
 export default {
   props: {
@@ -34,7 +36,19 @@ export default {
     centered: {
       type: Boolean,
       default: true,
+    },
+    horizontal: {
+      type: Boolean,
+      default: true
+    },
+
+
+    selected: {
+      type: Array,
+      default: () => []
     }
+
+
   },
   data() {
     return {
@@ -54,6 +68,17 @@ export default {
       })
       return renamed
     },
+
+
+    renamedSelected() {
+      var renamed = []
+      this.selected.forEach(id => {
+        renamed.push(this.addIdPrefix(id))
+      })
+      return renamed
+    },
+
+
     cursor() {
       return this.selectable ? 'cursor: pointer;' : ''
     },
@@ -67,7 +92,7 @@ export default {
     },
     createLayout() {
       this.g = new dagreD3.graphlib.Graph().setGraph({})
-      this.g.graph().rankDir = 'LR';
+      if (this.horizontal) this.g.graph().rankDir = 'LR';
       // Add nodes
       this.renamedNodes.forEach((item, index) => {
         item.rx = item.ry = 5;
@@ -97,20 +122,23 @@ export default {
           this.clearSelected()
         }
         this.selectedNodes.push(nodeId)
-        d3.select("#" + nodeId + ' rect').attr('style', 'fill: green; stroke: yellow;' + this.cursor) 
-        d3.select("#" + nodeId + ' text').attr('style', 'fill: yellow;' + this.cursor) 
+        this.paintSelected(nodeId)
       } else {
         this.selectedNodes.splice(index, 1)
-        d3.select("#" + nodeId + ' rect').attr('style', 'fill: #005aff; stroke: white;' + this.cursor) 
-        d3.select("#" + nodeId + ' text').attr('style', 'fill:  white;' + this.cursor)
+        this.paintUnselected(nodeId)
       }
     },
     clearSelected() {
-      this.selectedNodes.forEach(elem => {
-        d3.select("#" + elem + ' rect').attr('style', 'fill: #005aff; stroke: white;' + this.cursor) 
-        d3.select("#" + elem + ' text').attr('style', 'fill:  white;' + this.cursor)
-      })
+      this.selectedNodes.forEach(elem => this.paintUnselected(elem))
       this.selectedNodes = []
+    },
+    paintSelected(nodeId) {
+      d3.select("#" + nodeId + ' rect').attr('style', 'fill: green; stroke: yellow;' + this.cursor) 
+      d3.select("#" + nodeId + ' text').attr('style', 'fill: yellow;' + this.cursor) 
+    },
+    paintUnselected(nodeId) {
+      d3.select("#" + nodeId + ' rect').attr('style', 'fill: #005aff; stroke: white;' + this.cursor) 
+      d3.select("#" + nodeId + ' text').attr('style', 'fill:  white;' + this.cursor)
     },
     drawChart() {
       //Draw graphics
@@ -119,7 +147,12 @@ export default {
       var inner = svg.select("g");
       var container = this.$refs.container
       var maxWidth = container.clientWidth
-      svg.attr("width", maxWidth)
+
+      var maxHeight = container.clientHeight - 100
+
+      svg.attr("width", maxWidth)      
+      svg.attr("height", maxHeight)
+
       // Set up zoom support
       var zoom = d3.zoom().on("zoom", function () {
           inner.attr("transform", d3.event.transform);
@@ -196,6 +229,18 @@ export default {
       this.createLayout()
       this.drawChart()
     },
+    selected(newVal, oldVal) {
+      if (!isEqual(sortBy(newVal), sortBy(oldVal))) {
+        var renamed = []
+        newVal.forEach(id => {
+          renamed.push(this.addIdPrefix(id))
+        })
+        this.clearSelected()
+        renamed.forEach(nodeId => this.paintSelected(nodeId))
+        this.selectedNodes = renamed
+      }
+    }, 
+
     selectedNodes() {
       var nodesWithoutPrefix = []
       this.selectedNodes.forEach(nodeId => {

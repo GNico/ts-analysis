@@ -15,7 +15,7 @@
     @delete="deleteModel"
   />
 
-  <div class="column is-3 pb-0">
+  <div class="column is-4 pb-0">
     <!--Data options -->
     <div class="subtitle"> Data source </div>  
     <div class="inputs-box p-3 has-background-grey-dark">
@@ -50,7 +50,7 @@
     </b-field> 
   </div>
 
-  <div class="column is-9 pb-0 right-section">
+  <div class="column pb-0 right-section">
     <!--Model building -->
     <div class="subtitle is-flex is-justify-content-space-between"> 
       Detection model
@@ -205,7 +205,7 @@ export default {
 }
 
 .right-section {
-  border-left: 1px solid rgba(255,255,255,0.1);
+  border-left: 2px solid #073642;
 } 
 
 .sticky-container {
