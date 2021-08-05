@@ -3,7 +3,9 @@
   <b-collapse
     class="card"
     animation="slide"
-    :open="false">
+    :open="isOpen"
+    @open="sharedState.openNode = id"
+    @close="sharedState.openNode = null">
     <template #trigger="props">
       <div class="card-header" @mouseover="showDelete = true" @mouseleave="showDelete = false" >
         <span class="card-header-title long-text-with-ellipsis">
@@ -114,12 +116,22 @@ export default {
       }}
     },
   },
+  inject: {
+    sharedState: {
+      name: 'sharedState',
+      default: {}
+    }
+  },
   data() {
     return {
       showDelete: false,
     }
   },
   computed: {
+    isOpen() {
+      return this.sharedState.openNode === this.id
+    },    
+
     nodeData() {
       return this.nodes.find(elem => elem.id == this.id)
     },
