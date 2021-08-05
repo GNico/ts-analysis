@@ -642,6 +642,10 @@
             {
               "code": "proportion",
               "display": "Proportion"
+            },
+            {
+              "code": "ks",
+              "display": "Kolmorogov-Smirnov"
             }
           ]
         }

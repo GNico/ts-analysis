@@ -84,7 +84,7 @@ export default {
       },
       chartFilteredAnomalies() {
         return this.anomalies.filter(elem => 
-          (elem.score > this.activeOptions.scoreThreshold 
+          (elem.score >= this.activeOptions.scoreThreshold 
           && (parseInt(elem.to) - parseInt(elem.from) >= this.activeOptions.minDurationTime)))         
       },
       tableFilteredAnomalies() {

@@ -1,3 +1,4 @@
+from scipy import stats
 import pandas as pd
 import numpy as np
 
@@ -24,6 +25,7 @@ class MultiRollingAggregate(NodeTransformer):
             SelectOption("correlation_kendall", "Kendall Correlation"),
             SelectOption("correlation_spearman", "Spearman Correlation"),
             SelectOption("proportion", "Proportion"),
+            SelectOption("ks", "Kolmorogov-Smirnov"),
         ]
         self.add_required_param(Select('agg_method', 'Aggregation', 'Aggregation method', agg_method_options, agg_method_options[0].code))        
 
@@ -65,6 +67,8 @@ class MultiRollingAggregate(NodeTransformer):
 
         if agg == 'proportion':
             rolling_func = MultiRollingAggregate.func_proportion
+        elif agg == 'ks':
+            rolling_func = MultiRollingAggregate.func_ks_2samp
         elif agg == 'correlation_pearson':
             rolling_func = MultiRollingAggregate.func_correlation_pearson
         elif agg == 'correlation_kendall':
@@ -84,10 +88,14 @@ class MultiRollingAggregate(NodeTransformer):
                 )
 
     @staticmethod
+    def func_ks_2samp(lhs, rhs):
+        return stats.ks_2samp(lhs, rhs)[1]
+
+    @staticmethod
     def func_proportion(lhs, rhs):
         rhs_sum = sum(rhs)
         if rhs_sum == 0:
-            return np.nan
+            return 0.0
         else:
             return sum(lhs) / rhs_sum
 

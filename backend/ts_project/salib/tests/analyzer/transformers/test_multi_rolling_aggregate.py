@@ -87,6 +87,20 @@ class TestMultiRollingAggregate(unittest.TestCase):
             -0.9999999999999999,
         ])
 
+    def test_multi_rolling_aggregate_ks(self):
+        factory = NodeFactory.transformer('test', 'MultiRollingAggregate')
+        factory.set_param_value('window', '3')
+        factory.set_param_value('center', False)
+        factory.set_param_value('min_periods', '0')
+        factory.set_param_value('agg_method', 'ks')
+        factory.add_source(InputRef('lhs'))
+        factory.add_source(InputRef('rhs'))
+        ram = factory.build()
+
+        s1 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]], 1)
+        s2 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 2], [4, 1]], 1)
+        self.case(ram, s1, s2, list(s1.pdseries.index)[0:], [1.0, 1.0, 1.0, 1.0, 0.6])
+
     def case(self, node, s1, s2, expected_index, expected_series):
         pipeline = Pipeline([node])
         analyzer = Analyzer(pipeline=pipeline, debug=False)
