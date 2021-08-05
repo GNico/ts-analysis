@@ -49,9 +49,4 @@ class Series:
         return self.end + self.step()
 
     def output_format(self):
-        output = []
-        for i in range(0, self.span()):
-            output.append(
-                [timestamp_to_epoch(self.pdseries.index[i]),
-                 float(self.pdseries[i])])
-        return output
+        return [[timestamp_to_epoch(i[0]),float(i[1])] for i in self.pdseries.items()]

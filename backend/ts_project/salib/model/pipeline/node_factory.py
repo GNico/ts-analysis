@@ -3,6 +3,7 @@ from .nodes.transformers.rescale import Rescale
 from .nodes.transformers.exponential_moving_average import ExponentialMovingAverage
 from .nodes.transformers.exponential_smoothing import ExponentialSmoothing
 from .nodes.transformers.difference import Difference
+from .nodes.transformers.derivative import Derivative
 from .nodes.transformers.divide import Divide
 from .nodes.transformers.std_normalize import StdNormalize
 from .nodes.transformers.abs_value import AbsValue
@@ -58,6 +59,7 @@ class NodeFactory:
             'ExponentialMovingAverage': ExponentialMovingAverage,
             'ExponentialSmoothing': ExponentialSmoothing,
             'Difference': Difference,
+            'Derivative': Derivative,
             'Divide': Divide,
             'RollingAggregate': RollingAggregate,
             'MultiRollingAggregate': MultiRollingAggregate,

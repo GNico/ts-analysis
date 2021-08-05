@@ -3,7 +3,6 @@ import pandas as pd
 from datetime import datetime, timezone
 import traceback
 # import cProfile, pstats, io
-# import json
 
 from ..models import PeriodicAnalysis, Results, Incident
 from .. import services
