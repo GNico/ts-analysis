@@ -541,10 +541,6 @@
               "display": "Inter-decile range"
             },
             {
-              "code": "count",
-              "display": "Value count"
-            },
-            {
               "code": "nnz",
               "display": "Non zero count"
             },
@@ -663,6 +659,109 @@
         "names": [
           "lhs",
           "rhs"
+        ]
+      }
+    },
+    {
+      "type": "Dropout",
+      "desc": "Dropout window analysis",
+      "display": "Dropout",
+      "params": [
+        {
+          "id": "dropout_window",
+          "type": "String",
+          "display": "Dropout window",
+          "desc": "Window size in time interval (eg: 12h). Must be smaller than the context window.",
+          "conditions": [],
+          "value": "12h"
+        },
+        {
+          "id": "context_window",
+          "type": "String",
+          "display": "Context window",
+          "desc": "Window size in time interval (eg: 12h). Must be larger than the dropout window.",
+          "conditions": [],
+          "value": "7d"
+        },
+        {
+          "id": "center",
+          "type": "Boolean",
+          "display": "Center",
+          "desc": "Center aggregation window around value",
+          "conditions": [],
+          "value": false
+        },
+        {
+          "id": "min_periods",
+          "type": "String",
+          "display": "Min. periods",
+          "desc": "Min number of periods (eg: 12h). Leave empty for window size.",
+          "conditions": [],
+          "value": ""
+        },
+        {
+          "id": "agg_method",
+          "type": "Select",
+          "display": "Aggregation",
+          "desc": "Aggregation method",
+          "conditions": [],
+          "value": "mean",
+          "options": [
+            {
+              "code": "mean",
+              "display": "Mean"
+            },
+            {
+              "code": "median",
+              "display": "Median"
+            },
+            {
+              "code": "sum",
+              "display": "Sum"
+            },
+            {
+              "code": "min",
+              "display": "Min"
+            },
+            {
+              "code": "max",
+              "display": "Max"
+            },
+            {
+              "code": "count",
+              "display": "Value count"
+            },
+            {
+              "code": "nnz",
+              "display": "Non zero count"
+            },
+            {
+              "code": "nunique",
+              "display": "Unique count"
+            },
+            {
+              "code": "std",
+              "display": "Sample standard dev."
+            },
+            {
+              "code": "var",
+              "display": "Sample variance"
+            },
+            {
+              "code": "skew",
+              "display": "Sample skewness"
+            },
+            {
+              "code": "kurt",
+              "display": "Sample kurtosis"
+            }
+          ]
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
         ]
       }
     },

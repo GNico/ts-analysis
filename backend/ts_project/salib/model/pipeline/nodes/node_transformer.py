@@ -30,14 +30,21 @@ class NodeTransformer(Node):
         raise Exception('Unimplemented transform() method for NodeTransformer')
 
     @staticmethod
-    def rolling_apply_1input(input, func, window_size, center, min_periods):
+    def rolling_dropout(input, func, context_window_size, dropout_window_size, center, min_periods):
         result = []
-        for i in range(0, len(lhs)):
-            input_slice = NodeTransformer.window_slice(input, i, window_size, center)
-            if len(input_slice) < min_periods:
+        for i in range(0, len(input)):
+            input_slice = NodeTransformer.window_slice_dropped_out(
+                input,
+                i,
+                context_window_size,
+                dropout_window_size,
+                center
+            )
+            if len(input_slice) + dropout_window_size < min_periods:
                 new_entry = np.nan
             else:
                 new_entry = func(input_slice)
+            print(input, "SLICE #", i, input_slice, new_entry)
             result.append(new_entry)
         return result
 
@@ -60,12 +67,28 @@ class NodeTransformer(Node):
 
     @staticmethod
     def window_slice(data, index, window_size, center):
+        start, end = NodeTransformer.window_slice_idxs(index, window_size, center)
+        clamp_start = max(0, start)
+        clamp_end = min(len(data) + 1, end)
+        return data[clamp_start:clamp_end]
+
+    @staticmethod
+    def window_slice_dropped_out(data, index, context_window_size, dropout_window_size, center):
+        c_start, c_end = NodeTransformer.window_slice_idxs(index, context_window_size, center)
+        d_start, d_end = NodeTransformer.window_slice_idxs(index, dropout_window_size, center)
+        clamp_c_start = max(0, c_start)
+        clamp_c_end = min(len(data) + 1, c_end)
+        clamp_d_start = max(0, d_start)
+        clamp_d_end = min(len(data) + 1, d_end)
+        print("SLICE #", index, clamp_c_start, clamp_d_start, clamp_d_end, clamp_c_end)
+        return np.concatenate([data[clamp_c_start:clamp_d_start], data[clamp_d_end:clamp_c_end]])
+
+    @staticmethod
+    def window_slice_idxs(index, window_size, center):
         start = index - window_size + 1
         end = index + 1
         if center:
             offset = (window_size // 2) - ((window_size-1) % 2)
             start += offset
             end += offset
-        clamp_start = max(0, start)
-        clamp_end = min(len(data) + 1, end)
-        return data[clamp_start:clamp_end]
+        return start, end
