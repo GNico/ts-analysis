@@ -337,7 +337,7 @@ class TestSlack(unittest.TestCase):
             [4, 0],
             [5, 0],
             [6, 0]
-        ], 1, 's')
+        ])
 
         snd_series = Series.from_array([
             [0, 0],
@@ -347,7 +347,7 @@ class TestSlack(unittest.TestCase):
             [4, 0],
             [5, 0],
             [6, 0]
-        ], 1, 's')
+        ])
 
         fst_input = NodeResult(None, None, output_series=fst_series, anomalies=fst_anomalies)
         snd_input = NodeResult(None, None, output_series=snd_series, anomalies=snd_anomalies)

@@ -32,7 +32,7 @@ class TestSeriesBuilder:
             self.data[i] = [index, self.data[i][1] + test_series.data[i][1]]
 
     def build(self):
-        return Series.from_array(self.data, self.interval, self.unit)
+        return Series.from_array(self.data, self.unit)
 
     @staticmethod
     def constant(length, value=0, interval=1, unit='s'):

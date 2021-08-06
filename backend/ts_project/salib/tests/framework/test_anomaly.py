@@ -13,8 +13,8 @@ class TestAnomaly(unittest.TestCase):
                         [0, 0],
                         [1, 1],
                         [2, 1],
-                        [3, 0]],
-                        1)
+                        [3, 0],
+                        ])
 
     def test_copy(self):
         a = Anomaly.from_epoch(1, 2, 1.0)

@@ -16,13 +16,13 @@ class TestDivide(unittest.TestCase):
         series1 = Series.from_array([
             [1, 1],
             [2, 2],
-            [3, 3]]
-            , 1)
+            [3, 3]
+            ])
         series2 = Series.from_array([
             [2, 2],
             [3, 0],
-            [4, 5]]
-            , 1)
+            [4, 5]
+            ])
         factory = NodeFactory.transformer('test', 'Divide')
         factory.set_param_value('zero_div', 0)
         divide = factory.build()
@@ -36,13 +36,13 @@ class TestDivide(unittest.TestCase):
         series1 = Series.from_array([
             [1, 1],
             [2, 2],
-            [3, 3]]
-            , 1)
+            [3, 3]
+            ])
         series2 = Series.from_array([
             [1, 2],
             [2, 0],
-            [3, 5]]
-            , 1)
+            [3, 5]
+            ])
         factory = NodeFactory.transformer('test', 'Divide')
         factory.set_param_value('zero_div', None)
         divide = factory.build()
@@ -56,13 +56,13 @@ class TestDivide(unittest.TestCase):
         series1 = Series.from_array([
             [1, 1],
             [2, 2],
-            [3, 3]]
-            , 1)
+            [3, 3]
+            ])
         series2 = Series.from_array([
             [1, 2],
             [2, 0],
-            [3, 5]]
-            , 1)
+            [3, 5]
+            ])
         factory = NodeFactory.transformer('test', 'Divide')
         factory.set_param_value('zero_div', 0)
         divide = factory.build()

@@ -49,8 +49,15 @@ class NodeResult:
         return {
             "series": {k: v.output_format() for k, v in self.display_series().items()},
             "anomalies": list(map(lambda a: a.output_format(), self.anomalies)),
-            "debug_info": {} if self.debug_info is None else {k: v for k, v in self.debug_info.items()}
+            "debug_info": {} if self.debug_info is None else {k: NodeResult.pretty_debug_info(v) for k, v in self.debug_info.items()}
         }
+
+    @staticmethod
+    def pretty_debug_info(node_element):
+        if isinstance(node_element, float):
+            return round(node_element, 3)
+        else:
+            return node_element
 
     def all_sources(self):
         ret = []

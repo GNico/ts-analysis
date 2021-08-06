@@ -21,7 +21,7 @@ class TestTestCase(unittest.TestCase):
             [5, 1],
             [6, 1],
             [7, 0]
-        ], 1, 's')
+        ])
 
         actual_anomalies = [
             Anomaly.from_epoch(1, 1),
@@ -80,7 +80,7 @@ class TestTestCase(unittest.TestCase):
             [4, 1],
             [5, 1],
             [6, 0]
-        ], 1, 's')
+        ])
 
         anomalies = TestCase.anomalies_from_mock_series(test_series)
 
@@ -95,7 +95,7 @@ class TestTestCase(unittest.TestCase):
             [0, 1],
             [1, 0],
             [2, 1]
-        ], 1, 's')
+        ])
 
         anomalies = TestCase.anomalies_from_mock_series(test_series)
 
