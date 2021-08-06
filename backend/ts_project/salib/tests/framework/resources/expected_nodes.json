@@ -94,6 +94,14 @@
           "desc": "Time delta to shift (eg: 1h)",
           "conditions": [],
           "value": "12h"
+        },
+        {
+          "id": "shift_values",
+          "type": "Boolean",
+          "display": "Shift values",
+          "desc": "Shift values or only index",
+          "conditions": [],
+          "value": false
         }
       ],
       "inputs": {

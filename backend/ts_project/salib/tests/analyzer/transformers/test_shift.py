@@ -17,24 +17,35 @@ class TestShift(unittest.TestCase):
     def test_shift_positive(self):
         factory = self.prepare_factory()
         factory.set_param_value('delta', '1s')
+        factory.set_param_value('shift_values', True)
         stdnormalize = factory.build()
         self.case(stdnormalize, 2, 4, [[2000, 0.0], [3000, 1.0], [4000, 2.0]])
+
+    def test_shift_positive_without_values(self):
+        factory = self.prepare_factory()
+        factory.set_param_value('delta', '1s')
+        factory.set_param_value('shift_values', False)
+        stdnormalize = factory.build()
+        self.case(stdnormalize, 2, 3, [[2000, 0.0], [3000, 1.0]])
 
     def test_shift_positive_periods(self):
         factory = self.prepare_factory()
         factory.set_param_value('delta', '1')
+        factory.set_param_value('shift_values', True)
         stdnormalize = factory.build()
         self.case(stdnormalize, 2, 4, [[2000, 0.0], [3000, 1.0], [4000, 2.0]])
 
     def test_shift_negative(self):
         factory = self.prepare_factory()
         factory.set_param_value('delta', '-1s')
+        factory.set_param_value('shift_values', True)
         stdnormalize = factory.build()
         self.case(stdnormalize, 0, 2, [[0000, 0.0], [1000, 1.0], [2000, 2.0]])
 
     def test_shift_edge_case(self):
         factory = self.prepare_factory()
         factory.set_param_value('delta', '0')
+        factory.set_param_value('shift_values', True)
         stdnormalize = factory.build()
         self.case(stdnormalize, 1, 3, [[1000, 0.0], [2000, 1.0], [3000, 2.0]])
 

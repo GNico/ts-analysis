@@ -36,18 +36,9 @@ class Derivative(NodeTransformer):
         series = seriess[0]
         pdseries = series.pdseries
         lag, metric = self.get_params()
-        lhs = pdseries
         calc_lag = timedelta_to_period(lag, series.step(), validate=False)
-        s_shifted = pd.Series(pdseries.values, pdseries.index + (series.step() * calc_lag))
-        s_shifted = s_shifted.append(
-            pd.Series(index=pdseries.index, dtype="float64")
-        )
-        s_shifted = s_shifted.iloc[
-            s_shifted.index.duplicated() == False
-        ]
-        s_shifted = s_shifted.sort_index()
-        s_shifted.name = pdseries.name
-        rhs = s_shifted
+        lhs = pdseries
+        rhs = pdseries.shift(calc_lag)
 
         result = None
         if metric == 'sub':
