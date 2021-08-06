@@ -15,7 +15,7 @@
     @delete="deleteModel"
   />
 
-  <div class="column is-4 pb-0">
+  <div class="column is-3 pb-0">
     <!--Data options -->
     <div class="subtitle"> Data source </div>  
     <div class="inputs-box p-3 has-background-grey-dark">

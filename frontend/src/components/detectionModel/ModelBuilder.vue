@@ -1,7 +1,7 @@
 <template>
 <div>  
   <div class="columns bordered-columns">    
-    <div class="column is-6 is-paddingless">
+    <div class="column is-5 is-paddingless">
       <div class="p-3 bordered-column has-background-grey-dark" v-for="group in groups" :key="group">
         <PipeNodeList          
           :group="group"
@@ -15,7 +15,7 @@
     </div>
 
     <div class="column">
-      <div class="buttons">
+      <div class="buttons is-flex is-justify-content-flex-end">
         <b-button 
           type="is-info"
           size="is-small"
