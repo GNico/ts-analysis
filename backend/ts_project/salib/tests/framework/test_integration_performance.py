@@ -15,8 +15,8 @@ class TestIntegrationPerformance(unittest.TestCase):
     def test_integration_performance(self):
         # self.maxDiff = None
         pipeline = Pipeline.from_json(self.load_json('pipeline'))
-        input1 = Series.from_array(self.load_json('input1'), interval=3600, unit='ms')
-        input2 = Series.from_array(self.load_json('input2'), interval=3600, unit='ms')
+        input1 = Series.from_array(self.load_json('input1'), unit='ms')
+        input2 = Series.from_array(self.load_json('input2'), unit='ms')
         
 
         analyzer = Analyzer(pipeline, True)

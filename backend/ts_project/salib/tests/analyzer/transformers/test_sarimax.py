@@ -66,7 +66,7 @@ class TestSARIMAX(unittest.TestCase):
             [3, -1],
             [4, 1],
             [5, -1]
-            ], 1)
+            ])
 
         factory = NodeFactory.transformer('test', 'SARIMAX')
         factory.set_param_value('p', '1')
@@ -92,7 +92,7 @@ class TestSARIMAX(unittest.TestCase):
             [7, -1],
             [8, 1],
             [9, -1],
-            ], 1)
+            ])
 
         endog = TestSeriesBuilder.linear(10, 0, 1).build()
 

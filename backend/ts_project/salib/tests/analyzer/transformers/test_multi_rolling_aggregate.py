@@ -22,8 +22,8 @@ class TestMultiRollingAggregate(unittest.TestCase):
         factory.add_source(InputRef('rhs'))
         ram = factory.build()
 
-        s1 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 4]], 1)
-        s2 = Series.from_array([[0, 5], [1, 5], [2, 5], [3, 5]], 1)
+        s1 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 4]])
+        s2 = Series.from_array([[0, 5], [1, 5], [2, 5], [3, 5]])
         self.case(ram, s1, s2, list(s1.pdseries.index), [1/5, 2/5, 3/5, 4/5])
 
     def test_multi_rolling_aggregate_proportion_window(self):
@@ -36,8 +36,8 @@ class TestMultiRollingAggregate(unittest.TestCase):
         factory.add_source(InputRef('rhs'))
         ram = factory.build()
 
-        s1 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 4]], 1)
-        s2 = Series.from_array([[0, 5], [1, 5], [2, 5], [3, 5]], 1)
+        s1 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 4]])
+        s2 = Series.from_array([[0, 5], [1, 5], [2, 5], [3, 5]])
         self.case(ram, s1, s2, list(s1.pdseries.index), [0.2, 0.3, 0.5, 0.7])
 
     def test_multi_rolling_aggregate_proportion_window_min_periods_default(self):
@@ -50,8 +50,8 @@ class TestMultiRollingAggregate(unittest.TestCase):
         factory.add_source(InputRef('rhs'))
         ram = factory.build()
 
-        s1 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 4]], 1)
-        s2 = Series.from_array([[0, 5], [1, 5], [2, 5], [3, 5]], 1)
+        s1 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 4]])
+        s2 = Series.from_array([[0, 5], [1, 5], [2, 5], [3, 5]])
         self.case(ram, s1, s2, list(s1.pdseries.index[1:]), [0.3, 0.5, 0.7])
 
     def test_multi_rolling_aggregate_mismatching_start(self):
@@ -64,8 +64,8 @@ class TestMultiRollingAggregate(unittest.TestCase):
         factory.add_source(InputRef('rhs'))
         ram = factory.build()
 
-        s1 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 4]], 1)
-        s2 = Series.from_array([[1, 5], [2, 5], [3, 5]], 1)
+        s1 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 4]])
+        s2 = Series.from_array([[1, 5], [2, 5], [3, 5]])
         self.case(ram, s1, s2, list(s2.pdseries.index), [2/5, 3/5, 4/5])
 
     def test_multi_rolling_aggregate_correlation(self):
@@ -78,8 +78,8 @@ class TestMultiRollingAggregate(unittest.TestCase):
         factory.add_source(InputRef('rhs'))
         ram = factory.build()
 
-        s1 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]], 1)
-        s2 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 2], [4, 1]], 1)
+        s1 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]])
+        s2 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 2], [4, 1]])
         self.case(ram, s1, s2, list(s1.pdseries.index)[1:], [
             0.9999999999999999,
             0.9999999999999999,
@@ -97,8 +97,8 @@ class TestMultiRollingAggregate(unittest.TestCase):
         factory.add_source(InputRef('rhs'))
         ram = factory.build()
 
-        s1 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]], 1)
-        s2 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 2], [4, 1]], 1)
+        s1 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]])
+        s2 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 2], [4, 1]])
         self.case(ram, s1, s2, list(s1.pdseries.index)[0:], [1.0, 1.0, 1.0, 1.0, 0.6])
 
     def case(self, node, s1, s2, expected_index, expected_series):

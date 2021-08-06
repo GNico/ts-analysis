@@ -32,7 +32,7 @@ class TestDerivative(unittest.TestCase):
             [7, 1],
             [8, 1],
             [9, 1],
-            ], interval=1)
+            ])
 
         self.assertEqual(list(expected_series.pdseries.index), list(result.index))
         self.assertEqual(list(expected_series.pdseries.values), list(result.values))
@@ -57,7 +57,7 @@ class TestDerivative(unittest.TestCase):
             [7, 2],
             [8, 2],
             [9, 2],
-            ], interval=1)
+            ])
 
         self.assertEqual(list(expected_series.pdseries.index), list(result.index))
         self.assertEqual(list(expected_series.pdseries.values), list(result.values))

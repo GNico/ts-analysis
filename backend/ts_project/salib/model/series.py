@@ -1,23 +1,29 @@
 import pandas as pd
-from .utils import timestamp_to_epoch
+from pandas.tseries.frequencies import to_offset
 
+from .utils import timestamp_to_epoch
 
 class Series:
 
-    def __init__(self, pdseries, interval=None):
+    def __init__(self, pdseries):
         self.pdseries = pdseries
         if len(pdseries.index) < 2:
             raise RuntimeError("Series must contain 2 or more data points!")
         self.start = pdseries.index[0]
         self.end = pdseries.index[-1]
-        self.interval = self.calculate_interval() if interval is None else interval
+        self.interval = self.calculate_interval()
 
     def calculate_interval(self):
         series = self.pdseries
         if not (series.index.is_monotonic_increasing or series.index.is_monotonic_decreasing):
             raise ValueError('Index must be monotonic')
-        # ToDo validate equal spaced indices, taking first two points for now
-        return series.index[1] - series.index[0]
+        if len(series.index) == 2:
+            series.index.freq = to_offset(series.index[1]-series.index[0])
+        if series.index.freq is None:
+            if series.index.inferred_freq is None:
+                raise ValueError('Index must be equally spaced, could not infer frequency')
+            series.index.freq = series.index.inferred_freq
+        return series.index.freq.delta
 
     def span(self):
         return len(self.pdseries.index)
@@ -30,10 +36,10 @@ class Series:
         return None
 
     @staticmethod
-    def from_array(arr, interval, unit='s'):
+    def from_array(arr, unit='s'):
         dates, count = zip(*arr)
         dates = pd.to_datetime(dates, unit=unit)
-        return Series(pd.Series(count, index=dates), pd.to_timedelta(interval, unit='s'))
+        return Series(pd.Series(count, index=dates))
 
     def __str__(self):
         return 'Series [' + str(self.start) + ' to ' + str(self.end) + ']' \
