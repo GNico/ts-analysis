@@ -195,7 +195,8 @@ export default {
         xAxis: {
           allowDecimals: false,
           ordinal: false,
-          gridLineWidth: 0, 
+          gridLineWidth: 1, 
+          gridLineColor: 'rgba(255,255,255,0.1)',
           tickInterval: this.tickInterval,
           crosshair: {
             color: 'gray',
@@ -206,6 +207,7 @@ export default {
           plotBands: this.interactiveBands,
         },
         yAxis: {
+          gridLineColor: 'rgba(255,255,255,0.1)',
           crosshair: {
             allowDecimals: false,
             snap: this.isEmpty,
