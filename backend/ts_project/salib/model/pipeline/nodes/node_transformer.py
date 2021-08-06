@@ -44,7 +44,7 @@ class NodeTransformer(Node):
                 new_entry = np.nan
             else:
                 new_entry = func(input_slice)
-            print(input, "SLICE #", i, input_slice, new_entry)
+            # print(input, "SLICE #%s" % i, input_slice, new_entry)
             result.append(new_entry)
         return result
 
@@ -69,18 +69,19 @@ class NodeTransformer(Node):
     def window_slice(data, index, window_size, center):
         start, end = NodeTransformer.window_slice_idxs(index, window_size, center)
         clamp_start = max(0, start)
-        clamp_end = min(len(data) + 1, end)
+        clamp_end = min(len(data), end)
         return data[clamp_start:clamp_end]
 
     @staticmethod
     def window_slice_dropped_out(data, index, context_window_size, dropout_window_size, center):
         c_start, c_end = NodeTransformer.window_slice_idxs(index, context_window_size, center)
         d_start, d_end = NodeTransformer.window_slice_idxs(index, dropout_window_size, center)
+        # print("SLICE #%s" % index, c_start, d_start, d_end, c_end)
         clamp_c_start = max(0, c_start)
-        clamp_c_end = min(len(data) + 1, c_end)
-        clamp_d_start = max(0, d_start)
-        clamp_d_end = min(len(data) + 1, d_end)
-        print("SLICE #", index, clamp_c_start, clamp_d_start, clamp_d_end, clamp_c_end)
+        clamp_c_end = min(len(data), c_end)
+        clamp_d_start = max(0, d_start-1)
+        clamp_d_end = min(len(data), d_end-1)
+        # print("SLICE #%s" % index, clamp_c_start, clamp_d_start, clamp_d_end, clamp_c_end)
         return np.concatenate([data[clamp_c_start:clamp_d_start], data[clamp_d_end:clamp_c_end]])
 
     @staticmethod

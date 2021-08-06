@@ -23,7 +23,20 @@ class TestDropout(unittest.TestCase):
         factory.add_source(InputRef('input'))
         ram = factory.build()
 
-        self.case(ram, [])
+        self.case(ram, [1, 2, 2, 2])
+
+    def test_dropout_centered_mean(self):
+        
+        factory = NodeFactory.transformer('test', 'Dropout')
+        factory.set_param_value('context_window', 4)
+        factory.set_param_value('dropout_window', 2)
+        factory.set_param_value('center', True)
+        factory.set_param_value('min_periods', None)
+        factory.set_param_value('agg_method', 'mean')
+        factory.add_source(InputRef('input'))
+        ram = factory.build()
+
+        self.case(ram, [1, 1, 1, 2, 3, 3])
 
     def case(self, node, expected_series):
         series = self.build_series()
