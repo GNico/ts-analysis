@@ -12,6 +12,7 @@ from .nodes.transformers.boxcox import BoxCox
 from .nodes.transformers.identity import Identity
 from .nodes.transformers.fft_filter import FFTFilter
 from .nodes.transformers.rolling_aggregate import RollingAggregate
+from .nodes.transformers.dropout import Dropout
 from .nodes.transformers.multi_rolling_aggregate import MultiRollingAggregate
 from .nodes.transformers.stl import STL
 from .nodes.transformers.seasonal_decompose import SeasonalDecompose
@@ -64,6 +65,7 @@ class NodeFactory:
             'Divide': Divide,
             'RollingAggregate': RollingAggregate,
             'MultiRollingAggregate': MultiRollingAggregate,
+            'Dropout': Dropout,
             'FFTFilter': FFTFilter,
             'BoxCox': BoxCox,
             'STL': STL,
