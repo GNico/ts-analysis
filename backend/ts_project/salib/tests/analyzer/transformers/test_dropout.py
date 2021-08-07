@@ -13,7 +13,6 @@ from model.test.testcase import TestCase
 class TestDropout(unittest.TestCase):
 
     def test_dropout_mean(self):
-        
         factory = NodeFactory.transformer('test', 'Dropout')
         factory.set_param_value('context_window', 4)
         factory.set_param_value('dropout_window', 2)
@@ -23,10 +22,9 @@ class TestDropout(unittest.TestCase):
         factory.add_source(InputRef('input'))
         ram = factory.build()
 
-        self.case(ram, [1, 2, 2, 2])
+        self.case(ram, [-1, -2, 0, 2, 1])
 
     def test_dropout_centered_mean(self):
-        
         factory = NodeFactory.transformer('test', 'Dropout')
         factory.set_param_value('context_window', 4)
         factory.set_param_value('dropout_window', 2)
@@ -36,7 +34,7 @@ class TestDropout(unittest.TestCase):
         factory.add_source(InputRef('input'))
         ram = factory.build()
 
-        self.case(ram, [1, 1, 1, 2, 3, 3])
+        self.case(ram, [1, 0, -2, 0, 1])
 
     def case(self, node, expected_series):
         series = self.build_series()
@@ -52,9 +50,10 @@ class TestDropout(unittest.TestCase):
             [0, 1],
             [1, 1],
             [2, 1],
-            [3, 1],
+            [3, 3],
             [4, 3],
-            [5, 3],
-            [6, 3],
+            [5, 1],
+            [6, 1],
+            [7, 1],
         ])
         return series
