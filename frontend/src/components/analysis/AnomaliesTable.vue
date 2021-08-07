@@ -1,6 +1,6 @@
 <template>
 <b-table 
-  :style="{height: height}"
+  :style="{height: height, cursor: 'pointer'}"
   v-if="!isEmpty"
   :data="anomalies" 
   :selected="selected"      

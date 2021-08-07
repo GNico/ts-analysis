@@ -131,7 +131,6 @@ export default {
     isOpen() {
       return this.sharedState.openNode === this.id
     },    
-
     nodeData() {
       return this.nodes.find(elem => elem.id == this.id)
     },

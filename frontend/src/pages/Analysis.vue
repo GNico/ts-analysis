@@ -65,7 +65,7 @@
     </div>
   </div>  
   <!-- content -->  
-  <div v-show="!!activeAnalysis.id" class="wide-container main-section">
+  <div v-if="!!activeAnalysis.id" class="wide-container main-section">
     <b-tabs type="is-medium "  :animated="false" v-model="activeTab" destroy-on-hide>
       <b-tab-item label="Settings" icon="cog" value="Settings" >
         <SettingsTab @run="activeTab='Results'"/>    

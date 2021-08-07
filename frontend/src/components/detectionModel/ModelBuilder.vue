@@ -35,6 +35,7 @@
 
       <GraphDataProvider :nodes="nodes" @validation="validationMessages = $event" >
         <LayeredGraphChart 
+          ref="graph"
           slot-scope="{chartNodes, chartEdges}" 
           :nodes="chartNodes" 
           :edges="chartEdges" 
@@ -46,7 +47,6 @@
           @selected="openNode"/>
       </GraphDataProvider>
     </div>
-
   </div>
 
   <div v-for="msg in validationMessages">  
@@ -59,10 +59,6 @@
       {{msg.message}}
     </span>
   </div>
-
-
-  
-
 </div>
 </template>
 
@@ -84,17 +80,15 @@ export default {
       default: () => []
     }
   },
-  provide() {
-    return {
-      sharedState: this.sharedState
+  inject: {
+    sharedState: {
+      name: 'sharedState',
+      default: {}
     }
   },
   data() {
     return {
       validationMessages: [],
-      sharedState: {
-        openNode: null
-      }
     }
   },
   computed: {
@@ -107,15 +101,11 @@ export default {
     inputNodes() {
       return this.nodes.filter(elem => elem.group == "input")
     },
-
-
-
-
   },
   methods: {  
     openNode(selected) {
       this.sharedState.openNode = selected[0]
-    },
+    }, 
     addInput() {
       let modelCopy = cloneDeep(this.nodes)
       let newNode = this.getNewInputNode()
@@ -223,6 +213,11 @@ export default {
   }, 
   created() {
     this.$store.dispatch('models/fetchNodeTypes')          
+  },
+  watch: {
+    'sharedState.openNode'(newVal) {
+      if (!newVal) this.$refs.graph.clearSelected()
+    }
   }
 };
 </script>

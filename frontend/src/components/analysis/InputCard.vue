@@ -3,7 +3,9 @@
   <b-collapse
     class="card"
     animation="slide"
-    :open="false">
+    :open="isOpen"
+    @open="sharedState.openNode = inputNumber.toString()"
+    @close="sharedState.openNode = null">
     <template #trigger="props">
       <div class="card-header" @mouseover="showDelete = true" @mouseleave="showDelete = false" >
         <span class="card-header-title long-text-with-ellipsis">
@@ -134,6 +136,12 @@ export default {
       default: () => []
     }
   },
+  inject: {
+    sharedState: {
+      name: 'sharedState',
+      default: {}
+    }
+  },
   data() {
     return {
       showDelete: false,     
@@ -142,7 +150,10 @@ export default {
   computed: {
     inputNumber() {
       return this.index + 1
-    }
+    },
+    isOpen() {
+      return this.sharedState.openNode === this.inputNumber.toString()
+    },
   },
   methods: {
     updateAnalysis(prop, value) {

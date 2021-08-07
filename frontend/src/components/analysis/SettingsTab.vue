@@ -95,10 +95,18 @@ import cloneDeep from "lodash/cloneDeep";
 
 export default {
   components:  { ModelBuilder, ModalSaveTemplate, ModalLoadTemplate, InputCard },
+  provide() {
+    return {
+      sharedState: this.sharedState
+    }
+  },
   data () {
     return {
       saveTemplateModalActive: false,  
       loadTemplateModalActive: false,
+      sharedState: {
+        openNode: null
+      }
     }
   },
   computed: {
@@ -119,6 +127,9 @@ export default {
     }, 
   },
   methods: {
+    openNode(selected) {
+      this.sharedState.openNode = selected[0]
+    },
     saveModel(modalForm) {
       this.$store.dispatch('models/saveModel', {
         ...modalForm,
@@ -177,7 +188,9 @@ export default {
     deleteInput(index) {
       let dataOptionsCopy = cloneDeep(this.analysis.data_options)
       dataOptionsCopy.splice(index, 1)
-      this.$store.dispatch('analysis/updateLocalSettings', {id: this.analysis.id, data_options: dataOptionsCopy})      
+      this.$store.dispatch('analysis/updateLocalSettings', {id: this.analysis.id, data_options: dataOptionsCopy})
+      if (this.sharedState.openNode === (index + 1).toString())
+        this.sharedState.openNode = null      
     }
   },
   watch: {

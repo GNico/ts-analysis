@@ -38,7 +38,6 @@
     @nodeParamsChange="$emit('nodeParamsUpdate', $event)"
     @nodeSourceChange="$emit('nodeSourceUpdate', $event)"
     @nodeDelete="$emit('nodeDelete', $event)"/>
-
 </div>
 </template>
 
