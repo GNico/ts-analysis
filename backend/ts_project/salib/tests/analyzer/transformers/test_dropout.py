@@ -19,6 +19,8 @@ class TestDropout(unittest.TestCase):
         factory.set_param_value('center', False)
         factory.set_param_value('min_periods', None)
         factory.set_param_value('agg_method', 'mean')
+        factory.set_param_value('combine_method', 'sub')
+        factory.set_param_value('combine_method_order', 'context-dropout')
         factory.add_source(InputRef('input'))
         ram = factory.build()
 
@@ -31,6 +33,8 @@ class TestDropout(unittest.TestCase):
         factory.set_param_value('center', True)
         factory.set_param_value('min_periods', None)
         factory.set_param_value('agg_method', 'mean')
+        factory.set_param_value('combine_method', 'sub')
+        factory.set_param_value('combine_method_order', 'context-dropout')
         factory.add_source(InputRef('input'))
         ram = factory.build()
 

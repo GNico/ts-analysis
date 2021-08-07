@@ -37,13 +37,27 @@ class Dropout(NodeTransformer):
         ]
         self.add_required_param(Select('agg_method', 'Aggregation', 'Aggregation method', agg_method_options, agg_method_options[0].code))
 
+        combine_method_options = [
+            SelectOption("sub", "Substract"),
+            SelectOption("prop", "Ratio"),
+        ]
+        self.add_required_param(Select('combine_method', 'Combine func.', 'Combination method for context-dropout windows', combine_method_options, combine_method_options[0].code))
+
+        combine_method_order_options = [
+            SelectOption("context-dropout", "Context,dropout"),
+            SelectOption("dropout-context", "Dropout,context"),
+        ]
+        self.add_required_param(Select('combine_method_order', 'Combine func.', 'Combination method for context-dropout windows', combine_method_order_options, combine_method_order_options[0].code))
+
     def get_params(self):
         context_window = self.get_param('context_window').value
         dropout_window = self.get_param('dropout_window').value
         agg_method = self.get_param('agg_method').value
         center = self.get_param('center').value
         min_periods = self.get_param('min_periods').value
-        return (context_window, dropout_window, agg_method, center, min_periods)
+        combine_method = self.get_param('combine_method').value
+        combine_method_order = self.get_param('combine_method_order').value
+        return (context_window, dropout_window, agg_method, center, min_periods, combine_method, combine_method_order)
 
     def __str__(self):
         return "Dropout" + str(self.get_params()) + "[" + self.id + "]"
@@ -58,7 +72,7 @@ class Dropout(NodeTransformer):
         pdseries = seriess[0].pdseries
         step = seriess[0].step()
 
-        context_window, dropout_window, agg, center, min_periods = self.get_params()
+        context_window, dropout_window, agg, center, min_periods, combine_method, combine_method_order = self.get_params()
         calc_context_window = timedelta_to_period(context_window, step)
         calc_dropout_window = timedelta_to_period(dropout_window, step)
         if calc_dropout_window >= calc_context_window:
@@ -91,6 +105,16 @@ class Dropout(NodeTransformer):
         else:
             raise ValueError('Invalid aggregation method: ' + agg)
 
-        transformed_values = NodeTransformer.rolling_dropout(pdseries.values, agg_func, calc_context_window, calc_dropout_window, center=center, min_periods=calc_min_periods)
+        combine_func = None
+        if combine_method == 'sub':
+            combine_func = np.subtract
+        elif combine_method == 'prop':
+            combine_func = np.divide
+        else:
+            raise ValueError('Invalid combination method: ' + combine_method)
+
+        context_first = (combine_method_order == "context-dropout")
+
+        transformed_values = NodeTransformer.rolling_dropout(pdseries.values, agg_func, combine_func, context_first, calc_context_window, calc_dropout_window, center=center, min_periods=calc_min_periods)
         result = pd.Series(transformed_values, index=pdseries.index)
         return (result, {})

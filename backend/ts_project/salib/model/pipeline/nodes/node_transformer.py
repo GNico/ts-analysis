@@ -30,7 +30,7 @@ class NodeTransformer(Node):
         raise Exception('Unimplemented transform() method for NodeTransformer')
 
     @staticmethod
-    def rolling_dropout(input, func, context_window_size, dropout_window_size, center, min_periods):
+    def rolling_dropout(input, func, combine_func, context_first, context_window_size, dropout_window_size, center, min_periods):
         result = []
         for i in range(0, len(input)):
             context_slice, dropout_slice = NodeTransformer.window_slice_dropped_out(
@@ -43,7 +43,14 @@ class NodeTransformer(Node):
             if len(context_slice) + dropout_window_size < min_periods:
                 new_entry = np.nan
             else:
-                new_entry = func(context_slice) - func(dropout_slice)
+                # Combine according to specified order using combination function
+                if context_first:
+                    fst = context_slice
+                    snd = dropout_slice
+                else:
+                    fst = dropout_slice
+                    snd = context_slice
+                new_entry = combine_func(func(fst),func(snd))
             # print(input, "SLICE #%s" % i, context_slice, dropout_slice, new_entry)
             result.append(new_entry)
         return result
