@@ -47,7 +47,7 @@ class Dropout(NodeTransformer):
             SelectOption("context-dropout", "Context,dropout"),
             SelectOption("dropout-context", "Dropout,context"),
         ]
-        self.add_required_param(Select('combine_method_order', 'Combine func.', 'Combination method for context-dropout windows', combine_method_order_options, combine_method_order_options[0].code))
+        self.add_required_param(Select('combine_method_order', 'Combine order', 'Combination method parameters order', combine_method_order_options, combine_method_order_options[0].code))
 
     def get_params(self):
         context_window = self.get_param('context_window').value

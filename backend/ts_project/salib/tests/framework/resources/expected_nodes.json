@@ -778,8 +778,8 @@
         {
           "id": "combine_method_order",
           "type": "Select",
-          "display": "Combine func.",
-          "desc": "Combination method for context-dropout windows",
+          "display": "Combine order",
+          "desc": "Combination method parameters order",
           "conditions": [],
           "value": "context-dropout",
           "options": [
