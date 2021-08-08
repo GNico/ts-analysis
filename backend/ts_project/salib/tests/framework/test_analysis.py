@@ -1,7 +1,11 @@
+import os
+import json
 import unittest
+from pathlib import Path
 
 from model.analyzer import Analyzer
 from model.anomaly import Anomaly
+from model.series import Series
 from model.analysis import Analysis
 from model.pipeline.pipeline import Pipeline
 from model.pipeline.node_factory import NodeFactory
@@ -29,66 +33,44 @@ class TestAnalysis(unittest.TestCase):
         pipeline = Pipeline([node])
         analyzer = Analyzer(pipeline=pipeline, debug=True)
         analysis = analyzer.analyze({'input': series})
+        actual_output = analysis.output_format()
 
-        expected = {
-            "anomalies": [],
-            "debug_nodes": {
-                "test_node": {
-                    "anomalies": [],
-                    "debug_info": {},
-                    "series": {
-                        "output": [
-                            [0, 0.0],
-                            [1000, 1.0],
-                            [2000, 2.0],
-                            [3000, 3.0],
-                            [4000, 4.0],
-                            [5000, 5.0],
-                            [6000, 6.0],
-                            [7000, 7.0],
-                            [8000, 8.0],
-                            [9000, 9.0],
-                            [10000, 9.0],
-                            [11000, 9.0],
-                            [12000, 9.0],
-                            [13000, 9.0],
-                            [14000, 9.0],
-                            [15000, 8.0],
-                            [16000, 7.0],
-                            [17000, 6.0],
-                            [18000, 5.0],
-                            [19000, 4.0],
-                        ]
-                    },
-                }
-            },
-            "series": {
-                "input": [
-                    [0, 0.0],
-                    [1000, 1.0],
-                    [2000, 2.0],
-                    [3000, 3.0],
-                    [4000, 4.0],
-                    [5000, 5.0],
-                    [6000, 6.0],
-                    [7000, 7.0],
-                    [8000, 8.0],
-                    [9000, 9.0],
-                    [10000, 9.0],
-                    [11000, 8.0],
-                    [12000, 7.0],
-                    [13000, 6.0],
-                    [14000, 5.0],
-                    [15000, 4.0],
-                    [16000, 3.0],
-                    [17000, 2.0],
-                    [18000, 1.0],
-                    [19000, 0.0],
-                ]
-            },
-        }
+        expected_file = os.path.join(os.path.dirname(__file__), 'resources/analysis/expected_simplified.json')
+        # Uncomment to fix test
+        # print(json.dumps(actual_output, indent=2), file=open(expected_file, 'w'))
+        expected_output = json.loads(Path(expected_file).read_text())
+        self.assertEqual(expected_output, actual_output)
 
-        self.assertEqual(expected, analysis.output_format())
+    def test_analysis_histogram_heatmap(self):
+        self.maxDiff = None
+        series = Series.from_array([
+            [1628294400, 0],
+            [1628337600, 0],
+            [1628380800, 1],
+            [1628424000, 1],
+            [1628467200, 1],
+            [1628510400, 0],
+            [1628553600, 0],
+            [1628596800, 0],
+        ])
+        factory = NodeFactory.detector('test_node', 'SimpleThreshold')
+        factory.set_param_value('inside', False)
+        factory.set_param_value('strict', False)
+        factory.set_param_value('lower', None)
+        factory.set_param_value('upper', 1)
+        factory.add_source(InputRef('input'))
+        node = factory.build()
+
+        pipeline = Pipeline([node])
+        analyzer = Analyzer(pipeline=pipeline, debug=True)
+        analysis = analyzer.analyze({'input': series})
+        actual_output = analysis.output_format()
+
+        expected_file = os.path.join(os.path.dirname(__file__), 'resources/analysis/expected_histogram_heatmap.json')
+        # Uncomment to fix test
+        # print(json.dumps(actual_output, indent=2), file=open(expected_file, 'w'))
+        expected_output = json.loads(Path(expected_file).read_text())
+        self.assertEqual(expected_output, actual_output)
 
     def test_analysis_without_debug(self):
         self.maxDiff = None

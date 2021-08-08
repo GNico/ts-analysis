@@ -13,8 +13,8 @@ class GARCH(NodeTransformer):
         self.add_params()
 
     def add_params(self):
-        self.add_required_param(String('p', 'p', 'Lag order of series²', '7d'))
-        self.add_required_param(String('q', 'q', 'Lag order of volatility', '7d'))
+        self.add_required_param(String('p', 'p', 'Lag order of series²', '1'))
+        self.add_required_param(String('q', 'q', 'Lag order of volatility', '1'))
 
     def get_params(self):
         p = self.get_param('p').value
@@ -28,7 +28,7 @@ class GARCH(NodeTransformer):
         p, q = self.get_params()
         calc_p, calc_q = tuple(map(lambda param: timedelta_to_period(param, series.step()), (p, q)))
         ar = arch_model(pdseries, p=calc_p, q=calc_q, rescale=True)
-        model = ar.fit()
+        model = ar.fit(disp='off', update_freq=0)
 
         # Debug info
         if debug:
@@ -39,7 +39,7 @@ class GARCH(NodeTransformer):
             debug_info = {}
         # Drop offset_start elements
         
-        return (model.resid, debug_info)
+        return (model.conditional_volatility, debug_info)
 
     def __str__(self):
         return "GARCH" + str(self.get_params()) + "[" + self.id + "]"

@@ -24,9 +24,9 @@ function sum(arr) {
 
 const defaultStyle = {
   backgroundColor: 'transparent',
-  anomalyColor: 'rgba(133,176,190,0.3)',
+  anomalyColor: 'rgba(133,176,190,0.5)',
   anomalyArrowColor: 'yellow',
-  highlightedColor: 'rgba(173,216,230,0.6)',
+  highlightedColor: 'rgba(173,216,230,0.65)',
   highlightedBorderColor: 'rgba(173,216,230,1)',
   selectBandColor: 'rgba(0,0,0,0.5)',
   lineWidth: 2,

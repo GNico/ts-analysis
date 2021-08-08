@@ -33,7 +33,6 @@ class NodeDetector(Node):
         current_start = None
         current_score_sum = None
         current_consecutive_count = None
-
         for elem in series.pdseries.items():
             anomaly_score = anomaly_scoring(elem[1])
             if anomaly_score is not None:
