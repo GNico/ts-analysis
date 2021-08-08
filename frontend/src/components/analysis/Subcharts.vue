@@ -2,7 +2,7 @@
 <div class="columns">
   <div class="column is-5">
     <div class="is-flex is-justify-content-space-between">
-      <div><strong class="has-text-grey-light"> Date histogram </strong></div>
+      <div><strong class="has-text-grey-light"> Anomalies histogram </strong></div>
       <b-dropdown  class="header-item" aria-role="list" v-model="selectedBucket">
         <template #trigger>
           <a class="is-flex is-align-items-center has-text-grey">
@@ -20,7 +20,7 @@
       :deepCopyOnUpdate="false"/>
   </div>
   <div class="column is-7">
-    <div> <strong class="has-text-grey-light">Weekly distribution </strong></div>
+    <div> <strong class="has-text-grey-light">Anomalies heatmap</strong></div>
     <highcharts 
       :options="heatMapChartOptions" 
       :deepCopyOnUpdate="false"/>
@@ -122,10 +122,10 @@ export default {
         colorAxis: {
           min: 0,
           gridLineWidth: 1,
-         // minColor: '#FFFFFF',
-         // maxColor: Highcharts.getOptions().colors[0]
+          minColor: 'rgba(83,94,96,0)',
+          maxColor: 'rgba(83,94,96,1)'
         },
-        credits: false,  
+        credits: false,
         legend: {
           enabled: false,
         }, 
@@ -142,13 +142,13 @@ export default {
           borderWidth: 1,
           data: this.weeklyMap,           
           dataLabels: {
-            enabled: true,
-            color: '#000000',
+            enabled: false,
+            /*color: '#000000',
             filter: {
               property: 'value',
               operator: '>',
               value: 0
-            }
+            }*/
           }
         }],
       }
