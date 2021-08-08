@@ -2,7 +2,7 @@
 <div  class="columns" :style="expanded ? {height: height + 'px'} : ''">
   <a v-if="!expanded" class="is-flex is-align-items-center m-3 has-text-white" @click="expanded = !expanded">
     <b-icon icon="menu-right"></b-icon>
-    <span><strong>{{node.display}}</strong></span>
+    <span><strong>{{node.display}} {{node.id ? '(' + node.id + ')' : ''}}</strong></span>
   </a>
 
   <template v-else>
@@ -11,7 +11,7 @@
       <!--header left section-->
       <a class="is-flex is-align-items-center has-text-white" @click="expanded = !expanded">
         <b-icon icon="menu-down"></b-icon>
-        <span><strong>{{node.display}}</strong></span>
+        <span><strong>{{node.display}} {{node.id ? '(' + node.id + ')' : ''}}</strong></span>
       </a>
       
       <!--header right section-->
