@@ -1,10 +1,30 @@
 <template>
 <div class="columns">
-  <div class="column is-6">
+  <div class="column is-5">
+    <div class="is-flex is-justify-content-space-between">
+      <div><strong class="has-text-grey-light"> Date histogram </strong></div>
+      <b-dropdown  class="header-item" aria-role="list" v-model="selectedBucket">
+        <template #trigger>
+          <a class="is-flex is-align-items-center has-text-grey">
+            <span>Group by: {{selectedBucket}}</span>
+            <b-icon icon="menu-down"></b-icon>
+          </a>
+        </template>
+        <b-dropdown-item v-for="option in histogramBucketOptions" 
+          :value="option" :key="option">{{option}}</b-dropdown-item>      
+      </b-dropdown>
+    
+    </div>
     <highcharts 
-    :options="heatMapChartOptions" 
-    :deepCopyOnUpdate="false"/>
+      :options="histogramOptions" 
+      :deepCopyOnUpdate="false"/>
   </div>
+  <div class="column is-7">
+    <div> <strong class="has-text-grey-light">Weekly distribution </strong></div>
+    <highcharts 
+      :options="heatMapChartOptions" 
+      :deepCopyOnUpdate="false"/>
+  </div>  
 </div>
 </template>
 
@@ -12,11 +32,16 @@
 <script>
 import Highcharts from 'highcharts'
 
+const allHours =  [ ...Array(24).keys() ]
+const allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
+const allWeekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+const allWeekdaysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
 function getPointCategoryName(point, dimension) {
-    var series = point.series,
-        isY = dimension === 'y',
-        axis = series[isY ? 'yAxis' : 'xAxis'];
-    return axis.categories[point[isY ? 'y' : 'x']];
+  var series = point.series,
+    isY = dimension === 'y',
+    axis = series[isY ? 'yAxis' : 'xAxis'];
+  return axis.categories[point[isY ? 'y' : 'x']];
 }
 
 export default {
@@ -26,66 +51,158 @@ export default {
       default: () => []
     }
   },
+  data() {
+    return {
+      histogramBucketOptions: [ 'Hour', 'Day', 'Month'],
+      selectedBucket: 'Day'
+    }
+  },
   computed: {
+    histogramData() {
+      var groups = {
+        months: new Array(12).fill(0),
+        days: new Array(7).fill(0),
+        hours: new Array(24).fill(0)
+      }
+      for (let i=0; i < this.anomalies.length; i++) {
+        var start = new Date(this.anomalies[i].from)
+        const hour = start.getHours()
+        const day = start.getDay()
+        const month = start.getMonth()
+        groups.months[month] += 1
+        groups.days[day] += 1
+        groups.hours[hour] += 1
+      }
+      return groups
+
+    },
+    weeklyMap() {
+      var map = new Array(168)
+      var dayCounter = 0
+      var hourCounter = 0
+      for (let i=0; i < 168; i++) {
+        map[i] = [ hourCounter, dayCounter, 0]
+        dayCounter++
+        if (dayCounter > 6) {
+          dayCounter = 0
+          hourCounter++
+        }
+      }      
+      for (let j=0; j < this.anomalies.length; j++) {
+        var start = new Date(this.anomalies[j].from)
+        const day = start.getDay()
+        const hour = start.getHours()
+        const index = hour * 7 + day
+        map[index][2] += 1
+      } 
+      return map
+    },
     heatMapChartOptions() {
       return {
         chart: {
-            type: 'heatmap',
-            height: 200,
-            backgroundColor: 'transparent'
+          type: 'heatmap',
+          height: 250,
+          backgroundColor: 'transparent'
         },
         title: {
-            text: ''
+          text: ''
         },
         xAxis: {
-            categories: ['0:00', '2:00', '4:00', '6:00', '8:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00']
+         /* title: {
+              enabled: true,
+              text: 'hours'
+          },*/
+          categories: [ ...Array(24).keys() ]
         },
-
         yAxis: {
-            categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            title: null,
-            reversed: true
+          categories: allWeekdays,
+          title: null,
+          reversed: true
         },
-
         colorAxis: {
-            min: 0,
-            minColor: '#FFFFFF',
-            maxColor: Highcharts.getOptions().colors[0]
+          min: 0,
+          gridLineWidth: 1,
+         // minColor: '#FFFFFF',
+         // maxColor: Highcharts.getOptions().colors[0]
         },
         credits: false,  
         legend: {
           enabled: false,
-      /*      align: 'right',
-            layout: 'vertical',
-            margin: 0,
-            verticalAlign: 'top',
-            y: 0,
-            symbolHeight: 280*/
         }, 
-
         tooltip: {
-            formatter: function () {
-                return '<b>' + getPointCategoryName(this.point, 'x') + '</b> sold <br><b>' +
-                    this.point.value + '</b> items on <br><b>' + getPointCategoryName(this.point, 'y') + '</b>';
-            }
+          formatter: function() {
+            var hour = getPointCategoryName(this.point, 'x')
+            var day = getPointCategoryName(this.point, 'y')
+            return '<b>' + this.point.value + '</b> anomalies on <b>' + day +
+              ', <b> ' + hour + ':00 to ' + hour + ':59 </b>'
+          }
         },
-
         series: [{
-            name: 'Sales per employee',
-            borderWidth: 0,
-            data: [[0, 0, 0], [0, 1, 0], [0, 2, 8], [0, 3, 24], [0, 4, 67], [1, 0, 92], [1, 1, 58], [1, 2, 78], [1, 3, 117], [1, 4, 48], [2, 0, 35], [2, 1, 15], [2, 2, 123], [2, 3, 64], [2, 4, 52], [3, 0, 72], [3, 1, 132], [3, 2, 114], [3, 3, 19], [3, 4, 16], [4, 0, 38], [4, 1, 5], [4, 2, 8], [4, 3, 117], [4, 4, 115], [5, 0, 88], [5, 1, 32], [5, 2, 12], [5, 3, 6], [5, 4, 120], [6, 0, 13], [6, 1, 44], [6, 2, 88], [6, 3, 98], [6, 4, 96], [7, 0, 31], [7, 1, 1], [7, 2, 82], [7, 3, 32], [7, 4, 30], [8, 0, 85], [8, 1, 97], [8, 2, 123], [8, 3, 64], [8, 4, 84], [9, 0, 47], [9, 1, 114], [9, 2, 31], [9, 3, 48], [9, 4, 91], [10, 0, 47], [10, 1, 114], [10, 2, 31], [10, 3, 48], [10, 4, 91], [11, 0, 47], [11, 1, 114], [11, 2, 31], [11, 3, 48], [11, 4, 91]],
-            dataLabels: {
-                enabled: true,
-                color: '#000000',
-                filter: {
-                    property: 'value',
-                    operator: '>',
-                    value: 0
-                }
+          name: 'Weekly distribution',
+          borderWidth: 1,
+          data: this.weeklyMap,           
+          dataLabels: {
+            enabled: true,
+            color: '#000000',
+            filter: {
+              property: 'value',
+              operator: '>',
+              value: 0
             }
+          }
         }],
       }
-    }
+    },
+    bucketOptions() {
+      switch (this.selectedBucket) {
+        case 'Hour':
+          return {
+            categories: allHours,
+            data: this.histogramData.hours
+          }
+        case 'Day':
+          return {
+            categories: allWeekdaysShort,
+            data: this.histogramData.days
+          }
+        case 'Month':
+          return {
+            categories: allMonths,
+            data: this.histogramData.months
+          }  
+        default:
+          return {}
+      }
+    },
+    histogramOptions() {
+      return {
+        chart: {
+          type: 'column',
+          height: 250,
+          backgroundColor: 'transparent'
+        },
+        title: {
+          text: ''
+        },
+        xAxis: {        
+          categories: this.bucketOptions.categories
+        },
+        yAxis: {
+          title: null,
+        },        
+        credits: false,  
+        legend: {
+          enabled: false,
+        }, 
+        series: [{
+          name: 'Date histogram',
+          borderWidth: 1,
+          data: this.bucketOptions.data,        
+        }],
+      }
+    },
+  },
+  methods: {    
   }
 }
 

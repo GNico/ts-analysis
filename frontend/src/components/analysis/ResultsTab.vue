@@ -7,7 +7,7 @@
     <div v-else class="columns is-fullheight">
       <div class="column is-4 side-menu is-hidden-mobile">        
         <div class="table-header has-text-white">
-          <div> <strong class="has-text-white" > <i> Anomalies </i></strong></div>
+          <div> <strong class="has-text-white"> Anomalies</strong></div>
           <AnomaliesFilters v-bind="activeOptions" @update="updateOptions"/> 
         </div>
 
@@ -19,6 +19,7 @@
 
       <div class="column main-content">
         <Chart       
+          height="400px"
           :seriesData="seriesData"
           :anomalies="chartFilteredAnomalies"
           :loading="loading"
@@ -29,7 +30,7 @@
           @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" />
 
  
-      <!--  <Subcharts :anomalies="chartFilteredAnomalies"/> -->
+        <Subcharts class="mt-3" :anomalies="chartFilteredAnomalies"/> 
 
       </div>
     </div>  

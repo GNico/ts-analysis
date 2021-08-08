@@ -1,6 +1,6 @@
 <template>
 <BaseChart 
-  :style="{height: 'inherit'}"
+  :style="{height: height}"
   :seriesData="chartData" 
   :bands="anomalies"
   :activeBand="activeAnomaly"
@@ -72,6 +72,10 @@ export default {
     syncCrosshairEnabled: {
       type: Boolean,
       default: false
+    },
+    height: {
+      type: [String, Number],
+      default: 'inherit'
     }
   },
   data() {
