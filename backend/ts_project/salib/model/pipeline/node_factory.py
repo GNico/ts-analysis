@@ -1,4 +1,7 @@
+import numpy as np
+
 from .nodes.transformers.clamp import Clamp
+from .nodes.transformers.sigmoid import Sigmoid
 from .nodes.transformers.rescale import Rescale
 from .nodes.transformers.exponential_moving_average import ExponentialMovingAverage
 from .nodes.transformers.exponential_smoothing import ExponentialSmoothing
@@ -52,12 +55,13 @@ class NodeFactory:
 
     NODE_TYPES = {
         'transformer': {
+            'Identity': Identity,
+            'Shift': Shift,
+            'StdNormalize': StdNormalize,
             'Clamp': Clamp,
             'Rescale': Rescale,
-            'StdNormalize': StdNormalize,
             'AbsValue': AbsValue,
-            'Shift': Shift,
-            'Identity': Identity,
+            'Sigmoid': Sigmoid,
             'ExponentialMovingAverage': ExponentialMovingAverage,
             'ExponentialSmoothing': ExponentialSmoothing,
             'Difference': Difference,
@@ -66,12 +70,12 @@ class NodeFactory:
             'RollingAggregate': RollingAggregate,
             'MultiRollingAggregate': MultiRollingAggregate,
             'Dropout': Dropout,
-            'FFTFilter': FFTFilter,
             'BoxCox': BoxCox,
             'STL': STL,
             'Seasonal decompose': SeasonalDecompose,
             'AutoRegression': AutoRegression,
             'MarkovAutoRegression': MarkovAutoRegression,
+            'FFTFilter': FFTFilter,
             'SARIMAX': SARIMAX,
             'ALMA': ALMA,
             'GARCH': GARCH,
@@ -115,7 +119,8 @@ class NodeFactory:
         output = {}
         for group, types in NodeFactory.NODE_TYPES.items():
             nodes = []
-            for type in types:
+            sorted_types = {k: v for k, v in sorted(types.items(), key=lambda i: i[1].display(i[1]))}
+            for type in sorted_types:
                 instance = NodeFactory.base_node(None, group, type)
                 entry = {}
                 entry['type'] = type

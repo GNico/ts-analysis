@@ -113,7 +113,13 @@ class Dropout(NodeTransformer):
         else:
             raise ValueError('Invalid combination method: ' + combine_method)
 
-        context_first = (combine_method_order == "context-dropout")
+        context_first = None
+        if combine_method_order == 'context-dropout':
+            context_first = True
+        elif combine_method_order == 'dropout-context':
+            context_first = False
+        else:
+            raise ValueError('Invalid combination method order: ' + combine_method)
 
         transformed_values = NodeTransformer.rolling_dropout(pdseries.values, agg_func, combine_func, context_first, calc_context_window, calc_dropout_window, center=center, min_periods=calc_min_periods)
         result = pd.Series(transformed_values, index=pdseries.index)

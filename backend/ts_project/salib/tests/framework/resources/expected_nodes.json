@@ -1,6 +1,107 @@
 {
   "transformer": [
     {
+      "type": "AbsValue",
+      "desc": "Take the absolute value for series (modulo)",
+      "display": "Absolute value",
+      "params": [],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
+      "type": "ALMA",
+      "desc": "Arnaud Legoux moving average",
+      "display": "Arnaud Legoux moving average",
+      "params": [
+        {
+          "id": "window",
+          "type": "String",
+          "display": "Window",
+          "desc": "Window size in periods or time interval (eg: 12h)",
+          "conditions": [],
+          "value": "12h"
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
+      "type": "AutoRegression",
+      "desc": "Simple SAR model, with lags & seasonality. Fast implementation of SARIMA.",
+      "display": "Auto-Regression",
+      "params": [
+        {
+          "id": "lags",
+          "type": "String",
+          "display": "#Lags",
+          "desc": "Lags, in period (eg 12h) or count",
+          "conditions": [],
+          "value": "7d"
+        },
+        {
+          "id": "period",
+          "type": "String",
+          "display": "Period",
+          "desc": "Seasonality in period (eg 12h) or count. Leave empty for none.",
+          "conditions": [],
+          "value": ""
+        },
+        {
+          "id": "output",
+          "type": "Select",
+          "display": "Output",
+          "desc": "Model output",
+          "conditions": [],
+          "value": "resid",
+          "options": [
+            {
+              "code": "resid",
+              "display": "Residual"
+            },
+            {
+              "code": "predicted",
+              "display": "Predicted"
+            }
+          ]
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
+      "type": "BoxCox",
+      "desc": "BoxCox transform with optional lambda",
+      "display": "BoxCox",
+      "params": [
+        {
+          "id": "lambda",
+          "type": "Float",
+          "display": "Lambda",
+          "desc": "Lambda power, leave empty to estimate.",
+          "conditions": [],
+          "value": null
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
       "type": "Clamp",
       "desc": "Assigns values outside boundary to boundary values",
       "display": "Clamp",
@@ -30,25 +131,43 @@
       }
     },
     {
-      "type": "Rescale",
-      "desc": "Rescale data to given min-max values",
-      "display": "Rescale",
+      "type": "Derivative",
+      "desc": "Derivative operator",
+      "display": "Derivative",
       "params": [
         {
-          "id": "lower",
-          "type": "Float",
-          "display": "Lower",
-          "desc": "Lower bound",
+          "id": "lag",
+          "type": "String",
+          "display": "Lag",
+          "desc": "Lag to apply (eg: 1h, 10)",
           "conditions": [],
-          "value": 0.0
+          "value": "12h"
         },
         {
-          "id": "upper",
-          "type": "Float",
-          "display": "Upper",
-          "desc": "Upper bound",
+          "id": "metric",
+          "type": "Select",
+          "display": "Difference metric",
+          "desc": "Difference metric between window values",
           "conditions": [],
-          "value": 1.0
+          "value": "sub",
+          "options": [
+            {
+              "code": "sub",
+              "display": "Substract"
+            },
+            {
+              "code": "l1",
+              "display": "L1 distance metric (mod sub)"
+            },
+            {
+              "code": "rel_diff",
+              "display": "Relative difference"
+            },
+            {
+              "code": "abs_rel_diff",
+              "display": "Absolute relative difference"
+            }
+          ]
         }
       ],
       "inputs": {
@@ -59,49 +178,371 @@
       }
     },
     {
-      "type": "StdNormalize",
-      "desc": "Normalize data such that mean = 0 and std dev = 1",
-      "display": "Standard normalization",
-      "params": [],
-      "inputs": {
-        "num_required_inputs": 1,
-        "names": [
-          "input"
-        ]
-      }
-    },
-    {
-      "type": "AbsValue",
-      "desc": "Take the absolute value for series (modulo)",
-      "display": "Absolute value",
-      "params": [],
-      "inputs": {
-        "num_required_inputs": 1,
-        "names": [
-          "input"
-        ]
-      }
-    },
-    {
-      "type": "Shift",
-      "desc": "Shift series in time by a fixed time delta",
-      "display": "Time shift",
+      "type": "Difference",
+      "desc": "Difference operator",
+      "display": "Difference",
       "params": [
         {
-          "id": "delta",
+          "id": "metric",
+          "type": "Select",
+          "display": "Difference metric",
+          "desc": "Difference metric between window values",
+          "conditions": [],
+          "value": "sub",
+          "options": [
+            {
+              "code": "sub",
+              "display": "Substract"
+            },
+            {
+              "code": "l1",
+              "display": "L1 distance metric (mod sub)"
+            },
+            {
+              "code": "rel_diff",
+              "display": "Relative difference"
+            },
+            {
+              "code": "abs_rel_diff",
+              "display": "Absolute relative difference"
+            }
+          ]
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 2,
+        "names": [
+          "left",
+          "right"
+        ]
+      }
+    },
+    {
+      "type": "Divide",
+      "desc": "Divide operator",
+      "display": "Divide",
+      "params": [
+        {
+          "id": "zero_div",
+          "type": "Int",
+          "display": "Zero div:",
+          "desc": "Value for division by zero. Empty to skip",
+          "conditions": [],
+          "value": 0
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 2,
+        "names": [
+          "left",
+          "right"
+        ]
+      }
+    },
+    {
+      "type": "Dropout",
+      "desc": "Dropout window analysis",
+      "display": "Dropout",
+      "params": [
+        {
+          "id": "dropout_window",
           "type": "String",
-          "display": "Time delta",
-          "desc": "Time delta to shift (eg: 1h)",
+          "display": "Dropout window",
+          "desc": "Window size in time interval (eg: 12h). Must be smaller than the context window.",
           "conditions": [],
           "value": "12h"
         },
         {
-          "id": "shift_values",
+          "id": "context_window",
+          "type": "String",
+          "display": "Context window",
+          "desc": "Window size in time interval (eg: 12h). Must be larger than the dropout window.",
+          "conditions": [],
+          "value": "7d"
+        },
+        {
+          "id": "center",
           "type": "Boolean",
-          "display": "Shift values",
-          "desc": "Shift values or only index",
+          "display": "Center",
+          "desc": "Center aggregation window around value",
           "conditions": [],
           "value": false
+        },
+        {
+          "id": "min_periods",
+          "type": "String",
+          "display": "Min. periods",
+          "desc": "Min number of periods (eg: 12h). Leave empty for window size.",
+          "conditions": [],
+          "value": ""
+        },
+        {
+          "id": "agg_method",
+          "type": "Select",
+          "display": "Aggregation",
+          "desc": "Aggregation method",
+          "conditions": [],
+          "value": "mean",
+          "options": [
+            {
+              "code": "mean",
+              "display": "Mean"
+            },
+            {
+              "code": "median",
+              "display": "Median"
+            },
+            {
+              "code": "sum",
+              "display": "Sum"
+            },
+            {
+              "code": "min",
+              "display": "Min"
+            },
+            {
+              "code": "max",
+              "display": "Max"
+            },
+            {
+              "code": "count",
+              "display": "Value count"
+            },
+            {
+              "code": "nnz",
+              "display": "Non zero count"
+            },
+            {
+              "code": "nunique",
+              "display": "Unique count"
+            },
+            {
+              "code": "std",
+              "display": "Sample standard dev."
+            },
+            {
+              "code": "var",
+              "display": "Sample variance"
+            },
+            {
+              "code": "skew",
+              "display": "Sample skewness"
+            },
+            {
+              "code": "kurt",
+              "display": "Sample kurtosis"
+            }
+          ]
+        },
+        {
+          "id": "combine_method",
+          "type": "Select",
+          "display": "Combine func.",
+          "desc": "Combination method for context-dropout windows",
+          "conditions": [],
+          "value": "sub",
+          "options": [
+            {
+              "code": "sub",
+              "display": "Substract"
+            },
+            {
+              "code": "prop",
+              "display": "Ratio"
+            }
+          ]
+        },
+        {
+          "id": "combine_method_order",
+          "type": "Select",
+          "display": "Combine order",
+          "desc": "Combination method parameters order",
+          "conditions": [],
+          "value": "context-dropout",
+          "options": [
+            {
+              "code": "context-dropout",
+              "display": "Context,dropout"
+            },
+            {
+              "code": "dropout-context",
+              "display": "Dropout,context"
+            }
+          ]
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
+      "type": "ExponentialSmoothing",
+      "desc": "ExponentialSmoothing model with trend and (optional) seasonality",
+      "display": "Exponential Smoothing",
+      "params": [
+        {
+          "id": "damped_trend",
+          "type": "Boolean",
+          "display": "Damped trend",
+          "desc": "Damped trend",
+          "conditions": [],
+          "value": true
+        },
+        {
+          "id": "seasonal_length",
+          "type": "String",
+          "display": "Seasonal length",
+          "desc": "Season length (in intervals or period, eg. 3h). Leave empty for no seasonality.",
+          "conditions": [],
+          "value": "7d"
+        },
+        {
+          "id": "output",
+          "type": "Select",
+          "display": "Output",
+          "desc": "Model output",
+          "conditions": [],
+          "value": "resid",
+          "options": [
+            {
+              "code": "resid",
+              "display": "Residual"
+            },
+            {
+              "code": "predicted",
+              "display": "Predicted"
+            }
+          ]
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
+      "type": "ExponentialMovingAverage",
+      "desc": "Exponential moving average with decay rate. Mean, var or std dev.",
+      "display": "Exponential moving average",
+      "params": [
+        {
+          "id": "span",
+          "type": "String",
+          "display": "Span",
+          "desc": "Span size in time interval (eg: 12h)",
+          "conditions": [],
+          "value": "12h"
+        },
+        {
+          "id": "min_periods",
+          "type": "String",
+          "display": "Min. periods",
+          "desc": "Min number of periods (eg: 12h). Leave empty for window size.",
+          "conditions": [],
+          "value": ""
+        },
+        {
+          "id": "recursive",
+          "type": "Boolean",
+          "display": "Recursive",
+          "desc": "Calculate recursively using all past values (vs fixed window size)",
+          "conditions": [],
+          "value": true
+        },
+        {
+          "id": "agg_method",
+          "type": "Select",
+          "display": "Aggregation",
+          "desc": "Aggregation method",
+          "conditions": [],
+          "value": "mean",
+          "options": [
+            {
+              "code": "mean",
+              "display": "Mean"
+            },
+            {
+              "code": "std",
+              "display": "Sample standard dev."
+            },
+            {
+              "code": "var",
+              "display": "Sample variance"
+            }
+          ]
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
+      "type": "FFTFilter",
+      "desc": "Fast Fourier Transform band pass filter",
+      "display": "FFT filter",
+      "params": [
+        {
+          "id": "cutoff",
+          "type": "String",
+          "display": "Power cutoff",
+          "desc": "Power value or percentile cutoff for bandpass. Eg: 500 or 50%",
+          "conditions": [],
+          "value": "95%"
+        },
+        {
+          "id": "output",
+          "type": "Select",
+          "display": "Output",
+          "desc": "Output filtered signal or residuals",
+          "conditions": [],
+          "value": "filtered",
+          "options": [
+            {
+              "code": "filtered",
+              "display": "Filtered"
+            },
+            {
+              "code": "resid",
+              "display": "Residual"
+            }
+          ]
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
+      "type": "GARCH",
+      "desc": "Generalized ARCH model for volatility modeling. Inputs can be in periods or interval length.",
+      "display": "GARCH",
+      "params": [
+        {
+          "id": "p",
+          "type": "String",
+          "display": "p",
+          "desc": "Lag order of series\u00b2",
+          "conditions": [],
+          "value": "7d"
+        },
+        {
+          "id": "q",
+          "type": "String",
+          "display": "q",
+          "desc": "Lag order of volatility",
+          "conditions": [],
+          "value": "7d"
         }
       ],
       "inputs": {
@@ -257,17 +698,82 @@
       }
     },
     {
-      "type": "ExponentialMovingAverage",
-      "desc": "Exponential moving average with decay rate. Mean, var or std dev.",
-      "display": "Exponential moving average",
+      "type": "MarkovAutoRegression",
+      "desc": "Markov Auto-Regression with tunable regimes and AR/VAR order switching",
+      "display": "Markov Auto-Regression",
       "params": [
         {
-          "id": "span",
+          "id": "lags",
           "type": "String",
-          "display": "Span",
-          "desc": "Span size in time interval (eg: 12h)",
+          "display": "#Lags",
+          "desc": "Lags, in period (eg 12h) or count",
+          "conditions": [],
+          "value": "7d"
+        },
+        {
+          "id": "num_regimes",
+          "type": "BoundedInt",
+          "display": "# Regimes",
+          "desc": "Number of regimes",
+          "conditions": [],
+          "value": 2,
+          "min": 2,
+          "max": null
+        },
+        {
+          "id": "switching_ar",
+          "type": "Boolean",
+          "display": "Switching AR",
+          "desc": "Switching AR components",
+          "conditions": [],
+          "value": false
+        },
+        {
+          "id": "switching_var",
+          "type": "Boolean",
+          "display": "Switching var",
+          "desc": "Switching variance components",
+          "conditions": [],
+          "value": false
+        },
+        {
+          "id": "output_regime",
+          "type": "BoundedInt",
+          "display": "Regime output",
+          "desc": "Output probabilities from specified regime. Value must be [0, num_regimes)",
+          "conditions": [],
+          "value": 1,
+          "min": 0,
+          "max": null
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
+      "type": "MultiRollingAggregate",
+      "desc": "Multi Rolling aggregate",
+      "display": "Multi Rolling Aggregate",
+      "params": [
+        {
+          "id": "window",
+          "type": "String",
+          "display": "Window",
+          "desc": "Window size in time interval (eg: 12h)",
           "conditions": [],
           "value": "12h"
+        },
+        {
+          "id": "center",
+          "type": "Boolean",
+          "display": "Center",
+          "desc": "Center aggregation window around value",
+          "conditions": [],
+          "value": false
         },
         {
           "id": "min_periods",
@@ -278,118 +784,32 @@
           "value": ""
         },
         {
-          "id": "recursive",
-          "type": "Boolean",
-          "display": "Recursive",
-          "desc": "Calculate recursively using all past values (vs fixed window size)",
-          "conditions": [],
-          "value": true
-        },
-        {
           "id": "agg_method",
           "type": "Select",
           "display": "Aggregation",
           "desc": "Aggregation method",
           "conditions": [],
-          "value": "mean",
+          "value": "correlation_pearson",
           "options": [
             {
-              "code": "mean",
-              "display": "Mean"
+              "code": "correlation_pearson",
+              "display": "Pearson Correlation"
             },
             {
-              "code": "std",
-              "display": "Sample standard dev."
+              "code": "correlation_kendall",
+              "display": "Kendall Correlation"
             },
             {
-              "code": "var",
-              "display": "Sample variance"
-            }
-          ]
-        }
-      ],
-      "inputs": {
-        "num_required_inputs": 1,
-        "names": [
-          "input"
-        ]
-      }
-    },
-    {
-      "type": "ExponentialSmoothing",
-      "desc": "ExponentialSmoothing model with trend and (optional) seasonality",
-      "display": "Exponential Smoothing",
-      "params": [
-        {
-          "id": "damped_trend",
-          "type": "Boolean",
-          "display": "Damped trend",
-          "desc": "Damped trend",
-          "conditions": [],
-          "value": true
-        },
-        {
-          "id": "seasonal_length",
-          "type": "String",
-          "display": "Seasonal length",
-          "desc": "Season length (in intervals or period, eg. 3h). Leave empty for no seasonality.",
-          "conditions": [],
-          "value": "7d"
-        },
-        {
-          "id": "output",
-          "type": "Select",
-          "display": "Output",
-          "desc": "Model output",
-          "conditions": [],
-          "value": "resid",
-          "options": [
-            {
-              "code": "resid",
-              "display": "Residual"
+              "code": "correlation_spearman",
+              "display": "Spearman Correlation"
             },
             {
-              "code": "predicted",
-              "display": "Predicted"
-            }
-          ]
-        }
-      ],
-      "inputs": {
-        "num_required_inputs": 1,
-        "names": [
-          "input"
-        ]
-      }
-    },
-    {
-      "type": "Difference",
-      "desc": "Difference operator",
-      "display": "Difference",
-      "params": [
-        {
-          "id": "metric",
-          "type": "Select",
-          "display": "Difference metric",
-          "desc": "Difference metric between window values",
-          "conditions": [],
-          "value": "sub",
-          "options": [
-            {
-              "code": "sub",
-              "display": "Substract"
+              "code": "proportion",
+              "display": "Proportion"
             },
             {
-              "code": "l1",
-              "display": "L1 distance metric (mod sub)"
-            },
-            {
-              "code": "rel_diff",
-              "display": "Relative difference"
-            },
-            {
-              "code": "abs_rel_diff",
-              "display": "Absolute relative difference"
+              "code": "ks",
+              "display": "Kolmorogov-Smirnov"
             }
           ]
         }
@@ -397,77 +817,37 @@
       "inputs": {
         "num_required_inputs": 2,
         "names": [
-          "left",
-          "right"
+          "lhs",
+          "rhs"
         ]
       }
     },
     {
-      "type": "Derivative",
-      "desc": "Derivative operator",
-      "display": "Derivative",
+      "type": "Rescale",
+      "desc": "Rescale data to given min-max values",
+      "display": "Rescale",
       "params": [
         {
-          "id": "lag",
-          "type": "String",
-          "display": "Lag",
-          "desc": "Lag to apply (eg: 1h, 10)",
+          "id": "lower",
+          "type": "Float",
+          "display": "Lower",
+          "desc": "Lower bound",
           "conditions": [],
-          "value": "12h"
+          "value": 0.0
         },
         {
-          "id": "metric",
-          "type": "Select",
-          "display": "Difference metric",
-          "desc": "Difference metric between window values",
+          "id": "upper",
+          "type": "Float",
+          "display": "Upper",
+          "desc": "Upper bound",
           "conditions": [],
-          "value": "sub",
-          "options": [
-            {
-              "code": "sub",
-              "display": "Substract"
-            },
-            {
-              "code": "l1",
-              "display": "L1 distance metric (mod sub)"
-            },
-            {
-              "code": "rel_diff",
-              "display": "Relative difference"
-            },
-            {
-              "code": "abs_rel_diff",
-              "display": "Absolute relative difference"
-            }
-          ]
+          "value": 1.0
         }
       ],
       "inputs": {
         "num_required_inputs": 1,
         "names": [
           "input"
-        ]
-      }
-    },
-    {
-      "type": "Divide",
-      "desc": "Divide operator",
-      "display": "Divide",
-      "params": [
-        {
-          "id": "zero_div",
-          "type": "Int",
-          "display": "Zero div:",
-          "desc": "Value for division by zero. Empty to skip",
-          "conditions": [],
-          "value": 0
-        }
-      ],
-      "inputs": {
-        "num_required_inputs": 2,
-        "names": [
-          "left",
-          "right"
         ]
       }
     },
@@ -585,487 +965,6 @@
           "max": 0.5,
           "strict_min": false,
           "strict_max": false
-        }
-      ],
-      "inputs": {
-        "num_required_inputs": 1,
-        "names": [
-          "input"
-        ]
-      }
-    },
-    {
-      "type": "MultiRollingAggregate",
-      "desc": "Multi Rolling aggregate",
-      "display": "Multi Rolling Aggregate",
-      "params": [
-        {
-          "id": "window",
-          "type": "String",
-          "display": "Window",
-          "desc": "Window size in time interval (eg: 12h)",
-          "conditions": [],
-          "value": "12h"
-        },
-        {
-          "id": "center",
-          "type": "Boolean",
-          "display": "Center",
-          "desc": "Center aggregation window around value",
-          "conditions": [],
-          "value": false
-        },
-        {
-          "id": "min_periods",
-          "type": "String",
-          "display": "Min. periods",
-          "desc": "Min number of periods (eg: 12h). Leave empty for window size.",
-          "conditions": [],
-          "value": ""
-        },
-        {
-          "id": "agg_method",
-          "type": "Select",
-          "display": "Aggregation",
-          "desc": "Aggregation method",
-          "conditions": [],
-          "value": "correlation_pearson",
-          "options": [
-            {
-              "code": "correlation_pearson",
-              "display": "Pearson Correlation"
-            },
-            {
-              "code": "correlation_kendall",
-              "display": "Kendall Correlation"
-            },
-            {
-              "code": "correlation_spearman",
-              "display": "Spearman Correlation"
-            },
-            {
-              "code": "proportion",
-              "display": "Proportion"
-            },
-            {
-              "code": "ks",
-              "display": "Kolmorogov-Smirnov"
-            }
-          ]
-        }
-      ],
-      "inputs": {
-        "num_required_inputs": 2,
-        "names": [
-          "lhs",
-          "rhs"
-        ]
-      }
-    },
-    {
-      "type": "Dropout",
-      "desc": "Dropout window analysis",
-      "display": "Dropout",
-      "params": [
-        {
-          "id": "dropout_window",
-          "type": "String",
-          "display": "Dropout window",
-          "desc": "Window size in time interval (eg: 12h). Must be smaller than the context window.",
-          "conditions": [],
-          "value": "12h"
-        },
-        {
-          "id": "context_window",
-          "type": "String",
-          "display": "Context window",
-          "desc": "Window size in time interval (eg: 12h). Must be larger than the dropout window.",
-          "conditions": [],
-          "value": "7d"
-        },
-        {
-          "id": "center",
-          "type": "Boolean",
-          "display": "Center",
-          "desc": "Center aggregation window around value",
-          "conditions": [],
-          "value": false
-        },
-        {
-          "id": "min_periods",
-          "type": "String",
-          "display": "Min. periods",
-          "desc": "Min number of periods (eg: 12h). Leave empty for window size.",
-          "conditions": [],
-          "value": ""
-        },
-        {
-          "id": "agg_method",
-          "type": "Select",
-          "display": "Aggregation",
-          "desc": "Aggregation method",
-          "conditions": [],
-          "value": "mean",
-          "options": [
-            {
-              "code": "mean",
-              "display": "Mean"
-            },
-            {
-              "code": "median",
-              "display": "Median"
-            },
-            {
-              "code": "sum",
-              "display": "Sum"
-            },
-            {
-              "code": "min",
-              "display": "Min"
-            },
-            {
-              "code": "max",
-              "display": "Max"
-            },
-            {
-              "code": "count",
-              "display": "Value count"
-            },
-            {
-              "code": "nnz",
-              "display": "Non zero count"
-            },
-            {
-              "code": "nunique",
-              "display": "Unique count"
-            },
-            {
-              "code": "std",
-              "display": "Sample standard dev."
-            },
-            {
-              "code": "var",
-              "display": "Sample variance"
-            },
-            {
-              "code": "skew",
-              "display": "Sample skewness"
-            },
-            {
-              "code": "kurt",
-              "display": "Sample kurtosis"
-            }
-          ]
-        },
-        {
-          "id": "combine_method",
-          "type": "Select",
-          "display": "Combine func.",
-          "desc": "Combination method for context-dropout windows",
-          "conditions": [],
-          "value": "sub",
-          "options": [
-            {
-              "code": "sub",
-              "display": "Substract"
-            },
-            {
-              "code": "prop",
-              "display": "Ratio"
-            }
-          ]
-        },
-        {
-          "id": "combine_method_order",
-          "type": "Select",
-          "display": "Combine order",
-          "desc": "Combination method parameters order",
-          "conditions": [],
-          "value": "context-dropout",
-          "options": [
-            {
-              "code": "context-dropout",
-              "display": "Context,dropout"
-            },
-            {
-              "code": "dropout-context",
-              "display": "Dropout,context"
-            }
-          ]
-        }
-      ],
-      "inputs": {
-        "num_required_inputs": 1,
-        "names": [
-          "input"
-        ]
-      }
-    },
-    {
-      "type": "FFTFilter",
-      "desc": "Fast Fourier Transform band pass filter",
-      "display": "FFT filter",
-      "params": [
-        {
-          "id": "cutoff",
-          "type": "String",
-          "display": "Power cutoff",
-          "desc": "Power value or percentile cutoff for bandpass. Eg: 500 or 50%",
-          "conditions": [],
-          "value": "95%"
-        },
-        {
-          "id": "output",
-          "type": "Select",
-          "display": "Output",
-          "desc": "Output filtered signal or residuals",
-          "conditions": [],
-          "value": "filtered",
-          "options": [
-            {
-              "code": "filtered",
-              "display": "Filtered"
-            },
-            {
-              "code": "resid",
-              "display": "Residual"
-            }
-          ]
-        }
-      ],
-      "inputs": {
-        "num_required_inputs": 1,
-        "names": [
-          "input"
-        ]
-      }
-    },
-    {
-      "type": "BoxCox",
-      "desc": "BoxCox transform with optional lambda",
-      "display": "BoxCox",
-      "params": [
-        {
-          "id": "lambda",
-          "type": "Float",
-          "display": "Lambda",
-          "desc": "Lambda power, leave empty to estimate.",
-          "conditions": [],
-          "value": null
-        }
-      ],
-      "inputs": {
-        "num_required_inputs": 1,
-        "names": [
-          "input"
-        ]
-      }
-    },
-    {
-      "type": "STL",
-      "desc": "Seasonal-Trend decomposition (LOESS)",
-      "display": "STL decomposition",
-      "params": [
-        {
-          "id": "output",
-          "type": "Select",
-          "display": "Output",
-          "desc": "STL output",
-          "conditions": [],
-          "value": "trend",
-          "options": [
-            {
-              "code": "trend",
-              "display": "Trend"
-            },
-            {
-              "code": "seasonal",
-              "display": "Seasonality"
-            },
-            {
-              "code": "resid",
-              "display": "Residual"
-            }
-          ]
-        },
-        {
-          "id": "period",
-          "type": "String",
-          "display": "Period",
-          "desc": "Expected seasonality in periods or time interval (eg: 12h)",
-          "conditions": [],
-          "value": "7d"
-        },
-        {
-          "id": "seasonal_smoother",
-          "type": "String",
-          "display": "Seasonal smoother",
-          "desc": "Seasonal smoother in periods or time interval (eg: 12h)",
-          "conditions": [],
-          "value": "1d"
-        },
-        {
-          "id": "robust",
-          "type": "Boolean",
-          "display": "Robust",
-          "desc": "Tolerate larger errors using LOWESS",
-          "conditions": [],
-          "value": true
-        }
-      ],
-      "inputs": {
-        "num_required_inputs": 1,
-        "names": [
-          "input"
-        ]
-      }
-    },
-    {
-      "type": "Seasonal decompose",
-      "desc": "Seasonal & trend decomposition using averages",
-      "display": "Seasonal decomposition",
-      "params": [
-        {
-          "id": "output",
-          "type": "Select",
-          "display": "Output",
-          "desc": "Seasonal decompose output",
-          "conditions": [],
-          "value": "trend",
-          "options": [
-            {
-              "code": "trend",
-              "display": "Trend"
-            },
-            {
-              "code": "seasonal",
-              "display": "Seasonality"
-            },
-            {
-              "code": "resid",
-              "display": "Residual"
-            }
-          ]
-        },
-        {
-          "id": "period",
-          "type": "String",
-          "display": "Period",
-          "desc": "Expected seasonality in periods or time interval (eg: 12h)",
-          "conditions": [],
-          "value": "7d"
-        },
-        {
-          "id": "two_sided",
-          "type": "Boolean",
-          "display": "Two sided",
-          "desc": "Calculate moving averages in both directions for robustness",
-          "conditions": [],
-          "value": true
-        }
-      ],
-      "inputs": {
-        "num_required_inputs": 1,
-        "names": [
-          "input"
-        ]
-      }
-    },
-    {
-      "type": "AutoRegression",
-      "desc": "Simple SAR model, with lags & seasonality. Fast implementation of SARIMA.",
-      "display": "Auto-Regression",
-      "params": [
-        {
-          "id": "lags",
-          "type": "String",
-          "display": "#Lags",
-          "desc": "Lags, in period (eg 12h) or count",
-          "conditions": [],
-          "value": "7d"
-        },
-        {
-          "id": "period",
-          "type": "String",
-          "display": "Period",
-          "desc": "Seasonality in period (eg 12h) or count. Leave empty for none.",
-          "conditions": [],
-          "value": ""
-        },
-        {
-          "id": "output",
-          "type": "Select",
-          "display": "Output",
-          "desc": "Model output",
-          "conditions": [],
-          "value": "resid",
-          "options": [
-            {
-              "code": "resid",
-              "display": "Residual"
-            },
-            {
-              "code": "predicted",
-              "display": "Predicted"
-            }
-          ]
-        }
-      ],
-      "inputs": {
-        "num_required_inputs": 1,
-        "names": [
-          "input"
-        ]
-      }
-    },
-    {
-      "type": "MarkovAutoRegression",
-      "desc": "Markov Auto-Regression with tunable regimes and AR/VAR order switching",
-      "display": "Markov Auto-Regression",
-      "params": [
-        {
-          "id": "lags",
-          "type": "String",
-          "display": "#Lags",
-          "desc": "Lags, in period (eg 12h) or count",
-          "conditions": [],
-          "value": "7d"
-        },
-        {
-          "id": "num_regimes",
-          "type": "BoundedInt",
-          "display": "# Regimes",
-          "desc": "Number of regimes",
-          "conditions": [],
-          "value": 2,
-          "min": 2,
-          "max": null
-        },
-        {
-          "id": "switching_ar",
-          "type": "Boolean",
-          "display": "Switching AR",
-          "desc": "Switching AR components",
-          "conditions": [],
-          "value": false
-        },
-        {
-          "id": "switching_var",
-          "type": "Boolean",
-          "display": "Switching var",
-          "desc": "Switching variance components",
-          "conditions": [],
-          "value": false
-        },
-        {
-          "id": "output_regime",
-          "type": "BoundedInt",
-          "display": "Regime output",
-          "desc": "Output probabilities from specified regime. Value must be [0, num_regimes)",
-          "conditions": [],
-          "value": 1,
-          "min": 0,
-          "max": null
         }
       ],
       "inputs": {
@@ -1205,17 +1104,55 @@
       }
     },
     {
-      "type": "ALMA",
-      "desc": "Arnaud Legoux moving average",
-      "display": "Arnaud Legoux moving average",
+      "type": "STL",
+      "desc": "Seasonal-Trend decomposition (LOESS)",
+      "display": "STL decomposition",
       "params": [
         {
-          "id": "window",
-          "type": "String",
-          "display": "Window",
-          "desc": "Window size in periods or time interval (eg: 12h)",
+          "id": "output",
+          "type": "Select",
+          "display": "Output",
+          "desc": "STL output",
           "conditions": [],
-          "value": "12h"
+          "value": "trend",
+          "options": [
+            {
+              "code": "trend",
+              "display": "Trend"
+            },
+            {
+              "code": "seasonal",
+              "display": "Seasonality"
+            },
+            {
+              "code": "resid",
+              "display": "Residual"
+            }
+          ]
+        },
+        {
+          "id": "period",
+          "type": "String",
+          "display": "Period",
+          "desc": "Expected seasonality in periods or time interval (eg: 12h)",
+          "conditions": [],
+          "value": "7d"
+        },
+        {
+          "id": "seasonal_smoother",
+          "type": "String",
+          "display": "Seasonal smoother",
+          "desc": "Seasonal smoother in periods or time interval (eg: 12h)",
+          "conditions": [],
+          "value": "1d"
+        },
+        {
+          "id": "robust",
+          "type": "Boolean",
+          "display": "Robust",
+          "desc": "Tolerate larger errors using LOWESS",
+          "conditions": [],
+          "value": true
         }
       ],
       "inputs": {
@@ -1226,25 +1163,100 @@
       }
     },
     {
-      "type": "GARCH",
-      "desc": "Generalized ARCH model for volatility modeling. Inputs can be in periods or interval length.",
-      "display": "GARCH",
+      "type": "Seasonal decompose",
+      "desc": "Seasonal & trend decomposition using averages",
+      "display": "Seasonal decomposition",
       "params": [
         {
-          "id": "p",
+          "id": "output",
+          "type": "Select",
+          "display": "Output",
+          "desc": "Seasonal decompose output",
+          "conditions": [],
+          "value": "trend",
+          "options": [
+            {
+              "code": "trend",
+              "display": "Trend"
+            },
+            {
+              "code": "seasonal",
+              "display": "Seasonality"
+            },
+            {
+              "code": "resid",
+              "display": "Residual"
+            }
+          ]
+        },
+        {
+          "id": "period",
           "type": "String",
-          "display": "p",
-          "desc": "Lag order of series\u00b2",
+          "display": "Period",
+          "desc": "Expected seasonality in periods or time interval (eg: 12h)",
           "conditions": [],
           "value": "7d"
         },
         {
-          "id": "q",
-          "type": "String",
-          "display": "q",
-          "desc": "Lag order of volatility",
+          "id": "two_sided",
+          "type": "Boolean",
+          "display": "Two sided",
+          "desc": "Calculate moving averages in both directions for robustness",
           "conditions": [],
-          "value": "7d"
+          "value": true
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
+      "type": "Sigmoid",
+      "desc": "Sigmoid function",
+      "display": "Sigmoid",
+      "params": [],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
+      "type": "StdNormalize",
+      "desc": "Normalize data such that mean = 0 and std dev = 1",
+      "display": "Standard normalization",
+      "params": [],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
+    },
+    {
+      "type": "Shift",
+      "desc": "Shift series in time by a fixed time delta",
+      "display": "Time shift",
+      "params": [
+        {
+          "id": "delta",
+          "type": "String",
+          "display": "Time delta",
+          "desc": "Time delta to shift (eg: 1h)",
+          "conditions": [],
+          "value": "12h"
+        },
+        {
+          "id": "shift_values",
+          "type": "Boolean",
+          "display": "Shift values",
+          "desc": "Shift values or only index",
+          "conditions": [],
+          "value": false
         }
       ],
       "inputs": {
@@ -1256,51 +1268,6 @@
     }
   ],
   "detector": [
-    {
-      "type": "SimpleThreshold",
-      "desc": "Detect values outside of bounds",
-      "display": "Simple Threshold",
-      "params": [
-        {
-          "id": "upper",
-          "type": "Float",
-          "display": "Upper",
-          "desc": "Upper bound",
-          "conditions": [],
-          "value": null
-        },
-        {
-          "id": "lower",
-          "type": "Float",
-          "display": "Lower",
-          "desc": "Lower bound",
-          "conditions": [],
-          "value": null
-        },
-        {
-          "id": "inside",
-          "type": "Boolean",
-          "display": "Inside",
-          "desc": "If true, value must be within bounds",
-          "conditions": [],
-          "value": false
-        },
-        {
-          "id": "strict",
-          "type": "Boolean",
-          "display": "Strict",
-          "desc": "Strict comparison on bounds",
-          "conditions": [],
-          "value": false
-        }
-      ],
-      "inputs": {
-        "num_required_inputs": 1,
-        "names": [
-          "input"
-        ]
-      }
-    },
     {
       "type": "Quantile",
       "desc": "Compare values with given quantiles and identify anomalies beyond inter-quantile range",
@@ -1353,19 +1320,54 @@
           "input"
         ]
       }
+    },
+    {
+      "type": "SimpleThreshold",
+      "desc": "Detect values outside of bounds",
+      "display": "Simple Threshold",
+      "params": [
+        {
+          "id": "upper",
+          "type": "Float",
+          "display": "Upper",
+          "desc": "Upper bound",
+          "conditions": [],
+          "value": null
+        },
+        {
+          "id": "lower",
+          "type": "Float",
+          "display": "Lower",
+          "desc": "Lower bound",
+          "conditions": [],
+          "value": null
+        },
+        {
+          "id": "inside",
+          "type": "Boolean",
+          "display": "Inside",
+          "desc": "If true, value must be within bounds",
+          "conditions": [],
+          "value": false
+        },
+        {
+          "id": "strict",
+          "type": "Boolean",
+          "display": "Strict",
+          "desc": "Strict comparison on bounds",
+          "conditions": [],
+          "value": false
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 1,
+        "names": [
+          "input"
+        ]
+      }
     }
   ],
   "aggregator": [
-    {
-      "type": "Union",
-      "desc": "Combine all anomalies from sources",
-      "display": "Union",
-      "params": [],
-      "inputs": {
-        "num_required_inputs": null,
-        "names": []
-      }
-    },
     {
       "type": "Intersect",
       "desc": "Combine and merge overlapping anomalies from sources",
@@ -1443,6 +1445,16 @@
           "value": ""
         }
       ],
+      "inputs": {
+        "num_required_inputs": null,
+        "names": []
+      }
+    },
+    {
+      "type": "Union",
+      "desc": "Combine all anomalies from sources",
+      "display": "Union",
+      "params": [],
       "inputs": {
         "num_required_inputs": null,
         "names": []

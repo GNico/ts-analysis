@@ -12,7 +12,7 @@ from model.test.testcase import TestCase
 
 class TestDropout(unittest.TestCase):
 
-    def test_dropout_mean(self):
+    def test_dropout_mean_sub(self):
         factory = NodeFactory.transformer('test', 'Dropout')
         factory.set_param_value('context_window', 4)
         factory.set_param_value('dropout_window', 2)
@@ -26,7 +26,7 @@ class TestDropout(unittest.TestCase):
 
         self.case(ram, [-1, -2, 0, 2, 1])
 
-    def test_dropout_centered_mean(self):
+    def test_dropout_centered_mean_sub(self):
         factory = NodeFactory.transformer('test', 'Dropout')
         factory.set_param_value('context_window', 4)
         factory.set_param_value('dropout_window', 2)
@@ -39,6 +39,33 @@ class TestDropout(unittest.TestCase):
         ram = factory.build()
 
         self.case(ram, [1, 0, -2, 0, 1])
+
+    def test_dropout_mean_prop(self):
+        factory = NodeFactory.transformer('test', 'Dropout')
+        factory.set_param_value('context_window', 2)
+        factory.set_param_value('dropout_window', 1)
+        factory.set_param_value('center', False)
+        factory.set_param_value('min_periods', None)
+        factory.set_param_value('agg_method', 'mean')
+        factory.set_param_value('combine_method', 'prop')
+        factory.set_param_value('combine_method_order', 'dropout-context')
+        factory.add_source(InputRef('input'))
+        ram = factory.build()
+        self.case(ram, [1, 1, 3, 1, 1/3, 1, 1])
+
+    def test_dropout_centered_mean_prop(self):
+        factory = NodeFactory.transformer('test', 'Dropout')
+        factory.set_param_value('context_window', 3)
+        factory.set_param_value('dropout_window', 1)
+        factory.set_param_value('center', True)
+        factory.set_param_value('min_periods', None)
+        factory.set_param_value('agg_method', 'mean')
+        factory.set_param_value('combine_method', 'prop')
+        factory.set_param_value('combine_method_order', 'dropout-context')
+        factory.add_source(InputRef('input'))
+        ram = factory.build()
+        # [1,1,1,3,3,1,1,1]
+        self.case(ram, [1, 1/2, 3/2, 3/2, 1/2, 1])
 
     def case(self, node, expected_series):
         series = self.build_series()
