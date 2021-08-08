@@ -30,7 +30,7 @@
           @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" />
 
  
-        <Subcharts class="mt-3" :anomalies="chartFilteredAnomalies"/> 
+        <Subcharts class="mt-3" :anomalies="tableFilteredAnomalies"/> 
 
       </div>
     </div>  
