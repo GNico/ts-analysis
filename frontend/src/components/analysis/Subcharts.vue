@@ -194,8 +194,16 @@ export default {
         legend: {
           enabled: false,
         }, 
+        plotOptions: {
+          column: {
+            pointPadding: 0,
+            borderWidth: 0,
+            groupPadding: 0,
+            shadow: false
+          }
+        },
         series: [{
-          name: 'Date histogram',
+          name: 'Total anomalies',
           borderWidth: 1,
           data: this.bucketOptions.data,        
         }],
