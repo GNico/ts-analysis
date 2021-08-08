@@ -349,6 +349,10 @@
             {
               "code": "prop",
               "display": "Ratio"
+            },
+            {
+              "code": "ks",
+              "display": "Kolmorogov-Smirnov"
             }
           ]
         },
@@ -534,7 +538,7 @@
           "display": "p",
           "desc": "Lag order of series\u00b2",
           "conditions": [],
-          "value": "7d"
+          "value": "1"
         },
         {
           "id": "q",
@@ -542,7 +546,7 @@
           "display": "q",
           "desc": "Lag order of volatility",
           "conditions": [],
-          "value": "7d"
+          "value": "1"
         }
       ],
       "inputs": {

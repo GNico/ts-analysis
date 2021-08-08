@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 from ..node_transformer import NodeTransformer
-
+from .multi_rolling_aggregate import MultiRollingAggregate
 from ...params.string import String
 from ...params.select import Select, SelectOption
 from ...params.boolean import Boolean
@@ -40,6 +40,7 @@ class Dropout(NodeTransformer):
         combine_method_options = [
             SelectOption("sub", "Substract"),
             SelectOption("prop", "Ratio"),
+            SelectOption("ks", "Kolmorogov-Smirnov"),
         ]
         self.add_required_param(Select('combine_method', 'Combine func.', 'Combination method for context-dropout windows', combine_method_options, combine_method_options[0].code))
 
@@ -110,6 +111,8 @@ class Dropout(NodeTransformer):
             combine_func = np.subtract
         elif combine_method == 'prop':
             combine_func = np.divide
+        elif combine_method == 'ks':
+            combine_func = MultiRollingAggregate.func_ks_2samp
         else:
             raise ValueError('Invalid combination method: ' + combine_method)
 

@@ -13,7 +13,7 @@ from model.analyzer import Analyzer
 class TestIntegrationPerformance(unittest.TestCase):
 
     def test_integration_performance(self):
-        # self.maxDiff = None
+        self.maxDiff = None
         pipeline = Pipeline.from_json(self.load_json('pipeline'))
         input1 = Series.from_array(self.load_json('input1'), unit='ms')
         input2 = Series.from_array(self.load_json('input2'), unit='ms')
@@ -24,9 +24,9 @@ class TestIntegrationPerformance(unittest.TestCase):
         
         # pr = cProfile.Profile()
         # pr.enable()
-
         actual_output = result.output_format()
 
+        
         # pr.disable()
         # pr.dump_stats('output.prof')
         # s = io.StringIO()
@@ -34,7 +34,11 @@ class TestIntegrationPerformance(unittest.TestCase):
         # ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
         # ps.print_stats()
         # print(s.getvalue())
-        expected_output = self.load_json('expected_output')
+
+        expected_file = os.path.join(os.path.dirname(__file__), 'resources/perf/expected_output.json')
+        # Uncomment to fix test
+        # print(json.dumps(actual_output, indent=2), file=open(expected_file, 'w'))
+        expected_output = json.loads(Path(expected_file).read_text())
         self.assertEqual(expected_output, actual_output)
 
     def load_json(self, file):
