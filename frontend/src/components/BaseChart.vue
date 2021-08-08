@@ -24,9 +24,9 @@ function sum(arr) {
 
 const defaultStyle = {
   backgroundColor: 'transparent',
-  anomalyColor: 'rgba(255,0,0,0.8)',
+  anomalyColor: 'rgba(133,176,190,0.3)',
   anomalyArrowColor: 'yellow',
-  highlightedColor: 'rgba(173,216,230,0.3)', 
+  highlightedColor: 'rgba(173,216,230,0.6)',
   highlightedBorderColor: 'rgba(173,216,230,1)',
   selectBandColor: 'rgba(0,0,0,0.5)',
   lineWidth: 2,
@@ -88,7 +88,6 @@ export default {
   data () {
     return {
       updateArgs: [true, true, false],
-      arrows: undefined,
       cursorPosition: 0,
       eventUnbinder: null,
     }
@@ -358,31 +357,6 @@ export default {
         chart.xAxis[0].removePlotBand('selection')
       }
     },
-    drawArrows() {
-      this.clearArrows()
-      if (!this.activeBand) return
-      let chart = this.$refs.chart.chart
-      let axis = chart.xAxis[0]
-      for (let i = 0; i < axis.plotLinesAndBands.length; i++) { 
-        let band = axis.plotLinesAndBands[i]
-          if (band.id === this.activeBand) {
-            this.arrows = chart.renderer.text('→', chart.xAxis[0].toPixels(band.options.from, true) - 20, 20)
-            .attr({
-            })
-            .css({
-                color: this.normalizedSettings.anomalyArrowColor,
-                fontSize: '20px'
-            })
-            .add();
-          }
-      }
-    },
-    clearArrows() {
-      if (this.arrows) {
-        this.arrows.destroy()
-      }
-      this.arrows = undefined
-    },
     wheelZoom(event) {
       if (!this.zoomEnabled) return
       event.preventDefault()
@@ -423,7 +397,6 @@ export default {
         this.$nextTick(() => {
           this.eventUnbinder = Highcharts.addEvent(this.$refs.chart.chart.xAxis[0], 'afterSetExtremes',
             function(event) {
-              vm.drawArrows()
               if (this.zoomEnabled && event.trigger !== 'sync') {
                 vm.$emit("changedExtremes", event);
               }             
@@ -433,7 +406,6 @@ export default {
       }
     },
     activeBand(newId) {
-      this.drawArrows() 
     },
     extremes: {
       immediate: true,
