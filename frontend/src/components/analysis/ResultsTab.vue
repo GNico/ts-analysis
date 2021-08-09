@@ -142,8 +142,7 @@ export default {
 }
   
 .side-menu {
-  height: calc(100vh - 17rem); 
-  
+  height: calc(100vh - 17rem);
 }
 
 

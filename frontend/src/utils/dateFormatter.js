@@ -9,9 +9,10 @@ const formatDate = function(input) {
     return `${day}/${month}/${year} - ${hour}:${minutes}`
 }
 
-const formatDateVerbose = function(input, showWeekday=true, showTime=true) {
+const formatDateVerbose = function(input, showWeekday=true, showTime=true, shortWeekdayNames=false) {
     if (!input) return null
     const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    const dayNamesShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     const monthNamesShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     let dateObj = new Date(input)
@@ -19,11 +20,14 @@ const formatDateVerbose = function(input, showWeekday=true, showTime=true) {
     const month = monthNamesShort[dateObj.getMonth()]
     const day = dateObj.getDate().toString().padStart(2, '0')
     const dayName = dayNames[dateObj.getDay()]
+    const shortDayName = dayNamesShort[dateObj.getDay()]
     const hour = dateObj.getHours().toString().padStart(2, '0')
     const minutes = dateObj.getMinutes().toString().padStart(2, '0')
-    let weekday = showWeekday ? `${dayName}, ` : ''
+    let weekday = ''
+    if (showWeekday) {
+        weekday = shortWeekdayNames ? `${shortDayName}, ` : `${dayName}, `
+    }
     let time = showTime ? `, ${hour}:${minutes}` : ''
-
     return weekday + `${day} ${month} ${year}`  + time
 }
 

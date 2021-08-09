@@ -19,12 +19,12 @@
     </span>
   </b-table-column>
 
-  <b-table-column field="from" label="Start date" sortable centered v-slot="props">
-    {{ formatDateVerbose(props.row.from) }}
+  <b-table-column field="from" label="Start date" sortable centered v-slot="props" >
+    <span class="is-family-monospace">{{ formatDateVerbose(props.row.from, true, true, true) }} </span>
   </b-table-column>
   
-  <b-table-column :custom-sort="sortDuration" label="Duration" sortable centered v-slot="props">
-    {{ getDurationStr(getDuration(props.row)) }}
+  <b-table-column field="duration"  label="Duration" sortable centered v-slot="props" >
+     <span class="is-family-monospace"> {{ getDurationStr(props.row.duration*1000) }} </span>
   </b-table-column>
 
   <template #detail="props">
@@ -124,25 +124,6 @@ export default {
     selected() {
       return this.anomalies.find(item => item.id === this.activeAnomaly)
     },    
-  /*    openRows() {
-
-      if (this.selected) {
-       this.$nextTick(function () {
-          var element = document.getElementById(this.activeAnomaly);
-          element = element.closest('.detail').previousElementSibling
-          var scrollamount = element.offsetTop
-          var tableWrapper = element.closest('.table-wrapper')
-          if (tableWrapper) {            
-           tableWrapper.scroll(0, scrollamount - 32)
-           if (! (tableWrapper.scrollHeight - tableWrapper.scrollTop === tableWrapper.clientHeight)) {
-            tableWrapper.scroll(0, scrollamount -  32) 
-           }
-          }  
-        }) 
-      } 
-      return this.selected ? [this.selected.id] : [] 
-
-    }, */ 
     isEmpty() {
       return (!this.anomalies || !this.anomalies.length)
     }    
@@ -157,19 +138,12 @@ export default {
     formatDate(date) {
       return formatDate(date)
     },
-    formatDateVerbose(date) {
-      return formatDateVerbose(date)
-    },
-    getDuration(anom) {
-      return anom.to - anom.from
+
+    formatDateVerbose(date, showWeekday, showTime, shortWeekdayNames) {
+      return formatDateVerbose(...arguments)
     },
     getDurationStr(timedelta) {
       return timeRangeToString(timedelta)
-    },
-    sortDuration(a, b, isAsc) {
-      return isAsc 
-        ? this.getDuration(a) < this.getDuration(b)
-        : this.getDuration(a) > this.getDuration(b)
     },
     getScoreTagStyle(score) {
       if (score <= 0.33) {
@@ -183,11 +157,19 @@ export default {
   },
   watch: {
     selected(newVal, oldVal) {
+      if (oldRow) {
+        var oldRow = document.getElementById(oldVal.id);
+        var oldTr = oldRow.closest('tr')    
+        console.log('scroll before', oldTr.offsetTop)
+      }
       this.openRows = this.selected ? [this.selected.id] : []
       this.$nextTick(function () {
         if (this.selected) {
           var element = document.getElementById(this.selected.id);
           element = element.closest('tr')    
+
+          console.log("scroll after:", element.offsetTop )
+
           var next = element.nextElementSibling
           var scrollamount = element.offsetTop - 32
           if (this.detailed && oldVal && scrollamount > this.lastScroll)
@@ -205,7 +187,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .left-field {
   flex: 1;
 }
