@@ -7,14 +7,14 @@
   narrowed
   sticky-header
   :opened-detailed="openRows"
-  detailed
+  :detailed="detailed"
   detail-key="id"
   :show-detail-icon="false" 
   @click="changeActiveAnomaly($event)"
 >
 
   <b-table-column field="score" label="Score" sortable numeric v-slot="props">
-    <span class="tag is-small" :style="getScoreTagStyle(props.row.score)">
+    <span class="tag is-small" :style="getScoreTagStyle(props.row.score)" :id="props.row.id">
       {{ parseFloat((props.row.score * 100).toFixed(1)) }}%
     </span>
   </b-table-column>
@@ -28,7 +28,7 @@
   </b-table-column>
 
   <template #detail="props">
-    <article :id="props.row.id">
+    <article >
       <div class="is-flex">
         <div class="left-field has-text-right mr-5 has-text-weight-bold has-text-grey-light">
           ID
@@ -108,15 +108,26 @@ export default {
     height: {
       type: [ Number, String ],
       default: 'inherit',
+    },
+    detailed: {
+      type: Boolean,
+      default: true,
+    }
+  },
+  data() {
+    return {
+      openRows: [],
+      lastScroll: 0  //scroll control variable
     }
   },
   computed: {
     selected() {
       return this.anomalies.find(item => item.id === this.activeAnomaly)
     },    
-    openRows() {
+  /*    openRows() {
+
       if (this.selected) {
-        this.$nextTick(function () {
+       this.$nextTick(function () {
           var element = document.getElementById(this.activeAnomaly);
           element = element.closest('.detail').previousElementSibling
           var scrollamount = element.offsetTop
@@ -124,13 +135,14 @@ export default {
           if (tableWrapper) {            
            tableWrapper.scroll(0, scrollamount - 32)
            if (! (tableWrapper.scrollHeight - tableWrapper.scrollTop === tableWrapper.clientHeight)) {
-            tableWrapper.scroll(0, scrollamount -  32)
+            tableWrapper.scroll(0, scrollamount -  32) 
            }
           }  
-        })
-      }
-      return this.selected ? [this.selected.id] : []
-    },
+        }) 
+      } 
+      return this.selected ? [this.selected.id] : [] 
+
+    }, */ 
     isEmpty() {
       return (!this.anomalies || !this.anomalies.length)
     }    
@@ -167,6 +179,27 @@ export default {
       } else {
         return { 'background-color': '#005aff', color: 'white', 'font-weight': 600}
       }
+    }
+  },
+  watch: {
+    selected(newVal, oldVal) {
+      this.openRows = this.selected ? [this.selected.id] : []
+      this.$nextTick(function () {
+        if (this.selected) {
+          var element = document.getElementById(this.selected.id);
+          element = element.closest('tr')    
+          var next = element.nextElementSibling
+          var scrollamount = element.offsetTop - 32
+          if (this.detailed && oldVal && scrollamount > this.lastScroll)
+            scrollamount = scrollamount - next.clientHeight
+          var tableWrapper = element.closest('.table-wrapper')
+          tableWrapper.scroll({
+            top: scrollamount,
+            behavior: 'smooth'
+          }); 
+          this.lastScroll = scrollamount
+        }
+      }) 
     }
   }
 }

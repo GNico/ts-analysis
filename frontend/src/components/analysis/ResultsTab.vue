@@ -4,20 +4,24 @@
 
   <template v-else>
     <div v-if="error" class="is-size-7 error-text"><b-icon type="is-danger" icon="alert" size="is-small"/> {{error}}</div>
-    <div v-else class="columns is-fullheight">
+    <div v-else class="columns">
       <div class="column is-4 side-menu is-hidden-mobile">        
         <div class="table-header has-text-white">
           <div> <strong class="has-text-white"> Anomalies</strong></div>
           <AnomaliesFilters v-bind="activeOptions" @update="updateOptions"/> 
         </div>
-
-        <AnomaliesTable        
+        <AnomaliesTable   
           :anomalies="tableFilteredAnomalies"
           :activeAnomaly="activeAnomaly"
           @changeActive="updateOptions({activeAnomalyId: $event})"/> 
+
       </div>
 
-      <div class="column main-content">
+      <div class="column ">
+        <div class="table-header has-text-white">
+          <div> <strong class="has-text-white"> Anomalies</strong></div>
+          <AnomaliesFilters v-bind="activeOptions" @update="updateOptions"/> 
+        </div>
         <Chart       
           height="400px"
           :seriesData="seriesData"
@@ -29,7 +33,7 @@
           @changeActive="updateOptions({activeAnomalyId: $event})"
           @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" />
 
- 
+
         <Subcharts class="mt-3" :anomalies="tableFilteredAnomalies"/> 
 
       </div>
@@ -138,8 +142,10 @@ export default {
 }
   
 .side-menu {
-  height: calc(100vh - 17rem);
+  height: calc(100vh - 17rem); 
+  
 }
+
 
 .main-content {
   display: flex;
@@ -159,6 +165,4 @@ export default {
   white-space: pre;
   font-family: monospace;
 }
-
-
 </style>

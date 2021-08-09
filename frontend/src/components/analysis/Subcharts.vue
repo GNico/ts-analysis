@@ -30,8 +30,6 @@
 
 
 <script>
-import Highcharts from 'highcharts'
-
 const allHours =  [ ...Array(24).keys() ]
 const allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
 const allWeekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -122,8 +120,8 @@ export default {
         colorAxis: {
           min: 0,
           gridLineWidth: 1,
-          minColor: 'rgba(83,94,96,0)',
-          maxColor: 'rgba(83,94,96,1)'
+          minColor: 'rgba(43, 144, 143,0)',
+          maxColor: 'rgba(43, 144, 143,1)'
         },
         credits: false,
         legend: {

@@ -45,7 +45,7 @@
             </b-dropdown-item>
           </b-dropdown>
 
-          <div class="node-list">
+          <div class="node-list ml-5">
             <template v-if="nodeData.sources.length">
               <div v-for="nodeid in nodeData.sources">
                 <span class="long-text-with-ellipsis">

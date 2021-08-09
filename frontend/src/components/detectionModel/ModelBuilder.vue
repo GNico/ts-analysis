@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <div class="column">
+    <div class="column px-0">
       <div class="buttons is-flex is-justify-content-flex-end">
         <b-button 
           type="is-info"
