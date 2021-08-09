@@ -1,6 +1,7 @@
 <template>
 <b-table 
-  :style="{height: height, cursor: 'pointer'}"
+  class="anom-table"
+  :style="{height: height}"
   v-if="!isEmpty"
   :data="anomalies" 
   :selected="selected"      
@@ -39,46 +40,46 @@
       </div>
 
       <div class="is-flex">
-        <div class="left-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
+        <div class="left-detail-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
           From
         </div>
-        <div class="right-field has-text-left">
+        <div class="right-detail-field has-text-left">
           <strong>{{props.row.from}} </strong>({{formatDate(new Date(props.row.from))}}) 
         </div>
       </div>
 
       <div class="is-flex">
-        <div class="left-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
+        <div class="left-detail-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
           To
         </div>
-        <div class="right-field has-text-left">
+        <div class="right-detail-field has-text-left">
           <strong>{{props.row.to}} </strong>({{formatDate(new Date(props.row.to))}}) 
         </div>
       </div>
 
       <div class="is-flex">
-        <div class="left-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
+        <div class="left-detail-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
           Score
         </div>
-        <div class="right-field has-text-left">
+        <div class="right-detail-field has-text-left">
           {{props.row.score}}
         </div>
       </div>
 
       <div class="is-flex">
-        <div class="left-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
+        <div class="left-detail-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
           Node 
         </div>
-        <div class="right-field has-text-left">
+        <div class="right-detail-field has-text-left">
           {{props.row.source_node}}
         </div>
       </div>
 
       <div class="is-flex">
-        <div class="left-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
+        <div class="left-detail-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
           Anomaly sources
         </div>
-        <div class="right-field has-text-left">
+        <div class="right-detail-field has-text-left">
           <template v-if="props.row.source_anomalies.length">
             <div v-for="anom in props.row.source_anomalies">
               {{anom}}
@@ -188,6 +189,14 @@ export default {
 </script>
 
 <style>
+.anom-table { 
+  cursor: pointer;
+}
+
+.anom-table .table-wrapper {
+    overflow-x: hidden;
+}
+
 .left-field {
   flex: 1;
 }
