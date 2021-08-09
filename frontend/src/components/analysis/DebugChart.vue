@@ -51,7 +51,7 @@ export default {
         series: [{
           name: this.title,
           data: this.data,
-          type: 'column',
+          type: (this.title.includes('line') ? 'line' : 'column'),
         }]
       }
     }

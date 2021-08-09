@@ -1,3 +1,4 @@
+import numpy as np
 import statsmodels.tsa.seasonal as sm
 
 from ..node_transformer import NodeTransformer
@@ -17,11 +18,12 @@ class STL(NodeTransformer):
             SelectOption("trend", "Trend"),
             SelectOption("seasonal", "Seasonality"),
             SelectOption("resid", "Residual"),
+            SelectOption("weights", "Outlier weights"),
         ]
         self.add_required_param(Select('output', 'Output', 'STL output', output_options, output_options[0].code))
         self.add_required_param(String('period', 'Period', 'Expected seasonality in periods or time interval (eg: 12h)', '7d'))
         self.add_required_param(String('seasonal_smoother', 'Seasonal smoother', 'Seasonal smoother in periods or time interval (eg: 12h)', '1d'))
-        self.add_required_param(Boolean('robust', 'Robust', 'Tolerate larger errors using LOWESS', True))
+        self.add_required_param(Boolean('robust', 'Robust', 'Tolerate larger errors using LOWESS. See weights output', True))
 
     def get_params(self):
         output = self.get_param('output').value
@@ -45,9 +47,39 @@ class STL(NodeTransformer):
             result = model.trend
         elif output == 'seasonal':
             result = model.seasonal
+        elif output == 'weights':
+            if robust:
+                result = model.weights
+            else:
+                raise ValueError('Invalid output: weights - Must select robust mode')
         else:
             raise ValueError('Invalid output: ' + output)
-        return (result, {})
+        debug_info = {}
+        if debug:
+            debug_info['trend_chart_line'] = self.model_trend_sample(model.trend)
+            debug_info['period_seasonal_chart_line'] = STL.model_period_sample(model.seasonal.values, calc_period)
+        return (result, debug_info)
+
+    def model_trend_sample(self, model):
+        result = []
+        vals = model.resample('1D').mean().values
+        for i in range(0, len(vals)):
+            result.append([i, float(vals[i])])
+        return result
+
+    @staticmethod
+    def model_period_sample(values, period):
+        iters = len(values) // period
+        counts = [[] for _ in range(period)]
+        for i in range(0, period):
+            for j in range(0, iters):
+                idx = i + (j*period)
+                value = values[idx]
+                counts[i].append(value)
+        result = []
+        for i in range(0, len(counts)):
+            result.append([i, np.median(counts[i])])
+        return result
 
     @staticmethod
     def adapt_odd(n):

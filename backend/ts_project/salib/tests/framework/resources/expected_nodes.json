@@ -1131,6 +1131,10 @@
             {
               "code": "resid",
               "display": "Residual"
+            },
+            {
+              "code": "weights",
+              "display": "Outlier weights"
             }
           ]
         },
@@ -1154,7 +1158,7 @@
           "id": "robust",
           "type": "Boolean",
           "display": "Robust",
-          "desc": "Tolerate larger errors using LOWESS",
+          "desc": "Tolerate larger errors using LOWESS. See weights output",
           "conditions": [],
           "value": true
         }
