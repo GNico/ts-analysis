@@ -53,12 +53,12 @@ class Analysis:
         heatmaps = []
         heatmaps.append(self.build_anomalies_histogram('Day of week', lambda i: i.dayofweek, 24,
             ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']))
-        heatmaps.append(self.build_anomalies_histogram('Month of year', lambda i: i.month, 730,
+        heatmaps.append(self.build_anomalies_histogram('Month of year', lambda i: (i.month-1), 730,
             ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dic']))
         heatmaps.append(self.build_anomalies_histogram('Hour of day', lambda i: i.hour, 1,
             [str(h) for h in range(0, 24)]))
-        heatmaps.append(self.build_anomalies_histogram('Day of month', lambda i: i.day, 24,
-            [str(h) for h in range(0, 32)]))
+        heatmaps.append(self.build_anomalies_histogram('Day of month', lambda i: (i.day-1), 24,
+            [str(h) for h in range(1, 32)]))
         return heatmaps
 
     def build_anomalies_histogram(self, desc, idxfunc, period, labels):
@@ -84,10 +84,10 @@ class Analysis:
             lambda i: i.hour, 1,[str(h) for h in range(0, 24)],
             lambda i: i.dayofweek, 24, ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']))
         heatmaps.append(self.build_anomalies_heatmap('Day of month/Day of week',
-            lambda i: i.day, 24, [str(h) for h in range(0, 32)],
+            lambda i: (i.day-1), 24, [str(h) for h in range(1, 32)],
             lambda i: i.dayofweek, 24, ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']))
         heatmaps.append(self.build_anomalies_heatmap('Day of month/Month of year',
-            lambda i: i.day, 24, [str(h) for h in range(0, 32)],
+            lambda i: (i.day-1), 24, [str(h) for h in range(1, 32)],
             lambda i: i.dayofweek, 24, ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']))
         return heatmaps
 
