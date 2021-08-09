@@ -68658,6 +68658,7 @@
       "id": "031fd835dd10de5a13f09e701a81a279",
       "from": 1527854400000,
       "to": 1527868800000,
+      "duration": 14400.0,
       "score": 1.0,
       "source_anomalies": [],
       "source_node": "eKR"
@@ -102998,6 +102999,7 @@
           "id": "031fd835dd10de5a13f09e701a81a279",
           "from": 1527854400000,
           "to": 1527868800000,
+          "duration": 14400.0,
           "score": 1.0,
           "source_anomalies": [],
           "source_node": "eKR"

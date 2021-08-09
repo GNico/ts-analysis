@@ -38,6 +38,7 @@ class Anomaly:
             "id": self.id(),
             "from": from_timestamp,
             "to": to_timestamp,
+            "duration": self.span().total_seconds(),
             "score": self.score,
             "source_anomalies": [sa.id() for sa in self.source_anomalies],
             "source_node": self.source_node_id()

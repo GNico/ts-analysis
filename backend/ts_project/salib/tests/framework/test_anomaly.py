@@ -72,6 +72,7 @@ class TestAnomaly(unittest.TestCase):
             'id': all_ids.pop(),
             'from': 1000,
             'to': 2000,
+            'duration': 1.0,
             'score': 1.0,
             'source_anomalies': [],
             'source_node': 'test_node'
@@ -80,6 +81,7 @@ class TestAnomaly(unittest.TestCase):
             'id': all_ids.pop(),
             'from': 1000,
             'to': 1000,
+            'duration': 0.0,
             'score': 1.0,
             'source_anomalies': [],
             'source_node': 'test_node'
@@ -88,6 +90,7 @@ class TestAnomaly(unittest.TestCase):
             'id': all_ids.pop(),
             'from': 1000,
             'to': 2000,
+            'duration': 1.0,
             'score': 0.0,
             'source_anomalies': [],
             'source_node': 'test_node'
@@ -96,6 +99,7 @@ class TestAnomaly(unittest.TestCase):
             'id': all_ids.pop(),
             'from': 1000,
             'to': 2000,
+            'duration': 1.0,
             'score': 1.0,
             'source_anomalies': [],
             'source_node': 'other_node'
@@ -106,6 +110,7 @@ class TestAnomaly(unittest.TestCase):
             'id': all_ids.pop(),
             'from': 1000,
             'to': 2000,
+            'duration': 1.0,
             'score': 1.0,
             'source_anomalies': ['cb1eda751f67ae1b5d0ae2bd69f20531'],
             'source_node': 'test_node'

@@ -77,6 +77,7 @@ class TestQuantile(unittest.TestCase):
                 'id': anomalies[i].id(),
                 'from': expected_anomaly[0]*1000,
                 'to': expected_anomaly[1]*1000,
+                'duration': expected_anomaly[1]-expected_anomaly[0],
                 'score': 1.0,
                 'source_anomalies': [],
             },anomalies[i].output_format())

@@ -40,6 +40,7 @@
       "id": "d88d60e1283f648020cea9c883c02cd6",
       "from": 1628380800000,
       "to": 1628510400000,
+      "duration": 129600.0,
       "score": 0.0,
       "source_anomalies": [],
       "source_node": "test_node"
@@ -88,6 +89,7 @@
           "id": "d88d60e1283f648020cea9c883c02cd6",
           "from": 1628380800000,
           "to": 1628510400000,
+          "duration": 129600.0,
           "score": 0.0,
           "source_anomalies": [],
           "source_node": "test_node"
