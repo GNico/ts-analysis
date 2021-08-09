@@ -31,10 +31,10 @@
   <template #detail="props">
     <article >
       <div class="is-flex">
-        <div class="left-field has-text-right mr-5 has-text-weight-bold has-text-grey-light">
+        <div class="left-detail-field has-text-right mr-5 has-text-weight-bold has-text-grey-light">
           ID
         </div>
-        <div class="right-field has-text-left">
+        <div class="right-detail-field has-text-left">
           {{props.row.id}}
         </div>
       </div>
@@ -197,11 +197,11 @@ export default {
     overflow-x: hidden;
 }
 
-.left-field {
+.left-detail-field {
   flex: 1;
 }
 
-.right-field {
+.right-detail-field {
   flex: 3;
 }
 </style>
