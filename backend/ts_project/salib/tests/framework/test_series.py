@@ -43,6 +43,6 @@ Index: DatetimeIndex(['1970-01-01 00:00:00', '1970-01-01 00:00:01',
                '1970-01-01 00:00:02', '1970-01-01 00:00:04',
                '1970-01-01 00:00:05', '1970-01-01 00:00:06'],
               dtype='datetime64[ns]', freq=None)
-Deltas: [1000000000 2000000000]""", str(e))
+Deltas: [(numpy.timedelta64(1000000000,'ns'), 4), (numpy.timedelta64(2000000000,'ns'), 1)]""", str(e))
         else:
             self.fail('Should throw')
