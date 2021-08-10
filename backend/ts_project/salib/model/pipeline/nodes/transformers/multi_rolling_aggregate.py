@@ -21,11 +21,11 @@ class MultiRollingAggregate(NodeTransformer):
         self.add_required_param(Boolean('center', 'Center', 'Center aggregation window around value', False))
         self.add_required_param(String('min_periods', 'Min. periods', 'Min number of periods (eg: 12h). Leave empty for window size.', ''))
         agg_method_options = [
+            SelectOption("proportion", "Proportion"),
+            SelectOption("ks", "Kolmorogov-Smirnov"),
             SelectOption("correlation_pearson", "Pearson Correlation"),
             SelectOption("correlation_kendall", "Kendall Correlation"),
             SelectOption("correlation_spearman", "Spearman Correlation"),
-            SelectOption("proportion", "Proportion"),
-            SelectOption("ks", "Kolmorogov-Smirnov"),
         ]
         self.add_required_param(Select('agg_method', 'Aggregation', 'Aggregation method', agg_method_options, agg_method_options[0].code))        
 
@@ -100,25 +100,26 @@ class MultiRollingAggregate(NodeTransformer):
             return sum(lhs) / rhs_sum
 
     @staticmethod
-    def func_correlation(lhs, rhs, method):
-        lhs = pd.Series(lhs)
-        rhs = pd.Series(rhs)
+    def func_correlation(lhs, rhs, corr_func):
         if len(lhs) > 1 and len(rhs) > 1:
-            return lhs.corr(rhs, method=method)
+            value, _ = corr_func(lhs, rhs)
+            if not np.isfinite(value):
+                value = 0.0
         else:
-            return np.nan
+            value = np.nan
+        return value
 
     @staticmethod
     def func_correlation_pearson(lhs, rhs):
-        return MultiRollingAggregate.func_correlation(lhs, rhs, 'pearson')
+        return MultiRollingAggregate.func_correlation(lhs, rhs, stats.pearsonr)
 
     @staticmethod
     def func_correlation_kendall(lhs, rhs):
-        return MultiRollingAggregate.func_correlation(lhs, rhs, 'kendall')
+        return MultiRollingAggregate.func_correlation(lhs, rhs, lambda x,y: stats.weightedtau(x, y, rank=False))
 
     @staticmethod
     def func_correlation_spearman(lhs, rhs):
-        return MultiRollingAggregate.func_correlation(lhs, rhs, 'spearman')
+        return MultiRollingAggregate.func_correlation(lhs, rhs, stats.spearmanr)
 
     @staticmethod
     def validate_input_steps_spans(lhs, rhs):

@@ -21,9 +21,6 @@ class NodeTransformer(Node):
         (new_pdseries, debug_info) = self.transform(pdseriess, debug)
         with pd.option_context('mode.use_inf_as_na', True):
             new_pdseries.dropna(inplace=True)
-        inf_timestamps = list(new_pdseries[np.isinf(new_pdseries)].index)
-        if len(inf_timestamps) > 0:
-            raise ValueError('Found inf values from %s at: %s' % (self.id, inf_timestamps))
         return (new_pdseries, debug_info)
 
     def transform(self, seriess, debug):

@@ -80,12 +80,7 @@ class TestMultiRollingAggregate(unittest.TestCase):
 
         s1 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]])
         s2 = Series.from_array([[0, 1], [1, 2], [2, 3], [3, 2], [4, 1]])
-        self.case(ram, s1, s2, list(s1.pdseries.index)[1:], [
-            0.9999999999999999,
-            0.9999999999999999,
-            -0.9999999999999999,
-            -0.9999999999999999,
-        ])
+        self.case(ram, s1, s2, list(s1.pdseries.index)[1:], [1, 1, -1, -1])
 
     def test_multi_rolling_aggregate_ks(self):
         factory = NodeFactory.transformer('test', 'MultiRollingAggregate')

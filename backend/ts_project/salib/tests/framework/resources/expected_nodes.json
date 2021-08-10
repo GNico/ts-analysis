@@ -793,8 +793,16 @@
           "display": "Aggregation",
           "desc": "Aggregation method",
           "conditions": [],
-          "value": "correlation_pearson",
+          "value": "proportion",
           "options": [
+            {
+              "code": "proportion",
+              "display": "Proportion"
+            },
+            {
+              "code": "ks",
+              "display": "Kolmorogov-Smirnov"
+            },
             {
               "code": "correlation_pearson",
               "display": "Pearson Correlation"
@@ -806,14 +814,6 @@
             {
               "code": "correlation_spearman",
               "display": "Spearman Correlation"
-            },
-            {
-              "code": "proportion",
-              "display": "Proportion"
-            },
-            {
-              "code": "ks",
-              "display": "Kolmorogov-Smirnov"
             }
           ]
         }
