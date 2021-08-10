@@ -123,7 +123,6 @@ export default {
         type: 'input',
         group: 'input',
         sources: [],
-        debug: true,
         display: 'Input',
         desc: '',
       }
@@ -149,7 +148,6 @@ export default {
           type: type,
           group: group,
           sources: [],
-          debug: true,
           display: definition.display,
           desc: definition.desc
         }
