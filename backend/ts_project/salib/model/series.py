@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from pandas.tseries.frequencies import to_offset
 
@@ -21,7 +22,8 @@ class Series:
             series.index.freq = to_offset(series.index[1]-series.index[0])
         if series.index.freq is None:
             if series.index.inferred_freq is None:
-                raise ValueError('Index must be equally spaced, could not infer frequency')
+                deltas = np.unique(pd.Series(series.index).diff(1).dropna().values)
+                raise ValueError('Index must be equally spaced, could not infer frequency\nIndex: %s\nDeltas: %s' % (series.index, deltas))
             series.index.freq = series.index.inferred_freq
         return series.index.freq.delta
 
