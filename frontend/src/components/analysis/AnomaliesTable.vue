@@ -14,18 +14,18 @@
   @click="changeActiveAnomaly($event)"
 >
 
-  <b-table-column field="score" label="Score" sortable numeric v-slot="props">
+  <b-table-column field="score" label="Score" sortable centered v-slot="props">
     <span class="tag is-small" :style="getScoreTagStyle(props.row.score)" :id="props.row.id">
       {{ parseFloat((props.row.score * 100).toFixed(1)) }}%
     </span>
   </b-table-column>
 
   <b-table-column field="from" label="Start date" sortable centered v-slot="props" >
-    <span class="is-family-monospace">{{ formatDateVerbose(props.row.from, true, true, true) }} </span>
+    <span class="is-family-monospace is-size-7">{{ formatDateVerbose(props.row.from, true, true, true) }} </span>
   </b-table-column>
   
   <b-table-column field="duration"  label="Duration" sortable centered v-slot="props" >
-     <span class="is-family-monospace"> {{ getDurationStr(props.row.duration*1000) }} </span>
+     <span class="is-family-monospace is-size-7"> {{ getDurationStr(props.row.duration*1000) }} </span>
   </b-table-column>
 
   <template #detail="props">

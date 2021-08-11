@@ -1,7 +1,5 @@
 import VueRouter from 'vue-router'
-//import Index from '@/pages/monitoring/Index.vue'
 import MonitorDetails from '@/components/monitoring/MonitorDetails.vue'
-//import MonitorTable from '@/components/monitoring/MonitorTable.vue'
 
 function lazyLoad(view){
   return () => import(`@/pages/${view}.vue`)
@@ -49,10 +47,6 @@ let routes = [
       },
     ] 
   },
-  {
-    path: '/Test',
-    component: lazyLoad('Test')
-  } 
 ];
 
 export default new VueRouter({

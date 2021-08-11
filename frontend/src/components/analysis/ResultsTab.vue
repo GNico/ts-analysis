@@ -4,7 +4,7 @@
 
   <template v-else>
     <div v-if="error" class="is-size-7 error-text"><b-icon type="is-danger" icon="alert" size="is-small"/> {{error}}</div>
-    <div v-else class="columns">
+    <div v-else class="columns is-fullheight">
       <div class="column is-4 side-menu is-hidden-mobile">        
         <div class="table-header has-text-white">
           <div> <strong class="has-text-white"> Anomalies</strong></div>
@@ -17,7 +17,7 @@
 
       </div>
 
-      <div class="column ">
+      <div class="column">
         <div class="table-header has-text-white">
           <div> <strong class="has-text-white"> Anomalies</strong></div>
           <AnomaliesFilters v-bind="activeOptions" @update="updateOptions"/> 
@@ -34,7 +34,14 @@
           @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" />
 
 
-        <Subcharts class="mt-3" :anomalies="tableFilteredAnomalies"/> 
+        <div class="columns mt-5">
+          <div class="column is-5">
+            <AnomaliesHistogram :anomalies="tableFilteredAnomalies"/>
+          </div>
+          <div class="column is-7">
+            <AnomaliesHeatmap :anomalies="tableFilteredAnomalies"/>
+          </div>
+        </div>
 
       </div>
     </div>  
@@ -48,10 +55,11 @@ import Chart from './Chart.vue';
 import AnomaliesTable from './AnomaliesTable.vue';
 import AnomaliesFilters from './AnomaliesFilters.vue'
 import debounce from "lodash/debounce";
-import Subcharts from "./Subcharts"
+import AnomaliesHistogram from "./AnomaliesHistogram"
+import AnomaliesHeatmap from "./AnomaliesHeatmap"
 
 export default {
-    components: { Chart, AnomaliesTable, AnomaliesFilters, Subcharts },
+    components: { Chart, AnomaliesTable, AnomaliesFilters, AnomaliesHistogram, AnomaliesHeatmap },
     data() {
       return {
         polling: null,
@@ -138,20 +146,20 @@ export default {
 
 <style scoped>
 .is-fullheight {
-  max-height: calc(100vh - 3.5rem);
+  height: calc(100vh - 4rem);
 }
   
 .side-menu {
-  height: calc(100vh - 17rem);
+  height: calc(100vh - 8rem);
 }
 
 
-.main-content {
-  display: flex;
-  flex-direction: column;
+/*.main-content {
   overflow-y: overlay;
   overflow-x: hidden;
-}
+  height: calc(100vh - 14rem);
+
+} */
 
 .table-header {
   display: flex;

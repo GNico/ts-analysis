@@ -39,11 +39,12 @@ class AnalysisResultView(APIView):
                     'result': res
                 }) 
             else:
-                final_result = { 'series': res['series'], 'anomalies': res['anomalies'] }
+                #final_result = { 'series': res['series'], 'anomalies': res['anomalies'] }
+                res.pop('debug_nodes', None)
                 return Response({
                     "task_id": id, 
                     "state": "success", 
-                    "result": final_result
+                    "result": res
                 })                            
         elif task.state == 'FAILED':
             return Response({

@@ -11,7 +11,6 @@
       <router-link to='/Visualization'  class="navbar-item">Visualization</router-link>
       <router-link to='/Analysis'  class="navbar-item">Analysis</router-link>
       <router-link to='/Monitoring'  class="navbar-item">Monitoring</router-link>
-      <router-link to='/Test'  class="navbar-item">Test</router-link>
   </template>
 </b-navbar>
 </template>
