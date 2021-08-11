@@ -50,7 +50,7 @@ class MultiRollingAggregate(NodeTransformer):
 
     def transform(self, seriess, debug):
         lhs, rhs = seriess[0], seriess[1]
-        MultiRollingAggregate.validate_input_steps_spans(lhs, rhs)
+        NodeTransformer.validate_input_steps_spans(lhs, rhs)
         transformed_values = self.transform_values(lhs, rhs)
         new_index = lhs.pdseries.index if lhs.span() < rhs.span() else rhs.pdseries.index
         return (pd.Series(transformed_values, index=new_index), {})
@@ -120,11 +120,3 @@ class MultiRollingAggregate(NodeTransformer):
     @staticmethod
     def func_correlation_spearman(lhs, rhs):
         return MultiRollingAggregate.func_correlation(lhs, rhs, stats.spearmanr)
-
-    @staticmethod
-    def validate_input_steps_spans(lhs, rhs):
-        if lhs.step() != rhs.step():
-            err_vars = (lhs.step(), rhs.step())
-            raise ValueError('Inputs must have same step interval: lhs: %s != rhs: %s' % err_vars)
-        if lhs.end != rhs.end:
-            raise ValueError('Inputs must have same ending date: lhs: %s != rhs: %s' % (lhs.end, rhs.end))

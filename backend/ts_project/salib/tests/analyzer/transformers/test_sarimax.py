@@ -108,4 +108,4 @@ class TestSARIMAX(unittest.TestCase):
         for i in range(0, len(expected_series)):
             self.assertAlmostEqual(expected_series[i], actual_series[i], 2)
         # With debug info
-        self.assertEqual(set(['summary', 'offset_start']), set(debug_info.keys()))
+        self.assertEqual(set(['summary', 'offset_start', 'exog_coeff_x1']), set(debug_info.keys()))

@@ -90,6 +90,8 @@ class SARIMAX(NodeTransformer):
                 "summary": str(model_fit.summary()),
                 "offset_start": offset_start,
             }
+            for n, b in model_fit.params[model.k_trend:model.k_trend + model.k_exog].items():
+                debug_info["exog_coeff_"+n] = float(b)
         else:
             debug_info = {}
         # Drop offset_start elements

@@ -99,3 +99,11 @@ class NodeTransformer(Node):
             start += offset
             end += offset
         return start, end
+
+    @staticmethod
+    def validate_input_steps_spans(lhs, rhs):
+        if lhs.step() != rhs.step():
+            err_vars = (lhs.step(), rhs.step())
+            raise ValueError('Inputs must have same step interval: lhs: %s != rhs: %s' % err_vars)
+        if lhs.end != rhs.end:
+            raise ValueError('Inputs must have same ending date: lhs: %s != rhs: %s' % (lhs.end, rhs.end))

@@ -1273,6 +1273,46 @@
           "input"
         ]
       }
+    },
+    {
+      "type": "VAR",
+      "desc": "Vector AutoRegression with lags",
+      "display": "VAR",
+      "params": [
+        {
+          "id": "p",
+          "type": "String",
+          "display": "p",
+          "desc": "AR order",
+          "conditions": [],
+          "value": "1"
+        },
+        {
+          "id": "output",
+          "type": "Select",
+          "display": "Output",
+          "desc": "Model output",
+          "conditions": [],
+          "value": "resid",
+          "options": [
+            {
+              "code": "resid",
+              "display": "Residual"
+            },
+            {
+              "code": "predicted",
+              "display": "Predicted"
+            }
+          ]
+        }
+      ],
+      "inputs": {
+        "num_required_inputs": 2,
+        "names": [
+          "fst",
+          "snd"
+        ]
+      }
     }
   ],
   "detector": [

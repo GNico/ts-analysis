@@ -24,7 +24,7 @@ function sum(arr) {
 
 const defaultStyle = {
   backgroundColor: 'transparent',
-  anomalyColor: 'rgba(133,176,190,0.5)',
+  anomalyColor: 'rgba(133,176,190,0.4)',
   anomalyArrowColor: 'yellow',
   highlightedColor: 'rgba(173,216,230,0.65)',
   highlightedBorderColor: 'rgba(173,216,230,1)',
@@ -194,9 +194,9 @@ export default {
         xAxis: {
           allowDecimals: false,
           ordinal: false,
-          gridLineDashStyle: 'LongDash',
+          gridLineDashStyle: 'Dash',
           gridLineWidth: 1, 
-          gridLineColor: 'rgba(255,255,255,0.2)',
+          gridLineColor: 'rgba(255,255,255,0.1)',
           tickInterval: this.tickInterval,
           crosshair: {
             color: 'gray',

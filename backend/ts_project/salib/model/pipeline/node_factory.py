@@ -22,6 +22,7 @@ from .nodes.transformers.seasonal_decompose import SeasonalDecompose
 from .nodes.transformers.auto_regression import AutoRegression
 from .nodes.transformers.markov_auto_regression import MarkovAutoRegression
 from .nodes.transformers.sarimax import SARIMAX
+from .nodes.transformers.var import VAR
 from .nodes.transformers.garch import GARCH
 from .nodes.transformers.alma import ALMA
 
@@ -77,6 +78,7 @@ class NodeFactory:
             'MarkovAutoRegression': MarkovAutoRegression,
             'FFTFilter': FFTFilter,
             'SARIMAX': SARIMAX,
+            'VAR': VAR,
             'ALMA': ALMA,
             'GARCH': GARCH,
         },
