@@ -804,6 +804,10 @@
               "display": "Kolmorogov-Smirnov"
             },
             {
+              "code": "es",
+              "display": "Epps-Singleton"
+            },
+            {
               "code": "correlation_pearson",
               "display": "Pearson Correlation"
             },

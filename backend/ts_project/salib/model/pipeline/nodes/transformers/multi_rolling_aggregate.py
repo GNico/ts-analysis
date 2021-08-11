@@ -23,6 +23,7 @@ class MultiRollingAggregate(NodeTransformer):
         agg_method_options = [
             SelectOption("proportion", "Proportion"),
             SelectOption("ks", "Kolmorogov-Smirnov"),
+            SelectOption("es", "Epps-Singleton"),
             SelectOption("correlation_pearson", "Pearson Correlation"),
             SelectOption("correlation_kendall", "Kendall Correlation"),
             SelectOption("correlation_spearman", "Spearman Correlation"),
@@ -69,6 +70,8 @@ class MultiRollingAggregate(NodeTransformer):
             rolling_func = MultiRollingAggregate.func_proportion
         elif agg == 'ks':
             rolling_func = MultiRollingAggregate.func_ks_2samp
+        elif agg == 'es':
+            rolling_func = MultiRollingAggregate.func_es_2samp
         elif agg == 'correlation_pearson':
             rolling_func = MultiRollingAggregate.func_correlation_pearson
         elif agg == 'correlation_kendall':
@@ -90,6 +93,10 @@ class MultiRollingAggregate(NodeTransformer):
     @staticmethod
     def func_ks_2samp(lhs, rhs):
         return stats.ks_2samp(lhs, rhs)[1]
+
+    @staticmethod
+    def func_es_2samp(lhs, rhs):
+        return stats.epps_singleton_2samp(lhs, rhs)[1]
 
     @staticmethod
     def func_proportion(lhs, rhs):
