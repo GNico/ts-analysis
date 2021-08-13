@@ -3,7 +3,7 @@
   <b-collapse
     class="card"
     animation="slide"
-    :open="isOpen"
+    :open="true"
     @open="sharedState.openNode = inputNumber.toString()"
     @close="sharedState.openNode = null">
     <template #trigger="props">
@@ -154,6 +154,8 @@ export default {
     isOpen() {
       return this.sharedState.openNode === this.inputNumber.toString()
     },
+
+
   },
   methods: {
     updateAnalysis(prop, value) {

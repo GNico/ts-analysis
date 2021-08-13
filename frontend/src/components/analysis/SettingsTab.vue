@@ -195,6 +195,7 @@ export default {
   },
   watch: {
     'analysis.client': {
+      immediate: true,
       handler(newVal) {
         if (!newVal || this.clients.includes(newVal)) {
           this.$store.dispatch('clients/fetchTags', (newVal))
