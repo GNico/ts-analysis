@@ -49,7 +49,7 @@
         size="is-small" 
         type="is-primary" 
         @click="saveModalActive = !saveModalActive"
-        :disabled="!activeAnalysis.id"/>      
+        :disabled="!activeAnalysis.id || hasSettingsErrors"/>      
     </div>
 
     <div class="scroll-container">
@@ -68,7 +68,7 @@
   <div v-if="!!activeAnalysis.id" class="wide-container main-section">
     <b-tabs type="is-medium "  :animated="false" v-model="activeTab" destroy-on-hide>
       <b-tab-item label="Settings" icon="cog" value="Settings" >
-        <SettingsTab @run="activeTab='Results'"/>    
+        <SettingsTab @run="activeTab='Results'" @errors="hasSettingsErrors = $event"/>    
       </b-tab-item>
       <b-tab-item label="Results" icon="file-chart" value="Results" :disabled="!hasResults" >
         <ResultsTab v-if="hasResults"/>
@@ -98,7 +98,8 @@ export default {
     return {        
       activeTab: "Settings",
       loadModalActive: false,
-      saveModalActive: false
+      saveModalActive: false,
+      hasSettingsErrors: false,
     }
   },
   computed: {

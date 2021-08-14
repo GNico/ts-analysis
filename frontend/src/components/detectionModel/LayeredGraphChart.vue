@@ -68,8 +68,6 @@ export default {
       })
       return renamed
     },
-
-
     renamedSelected() {
       var renamed = []
       this.selected.forEach(id => {
@@ -77,8 +75,6 @@ export default {
       })
       return renamed
     },
-
-
     cursor() {
       return this.selectable ? 'cursor: pointer;' : ''
     },
@@ -147,11 +143,7 @@ export default {
       var inner = svg.select("g");
       var container = this.$refs.container
       var maxWidth = container.clientWidth
-
-      var maxHeight = container.clientHeight - 100
-
       svg.attr("width", maxWidth)      
-      svg.attr("height", maxHeight)
 
       // Set up zoom support
       var zoom = d3.zoom().on("zoom", function () {
@@ -219,7 +211,7 @@ export default {
     window.removeEventListener("resize", this.resizeHandler);
   },
   watch: {
-    nodes() {
+    nodes(newVal, oldVal) {
       this.createLayout()
       this.drawChart()
     },
@@ -234,7 +226,6 @@ export default {
         this.selectedNodes = renamed
       }
     }, 
-
     selectedNodes() {
       var nodesWithoutPrefix = []
       this.selectedNodes.forEach(nodeId => {

@@ -1,40 +1,36 @@
-//medio feo refactorear despues 
-
-function validate(bidirectionalNodes) {
+export function validate(bidirectionalNodes) {
     var validationMessages = []
-    //chequear si tiene ciclos
+    //check for cycles
     if (hasCycle(bidirectionalNodes)) {
         validationMessages.push({
             message: 'The graph must be acyclic',
             type: 'invalid',
-            id: '',
         })
     }
-    //buscar nodos sin conectar correctamente
+    //unconnected nodes and detector presence
+    var foundDetector = false
+    var foundInput = false
     Object.keys(bidirectionalNodes).forEach(elemId => {
         const elem = bidirectionalNodes[elemId]
-        if (elem.group == 'transformer') {
-            if (!elem.target || elem.target.length == 0) {
+        if (elem.group !== 'input') {
+            if (!elem.source || elem.source.length == 0) {
                 validationMessages.push({
-                    message: 'Transformer output should be connected to a detector or another transformer',
+                    message: elem.display + ' (' + elem.id + '): no input nodes connected',
                     type: 'warning',
-                    id: elem.id,
                 })
             }
         }
-        if (elem.group == 'aggregator') {
-            if (!elem.source || elem.source.length == 0) {                
-                validationMessages.push({
-                    message: 'Aggregator input should be a detector or another aggregator',
-                    type: 'warning',
-                    id: elem.id,
-                })
-            }         
+        if (elem.group === 'detector') {
+            foundDetector = true
+        }
+        if (elem.group === 'input') {
+            foundInput = true
         }
     })
-    return []
-   // return validationMessages
-
+    if (!foundInput) validationMessages.push({message: 'No input node', type: 'warning'})
+    if (!foundDetector) validationMessages.push({message: 'No detector node', type: 'warning'})
+     
+    return validationMessages
 }
 
 
@@ -73,9 +69,4 @@ function detectCycle(vertex, visited, recStack, adjList) {
   }
   recStack[vertex] = false;
   return false;
-}
-
-
-export {
-    validate,
 }

@@ -27,13 +27,14 @@
           type="is-info"
           size="is-small"
           icon-left="delete"
-          :disabled="!inputNodes.length"
+          :disabled="inputNodes.length <= 1"
           @click="removeInput">
           Remove Input Node
         </b-button>
       </div>
 
-      <GraphDataProvider :nodes="nodes" @validation="validationMessages = $event" >
+
+      <GraphDataProvider :nodes="nodes" @validation="validationMessages = $event" class="mb-3">
         <LayeredGraphChart 
           ref="graph"
           slot-scope="{chartNodes, chartEdges}" 
@@ -46,19 +47,17 @@
           :selected="sharedState.openNode ? [sharedState.openNode] : []"
           @selected="openNode"/>
       </GraphDataProvider>
+
+      <div v-for="msg in validationMessages" class="has-text-centered">  
+        <span :class="msg.type=='warning' ? 'has-text-link' : 'has-text-warning'">
+          <b-icon :icon="msg.type=='warning' ? 'alert-circle' : 'close-octagon'" size="is-small"/>
+           {{msg.message}}
+        </span>
+        
+      </div>
     </div>
   </div>
 
-  <div v-for="msg in validationMessages">  
-    <span v-if="msg.type=='warning'" class="has-text-link">
-      <b-icon icon="alert-circle" size="is-small"></b-icon>
-       {{msg.message}} ({{msg.id}})
-    </span>
-    <span v-if="msg.type=='invalid'" class="has-text-warning">
-      <b-icon icon="close-octagon" size="is-small"></b-icon>
-      {{msg.message}}
-    </span>
-  </div>
 </div>
 </template>
 
@@ -113,8 +112,8 @@ export default {
       this.updateModel(modelCopy)
     },
     removeInput() {
-      let inputNumber = this.inputNodes.length
-      this.deleteNode(inputNumber.toString())
+      if (this.inputNodes.length > 1)
+        this.deleteNode(this.inputNodes.length.toString())
     },
     getNewInputNode() {
       let inputNumber = this.inputNodes.length + 1

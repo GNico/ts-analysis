@@ -43,9 +43,18 @@
 
     <b-field class="has-text-right sticky-container">
       <div class="box">
-        <a class="button is-primary is-medium has-text-weight-semibold" @click="runAnalysis">
+        <a class="button is-primary is-medium has-text-weight-semibold mb-3" 
+          @click="runAnalysis" :disabled="hasCriticalErrors"> 
           Run analysis
         </a>
+
+        <div v-for="msg in errors" class="has-text-right">  
+          <span :class="msg.type=='warning' ? 'has-text-link' : 'has-text-warning'">
+          <b-icon :icon="msg.type=='warning' ? 'alert-circle' : 'close-octagon'" size="is-small"/>
+           {{msg.message}}
+          </span>
+        </div>
+
       </div>
     </b-field> 
   </div>
@@ -106,7 +115,7 @@ export default {
       loadTemplateModalActive: false,
       sharedState: {
         openNode: null
-      }
+      },
     }
   },
   computed: {
@@ -125,6 +134,29 @@ export default {
     allContexts() {
       return this.$store.state.clients.contexts[this.analysis.client] 
     }, 
+    errors() {
+      var err = []
+      //check if client was set
+      if (!this.analysis.client) {
+        err.push({
+            message: 'Client is not selected',
+            type: 'invalid',
+        })
+      }
+      //check if number of inputs match with model
+      var inputs = this.analysis.model.filter(elem => elem.group === 'input')
+      if (this.analysis.data_options.length != inputs.length) {
+        err.push({
+            message: 'Number of inputs does not match the model',
+            type: 'warning',
+        })
+      }
+      return err
+    },
+    hasCriticalErrors() {
+      var critical = this.errors.filter(elem => elem.type === 'invalid')
+      return critical.length > 0
+    }
   },
   methods: {
     openNode(selected) {
@@ -203,6 +235,12 @@ export default {
         }
       }
     }, 
+    hasCriticalErrors: {
+      immediate: true,
+      handler(newVal) {
+        this.$emit("errors", newVal)
+      }
+    }
   },
   created() {
     this.$store.dispatch('models/fetchModels')

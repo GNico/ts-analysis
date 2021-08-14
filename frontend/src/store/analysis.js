@@ -2,7 +2,7 @@ import api from "../api/repository";
 import { nanoid } from 'nanoid'
 
 
-const defaultSettings = {
+const initialSettings = {
   name: '',
   description: '',
   client: '',
@@ -15,7 +15,14 @@ const defaultSettings = {
     start: null,
     end: null,
   }],
-  model: [],
+  model: [{
+    id: '1',
+    display: 'Input',
+    group: 'input',
+    desc: '',
+    sources: [],
+    type: 'input'
+  }],
   saveId: undefined,
 }
 
@@ -130,7 +137,7 @@ const actions = {
     }, 
     createLocalAnalysis(store) {
         const newId = nanoid(5)
-        store.commit('add_analysis', { id: newId, ...defaultSettings })
+        store.commit('add_analysis', { id: newId, ...initialSettings })
         store.dispatch('setActiveAnalysis', newId)
     },
     closeLocalAnalysis(store, id) {
