@@ -21,15 +21,16 @@
 
     <div class="card-content">
       <div class="content">
-        <b-field horizontal label="Client">
+        <b-field horizontal label="Client">        
           <SearchSelect
             :value="client"
             @input="updateAnalysis('client', $event)"
             :data="allClients"/>
         </b-field>
-        <b-field horizontal label="Tags">
+        <div class="mb-3 filters-box is-flex">
+          <div class="label field-label"> Tags </div>
           <TreeSelect 
-            class="filters-box"s
+            class="treebody"
             rootName="All tags"
             filterName="Filter by tags"
             :itemsTree="tagOptions"
@@ -37,11 +38,12 @@
             :applyFilter="dataOptions.filterTags"
             @input="updateAnalysis('tags', $event)"
             @filterCheck="updateAnalysis('filterTags', $event)"
-        />
-        </b-field>
-        <b-field horizontal label="Contexts">
+          />
+        </div>
+        <div class="mb-3 filters-box is-flex">
+          <div class="label field-label"> Contexts </div>
           <TreeSelect 
-            class="filters-box"
+            class="treebody"
             rootName="All contexts"
             filterName="Filter by contexts"
             :itemsTree="contextOptions"
@@ -49,8 +51,8 @@
             :applyFilter="dataOptions.filterContexts"
             @input="updateAnalysis('contexts', $event)"
             @filterCheck="updateAnalysis('filterContexts', $event)"
-        />
-        </b-field>
+          />
+        </div>
         <b-field horizontal label="Interval">
           <b-input 
             :value="dataOptions.interval"
@@ -168,3 +170,17 @@ export default {
 } 
 
 </script>
+
+
+<style scoped>
+.filters-box {
+  max-height: 15rem;
+  overflow: auto;
+}
+
+.treebody {
+  flex-basis: 0;
+  flex-grow: 5;
+  flex-shrink: 1;
+}
+</style>

@@ -214,8 +214,9 @@ li {
   margin-bottom: 0.25rem;
 }
 ul {
-  padding-left: 1em;
+  padding-left: 1.25rem;
   line-height: 1.5em;
+  margin-left:  0;
   margin-top: 0.25rem;
 
 }
