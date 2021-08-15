@@ -43,6 +43,7 @@
       :loading="loading"
       :activeAnomaly="activeAnomalyId"
       :range="extremes"
+      :forcedMaxRange="chartsRange"
       :syncCrosshairEnabled="true"
       :showMinMax="showMinMax"
       :axisInterval="axisInterval"
@@ -86,7 +87,6 @@
     <div v-else-if="activeTab == 3 && !isEmpty(debug_info)" class="is-flex-grow-1 scrollable" >
       <div v-for="(value, key) in debug_info">
         <span class="has-text-grey-light">{{key}}:</span> 
-
         <span class="param-text" v-if="!key.includes('chart')"> {{value}} </span>
         <DebugChart 
           v-else
@@ -118,6 +118,10 @@ export default {
       default: 450,
     },
     extremes: {
+      type: Object,
+      default: () => {return {}}
+    },
+    chartsRange: {
       type: Object,
       default: () => {return {}}
     },

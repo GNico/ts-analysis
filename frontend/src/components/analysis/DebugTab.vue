@@ -27,6 +27,7 @@
         class="item-section" 
         :result="results[item]"               
         @updateRange="updateRange"
+        :chartsRange="seriesMaxRange"
         :extremes="extremes"
         :node="getNode(item)"/>       
     </div>
@@ -55,7 +56,7 @@ export default {
       selectedNodesOrder: [],
       results: {},
       error: '',
-      extremes: {},
+      extremes: {},      
       sharedState: {
         crosshair: {}
       }
@@ -73,8 +74,25 @@ export default {
     },     
     isSelected() {
       return this.selectedNodes.length > 0
-    }
-  },
+    },
+    seriesMaxRange() {
+      var range = {start: null, end: null}
+      for (var debugNode in this.results) {
+        var nodeSeries = this.results[debugNode].series
+        for (var series in nodeSeries) {
+          var min = nodeSeries[series][0][0]
+          var max = nodeSeries[series][nodeSeries[series].length-1][0]
+          if (!range.start || min < range.start) {
+            range.start = min
+          }
+          if (!range.end || max > range.end) {
+            range.end = max
+          }
+        }
+      }
+      return range
+    }, 
+  }, 
   methods: {
     getNodesResults() {
       this.selectedNodesOrder = [ ...this.selectedNodes ]
@@ -103,7 +121,7 @@ export default {
         if (!isNaN(parseInt(nodeId))) { //numeric id = is input
           formatted[nodeId] = {
             series: {
-              nodeId: result.series[nodeId]
+              [nodeId]: result.series[nodeId]
             },
             anomalies: [],
           }
@@ -143,6 +161,26 @@ export default {
     clearSelected() {
       this.$refs.graphChart.clearSelected()
     }
+  },
+  watch: {
+ /*   results() {
+      var range = {start: null, end: null}
+      for (var debugNode in this.results) {
+        var nodeSeries = this.results[debugNode].series
+        for (var series in nodeSeries) {
+          var min = nodeSeries[series][0][0]
+          var max = nodeSeries[series][nodeSeries[series].length-1][0]
+          if (!range.start || min < range.start) {
+            range.start = min
+          }
+          if (!range.end || max > range.end) {
+            range.end = max
+          }
+        }
+      }
+      console.log("range", range) 
+      console.log("result watcher")
+    } */
   },
   created() {
   },

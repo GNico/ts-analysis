@@ -69,6 +69,15 @@ export default {
         }
       }
     },
+    forcedMaxRange: {
+      type: Object,
+      default: () => {
+        return {
+          start: null,
+          end: null
+        }
+      }
+    },
     syncCrosshairEnabled: {
       type: Boolean,
       default: false
@@ -171,6 +180,29 @@ export default {
               }
             },
           })
+        })
+      }
+
+      if (this.forcedMaxRange.start) { //invisible series to force out of bound extremes
+        cdata.push({
+          data: [{
+            x: this.forcedMaxRange.start,
+            y: 0
+          }],
+          color: 'rgba(0,0,0,0)',
+          enableMouseTracking: false,
+          showInLegend: false
+        })
+      }
+      if (this.forcedMaxRange.end) { //invisible series to force out of bound extremes
+        cdata.push({
+          data: [{
+            x: this.forcedMaxRange.end,
+            y: 0
+          }],
+          color: 'rgba(0,0,0,0)',
+          enableMouseTracking: false,
+          showInLegend: false
         })
       }
       return cdata
