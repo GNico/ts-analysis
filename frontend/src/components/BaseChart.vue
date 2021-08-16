@@ -236,7 +236,7 @@ export default {
           enabled: false,
         },
         tooltip: {
-          animation: false,
+          animation: true,
           split: false,
           shared: true,
           xDateFormat: '%A, %e %b %Y, %H:%M',

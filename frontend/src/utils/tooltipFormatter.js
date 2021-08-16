@@ -5,14 +5,14 @@ const headerTooltipFormatter = function() {
         var d = new Date(original+range)
         const hour = d.getHours().toString().padStart(2, '0')
         const minutes = d.getMinutes().toString().padStart(2, '0')
-        return '<small>' + formatDateVerbose(original) + ` to ${hour}:${minutes}</small><br>`
+        return '<span class="is-family-monospace is-size-7">' + formatDateVerbose(original) + ` - ${hour}:${minutes}</span><br>`
     }
     var currentDataGrouping = this.points[0].series.currentDataGrouping
     var header = ''
     if (currentDataGrouping) {
         if (currentDataGrouping.unitName == 'day') {
-            header = '<small>' + formatDateVerbose(this.x, true, false) + 
-                ' to ' + formatDateVerbose(this.x + currentDataGrouping.totalRange , false, false) +'</small><br>'
+            header = '<span class="is-family-monospace is-size-7">' + formatDateVerbose(this.x, true, false, true) + 
+                ' - ' + formatDateVerbose(this.x + currentDataGrouping.totalRange, true, false, true) +'</span><br>'
         } 
         if (currentDataGrouping.unitName == 'hour') {
             header =   hourlyHeader(this.x, currentDataGrouping.totalRange)
@@ -45,13 +45,13 @@ const analysisTooltipFormatter = function() {
           min = newval
         }
     } 
-    tooltipHtml = '<span style="color:' + this.points[0].series.color + '">● </span>' +
-        this.points[0].series.name + ': <b>'  + roundValue(this.points[0].y) + '</b><br/>' + 
-        '<span style="color:transparent">● </span>Min: <b>'  + roundValue(min) + '</b><br/>' +
-        '<span style="color:transparent">● </span>Max: <b>'  + roundValue(max) + '</b><br/>'
+    tooltipHtml = '<span class="is-family-monospace is-size-7" style="color:' + this.points[0].series.color + '">● ' +
+        this.points[0].series.name + ': <b>'  + roundValue(this.points[0].y) + '</b></span><br/>' + 
+        '<span class="is-family-monospace is-size-7">● Min: <b>'  + roundValue(min) + '</b></span><br/>' +
+        '<span class="is-family-monospace is-size-7">● Max: <b>'  + roundValue(max) + '</b></span><br/>'
     } else {
-      tooltipHtml = '<span style="color:' + this.points[0].series.color + '">● </span>Total: <b>' +
-        this.points[0].y+ '</b><br/>'
+      tooltipHtml = '<span class="is-family-monospace is-size-7" style="color:' + this.points[0].series.color + '">● Value: <b>' +
+        roundValue(this.points[0].y)+ '</b></span><br/>'
     }    
     return headerTooltipFormatter.call(this) + tooltipHtml
 }

@@ -25,9 +25,9 @@ const formatDateVerbose = function(input, showWeekday=true, showTime=true, short
     const minutes = dateObj.getMinutes().toString().padStart(2, '0')
     let weekday = ''
     if (showWeekday) {
-        weekday = shortWeekdayNames ? `${shortDayName}, ` : `${dayName}, `
+        weekday = shortWeekdayNames ? `${shortDayName} ` : `${dayName} `
     }
-    let time = showTime ? `, ${hour}:${minutes}` : ''
+    let time = showTime ? ` ${hour}:${minutes}` : ''
     return weekday + `${day} ${month} ${year}`  + time
 }
 
