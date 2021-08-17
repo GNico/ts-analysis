@@ -362,15 +362,15 @@
           "display": "Combine order",
           "desc": "Combination method parameters order",
           "conditions": [],
-          "value": "context-dropout",
+          "value": "dropout-context",
           "options": [
-            {
-              "code": "context-dropout",
-              "display": "Context,dropout"
-            },
             {
               "code": "dropout-context",
               "display": "Dropout,context"
+            },
+            {
+              "code": "context-dropout",
+              "display": "Context,dropout"
             }
           ]
         }
@@ -1156,7 +1156,7 @@
           "display": "Seasonal smoother",
           "desc": "Seasonal smoother in periods or time interval (eg: 12h)",
           "conditions": [],
-          "value": "1d"
+          "value": "7"
         },
         {
           "id": "robust",
