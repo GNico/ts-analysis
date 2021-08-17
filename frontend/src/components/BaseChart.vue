@@ -112,6 +112,7 @@ export default {
         bands.push({ 
           id: item.id,
           from: item.from,
+          className: 'pointer-cursor',
           to: item.to,
           color: (item.id == this.activeBand) ? this.normalizedSettings.highlightedColor : this.normalizedSettings.anomalyColor, 
           borderWidth: (item.id == this.activeBand) ? 2 : 0,
