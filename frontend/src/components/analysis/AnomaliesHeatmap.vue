@@ -34,6 +34,7 @@ const countByFixedStep = function (anomalies, categoriesX, categoriesY, stepInSe
   for (let k=0; k < anomalies.length; k++) {
     var anom = anomalies[k]
     var next = new Date(anom.from) 
+    console.log(next)
     var acc = 0
     while (acc < anom.duration) {
       acc += stepInSeconds

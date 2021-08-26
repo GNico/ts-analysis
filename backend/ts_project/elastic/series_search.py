@@ -14,17 +14,19 @@ class SeriesSearch():
         res = ic.refresh(indexname)
 
 
-    def get_series(self, indexname, start='', end='', context=[], tags=[], interval='1h', filter_tags=False, filter_contexts=False):
+    def get_series(self, indexname, start='', end='', context=[], tags=[], interval='1h', filter_tags=False, filter_contexts=False, timezoneOffset='+180m'):
         index_pattern = indexname + '-*'
         query = self._build_series_query(start, end, context, tags, filter_tags, filter_contexts)
         query["aggs"] = {
             "interval_aggregation": {
               "date_histogram": {
                 "field":     "@timestamp",
-                "fixed_interval":  interval
+                "fixed_interval":  interval,
               }
             }
         }
+        if timezoneOffset:
+            query["aggs"]["interval_aggregation"]["date_histogram"]["offset"] = timezoneOffset            
         response = es.search(index=index_pattern, size=0, body=query)
         series_data = []    
         for element in response['aggregations']['interval_aggregation']['buckets']:

@@ -306,28 +306,25 @@ export default {
     setActiveBand(id) {
       this.$emit('changeActiveBand', id)
     },
-    setChartExtremes(min, max) {
-      var realMin = min 
-      var realMax = max       
+    setChartExtremes(min, max, trigger) {
       var chart = this.$refs.chart.chart
-      var dataMin = chart.xAxis[0].dataMin
-      var dataMax = chart.xAxis[0].dataMax
-      if (min < dataMin) {
-        realMin = dataMin
-      } 
-      if (max > dataMax) {
-        realMax = dataMax
-      }
-      chart.xAxis[0].setExtremes(realMin, realMax, undefined, false, {trigger: 'sync'})
-      if (chart.resetZoomButton != undefined) { // force hide or show reset button 
-        if ((realMin == undefined || realMin == chart.xAxis[0].dataMin) && 
-            (realMax == undefined) || (realMax == chart.xAxis[0].dataMax)) {
-          chart.resetZoomButton.hide()
+      chart.xAxis[0].setExtremes(min, max, undefined, false, trigger)
+      //toggle reset zoom button
+      this.$nextTick(() => {
+        var dataMin = chart.xAxis[0].dataMin
+        var dataMax = chart.xAxis[0].dataMax
+        var zoomMin = chart.xAxis[0].min
+        var zoomMax = chart.xAxis[0].max
+        if (dataMin < zoomMin || dataMax > zoomMax) {
+          if (chart.resetZoomButton == undefined) chart.showResetZoom()
         } else {
-          chart.resetZoomButton.show()
+          if (chart.resetZoomButton != undefined) {
+            chart.resetZoomButton.destroy()
+            delete chart.resetZoomButton;
+          }
         }
-      }
-    }, 
+      })     
+    },
     //return true for zoom, false to prevent zoom
     selectAreaByDrag(e) {   
       if (typeof e.xAxis == 'undefined')  { //reset button clicked
@@ -372,7 +369,7 @@ export default {
       var diff = max - min 
       var newZoomedDiff = Math.round(diff * zoomAmount)
       if (newZoomedDiff > (dataMax - dataMin)) {
-        chart.xAxis[0].setExtremes(undefined, undefined, undefined, false, {trigger: 'mwheelzoom'})
+        this.setChartExtremes(undefined, undefined, {trigger: 'mwheelzoom'})
         return
       }
       if (this.cursorPosition < min || this.cursorPosition > max) { 
@@ -384,7 +381,7 @@ export default {
       var newCursorDistanceToMax = newZoomedDiff - newCursorDistanceToMin
       var newMin = Math.round(this.cursorPosition - newCursorDistanceToMin)
       var newMax = Math.round(this.cursorPosition + newCursorDistanceToMax)
-      chart.xAxis[0].setExtremes(newMin, newMax, undefined, false, {trigger: 'mwheelzoom'})
+      this.setChartExtremes(newMin, newMax, {trigger: 'mwheelzoom'})
     },    
   },
   watch: {
@@ -414,7 +411,12 @@ export default {
       handler(newVal, oldVal) {
         if (!oldVal || (newVal.min != oldVal.min || newVal.max != oldVal.max))
           this.$nextTick(function() { 
-            this.setChartExtremes(newVal.min, newVal.max)
+            var chart = this.$refs.chart.chart
+            var dataMin = chart.xAxis[0].dataMin
+            var dataMax = chart.xAxis[0].dataMax
+            var realMin = (newVal.min < dataMin) ? dataMin : newVal.min 
+            var realMax = (newVal.max > dataMax) ? dataMax : newVal.max
+            this.setChartExtremes(realMin, realMax, {trigger: 'sync'})
           })
         } 
     }, 
