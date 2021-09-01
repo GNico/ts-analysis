@@ -3,28 +3,29 @@ import pandas as pd
 from datetime import datetime, timezone
 import traceback
 # import cProfile, pstats, io
-
-from ..models import PeriodicAnalysis, Results, Incident
-from .. import services
+from ..models import PeriodicAnalysis, Results, Incident, Client
+from ..elastic import series_search
 from ..salib.model.series import Series
 from ..salib.model.analyzer import Analyzer
 from ..salib.model.pipeline.pipeline import Pipeline
 from ..salib.model.pipeline.node_factory import NodeFactory
 from ..adapters import SalibModelAdapter
 
+search = series_search.SeriesSearch()
 
-def run_analysis(client, inputs_data, model):
+def run_analysis(client_name, inputs_data, model):
     salib_model = SalibModelAdapter.toSalib(model)
     pipeline = Pipeline.from_json(salib_model)
     analyzer = Analyzer(pipeline=pipeline, debug=True)
 
     salib_inputs = {}
+    client = Client.objects.get(name=client_name)
     for index, input_data in enumerate(inputs_data): 
-        data_series = services.get_series( 
-            client_name=client, 
-            contexts=input_data.get('contexts'), 
+        data_series = search.get_series( 
+            indexname=client.index_name, 
             start=input_data.get('start', ''),  
             end=input_data.get('end', ''),  
+            context=input_data.get('contexts'), 
             tags=input_data.get('tags'),             
             interval=input_data.get('interval', '1h'),
             filter_tags=input_data.get('filterTags', False),

@@ -1,7 +1,10 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .. import services
+from ..elastic import series_search
+from ..models import Client
+
+search = series_search.SeriesSearch()
 
 def filter_series_params(request):
     if 'tags' not in request.query_params:
@@ -23,11 +26,12 @@ def filter_series_params(request):
 class SeriesView(APIView):
     def get(self, request, pk):
         tags, contexts = filter_series_params(request)
-        data = services.get_series( 
-            client_name=pk, 
+        client = Client.objects.get(name=pk)
+        data = search.get_series(
+            indexname=client.index_name, 
             start=request.query_params.get('start', ''),
             end=request.query_params.get('end', ''),
-            contexts=contexts,             
+            context=contexts,             
             tags=tags,             
             interval=request.query_params.get('interval', '1h'),
             filter_tags=request.query_params.get('filterTags', False),
@@ -38,11 +42,12 @@ class SeriesView(APIView):
 class TagCountView(APIView):
     def get(self, request, pk):
         tags, contexts = filter_series_params(request)
-        data = services.get_tags_count(
-            client_name=pk, 
+        client = Client.objects.get(name=pk)
+        data = search.get_tags_count(
+            indexname=client.index_name, 
             start=request.query_params.get('start', ''),
             end=request.query_params.get('end', ''),
-            contexts=contexts,             
+            context=contexts,             
             tags=tags,             
             size=request.query_params.get('size', 20),
             filter_tags=request.query_params.get('filterTags', False),
@@ -52,14 +57,16 @@ class TagCountView(APIView):
 
 class TagListView(APIView):
     def get(self, request, pk):
-        data = services.get_tags(client_name=pk)      
+        client = Client.objects.get(name=pk)
+        data = search.get_tags(client.index_name)
         response = listToTree(data)
         return Response(response)
 
 
 class ContextListView(APIView):
     def get(self, request, pk):
-        data = services.get_contexts(client_name=pk)
+        client = Client.objects.get(name=client_name)
+        data = search.get_contexts(client.index_name)
         response = listToTree(data)
         return Response(response)
 

@@ -4,7 +4,6 @@ from rest_framework.views import APIView
 
 from ..models import Incident
 from ..serializers import IncidentListSerializer, IncidentSerializer
-from .. import services
 
 from django.http import Http404
 from django.db.models import Q

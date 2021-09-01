@@ -16,22 +16,21 @@ class SeriesSearch():
 
 
     def get_series(self, indexname, start='', end='', context=[], tags=[], interval='1h', 
-        filter_tags=False, filter_contexts=False, gmt='0'):
+        filter_tags=False, filter_contexts=False, UTC_offset=0):
         index_pattern = indexname + '-*'
         query = self._build_series_query(start, end, context, tags, filter_tags, filter_contexts)
-
-
         query["aggs"] = {
             "interval_aggregation": {
               "date_histogram": {
                 "field":     "@timestamp",
                 "fixed_interval":  interval,
-                #"time_zone": "-03:00"
               }
             }
         }
-       # if timezoneOffset:
-       #     query["aggs"]["interval_aggregation"]["date_histogram"]["offset"] = timezoneOffset            
+        if UTC_offset:
+            offset = '+' if UTC_offset > 0 else '-'
+            offset += str(UTC_offset) + 'm'
+            query["aggs"]["interval_aggregation"]["date_histogram"]["offset"] = offset            
         response = es.search(index=index_pattern, size=0, body=query)
         series_data = []    
         for element in response['aggregations']['interval_aggregation']['buckets']:
@@ -59,8 +58,8 @@ class SeriesSearch():
         query["aggs"] = {
             "popular_tags": {
               "terms": {
-                "field":    "tag",
-                "size":     size
+                "field": "tag",
+                "size": size
               }
             }
         }
@@ -74,18 +73,19 @@ class SeriesSearch():
     def get_contexts(self, indexname):
         requestedData = [] 
         index_pattern = indexname + '-*'
-        response = es.search(index=index_pattern, 
-                            size=0, 
-                            body={
-                                "aggs": {
-                                    "my_aggregation": {
-                                        "terms":  { 
-                                            "field" : "context",
-                                            "size": 10000
-                                        }
-                                    }
-                                }
-                            })
+        response = es.search(
+            index=index_pattern, 
+            size=0, 
+            body={
+              "aggs": {
+                "my_aggregation": {
+                  "terms":  { 
+                    "field" : "context",
+                    "size": 10000
+                  }
+                }
+              }
+            })
         for element in response['aggregations']['my_aggregation']['buckets']:
             requestedData.append(element['key'])
         return requestedData
@@ -94,18 +94,19 @@ class SeriesSearch():
     def get_tags(self, indexname):
         requestedData = []
         index_pattern =  indexname + '-*'
-        response = es.search(index=index_pattern, 
-                            size=0, 
-                            body={
-                                "aggs": {
-                                    "my_aggregation": {
-                                        "terms":  { 
-                                            "field" : "tag",
-                                            "size": 10000
-                                        }
-                                    }
-                                }
-                            })
+        response = es.search(
+            index=index_pattern, 
+            size=0, 
+            body={
+              "aggs": {
+                "my_aggregation": {
+                  "terms":  { 
+                    "field" : "tag",
+                    "size": 10000
+                  }
+                }
+              }
+            })
         for element in response['aggregations']['my_aggregation']['buckets']:
             requestedData.append(element['key'])
         return requestedData
@@ -116,9 +117,9 @@ class SeriesSearch():
         index_pattern = indexname + '-*'
         query = self._build_series_query(start, end, context, tags)
         query["sort"] = [{   
-              "@timestamp": {
-                "order": "desc"
-              }
+          "@timestamp": {
+            "order": "desc"
+          }
         }]   
         response = es.search(index=index_pattern, size=size, body=query)
         for element in response["hits"]["hits"]:

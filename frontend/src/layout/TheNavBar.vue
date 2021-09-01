@@ -36,11 +36,12 @@
 
 
 <script>
+import { dtNames } from '@/utils/dateFormatter'
   
 export default {
   data() {
     return {
-      offsets: [
+     /* offsets: [
         ["UTC−12:00", -12],
         ["UTC−11:00", -11],
         ["UTC−10:00", -10],
@@ -76,10 +77,13 @@ export default {
         ["UTC+12:00", 12],
         ["UTC+13:00", 13],
         ["UTC+14:00", 14]
-      ]
+      ] */
     }
   },
   computed: {
+    offsets() {
+      return dtNames.UTCOffsets
+    },
     UTCOffset: {
       // getter
       get: function () {

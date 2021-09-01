@@ -152,8 +152,7 @@ export default {
           enabled: false,
         },
         time: {
-           // timezoneOffset: 3 * 60
-           timezoneOffset:  this.UTCOffset
+          timezoneOffset: this.UTCOffset
         },
         chart: {          
           zoomType: 'x',          

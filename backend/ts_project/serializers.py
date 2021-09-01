@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from .models import Pipeline, Analysis, PeriodicAnalysis, Monitor, NotificationChannel, Incident
-from . import services
-
+from .models import Pipeline, Analysis, PeriodicAnalysis, Monitor, NotificationChannel, Incident, Client
+from .elastic import series_search
 
 class ClientInputSerializer(serializers.Serializer):
     name = serializers.RegexField(regex='^[a-z0-9_]+$', allow_blank=False)
@@ -75,14 +74,16 @@ class IncidentSerializer(serializers.ModelSerializer):
     series = serializers.SerializerMethodField()
 
     def get_series(self, obj):
+        search = series_search.SeriesSearch()
         series_data = {}
         inputs_data = obj.periodic_analysis.analysis.data_options
+        client = Client.objects.get(name=obj.client)
         for index, input_data in enumerate(inputs_data):
-            s = services.get_series( 
-                client_name=obj.client, 
-                contexts=input_data.get('contexts', []), 
+            s = search.get_series( 
+                indexname=client.index_name, 
                 start=input_data.get('start', ''),  
                 end=input_data.get('end', ''),  
+                context=input_data.get('contexts', []), 
                 tags=input_data.get('tags', []),             
                 interval=input_data.get('interval', '1h'),
                 filter_tags=input_data.get('filter_tags', False),
