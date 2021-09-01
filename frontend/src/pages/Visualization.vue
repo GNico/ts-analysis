@@ -50,6 +50,7 @@
         :range="range"
         :zoomEnabled="zoomEnabled"
         :tagsCount="tagsCount"
+        :UTCOffset="UTCOffset"
         @tagsCountRequest="getTagsCount"/>
     </div>
   </section>  
@@ -112,6 +113,9 @@ export default {
     },
     range() {
       return this.$store.state.visualize.allSeriesRange
+    },
+    UTCOffset() {
+      return this.$store.state.UTCOffset
     } 
   },
   methods: {

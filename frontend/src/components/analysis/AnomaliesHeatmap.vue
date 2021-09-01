@@ -21,7 +21,10 @@
 
 
 <script>
-//pre: step in seconds correspond to lowest axis increment
+import { addUTCOffset } from '@/utils/dateFormatter'
+
+
+//precondition: stepInSeconds correspond to lowest axis increment
 const countByFixedStep = function (anomalies, categoriesX, categoriesY, stepInSeconds, indexFuncX, indexFuncY) {
   //init counter
   var counter = []
@@ -34,7 +37,6 @@ const countByFixedStep = function (anomalies, categoriesX, categoriesY, stepInSe
   for (let k=0; k < anomalies.length; k++) {
     var anom = anomalies[k]
     var next = new Date(anom.from) 
-    console.log(next)
     var acc = 0
     while (acc < anom.duration) {
       acc += stepInSeconds
@@ -52,8 +54,8 @@ const axisDefinitions = [
     name: 'Hour of day/Day of week',
     categoriesX: [ ...Array(24).keys() ],
     categoriesY: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    indexFuncX: d => d.getHours(),
-    indexFuncY: d => d.getDay(),
+    indexFuncX: d => addUTCOffset(d).getUTCHours(),
+    indexFuncY: d => addUTCOffset(d).getUTCDay(),
     getCounts: function (anomalies) {
       return countByFixedStep(anomalies, this.categoriesX, this.categoriesY, 3600, this.indexFuncX, this.indexFuncY)
     },
@@ -68,8 +70,8 @@ const axisDefinitions = [
     name: 'Day of month/Day of week',
     categoriesX: Array.from({length: 31}, (_, i) => i + 1),
     categoriesY: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    indexFuncX: d => d.getDate()-1,
-    indexFuncY: d => d.getDay(),
+    indexFuncX: d => addUTCOffset(d).getUTCDate()-1,
+    indexFuncY: d => addUTCOffset(d).getUTCDay(),
     getCounts: function (anomalies) {
       return countByFixedStep(anomalies, this.categoriesX, this.categoriesY, 3600 * 24, this.indexFuncX, this.indexFuncY)
     },
@@ -82,8 +84,8 @@ const axisDefinitions = [
     name: 'Day of month/Month of year',
     categoriesX: Array.from({length: 31}, (_, i) => i + 1),
     categoriesY: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
-    indexFuncX: d => d.getDate()-1,
-    indexFuncY: d => d.getMonth(),
+    indexFuncX: d => addUTCOffset(d).getUTCDate()-1,
+    indexFuncY: d => addUTCOffset(d).getUTCMonth(),
     getCounts: function (anomalies) {
       return countByFixedStep(anomalies, this.categoriesX, this.categoriesY, 3600 * 24, this.indexFuncX, this.indexFuncY)
     },  

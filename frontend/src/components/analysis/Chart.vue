@@ -12,7 +12,8 @@
   :crosshair="crosshair"
   :syncCrosshairEnabled="syncCrosshairEnabled"
   :tooltipFormatter="tooltipFormatter"
-  :tickInterval="tickInterval"/>
+  :tickInterval="tickInterval"
+  :UTCOffset="chartUTCOffset"/>
 </template>
 
 
@@ -85,7 +86,7 @@ export default {
     height: {
       type: [String, Number],
       default: 'inherit'
-    }
+    },    
   },
   data() {
     return {
@@ -207,6 +208,9 @@ export default {
       }
       return cdata
     },
+    chartUTCOffset() {
+      return this.$store.state.UTCOffset * -60 
+    }
   },
   methods: {
     setActiveAnomaly(id) {

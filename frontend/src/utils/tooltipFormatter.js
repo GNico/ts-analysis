@@ -1,10 +1,10 @@
-import { formatDateVerbose } from '@/utils/dateFormatter'
+import { formatDateVerbose, addUTCOffset } from '@/utils/dateFormatter'
 
 const headerTooltipFormatter = function() {
     function hourlyHeader(original, range) {
-        var d = new Date(original+range)
-        const hour = d.getHours().toString().padStart(2, '0')
-        const minutes = d.getMinutes().toString().padStart(2, '0')
+        var d = addUTCOffset(new Date(original+range))
+        const hour = d.getUTCHours().toString().padStart(2, '0')
+        const minutes = d.getUTCMinutes().toString().padStart(2, '0')
         return '<span class="is-family-monospace is-size-7">' + formatDateVerbose(original) + ` - ${hour}:${minutes}</span><br>`
     }
     var currentDataGrouping = this.points[0].series.currentDataGrouping
@@ -13,13 +13,15 @@ const headerTooltipFormatter = function() {
         if (currentDataGrouping.unitName == 'day') {
             header = '<span class="is-family-monospace is-size-7">' + formatDateVerbose(this.x, true, false, true) + 
                 ' - ' + formatDateVerbose(this.x + currentDataGrouping.totalRange, true, false, true) +'</span><br>'
-        } 
+        }     
         if (currentDataGrouping.unitName == 'hour') {
-            header =   hourlyHeader(this.x, currentDataGrouping.totalRange)
+            header = hourlyHeader(this.x, currentDataGrouping.totalRange)
         }
     } else {
         header = hourlyHeader(this.x, this.points[0].series.closestPointRange)
     }
+                    console.log(this.x)
+
     return header
 }
 

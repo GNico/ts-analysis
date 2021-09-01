@@ -67,7 +67,7 @@ export default {
       return this.$store.getters['results/activeResults']
     },    
     model() {
-      return this.activeResults.model
+      return this.activeResults.settings.model
     },
     loadingResults() {
       return this.activeResults.loading

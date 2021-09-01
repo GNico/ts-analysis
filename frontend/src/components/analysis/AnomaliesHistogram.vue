@@ -21,6 +21,8 @@
 
 
 <script>
+import { addUTCOffset } from '@/utils/dateFormatter'
+
 const countByFixedStep = function (anomalies, counter, stepInSeconds, indexFunc) {
   var counts = [ ...counter ]
   for (let i=0; i < anomalies.length; i++) {
@@ -41,7 +43,7 @@ const bucketDefinitions = [
     name: 'Hour',
     counter: new Array(24).fill(0),
     categories: [ ...Array(24).keys() ],
-    indexFunc: d => d.getHours(),
+    indexFunc: d => addUTCOffset(d).getUTCHours(),
     getCounts: function (anomalies) {
       return countByFixedStep(anomalies, this.counter, 3600, this.indexFunc)
     }
@@ -50,7 +52,7 @@ const bucketDefinitions = [
     name: 'Day of Week',
     counter:  new Array(7).fill(0),
     categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    indexFunc: d => d.getDay(),
+    indexFunc: d => addUTCOffset(d).getUTCDay(),
     getCounts: function (anomalies) {
       return countByFixedStep(anomalies, this.counter, 3600 * 24, this.indexFunc)
     }
@@ -59,7 +61,7 @@ const bucketDefinitions = [
     name: 'Day of Month',
     counter:  new Array(31).fill(0),
     categories:  Array.from({length: 31}, (_, i) => i + 1),
-    indexFunc: d => d.getDate()-1,
+    indexFunc: d => addUTCOffset(d).getUTCDate()-1,
     getCounts: function (anomalies) {
       return countByFixedStep(anomalies, this.counter, 3600 * 24, this.indexFunc)      
     }
@@ -68,7 +70,7 @@ const bucketDefinitions = [
     name: 'Month',
     counter:  new Array(12).fill(0),
     categories:  ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
-    indexFunc: d => d.getMonth(),
+    indexFunc: d => addUTCOffset(d).getUTCMonth(),
     getCounts: function (anomalies) {
       //note: this is not perfectly accurate because months are not all 30 days
       return countByFixedStep(anomalies, this.counter, 3600 * 24 * 30, this.indexFunc)      

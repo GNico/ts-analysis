@@ -23,8 +23,14 @@ export default {
     }
   },
   computed: {
+    chartUTCOffset() {
+      return this.$store.state.UTCOffset * -60 
+    },
     chartOptions() {
       return {
+        time: {
+          timezoneOffset: this.chartUTCOffset
+        },
         chart: {
           backgroundColor: 'transparent'
         },

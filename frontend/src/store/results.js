@@ -84,7 +84,7 @@ const actions = {
     },
     startAnalysis({commit, getters, dispatch}, settings) {
         if (!settings) return
-        commit('add_results', {id: settings.id, loading: true, taskId: undefined })
+        commit('add_results', {id: settings.id, loading: true, taskId: undefined})
         dispatch('updateOptions', {id: settings.id, ...defaultOptions})
         return  api.getAnomalies({
                     client: settings.client,
@@ -92,7 +92,7 @@ const actions = {
                     model: settings.model
                 })
                 .then(response => {    
-                    commit('add_results', {id: settings.id, loading: true, taskId: response.data.task_id, model: settings.model }) 
+                    commit('add_results', {id: settings.id, loading: true, taskId: response.data.task_id, settings: settings }) 
                 })
                 .catch(error => { 
                     if (error.response) {

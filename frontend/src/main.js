@@ -22,6 +22,7 @@ highchartsMore(Highcharts)
 require('./assets/themes/dark-unica.js'); //dark theme for highcharts
 require('./assets/sass/main.scss');
 
+
 new Vue({
   el: '#app',
   router: router,

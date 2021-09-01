@@ -29,7 +29,9 @@
   </b-table-column>
 
   <template #detail="props">
-    <article >
+    <AnomalyDetailsResult :anomaly="props.row"/>
+
+    <!-- <article>
       <div class="is-flex">
         <div class="left-detail-field has-text-right mr-5 has-text-weight-bold has-text-grey-light">
           ID
@@ -88,16 +90,18 @@
           <span v-else>-</span>
         </div>
       </div>
-    </article>
+    </article> -->
   </template>
 </b-table>
 </template>
 
 
 <script>
-import { timeRangeToString, formatDateVerbose, formatDate } from '@/utils/dateFormatter';
+import { timeRangeToString, formatDateVerbose } from '@/utils/dateFormatter';
+import AnomalyDetailsResult from "./AnomalyDetailsResult"
 
 export default {
+  components: { AnomalyDetailsResult },
   props: {
     anomalies: {
       type: Array,
@@ -136,10 +140,6 @@ export default {
       else 
         this.$emit('changeActive', event.id)
     },
-    formatDate(date) {
-      return formatDate(date)
-    },
-
     formatDateVerbose(date, showWeekday, showTime, shortWeekdayNames) {
       return formatDateVerbose(...arguments)
     },
@@ -161,16 +161,12 @@ export default {
       if (oldRow) {
         var oldRow = document.getElementById(oldVal.id);
         var oldTr = oldRow.closest('tr')    
-        console.log('scroll before', oldTr.offsetTop)
       }
       this.openRows = this.selected ? [this.selected.id] : []
       this.$nextTick(function () {
         if (this.selected) {
           var element = document.getElementById(this.selected.id);
           element = element.closest('tr')    
-
-          console.log("scroll after:", element.offsetTop )
-
           var next = element.nextElementSibling
           var scrollamount = element.offsetTop - 32
           if (this.detailed && oldVal && scrollamount > this.lastScroll)

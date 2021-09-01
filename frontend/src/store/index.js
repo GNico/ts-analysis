@@ -10,6 +10,14 @@ import models from './models'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+  state: {
+    UTCOffset: 0,
+  },
+  mutations: {
+    set_utcoffset(state, value) {
+      state.UTCOffset = value
+    }
+  },
   modules: {
     visualize,
     analysis,

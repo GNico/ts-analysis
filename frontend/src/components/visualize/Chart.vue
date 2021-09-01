@@ -14,6 +14,7 @@
     :syncCrosshairEnabled="true"
     @selection="getTagsCount(panel.id, $event)"
     :tooltipFormatter="tooltipFormatter"
+    :UTCOffset="chartUTCOffset"
   />
 </div>
 </template>
@@ -62,6 +63,10 @@ export default {
       type: Object,
       default: () => {}
     },
+    UTCOffset: {
+      type: Number,
+      default: 0,
+    }
   },
   data () {
     return {
@@ -121,6 +126,9 @@ export default {
       })
       return allSeriesData 
     },
+    chartUTCOffset() {
+      return this.UTCOffset * -60 
+    }
   },
   methods: {  
     transform(panelId) {

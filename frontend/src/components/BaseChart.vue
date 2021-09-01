@@ -84,6 +84,10 @@ export default {
       type: Object,
       default: () => { return {} }
     },
+    UTCOffset: {
+      type: Number,
+      default: 0,
+    }
   },
   data () {
     return {
@@ -146,6 +150,10 @@ export default {
       return {      
         boost: {
           enabled: false,
+        },
+        time: {
+           // timezoneOffset: 3 * 60
+           timezoneOffset:  this.UTCOffset
         },
         chart: {          
           zoomType: 'x',          
