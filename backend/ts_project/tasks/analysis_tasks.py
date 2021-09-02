@@ -29,7 +29,8 @@ def run_analysis(client_name, inputs_data, model):
             tags=input_data.get('tags'),             
             interval=input_data.get('interval', '1h'),
             filter_tags=input_data.get('filterTags', False),
-            filter_contexts=input_data.get('filterContexts', False))
+            filter_contexts=input_data.get('filterContexts', False),
+            UTC_offset=input_data.get('UTCOffset', 0))
         dates = [datetime.fromtimestamp(item[0]/1000) for item in data_series]
         count  = [item[1] for item in data_series]
         ts = pd.Series(count, index=dates)

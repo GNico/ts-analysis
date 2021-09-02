@@ -12,6 +12,7 @@ const initialSettings = {
     filterTags: false,
     filterContexts: false,
     interval: '1h',
+    UTCOffset: 0,
     start: null,
     end: null,
   }],

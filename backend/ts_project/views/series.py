@@ -65,7 +65,7 @@ class TagListView(APIView):
 
 class ContextListView(APIView):
     def get(self, request, pk):
-        client = Client.objects.get(name=client_name)
+        client = Client.objects.get(name=pk)
         data = search.get_contexts(client.index_name)
         response = listToTree(data)
         return Response(response)

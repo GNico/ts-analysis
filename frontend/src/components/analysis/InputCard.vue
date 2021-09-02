@@ -60,7 +60,20 @@
             type="text" 
             pattern="^[0-9]+[mhd]$" 
             size="is-small" />
-        </b-field>       
+        </b-field>    
+        <b-field horizontal label="UTC offset">
+          <b-select
+            :value="dataOptions.UTCOffset"
+            @input="updateAnalysis('UTCOffset', $event)"
+            size="is-small">
+            <option
+                v-for="offset in UTCOffsets"
+                :value="offset[1]"
+                :key="offset[1]">
+                {{ offset[0] }}
+            </option>
+          </b-select>
+        </b-field>
         <b-field horizontal label="From">
           <b-datepicker          
             :first-day-of-week="1"
@@ -109,6 +122,7 @@
 <script>
 import TreeSelect from '@/components/inputs/TreeSelect.vue';
 import SearchSelect from '@/components/inputs/SearchSelect.vue';
+import { dtNames } from '@/utils/dateFormatter'
 
 export default {
   components:  { TreeSelect, SearchSelect },
@@ -156,6 +170,9 @@ export default {
     isOpen() {
       return this.sharedState.openNode === this.inputNumber.toString()
     },
+    UTCOffsets() {
+      return dtNames.UTCOffsets
+    }
   },
   methods: {
     updateAnalysis(prop, value) {
