@@ -20,8 +20,6 @@ const headerTooltipFormatter = function() {
     } else {
         header = hourlyHeader(this.x, this.points[0].series.closestPointRange)
     }
-                    console.log(this.x)
-
     return header
 }
 

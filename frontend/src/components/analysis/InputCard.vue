@@ -23,8 +23,8 @@
       <div class="content">
         <b-field horizontal label="Client">        
           <SearchSelect
-            :value="client"
-            @input="updateAnalysis('client', $event)"
+            :value="analysis.client"
+            @input="updateAnalysis('client', $event, true)"
             :data="allClients"/>
         </b-field>
         <div class="mb-3 filters-box is-flex">
@@ -36,8 +36,8 @@
             :itemsTree="tagOptions"
             :value="dataOptions.tags"
             :applyFilter="dataOptions.filterTags"
-            @input="updateAnalysis('tags', $event)"
-            @filterCheck="updateAnalysis('filterTags', $event)"
+            @input="updateAnalysis('tags', $event, false)"
+            @filterCheck="updateAnalysis('filterTags', $event, false)"
           />
         </div>
         <div class="mb-3 filters-box is-flex">
@@ -49,22 +49,22 @@
             :itemsTree="contextOptions"
             :value="dataOptions.contexts"
             :applyFilter="dataOptions.filterContexts"
-            @input="updateAnalysis('contexts', $event)"
-            @filterCheck="updateAnalysis('filterContexts', $event)"
+            @input="updateAnalysis('contexts', $event, false)"
+            @filterCheck="updateAnalysis('filterContexts', $event, false)"
           />
         </div>
         <b-field horizontal label="Interval">
           <b-input 
-            :value="dataOptions.interval"
-            @input="updateAnalysis('interval', $event)"
+            :value="analysis.interval"
+            @input="updateAnalysis('interval', $event, true)"
             type="text" 
             pattern="^[0-9]+[mhd]$" 
             size="is-small" />
         </b-field>    
         <b-field horizontal label="UTC offset">
           <b-select
-            :value="dataOptions.UTCOffset"
-            @input="updateAnalysis('UTCOffset', $event)"
+            :value="analysis.UTCOffset"
+            @input="updateAnalysis('UTCOffset', $event, true)"
             size="is-small">
             <option
                 v-for="offset in UTCOffsets"
@@ -79,14 +79,14 @@
             :first-day-of-week="1"
             size="is-small"
             :value="dataOptions.start ? new Date(dataOptions.start) : null"
-            @input="updateAnalysis('start', $event)">
+            @input="updateAnalysis('start', $event, false)">
             <button class="button is-primary is-small"
-                @click="updateAnalysis('start', new Date())">
+                @click="updateAnalysis('start', new Date(), false)">
                 <b-icon icon="calendar-today" size="is-small"></b-icon>
                 <span>Today</span>
             </button>
             <button class="button is-danger is-small"
-                @click="updateAnalysis('start', null)">
+                @click="updateAnalysis('start', null, false)">
                 <b-icon icon="close-thick" size="is-small"></b-icon>
                 <span>Clear</span>
             </button>
@@ -97,14 +97,14 @@
             :first-day-of-week="1"
             size="is-small"
             :value="dataOptions.end ? new Date(dataOptions.end) : null"
-            @input="updateAnalysis('end', $event)">
+            @input="updateAnalysis('end', $event, false)">
             <button class="button is-primary is-small"
-                @click="updateAnalysis('end', new Date())">
+                @click="updateAnalysis('end', new Date(), false)">
                 <b-icon icon="calendar-today" size="is-small"></b-icon>
                 <span>Today</span>
             </button>
             <button class="button is-danger is-small"
-                @click="updateAnalysis('end', null)">
+                @click="updateAnalysis('end', null, false)">
                 <b-icon icon="close-thick" size="is-small"></b-icon>
                 <span>Clear</span>
             </button>
@@ -122,7 +122,7 @@
 <script>
 import TreeSelect from '@/components/inputs/TreeSelect.vue';
 import SearchSelect from '@/components/inputs/SearchSelect.vue';
-import { dtNames } from '@/utils/dateFormatter'
+import { dtNames } from '@/utils/datetimeConstants'
 
 export default {
   components:  { TreeSelect, SearchSelect },
@@ -131,18 +131,26 @@ export default {
       type: Number,
       default: 0,
     },
-    client: {
+    analysis: {
+      type: Object,
+      default: () => {return {}}
+    },
+  /*  client: {
       type: String,
       default: '',
     },
+    UTCOffset: {
+      type: Number,
+      default: 0
+    }, */
     allClients: {
       type: Array,
       default: () => []
     },
-    dataOptions: {
+ /*   dataOptions: {
       type: Object,
       default: () => {return {}}
-    },
+    }, */
     tagOptions: {
       type: Array,
       default: () => []
@@ -164,6 +172,9 @@ export default {
     }
   },
   computed: {
+    dataOptions() {
+      return this.analysis.data_options[this.index]
+    },
     inputNumber() {
       return this.index + 1
     },
@@ -175,9 +186,9 @@ export default {
     }
   },
   methods: {
-    updateAnalysis(prop, value) {
+    updateAnalysis(prop, value, shared) {
       if (!(prop == 'client' && value == this.client)) {
-        this.$emit('update', { prop: prop, value: value, index: this.index })
+        this.$emit('update', { prop: prop, value: value, index: this.index, shared: shared })
       } 
     },
     deleteInput() {

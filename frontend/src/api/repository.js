@@ -131,14 +131,9 @@ export default {
         transformResponse: [
             ...axios.defaults.transformResponse, 
             (data) => {
-                let formatted = {}
-                formatted.saveId = data.id
-                formatted.client = data.client
-                formatted.data_options = data.data_options
-                formatted.name = data.name
-                formatted.description = data.description
-                formatted.model = data.model
-                return formatted
+                data.saveId = data.id
+                delete data.id
+                return data
             },
         ]
     })

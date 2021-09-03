@@ -20,13 +20,17 @@
         position="is-bottom-left" 
         :max-height="300" 
         v-model="UTCOffset">
-          <template #trigger>
-            <a class="is-flex is-align-items-center has-text-grey">
-              <span><strong>{{offsets.find(elem=> elem[1] === UTCOffset)[0]}}</strong></span>
-              <b-icon icon="menu-down"></b-icon>
-            </a>
-          </template>
-          <b-dropdown-item v-for="offset in offsets" :value="offset[1]">{{offset[0]}}</b-dropdown-item>
+        <template #trigger>
+          <a class="is-flex is-align-items-center has-text-grey">
+            <span><strong>{{offsets.find(elem=> elem[1] === UTCOffset)[0]}}</strong></span>
+            <b-icon icon="menu-down"></b-icon>
+          </a>
+        </template>
+        <b-dropdown-item 
+          v-for="offset in offsets" 
+          :key="offset[1]"
+          :value="offset[1]">{{offset[0]}}"
+        </b-dropdown-item>
       </b-dropdown>   
 
     </b-navbar-item>
@@ -36,7 +40,7 @@
 
 
 <script>
-import { dtNames } from '@/utils/dateFormatter'
+import { dtNames } from '@/utils/datetimeConstants'
   
 export default {
   data() {
@@ -48,18 +52,16 @@ export default {
       return dtNames.UTCOffsets
     },
     UTCOffset: {
-      // getter
       get: function () {
         return this.$store.state.UTCOffset
       },
-      // setter
       set: function (newValue) {
         this.$store.commit('set_utcoffset', newValue)
       }
     }    
   },
-
-
+  methods: {    
+  }
 }
 
 </script>

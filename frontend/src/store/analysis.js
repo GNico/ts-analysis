@@ -1,18 +1,18 @@
 import api from "../api/repository";
 import { nanoid } from 'nanoid'
-
+import { getValidUserUTCOffset } from '@/utils/datetimeConstants'
 
 const initialSettings = {
   name: '',
   description: '',
   client: '',
+  UTCOffset: getValidUserUTCOffset(),
+  interval: '1h',
   data_options: [{
     contexts: [],
     tags: [],
     filterTags: false,
     filterContexts: false,
-    interval: '1h',
-    UTCOffset: 0,
     start: null,
     end: null,
   }],
@@ -97,7 +97,9 @@ const actions = {
         const objectToSave = { 
             client: settings.client,
             name: name,
-            description: description,          
+            description: description,  
+            interval: settings.interval,
+            UTCOffset: settings.UTCOffset,        
             data_options: settings.data_options,
             model: settings.model 
         }
@@ -115,6 +117,8 @@ const actions = {
             client: settings.client,
             name: name,
             description: description,
+            interval: settings.interval,
+            UTCOffset: settings.UTCOffset,
             data_options: settings.data_options,           
             model: settings.model 
         }

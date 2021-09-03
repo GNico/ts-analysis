@@ -29,16 +29,15 @@
           @click="addInput"/>        
       </div>
 
-      <InputCard v-for="(input, index) in analysis.data_options"
-        :index="index"
-        :key="index"
-        :client="analysis.client"
-        :dataOptions="input"
-        :allClients="clients"
-        :tagOptions="allTags"
-        :contextOptions="allContexts"
-        @update="updateAnalysis"
-        @delete="deleteInput"/>
+    <InputCard v-for="(input, index) in analysis.data_options"
+      :index="index"
+      :key="index"
+      :analysis="analysis"
+      :allClients="clients"
+      :tagOptions="allTags"
+      :contextOptions="allContexts"
+      @update="updateAnalysis"
+      @delete="deleteInput"/>
     </div>
 
     <b-field class="has-text-right sticky-container">
@@ -87,10 +86,9 @@
     <ModelBuilder 
       class="pt-1" 
       :nodes="analysis.model"
-      @input="updateAnalysis({prop: 'model', value: $event})"
+      @input="updateAnalysis({prop: 'model', value: $event, shared: true})"
     />
   </div>
-
 </div>
 </template>
 
@@ -184,9 +182,9 @@ export default {
       this.$emit('run')
       this.$store.dispatch('analysis/runAnalysis', this.analysis.id)
     },
-    updateAnalysis({prop, value, index}) {
+    updateAnalysis({prop, value, index, shared}) {
       let updatedSettings = undefined
-      if (prop === 'client' || prop === 'model') {
+      if (shared) {
         updatedSettings = {id: this.analysis.id, [prop]: value }
         // reset tag and contexts if client changed
         if (prop == 'client' && value !=  this.analysis.client) {
@@ -211,7 +209,6 @@ export default {
         contexts: [],
         filterTags: false,
         tags: [],
-        interval: '1h',
         start: null,
         end: null,
       })

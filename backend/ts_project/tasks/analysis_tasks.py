@@ -13,24 +13,49 @@ from ..adapters import SalibModelAdapter
 
 search = series_search.SeriesSearch()
 
-def run_analysis(client_name, inputs_data, model):
-    salib_model = SalibModelAdapter.toSalib(model)
+# def run_analysis(client_name, inputs_data, model):
+#     salib_model = SalibModelAdapter.toSalib(model)
+#     pipeline = Pipeline.from_json(salib_model)
+#     analyzer = Analyzer(pipeline=pipeline, debug=True)
+
+#     salib_inputs = {}
+#     client = Client.objects.get(name=client_name)
+#     for index, input_data in enumerate(inputs_data): 
+#         data_series = search.get_series( 
+#             indexname=client.index_name, 
+#             start=input_data.get('start', ''),  
+#             end=input_data.get('end', ''),  
+#             context=input_data.get('contexts'), 
+#             tags=input_data.get('tags'),             
+#             interval=input_data.get('interval', '1h'),
+#             filter_tags=input_data.get('filterTags', False),
+#             filter_contexts=input_data.get('filterContexts', False),
+#             UTC_offset=input_data.get('UTCOffset', 0))
+#         dates = [datetime.fromtimestamp(item[0]/1000) for item in data_series]
+#         count  = [item[1] for item in data_series]
+#         ts = pd.Series(count, index=dates)
+#         #input id is just the order in the array
+#         salib_inputs[str(index+1)] = Series(ts)
+
+#     return  analyzer.analyze(salib_inputs)
+
+def run_analysis(data):
+    salib_model = SalibModelAdapter.toSalib(data['model'])
     pipeline = Pipeline.from_json(salib_model)
     analyzer = Analyzer(pipeline=pipeline, debug=True)
-
     salib_inputs = {}
-    client = Client.objects.get(name=client_name)
-    for index, input_data in enumerate(inputs_data): 
+    client = Client.objects.get(name=data['client'])
+    for index, input_data in enumerate(data['data_options']): 
         data_series = search.get_series( 
             indexname=client.index_name, 
             start=input_data.get('start', ''),  
             end=input_data.get('end', ''),  
             context=input_data.get('contexts'), 
             tags=input_data.get('tags'),             
-            interval=input_data.get('interval', '1h'),
+            interval=data.get('interval', '1h'),
             filter_tags=input_data.get('filterTags', False),
             filter_contexts=input_data.get('filterContexts', False),
-            UTC_offset=input_data.get('UTCOffset', 0))
+            UTC_offset=data.get('UTCOffset', 0))
         dates = [datetime.fromtimestamp(item[0]/1000) for item in data_series]
         count  = [item[1] for item in data_series]
         ts = pd.Series(count, index=dates)
@@ -39,13 +64,12 @@ def run_analysis(client_name, inputs_data, model):
 
     return  analyzer.analyze(salib_inputs)
 
-
 @shared_task(bind=True)
 def perform_live_analysis(self, data):
     # pr = cProfile.Profile()
     # pr.enable()
     try:
-        analysis_results = run_analysis(data['client'], data['data_options'], data['model'])
+        analysis_results = run_analysis(data)
         output_json = analysis_results.output_format()
     except Exception as e:
         stack = traceback.format_exc()

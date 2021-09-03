@@ -88,6 +88,8 @@ const actions = {
         dispatch('updateOptions', {id: settings.id, ...defaultOptions})
         return  api.getAnomalies({
                     client: settings.client,
+                    interval: settings.interval,
+                    UTCOffset: settings.UTCOffset,
                     data_options: settings.data_options,                    
                     model: settings.model
                 })

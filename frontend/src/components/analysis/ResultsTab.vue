@@ -7,7 +7,7 @@
     <div v-else class="columns is-fullheight">
       <div class="column is-4 side-menu is-hidden-mobile">        
         <div class="table-header has-text-white">
-          <div> <strong class="has-text-white"> Anomalies</strong></div>
+          <div> <strong class="has-text-white"> Anomalies ({{tableFilteredAnomalies.length}})</strong></div>
           <AnomaliesFilters v-bind="activeOptions" @update="updateOptions"/> 
         </div>
         <AnomaliesTable   
@@ -19,7 +19,7 @@
 
       <div class="column">
         <div class="table-header has-text-white">
-          <div> <strong class="has-text-white"> Anomalies</strong></div>
+          <div> <strong class="has-text-white"> </strong></div>
           <AnomaliesFilters v-bind="activeOptions" @update="updateOptions"/> 
         </div>
         <Chart       

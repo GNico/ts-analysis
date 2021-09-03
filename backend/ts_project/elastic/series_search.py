@@ -9,12 +9,10 @@ class SeriesSearch():
         response = es.count(index=index_pattern)
         return response['count']
 
-
     def refresh(self, indexname):
         ic = IndicesClient(es)
         res = ic.refresh(indexname)
 
-    #UTF_offset in hours
     def get_series(self, indexname, start='', end='', context=[], tags=[], interval='1h', 
         filter_tags=False, filter_contexts=False, UTC_offset=0):
         index_pattern = indexname + '-*'
@@ -28,9 +26,10 @@ class SeriesSearch():
             }
         }
         if UTC_offset:
-            offset = '+' if UTC_offset < 0 else '-'
-            offset += str(abs(UTC_offset) * 60) + 'm'
-            query["aggs"]["interval_aggregation"]["date_histogram"]["offset"] = offset            
+            offset = '+' if UTC_offset > 0 else '-'
+            offset += str(abs(UTC_offset)) + 'm'
+            query["aggs"]["interval_aggregation"]["date_histogram"]["offset"] = offset     
+
         response = es.search(index=index_pattern, size=0, body=query)
         series_data = []    
         for element in response['aggregations']['interval_aggregation']['buckets']:

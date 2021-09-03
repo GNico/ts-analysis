@@ -17,12 +17,14 @@ class PipelineSerializer(serializers.ModelSerializer):
 class AnalysisSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Analysis
-        fields = ['id', 'client', 'name', 'description', 'data_options', 'model', 'created', 'modified']
+        fields = ['id', 'client', 'name', 'interval', 'UTCOffset', 'description', 'data_options', 'model', 'created', 'modified']
 
 
 #serializer for performing live analysis requests
 class AnalysisSerializer(serializers.Serializer):
     client = serializers.CharField(allow_blank=False)
+    interval = serializers.CharField()
+    UTCOffset = serializers.IntegerField()
     data_options = serializers.JSONField()
     model = serializers.JSONField()
 

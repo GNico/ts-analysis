@@ -26,6 +26,8 @@ class Analysis(models.Model):
     client = models.ForeignKey(Client, to_field='name', on_delete=models.CASCADE)
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(blank=True)
+    interval = models.TextField(default='1h')
+    UTCOffset = models.IntegerField(default=0)
     data_options = models.JSONField(default=list)
     model = models.JSONField(default=list)
     created = models.DateTimeField(auto_now_add=True) 
