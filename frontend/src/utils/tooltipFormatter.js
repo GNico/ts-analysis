@@ -23,7 +23,6 @@ const headerTooltipFormatter = function() {
     return header
 }
 
-
 const roundValue = function(value) {
     return (value % 1) ? parseFloat(value).toFixed(2) : value
 }
@@ -61,10 +60,12 @@ const multiseriesTooltipFormatter = function() {
     var grouping = this.points[0].point.dataGroup
     var tooltipHtml = ''
     for (var i = 0; i < this.points.length; i++) {
-        let val = (this.points[i].y % 1) ? parseFloat(this.points[i].y).toFixed(2) : this.points[i].y
-        let name = this.points[i].series.name ? this.points[i].series.name : 'Series'
-        tooltipHtml = tooltipHtml + '<span style="color:' + this.points[i].series.color + '">● </span>' +
-            name + ': <b>'  + val + '</b><br/>'
+        if (this.points[i].series.name !== "ForceRangeStart" && this.points[i].series.name !== "ForceRangeEnd") {
+            let val = (this.points[i].y % 1) ? parseFloat(this.points[i].y).toFixed(2) : this.points[i].y
+            let name = this.points[i].series.name ? this.points[i].series.name : 'Series'
+            tooltipHtml = tooltipHtml + '<span style="color:' + this.points[i].series.color + '">● </span>' +
+                name + ': <b>'  + val + '</b><br/>'
+        }
     }
     return headerTooltipFormatter.call(this) + tooltipHtml
 }

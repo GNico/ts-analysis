@@ -186,6 +186,7 @@ export default {
 
       if (this.forcedMaxRange.start) { //invisible series to force out of bound extremes
         cdata.push({
+          name: "ForceRangeStart",
           data: [{
             x: this.forcedMaxRange.start,
             y: 0
@@ -197,6 +198,7 @@ export default {
       }
       if (this.forcedMaxRange.end) { //invisible series to force out of bound extremes
         cdata.push({
+          name: "ForceRangeStart",
           data: [{
             x: this.forcedMaxRange.end,
             y: 0
@@ -209,7 +211,7 @@ export default {
       return cdata
     },
     chartUTCOffset() {
-      return this.$store.state.UTCOffset * -60 
+      return this.$store.state.UTCOffset 
     }
   },
   methods: {

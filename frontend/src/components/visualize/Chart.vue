@@ -14,7 +14,7 @@
     :syncCrosshairEnabled="true"
     @selection="getTagsCount(panel.id, $event)"
     :tooltipFormatter="tooltipFormatter"
-    :UTCOffset="chartUTCOffset"
+    :UTCOffset="UTCOffset"
   />
 </div>
 </template>
@@ -101,6 +101,7 @@ export default {
           })
           if (this.range.start) { //invisible series to force out of bound extremes
             seriesData.push({
+              name: "ForceRangeStart",
               data: [{
                 x: this.range.start,
                 y: 0
@@ -112,6 +113,7 @@ export default {
           }
           if (this.range.end) { //invisible series to force out of bound extremes
             seriesData.push({
+              name: "ForceRangeEnd",
               data: [{
                 x: this.range.end,
                 y: 0
@@ -126,9 +128,6 @@ export default {
       })
       return allSeriesData 
     },
-    chartUTCOffset() {
-      return this.UTCOffset * -60 
-    }
   },
   methods: {  
     transform(panelId) {
