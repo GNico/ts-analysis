@@ -13,7 +13,6 @@ def filter_series_params(request):
         tags = []
     else:
         tags =  request.query_params.getlist('tags', [])
-
     if 'contexts' not in request.query_params:
         contexts = None
     elif request.query_params['contexts'] == '':
@@ -35,7 +34,8 @@ class SeriesView(APIView):
             tags=tags,             
             interval=request.query_params.get('interval', '1h'),
             filter_tags=request.query_params.get('filterTags', False),
-            filter_contexts=request.query_params.get('filterContexts', False))
+            filter_contexts=request.query_params.get('filterContexts', False),
+            UTC_offset=client.utc_offset)
         return Response(data)
 
 
@@ -51,7 +51,8 @@ class TagCountView(APIView):
             tags=tags,             
             size=request.query_params.get('size', 20),
             filter_tags=request.query_params.get('filterTags', False),
-            filter_contexts=request.query_params.get('filterContexts', False))
+            filter_contexts=request.query_params.get('filterContexts', False),
+            UTC_offset=client.utc_offset)
         return Response(data)
 
 

@@ -4,6 +4,7 @@ from .elastic import series_search
 
 class ClientInputSerializer(serializers.Serializer):
     name = serializers.RegexField(regex='^[a-z0-9_]+$', allow_blank=False)
+    UTC_offset = serializers.IntegerField()
     folder_name = serializers.CharField(allow_blank=False)
 
 
@@ -17,14 +18,13 @@ class PipelineSerializer(serializers.ModelSerializer):
 class AnalysisSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Analysis
-        fields = ['id', 'client', 'name', 'interval', 'UTCOffset', 'description', 'data_options', 'model', 'created', 'modified']
+        fields = ['id', 'client', 'name', 'interval', 'description', 'data_options', 'model', 'created', 'modified']
 
 
 #serializer for performing live analysis requests
 class AnalysisSerializer(serializers.Serializer):
     client = serializers.CharField(allow_blank=False)
     interval = serializers.CharField()
-    UTCOffset = serializers.IntegerField()
     data_options = serializers.JSONField()
     model = serializers.JSONField()
 

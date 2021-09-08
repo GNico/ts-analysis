@@ -38,29 +38,39 @@ class ClientListView(APIView):
     def post(self, request):
         serializer = serializers.ClientInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        client_name = serializer.data.get('name')
         dest_dir = serializer.data.get('folder_name')
-        docs_path = utils.get_data_source_path() + dest_dir
         try:
-            status_id = self._add_new_client(client_name=client_name, docs_path=docs_path)
+            status_id = self._add_new_client(
+                client_name=serializer.data.get('name'), 
+                dest_dir=dest_dir, 
+                utc_offset=serializer.data.get('UTCOffset')
+            )
         except ClientNameAlreadyExists:
             return Response({'error': "There's already a client with the same name"}, status=status.HTTP_409_CONFLICT)
         return Response({'status_id': status_id}, status=status.HTTP_201_CREATED)
 
 
-    def _add_new_client(self, client_name, docs_path):
+    def _add_new_client(self, client_name, dest_dir, utc_offset):
         if Client.objects.filter(name=client_name).exists():
             raise ClientNameAlreadyExists()
+        docs_path = utils.get_data_source_path() + dest_dir
         filenames = utils.get_files_from_directory(docs_path)
         task = tasks.index_series_data.delay(client_name, filenames)
         task = tasks.index_series_data.apply_async(args=[client_name, filenames], priority=task_priorities.INDEXING)
-        client = Client.objects.create(name=client_name, index_name='', task_id=task.id, status='Pending')
+        client = Client.objects.create(
+            name=client_name, 
+            utc_offset=utc_offset, 
+            index_name='', 
+            task_id=task.id, 
+            status='Pending'
+        )
         return task.id
 
 
 class ClientView(APIView):
     def get(self, request, pk):
         client = Client.objects.get(name=pk)
+        utc_offset = client.utc_offset
         series_data = search.get_series(indexname=client.index_name, interval='7d')
         series_range = search.get_series_range(indexname=client.index_name)
         total_events = search.get_count(indexname=client.index_name)

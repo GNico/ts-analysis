@@ -9,6 +9,7 @@ class Client(models.Model):
         db_table = 'clients'
 
     name = models.CharField(max_length=50, unique=True)
+    utc_offset = models.IntegerField(default=0)
     index_name = models.CharField(max_length=50)
     task_id = models.CharField(max_length=50)
     status = models.CharField(max_length=20, default=None)
@@ -27,7 +28,6 @@ class Analysis(models.Model):
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(blank=True)
     interval = models.TextField(default='1h')
-    UTCOffset = models.IntegerField(default=0)
     data_options = models.JSONField(default=list)
     model = models.JSONField(default=list)
     created = models.DateTimeField(auto_now_add=True) 

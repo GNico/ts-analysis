@@ -13,6 +13,7 @@ class SeriesSearch():
         ic = IndicesClient(es)
         res = ic.refresh(indexname)
 
+    #utc offset in minutes
     def get_series(self, indexname, start='', end='', context=[], tags=[], interval='1h', 
         filter_tags=False, filter_contexts=False, UTC_offset=0):
         index_pattern = indexname + '-*'
@@ -35,7 +36,6 @@ class SeriesSearch():
         for element in response['aggregations']['interval_aggregation']['buckets']:
             series_data.append([element['key'], element['doc_count']])
         return series_data
-
 
     def get_series_range(self, indexname):
         index_pattern = indexname + '-*'

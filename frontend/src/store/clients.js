@@ -38,8 +38,7 @@ const mutations = {
 const actions = {
   addClient(store, form) {
     return  api.addNewClient(form)
-            .then(response => {       
-            })
+            .then(response => {})
             .catch(error => { 
               console.log('error creating new client')
             })

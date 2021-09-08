@@ -8,21 +8,32 @@
             @input="e => form.name = e.toLowerCase()"
             placeholder="Client's name"
             pattern="[a-z0-9]+"
+            size="is-small"
             validation-message="Required. Only alphanumeric characters"
             required>
           </b-input>
-        </b-field>
-        <b-field label="Folder name">
-            <b-select placeholder="Select a name" v-model="form.folder_name">
-                <option
-                    v-for="option in dataSourceNames"
-                    :value="option"
-                    :key="option">
-                    {{ option}}
-                </option>
-            </b-select>
+        </b-field>      
 
-         
+        <b-field label="Data source">
+          <b-select placeholder="Select a name" v-model="form.folder_name" size="is-small">
+            <option
+              v-for="option in dataSourceNames"
+              :value="option"
+              :key="option">
+              {{ option}}
+            </option>
+          </b-select>
+        </b-field>
+
+        <b-field label="Time zone">
+          <b-select v-model="form.UTCOffset" size="is-small">
+            <option
+              v-for="offset in UTCOffsets"
+              :value="offset[1]"
+              :key="offset[1]">
+              {{ offset[0] }}
+            </option>
+          </b-select>
         </b-field>
       </section>
       <footer class="modal-card-foot">
@@ -34,6 +45,14 @@
 
 
 <script>
+import { dtNames, getValidUserUTCOffset } from "@/utils/datetimeConstants"
+
+const initForm = {
+  name: '',
+  folder_name: '',
+  UTCOffset: getValidUserUTCOffset()
+}
+
 export default {
   name: 'FormNewClient',
   props: {
@@ -44,16 +63,21 @@ export default {
   },
 	data() {
     return {
-      form: {
-        name: '',
-        folder_name: '',
-      },
+      form: { ...initForm }
+    }
+  },
+  computed: {
+    UTCOffsets() {
+      return dtNames.UTCOffsets
     }
   },
   methods: {
     handleSubmit() {
       this.$emit('submit', this.form)
     },  
+    resetForm() {
+      this.form = { ...initForm }
+    }
   }
 }
 
