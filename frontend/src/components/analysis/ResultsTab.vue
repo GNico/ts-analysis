@@ -14,7 +14,6 @@
           :anomalies="tableFilteredAnomalies"
           :activeAnomaly="activeAnomaly"
           @changeActive="updateOptions({activeAnomalyId: $event})"/> 
-
       </div>
 
       <div class="column">
@@ -33,7 +32,6 @@
           @changeActive="updateOptions({activeAnomalyId: $event})"
           @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" />
 
-
         <div class="columns mt-5">
           <div class="column is-5">
             <AnomaliesHistogram :anomalies="tableFilteredAnomalies"/>
@@ -42,7 +40,6 @@
             <AnomaliesHeatmap :anomalies="tableFilteredAnomalies"/>
           </div>
         </div>
-
       </div>
     </div>  
   </template>

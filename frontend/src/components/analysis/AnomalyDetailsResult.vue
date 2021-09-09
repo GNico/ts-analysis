@@ -1,67 +1,26 @@
 <template>
-<div>
-  <div class="is-flex">
-    <div class="left-detail-field has-text-right mr-5 has-text-weight-bold has-text-grey-light">
-      ID
-    </div>
-    <div class="right-detail-field has-text-left">
-      {{anomaly.id}}
-    </div>
-  </div>
+<b-table 
+  v-if="tagsCount"
+  class="tags-table"
+  height="200px"
+  :data="tagsCount.tags"
+  narrowed>
+  
+  <b-table-column field="tag" label="Tag" v-slot="props" width="50%">
+    <span> {{props.row.tag}} </span>
+  </b-table-column>
 
-  <div class="is-flex">
-    <div class="left-detail-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
-      From
-    </div>
-    <div class="right-detail-field has-text-left">
-      <strong>{{anomaly.from}} </strong>({{formatDate(new Date(anomaly.from))}}) 
-    </div>
-  </div>
+  <b-table-column field="count" label="Count" v-slot="props" width="25%" numeric>
+    <span class="is-family-monospace is-size-7">        
+      <strong>{{props.row.count}}</strong> ({{(props.row.count * 100 / tagsCount.total).toFixed(1)}}%)
+    </span>
+  </b-table-column>
 
-  <div class="is-flex">
-    <div class="left-detail-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
-      To
-    </div>
-    <div class="right-detail-field has-text-left">
-      <strong>{{anomaly.to}} </strong>({{formatDate(new Date(anomaly.to))}}) 
-    </div>
-  </div>
-
-  <div class="is-flex">
-    <div class="left-detail-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
-      Score
-    </div>
-    <div class="right-detail-field has-text-left">
-      {{anomaly.score}}
-    </div>
-  </div>
-
-  <div class="is-flex">
-    <div class="left-detail-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
-      Node 
-    </div>
-    <div class="right-detail-field has-text-left">
-      {{anomaly.source_node}}
-    </div>
-  </div>
-
-  <div class="is-flex">
-    <div class="left-detail-field has-text-right mr-5 mb-1 has-text-weight-bold has-text-grey-light">
-      Anomaly sources
-    </div>
-    <div class="right-detail-field has-text-left">
-      <template v-if="anomaly.source_anomalies.length">
-        <div v-for="anom in anomaly.source_anomalies">
-          {{anom}}
-        </div>
-      </template>
-      <span v-else>-</span>
-    </div>
-  </div>
-</div>
+</b-table> 
 </template>
 
 <script>
+import api from "@/api/repository";
 import { formatDate } from '@/utils/dateFormatter';
 
 export default {
@@ -71,43 +30,56 @@ export default {
       default: {}
     }
   },
+  data() {
+    return {
+      tagsCount: undefined,
+    }
+  },
   computed: {
-    
+    active() {
+      return this.$store.getters['results/activeResults']
+    }
   },
   methods: {
-   /* getTagsCount(series) {
+   getTagsCount(results) {
       api.getTagsCount({
-        name: series.client, 
-        tags: series.tags,
-        contexts: series.contexts,
-        filterTags: series.filterTags,
-        filterContexts: series.filterContexts,
-        start: new Date(anomaly.min).toISOString(),
-        end: new Date(anomaly.max).toISOString(),
+        name: results.settings.client, 
+        tags: results.settings.tags,
+        contexts: results.settings.contexts,
+        filterTags: results.settings.filterTags,
+        filterContexts: results.settings.filterContexts,
+        start: new Date(this.anomaly.from).toISOString(),
+        end: new Date(this.anomaly.to).toISOString(),
       })
       .then(response => {   
-        this.tagsCount[request.panelId].push({
-          name: series.name, 
+        this.tagsCount = {
+          client: results.settings.client, 
           total: response.data.total, 
           tags: response.data.tags_count
-        })
+        }
       }) 
-    }, */
+    }, 
     formatDate(date) {
       return formatDate(date)
     },   
   },
-  watch: {
-    anomaly: {
-      deep: true,
-      handler: function() {
-        console.log("changes")
-      }
-    }
+  watch: {    
   },
- /* created() {
+  created() {
     this.getTagsCount(this.$store.getters['results/activeResults'])
-  }, */  
+  },   
 }
 
 </script>
+
+
+<style>
+.tags-table .table {
+  background-color: #001e25;
+}
+
+.tags-table td {
+  word-break: break-all;
+}
+
+</style>

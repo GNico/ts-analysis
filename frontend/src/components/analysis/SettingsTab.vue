@@ -53,7 +53,6 @@
            {{msg.message}}
           </span>
         </div>
-
       </div>
     </b-field> 
   </div>

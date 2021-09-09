@@ -1,4 +1,4 @@
-import api from "../api/repository";
+import api from "@/api/repository";
 import { nanoid } from 'nanoid'
 import Vue from 'vue'
 

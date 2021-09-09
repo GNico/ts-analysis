@@ -51,8 +51,7 @@ class TagCountView(APIView):
             tags=tags,             
             size=request.query_params.get('size', 20),
             filter_tags=request.query_params.get('filterTags', False),
-            filter_contexts=request.query_params.get('filterContexts', False),
-            UTC_offset=client.utc_offset)
+            filter_contexts=request.query_params.get('filterContexts', False))
         return Response(data)
 
 

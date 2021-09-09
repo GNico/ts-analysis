@@ -50,7 +50,7 @@ class SeriesSearch():
         return { 'start': min_val, 'end': max_val }
 
 
-    def get_tags_count(self, indexname, start='', end='', context=[], tags=[], size=3, filter_tags=False, filter_contexts=False):
+    def get_tags_count(self, indexname, start='', end='', context=[], tags=[], size=10, filter_tags=False, filter_contexts=False):
         index_pattern = indexname + '-*'
         query = self._build_series_query(start, end, context, tags, filter_tags, filter_contexts)
         total_docs = es.count(index=index_pattern, body=query)
@@ -62,6 +62,7 @@ class SeriesSearch():
               }
             }
         }
+
         response = es.search(index=index_pattern, size=0, body=query)
         tags_count = []
         for element in response['aggregations']['popular_tags']['buckets']:

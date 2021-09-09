@@ -76,12 +76,7 @@
             <button class="transparent-button" @click="toggleDetails(props.row.name)">
               <b-icon icon="eye-outline" type="is-primary"></b-icon>
             </button>
-          </b-tooltip>
-          <b-tooltip label="Edit">
-            <button class="transparent-button">
-              <b-icon icon="pencil" type="is-primary"></b-icon>
-            </button>
-          </b-tooltip>
+          </b-tooltip>         
           <b-tooltip label="Settings">
             <button class="transparent-button">
               <b-icon icon="cog" type="is-primary"></b-icon>
@@ -106,8 +101,8 @@
 
 
 <script>
-import FormNewClient from '@/components/FormNewClient'
-import ClientDetails from '@/components/ClientDetails'
+import FormNewClient from '@/components/dataManagement/FormNewClient'
+import ClientDetails from '@/components/dataManagement/ClientDetails'
 import api from '@/api/repository'
 import { formatDate } from '@/utils/dateFormatter'
 

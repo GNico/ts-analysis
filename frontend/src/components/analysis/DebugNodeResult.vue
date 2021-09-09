@@ -82,6 +82,7 @@
       :height="tableHeight"
       :anomalies="filteredAnomalies"
       :activeAnomaly="activeAnomalyId"
+      :debug="true"
       @changeActive="activeAnomalyId = $event"/> 
 
     <div v-else-if="activeTab == 3 && !isEmpty(debug_info)" class="is-flex-grow-1 scrollable" >

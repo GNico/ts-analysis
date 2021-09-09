@@ -29,7 +29,7 @@
         <b-dropdown-item 
           v-for="offset in offsets" 
           :key="offset[1]"
-          :value="offset[1]">{{offset[0]}}"
+          :value="offset[1]">{{offset[0]}}
         </b-dropdown-item>
       </b-dropdown>   
 

@@ -72,7 +72,7 @@
 
 
 <script>
-import { formatDate } from '../utils/dateFormatter'
+import { formatDate } from '@/utils/dateFormatter'
 
 export default {
   props: {
