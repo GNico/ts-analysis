@@ -37,7 +37,11 @@ const mutations = {
 
 const actions = {
   addClient(store, form) {
-    return  api.addNewClient(form)
+    return  api.addNewClient({
+              name: form.name,
+              folder_name: form.folderName,
+              utc_offset: form.UTCOffset
+            })
             .then(response => {})
             .catch(error => { 
               console.log('error creating new client')

@@ -4,8 +4,14 @@ from .elastic import series_search
 
 class ClientInputSerializer(serializers.Serializer):
     name = serializers.RegexField(regex='^[a-z0-9_]+$', allow_blank=False)
-    UTC_offset = serializers.IntegerField()
+    utc_offset = serializers.IntegerField()
     folder_name = serializers.CharField(allow_blank=False)
+
+
+class ClientEditSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = ['id', 'name', 'utc_offset']
 
 
 class PipelineSerializer(serializers.ModelSerializer):

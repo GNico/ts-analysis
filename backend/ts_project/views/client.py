@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from ..elastic import series_indexer, series_search
 from ..models import Client
+from ..serializers import ClientInputSerializer, ClientEditSerializer
 from .. import tasks, task_priorities, utils, serializers
 
 search = series_search.SeriesSearch()
@@ -22,28 +23,30 @@ class ClientListView(APIView):
             if task.state == 'PROGRESS' or task.state == 'STARTED':
                 indexing_clients.append({
                     'name': client.name,
+                    'utc_offset': client.utc_offset,
                     'status': 'Indexing',
                     'progress': task.info.get('progress', 0)
                 })
             elif task.state == 'PENDING':
                 indexing_clients.append({
                     'name': client.name,
+                    'utc_offset': client.utc_offset,
                     'status': 'Waiting',
                     'progress': 0
                 })
-        indexed_clients = Client.objects.exclude(status='Pending').values('name', 'status', 'created', 'modified')
+        indexed_clients = Client.objects.exclude(status='Pending').values('name', 'utc_offset', 'status', 'created', 'modified')
         data = [ *indexing_clients, *indexed_clients ]
         return Response(data)
 
     def post(self, request):
-        serializer = serializers.ClientInputSerializer(data=request.data)
+        serializer = ClientInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         dest_dir = serializer.data.get('folder_name')
         try:
             status_id = self._add_new_client(
                 client_name=serializer.data.get('name'), 
                 dest_dir=dest_dir, 
-                utc_offset=serializer.data.get('UTCOffset')
+                utc_offset=serializer.data.get('utc_offset')
             )
         except ClientNameAlreadyExists:
             return Response({'error': "There's already a client with the same name"}, status=status.HTTP_409_CONFLICT)
@@ -77,6 +80,14 @@ class ClientView(APIView):
         last_events = search.get_last_events(indexname=client.index_name, size=20)
         data = { 'data': series_data, 'range': series_range, 'total': total_events, 'lastEvents': last_events }
         return Response(data)
+
+    def put(self, request, pk):
+        client = Client.objects.get(name=pk)
+        serializer = ClientEditSerializer(client, data=request.data, partial=True)
+        if serializer.is_valid():            
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
         client = Client.objects.filter(name=pk).delete()

@@ -15,7 +15,7 @@
         </b-field>      
 
         <b-field label="Data source">
-          <b-select placeholder="Select a name" v-model="form.folder_name" size="is-small">
+          <b-select placeholder="Select a name" v-model="form.folderName" size="is-small">
             <option
               v-for="option in dataSourceNames"
               :value="option"
@@ -49,7 +49,7 @@ import { dtNames, getValidUserUTCOffset } from "@/utils/datetimeConstants"
 
 const initForm = {
   name: '',
-  folder_name: '',
+  folderName: '',
   UTCOffset: getValidUserUTCOffset()
 }
 
