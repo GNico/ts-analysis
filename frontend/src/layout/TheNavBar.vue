@@ -40,7 +40,7 @@
 
 
 <script>
-import { dtNames } from '@/utils/datetimeConstants'
+import { timezones } from '@/utils/datetimeConstants'
   
 export default {
   data() {
@@ -49,7 +49,7 @@ export default {
   },
   computed: {
     offsets() {
-      return dtNames.UTCOffsets
+      return timezones.UTCOffsets
     },
     UTCOffset: {
       get: function () {

@@ -1,5 +1,11 @@
 <template>
 <div class="container">
+  <ModalSettings 
+    :settings="modalSettings"
+    :isActive="isActiveSettings" 
+    @close="isActiveSettings = false"
+    @update="updateClient"/>
+
   <div class="section">
     <b-dropdown ref="dropdown" class="mb-3" position="is-bottom-right" append-to-body trap-focus>
       <a
@@ -78,7 +84,7 @@
             </button>
           </b-tooltip>         
           <b-tooltip label="Settings">
-            <button class="transparent-button">
+            <button class="transparent-button" @click="openSettings(props.row)">
               <b-icon icon="cog" type="is-primary"></b-icon>
             </button>
           </b-tooltip>
@@ -103,16 +109,19 @@
 <script>
 import FormNewClient from '@/components/dataManagement/FormNewClient'
 import ClientDetails from '@/components/dataManagement/ClientDetails'
+import ModalSettings from '@/components/dataManagement/ModalSettings'
 import api from '@/api/repository'
 import { formatDate } from '@/utils/dateFormatter'
 
 export default {
-    components: {  FormNewClient, ClientDetails },
+    components: {  FormNewClient, ClientDetails, ModalSettings },
     data() {
       return {
         polling: null,
         openRows: [],
-        dataSourceNames: []
+        dataSourceNames: [],
+        isActiveSettings: false,
+        modalSettings: {}
       }
     },
     computed: {
@@ -132,12 +141,25 @@ export default {
       addClient(form) {
         this.$store.dispatch('clients/addClient', form)
         this.$refs.dropdown.isActive = false
-        this.$buefy.toast.open({
-          message: 'Creating new entry',
-          type: 'is-success',
-          duration: 2500,
-        })
+        this.alert('Creating new client', 'is-success')        
       },      
+      updateClient(settings) {
+        this.$store.dispatch('clients/updateClient', settings)
+        .then(response => {
+          if (response.status == 200) {
+            this.alert('Client successfully updated', 'is-success')
+          }
+        })
+        .catch(error => {
+          if (error.response) {
+            this.alert(JSON.stringify(error.response.data), 'is-danger')
+          } else if (error.request) {
+            this.alert('The server could not be reached', 'is-danger')
+          } else {
+            this.alert(error.message, 'is-danger')
+          }
+        })        
+      },
       confirmDelete(name) {
         this.$buefy.dialog.confirm({
           title: 'Deleting client',
@@ -151,10 +173,7 @@ export default {
       },
       deleteClient(name) {
         this.$store.dispatch('clients/deleteClient', name)
-        this.$buefy.toast.open({
-          message: 'Deleting ' + name,
-          type: 'is-danger',
-        })
+        this.alert('Deleting ' + name, 'is-danger')        
       },
       formatDate(input) {
         return formatDate(input)
@@ -190,7 +209,20 @@ export default {
               classColor: 'is-link',
               colspan: 4,
             }
+        }     
+      },
+      openSettings(settings) {
+        this.isActiveSettings = !this.isActiveSettings
+        if (this.isActiveSettings) {
+          this.modalSettings = settings
         }
+      },
+      alert(msg, type) {
+        this.$buefy.toast.open({
+          message: msg,
+          type: type,
+          duration: 2500,
+        })
       }
     },
     created () {

@@ -45,13 +45,14 @@ export default {
   addNewClient(form) {
     return repository.post("/clients/", form)
   },
+  updateClient(clientName, options) {
+    return repository.put("/clients/" + clientName + "/", options)
+  },
   deleteClient(clientName) {
-    let url = "/clients/" + clientName + "/"
-    return repository.delete(url)
+    return repository.delete("/clients/" + clientName + "/")
   },
   getClientDetails(clientName) {
-    let url = "/clients/" + clientName + "/"
-    return repository.get(url)
+    return repository.get("/clients/" + clientName + "/")
   },
 
   //Series

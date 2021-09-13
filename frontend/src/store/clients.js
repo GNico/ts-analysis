@@ -47,6 +47,9 @@ const actions = {
               console.log('error creating new client')
             })
   },
+  updateClient(store, {name, options}) {
+    return  api.updateClient(name, options)
+  },
   deleteClient(store, name) {
     return  api.deleteClient(name)
   },

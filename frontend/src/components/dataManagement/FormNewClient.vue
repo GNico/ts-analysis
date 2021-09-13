@@ -45,7 +45,7 @@
 
 
 <script>
-import { dtNames, getValidUserUTCOffset } from "@/utils/datetimeConstants"
+import { timezones, getValidUserUTCOffset } from "@/utils/datetimeConstants"
 
 const initForm = {
   name: '',
@@ -68,7 +68,7 @@ export default {
   },
   computed: {
     UTCOffsets() {
-      return dtNames.UTCOffsets
+      return timezones.UTCOffsets
     }
   },
   methods: {
