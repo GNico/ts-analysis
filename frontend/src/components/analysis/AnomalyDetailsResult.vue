@@ -1,22 +1,35 @@
 <template>
-<b-table 
-  v-if="tagsCount"
-  class="tags-table"
-  height="200px"
-  :data="tagsCount.tags"
-  narrowed>
-  
-  <b-table-column field="tag" label="Tag" v-slot="props" width="50%">
-    <span> {{props.row.tag}} </span>
-  </b-table-column>
-
-  <b-table-column field="count" label="Count" v-slot="props" width="25%" numeric>
-    <span class="is-family-monospace is-size-7">        
-      <strong>{{props.row.count}}</strong> ({{(props.row.count * 100 / tagsCount.total).toFixed(1)}}%)
-    </span>
-  </b-table-column>
-
-</b-table> 
+<div>
+  <div class="card tag-count-card">
+    <header class="card-header">
+      <p class="card-header-title has-text-grey-light">Tag counts from {{formatDate(anomaly.from)}} to {{formatDate(anomaly.to)}}</p>
+      <a href="#" class="card-header-icon" aria-label="more options">
+      <span class="icon">
+        <i class="fa fa-angle-down" aria-hidden="true"></i>
+      </span>
+      </a>
+    </header>
+    <div class="card-table">
+      <div class="content">
+        <table class="table is-fullwidth is-striped">
+          <tbody>
+            <tr v-for="item in tagsCount.tags">
+              <td>
+                <div class="is-flex is-justify-content-space-between is-family-monospace is-size-7">
+                  <div class="tag-label"><i class="mdi mdi-tag-multiple"></i> {{ item.tag}}</div>
+                  <div class="tag-count has-text-right has-text-weight-bold"> 
+                    {{item.count}} 
+                    <span class="has-text-weight-medium">({{(item.count * 100 / tagsCount.total).toFixed(1)}}%)</span>
+                  </div>
+                </div>             
+              </td>
+            </tr>              
+          </tbody>
+        </table>
+      </div>
+    </div>        
+  </div>
+</div>
 </template>
 
 <script>
@@ -74,12 +87,27 @@ export default {
 
 
 <style>
-.tags-table .table {
+.tag-count-card .card-table {
+  max-height: 350px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.tag-label {
+  word-break: break-all;
+  width: 70%;
+}
+
+.tag-count {
+  width: 30%;
+}
+
+.tag-count-card .table.is-striped tbody tr:not(.is-selected):nth-child(2n-1) {
   background-color: #001e25;
 }
 
-.tags-table td {
-  word-break: break-all;
+.tag-count-card .table.is-striped tbody tr:not(.is-selected):nth-child(2n) {
+  background-color: rgba(18, 18, 18, 0.1);
 }
 
 </style>

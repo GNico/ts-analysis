@@ -148,6 +148,7 @@ export default {
         .then(response => {
           if (response.status == 200) {
             this.alert('Client successfully updated', 'is-success')
+            this.pollClients()
           }
         })
         .catch(error => {
