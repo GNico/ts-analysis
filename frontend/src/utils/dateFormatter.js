@@ -1,22 +1,17 @@
 import store from '@/store/index'
 import { dtNames } from '@/utils/datetimeConstants'
 
-const addUTCOffset = function (date) {
+export const addUTCOffset = function (date) {
     return new Date(date.getTime() - store.state.UTCOffset * 60 * 1000)
 }
 
-const formatDate = function(input) {
+export const formatDate = function(input) {
     if (!input) return null
     const dateObj =  addUTCOffset(new Date(input))
-    const year = dateObj.getFullYear()
-    const month = (dateObj.getUTCMonth()+1).toString().padStart(2, '0')
-    const day = dateObj.getUTCDate().toString().padStart(2, '0')
-    const hour = dateObj.getUTCHours().toString().padStart(2, '0')
-    const minutes = dateObj.getUTCMinutes().toString().padStart(2, '0')
-    return `${day}/${month}/${year} - ${hour}:${minutes}`
+    return buildDateStringFromDate(dateObj)
 }
 
-const formatDateVerbose = function(input, showWeekday=true, showTime=true, shortWeekdayNames=false) {
+export const formatDateVerbose = function(input, showWeekday=true, showTime=true, shortWeekdayNames=false) {
     if (!input) return null
     const dateObj =  addUTCOffset(new Date(input))
     const year = dateObj.getUTCFullYear()
@@ -24,17 +19,31 @@ const formatDateVerbose = function(input, showWeekday=true, showTime=true, short
     const day = dateObj.getUTCDate().toString().padStart(2, '0')
     const dayName = dtNames.dayNames[dateObj.getUTCDay()]
     const shortDayName = dtNames.dayNamesShort[dateObj.getUTCDay()]
-    const hour = dateObj.getUTCHours().toString().padStart(2, '0')
-    const minutes = dateObj.getUTCMinutes().toString().padStart(2, '0')
     let weekday = ''
     if (showWeekday) {
         weekday = shortWeekdayNames ? `${shortDayName} ` : `${dayName} `
     }
-    let time = showTime ? ` ${hour}:${minutes}` : ''
+    let time = showTime ? ' - ' + dateToHourStr(dateObj) : ''
     return weekday + `${day} ${month} ${year}`  + time
 }
 
-const timeRangeToString = function(timeRange) {
+export const formatDateRange = function(start, end) {
+    var result = ''
+
+    if (!start || !end) return result
+    const from =  addUTCOffset(new Date(start))
+    const to =  addUTCOffset(new Date(end))
+    const isSameDay = from.getUTCDate() === to.getUTCDate()
+    if (isSameDay) {
+        result = buildDateStringFromDate(from) + ' to ' + dateToHourStr(to)
+    } else {
+        result = buildDateStringFromDate(from) + ' to ' + buildDateStringFromDate(to)
+    }
+    console.log('end result', result)
+    return result
+}
+
+export const timeRangeToString = function(timeRange) {
     let textResult = ''
     let minsDiff = 0
     let hoursDiff = 0
@@ -53,10 +62,16 @@ const timeRangeToString = function(timeRange) {
     return textResult.trim()
 }
 
-export  {
-    formatDate,
-    formatDateVerbose,
-    timeRangeToString,
-    addUTCOffset,
-    dtNames
+
+const buildDateStringFromDate = function(date) {
+    const year = date.getFullYear()
+    const month = (date.getUTCMonth()+1).toString().padStart(2, '0')
+    const day = date.getUTCDate().toString().padStart(2, '0')    
+    return `${day}/${month}/${year} - ` + dateToHourStr(date)
+}
+
+const dateToHourStr = function(date) {
+    const hour = date.getUTCHours().toString().padStart(2, '0')
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0')
+    return `${hour}:${minutes}`
 }

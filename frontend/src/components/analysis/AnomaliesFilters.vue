@@ -48,28 +48,6 @@
               :max="1"
               :step="0.01"/>
           </b-field>        
-
-          <b-field horizontal label="">
-            <b-checkbox :value="showSeries" @input="update('showSeries', $event)">
-              <strong class="has-text-white">Show series</strong>
-            </b-checkbox>        
-          </b-field>
-              
-          <b-field horizontal label="">
-            <b-checkbox :value="showMinMax" @input="update('showMinMax', $event)">
-              <strong class="has-text-white">Show min and max values</strong>
-            </b-checkbox>        
-          </b-field>
-
-          <b-field horizontal label="Axis interval">
-            <b-select :value="axisInterval" @input="update('axisInterval', $event)" size="is-small">
-              <option value="">auto</option>
-              <option value="month">month</option>
-              <option value="week">week</option>
-              <option value="day">day</option>
-              <option value="hour">hour</option>
-            </b-select>
-          </b-field>
         </section>
       </div>
     </div>
@@ -79,7 +57,6 @@
 
 
 <script>
-
 export default {
   props: {
     position: {
@@ -98,18 +75,6 @@ export default {
       type: Number,
       default: 0,
     },
-    showSeries: {
-      type: Boolean,
-      default: true,
-    },
-    showMinMax: {
-      type: Boolean,
-      default: true,
-    },
-    axisInterval: {
-      type: String,
-      default: ''
-    }
   },
   data() {
     return {

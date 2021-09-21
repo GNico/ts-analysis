@@ -19,7 +19,7 @@
       <div class="column">
         <div class="table-header has-text-white">
           <div> <strong class="has-text-white"> </strong></div>
-          <AnomaliesFilters v-bind="activeOptions" @update="updateOptions"/> 
+          <AnomaliesChartOptions v-bind="activeOptions" @update="updateOptions"/> 
         </div>
         <Chart       
           height="400px"
@@ -51,12 +51,13 @@
 import Chart from './Chart.vue';
 import AnomaliesTable from './AnomaliesTable.vue';
 import AnomaliesFilters from './AnomaliesFilters.vue'
-import debounce from "lodash/debounce";
+import AnomaliesChartOptions from './AnomaliesChartOptions.vue'
 import AnomaliesHistogram from "./AnomaliesHistogram"
 import AnomaliesHeatmap from "./AnomaliesHeatmap"
+import debounce from "lodash/debounce";
 
 export default {
-    components: { Chart, AnomaliesTable, AnomaliesFilters, AnomaliesHistogram, AnomaliesHeatmap },
+    components: { Chart, AnomaliesTable, AnomaliesFilters, AnomaliesChartOptions, AnomaliesHistogram, AnomaliesHeatmap },
     data() {
       return {
         polling: null,

@@ -2,7 +2,9 @@
 <div>
   <div class="card tag-count-card">
     <header class="card-header">
-      <p class="card-header-title has-text-grey-light">Tag counts from {{formatDate(anomaly.from)}} to {{formatDate(anomaly.to)}}</p>
+      <p class="card-header-title has-text-grey-light has-text-weight-medium">
+       <b>Tags count from {{formatAnomalyRange()}}</b>       
+      </p>
       <a href="#" class="card-header-icon" aria-label="more options">
       <span class="icon">
         <i class="fa fa-angle-down" aria-hidden="true"></i>
@@ -12,29 +14,29 @@
     <div class="card-table">
       <div class="content">
         <table class="table is-fullwidth is-striped">
-          <tbody>
+          <tbody v-if="tagsCount">
             <tr v-for="item in tagsCount.tags">
               <td>
                 <div class="is-flex is-justify-content-space-between is-family-monospace is-size-7">
                   <div class="tag-label"><i class="mdi mdi-tag-multiple"></i> {{ item.tag}}</div>
                   <div class="tag-count has-text-right has-text-weight-bold"> 
-                    {{item.count}} 
+                    {{item.count}}
                     <span class="has-text-weight-medium">({{(item.count * 100 / tagsCount.total).toFixed(1)}}%)</span>
                   </div>
-                </div>             
+                </div>
               </td>
-            </tr>              
+            </tr>
           </tbody>
         </table>
       </div>
-    </div>        
+    </div>
   </div>
 </div>
 </template>
 
 <script>
 import api from "@/api/repository";
-import { formatDate } from '@/utils/dateFormatter';
+import { formatDateRange, formatDate } from '@/utils/dateFormatter';
 
 export default {
   props: {
@@ -51,7 +53,7 @@ export default {
   computed: {
     active() {
       return this.$store.getters['results/activeResults']
-    }
+    },    
   },
   methods: {
    getTagsCount(results) {
@@ -72,8 +74,8 @@ export default {
         }
       }) 
     }, 
-    formatDate(date) {
-      return formatDate(date)
+    formatAnomalyRange() {
+      return formatDateRange(this.anomaly.from, this.anomaly.to)
     },   
   },
   watch: {    
@@ -109,5 +111,4 @@ export default {
 .tag-count-card .table.is-striped tbody tr:not(.is-selected):nth-child(2n) {
   background-color: rgba(18, 18, 18, 0.1);
 }
-
 </style>
