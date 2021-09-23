@@ -97,6 +97,10 @@ export default {
   methods: {
     close() {
       this.$emit('close')
+      //reset mock field
+      this.deleteOld = false    
+      this.periodNum = 2
+      this.periodUnit = "y"
     },
     update() {
       this.$emit('update', {name: this.settings.name, options: this.options})

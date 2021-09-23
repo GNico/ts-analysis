@@ -1,8 +1,8 @@
 <template>
 <b-navbar>
   <template slot="brand">
-    <b-navbar-item tag="router-link" :to="{ path: '/' }">
-      <img src="@/assets/img/keepconlogo.png" width="156" height="30">
+    <b-navbar-item tag="router-link" :to="{ path: '/' }" >
+      <img src="@/assets/img/tsalogo.png">
     </b-navbar-item>
   </template>
 
