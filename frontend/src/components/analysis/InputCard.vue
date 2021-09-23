@@ -60,7 +60,7 @@
             type="text" 
             pattern="^[0-9]+[mhd]$" 
             size="is-small" />
-        </b-field>            
+        </b-field>    
         <b-field horizontal label="From">
           <b-datepicker          
             :first-day-of-week="1"
@@ -96,13 +96,11 @@
                 <span>Clear</span>
             </button>
           </b-datepicker>
-        </b-field>
-      
+        </b-field>      
       </div>
     </div>
   </b-collapse>
 </div>  
-
 </template>
 
 

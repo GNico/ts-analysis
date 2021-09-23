@@ -7,111 +7,60 @@
   @close="close"
   @accept="isEdit ? updateSeries() : addSeries()">
 
-  <div class="columns is-multiline ">
+  <div class="columns is-multiline series-card-fields">
     <!--first column-->
     <div class="column is-6"> 
-      <div class="field is-horizontal">
-        <div class="field-label is-small has-text-left">
-          <label class="label">Name</label>
-        </div>
-        <div class="field-body">
-          <div class="field is-narrow">
-            <div class="control">
-              <input class="input is-small" type="text" v-model="seriesOptions.name">
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="field is-horizontal">
-        <div class="field-label is-small has-text-left">
-          <label class="label">Client</label>
-        </div>
-        <div class="field-body">
-          <div class="field is-narrow">
-            <div class="control">
-             <SearchSelect
-                v-model="seriesOptions.client"
-                :data="clients"
-                @select="clearTagsContexts"/>               
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="field is-horizontal" v-if="!isEdit">
-        <div class="field-label is-small has-text-left">
-          <label class="label">Panel</label>
-        </div>
-        <div class="field-body">
-          <div class="field is-narrow short-field">
-            <b-select size="is-small" v-model="seriesOptions.yAxis">
-              <option value="-1" default>New panel</option>
-              <option v-for="index in numPanels" :key="index" :value="index-1">{{index}}</option>
-            </b-select>
-          </div>
-        </div>
-      </div>
+      <b-field horizontal label="Name">            
+        <b-input size="is-small" type="text" v-model="seriesOptions.name"></b-input>                
+      </b-field>
+      <b-field horizontal label="Client">            
+        <SearchSelect
+            v-model="seriesOptions.client"
+            :data="clients"
+            @select="clearTagsContexts"/>               
+      </b-field>
+      <b-field  v-if="!isEdit" horizontal label="Panel">            
+        <b-select size="is-small" v-model="seriesOptions.yAxis">
+          <option value="-1" default>New panel</option>
+          <option v-for="index in numPanels" :key="index" :value="index-1">{{index}}</option>
+        </b-select>             
+      </b-field>
     </div>
-
     <!--second column-->
-    <div class="column is-6">
-      <b-field class="field is-horizontal">
-        <div class="field-label is-small has-text-left">
-          <label class="label">Type</label>
-        </div>
-        <div class="field-body">
-          <div class="field is-narrow short-field">
-            <b-select size="is-small" v-model="seriesOptions.type">
-              <option>line</option>
-              <option>column</option>
-              <option>area</option>
-            </b-select>
-          </div>
-        </div>
-      </b-field>
-  
-      <b-field class="field is-horizontal">
-        <div class="field-label is-small has-text-left">
-          <label class="label">Interval</label>
-        </div>
-        <div class="field-body">
-          <div class="field is-narrow short-field">
-            <div class="control">
-              <b-tooltip
-                label="Input must be a number followed by a valid letter [ m = minutes, h = hour, d = day ]"
-                size="is-large"
-                position="is-bottom"
-                multilined>
-                <b-input
-                  v-model="seriesOptions.interval"
-                  type="text"
-                  size="is-small"              
-                  validation-message="Invalid format"
-                  pattern="[0-9]+[mhd]+">
-                </b-input> 
-              </b-tooltip>          
-            </div>              
-          </div>
-        </div>
-      </b-field>
-      <div class="field is-horizontal">
-        <div class="field-label is-small has-text-left">
-          <label class="label">Color</label>
-        </div>
-        <div class="field-body">
-          <div class="field is-narrow shorter-field">
-            <div class="control">
-              <ColorSelect :value="selectedColor" @input="changeColor"/>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="column is-6"> 
+      <b-field horizontal label="Interval">            
+        <b-tooltip
+          label="Input must be a number followed by a valid letter [ m = minutes, h = hour, d = day ]"
+          size="is-large"
+          position="is-bottom"
+          multilined>
+          <b-input
+          class="short-field"
+            v-model="seriesOptions.interval"
+            type="text"
+            size="is-small"              
+            validation-message="Invalid format"
+            pattern="[0-9]+[mhd]+">
+          </b-input> 
+        </b-tooltip>             
+      </b-field>  
+      <b-field horizontal label="Type">            
+        <b-select size="is-small" v-model="seriesOptions.type">
+          <option>line</option>
+          <option>column</option>
+          <option>area</option>
+        </b-select>             
+      </b-field>            
+      <b-field horizontal label="Color">            
+        <ColorSelect class="shorter-field" :value="selectedColor" @input="changeColor"/>            
+      </b-field>      
     </div>
-    <div class="column is-full ">
-      <div class="label is-small">Filters</div>
+    <div class="column is-full">
+      <div class="label">Filters</div>
     </div>
     <div class="column is-6 pt-0">
       <TreeSelect 
-        class="filters-box"
+        class="series-card-filters-box"
         filterName="Filter by tag"
         rootName="All tags"
         :applyFilter.sync="seriesOptions.filterTags"
@@ -121,7 +70,7 @@
     </div>
     <div class="column is-6 pt-0">
       <TreeSelect 
-        class="filters-box"
+        class="series-card-filters-box"
         filterName="Filter by context"
         rootName="All contexts"
         :applyFilter="seriesOptions.filterContexts"
@@ -254,13 +203,16 @@ export default {
 </script>
 
 
-<style scoped>
+<style>
 
-.filters-box {
+.series-card-fields .field-label {
+  text-align: left;
+}
+
+.series-card-filters-box {
   padding-left: 0.5rem;
   max-height: 15rem;
   overflow-y: auto;
   width: 95%;
 }
-
 </style>

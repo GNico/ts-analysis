@@ -26,6 +26,21 @@
       </b-select>
     </b-field>
 
+    <b-field class="mt-4" horizontal label="">
+      <b-checkbox v-model="deleteOld" >
+        <strong class="has-text-white">Automatically delete old data</strong>
+      </b-checkbox>        
+    </b-field>
+
+    <b-field v-if="deleteOld" horizontal label="Delete older than">            
+      <b-input type="number" size="is-small" step="1" min="1" :value="periodNum"></b-input>
+      <b-select size="is-small" :value="periodUnit">
+          <option value="m">minutes</option>
+          <option value="d">days</option>
+          <option value="y">years</option>
+      </b-select>            
+    </b-field>
+
     <template v-slot:footer-left>
       <span class="is-size-7 has-text-warning"> {{validationError}} </span>
     </template>
@@ -61,7 +76,11 @@ export default {
       options: {
         name: '',
         utc_offset: '',
-      }      
+      },
+      //the following is not implemented, just a placeholder for show
+      deleteOld: false,     
+      periodNum: 2,
+      periodUnit: "y", 
     }
   },
   computed: {
