@@ -30,7 +30,12 @@
         </b-field>        
         <b-field horizontal label="">
           <b-checkbox :value="showSeries" @input="update('showSeries', $event)">
-            <strong class="has-text-white">Show series</strong>
+            <strong class="has-text-white">Display series</strong>
+          </b-checkbox>        
+        </b-field>
+        <b-field horizontal label="">
+          <b-checkbox :value="showAnomalies" @input="update('showAnomalies', $event)">
+            <strong class="has-text-white">Display anomalies</strong>
           </b-checkbox>        
         </b-field>
             
@@ -55,6 +60,10 @@ export default {
       default: "is-bottom-left"
     },    
     showSeries: {
+      type: Boolean,
+      default: true,
+    },
+    showAnomalies: {
       type: Boolean,
       default: true,
     },

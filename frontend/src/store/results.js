@@ -6,6 +6,7 @@ const defaultOptions = {
     activeAnomalyId: '',
     showMinMax: true,
     showSeries: true,
+    showAnomalies: true,
     showTrend: false,
     axisInterval: '',
     scoreThreshold: 0,

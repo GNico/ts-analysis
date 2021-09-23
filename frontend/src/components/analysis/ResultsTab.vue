@@ -7,11 +7,11 @@
     <div v-else class="columns is-fullheight">
       <div class="column is-4 side-menu is-hidden-mobile">        
         <div class="table-header has-text-white">
-          <div> <strong class="has-text-white"> Anomalies ({{tableFilteredAnomalies.length}})</strong></div>
+          <div> <strong class="has-text-white"> Anomalies ({{tableAnomalies.length}})</strong></div>
           <AnomaliesFilters v-bind="activeOptions" @update="updateOptions"/> 
         </div>
         <AnomaliesTable   
-          :anomalies="tableFilteredAnomalies"
+          :anomalies="tableAnomalies"
           :activeAnomaly="activeAnomaly"
           @changeActive="updateOptions({activeAnomalyId: $event})"/> 
       </div>
@@ -24,7 +24,7 @@
         <Chart       
           height="400px"
           :seriesData="seriesData"
-          :anomalies="chartFilteredAnomalies"
+          :anomalies="chartAnomalies"
           :loading="loading"
           :activeAnomaly="activeAnomaly"
           :showMinMax="activeOptions.showMinMax"
@@ -34,10 +34,10 @@
 
         <div class="columns mt-5">
           <div class="column is-5">
-            <AnomaliesHistogram :anomalies="tableFilteredAnomalies"/>
+            <AnomaliesHistogram :anomalies="tableAnomalies"/>
           </div>
           <div class="column is-7">
-            <AnomaliesHeatmap :anomalies="tableFilteredAnomalies"/>
+            <AnomaliesHeatmap :anomalies="tableAnomalies"/>
           </div>
         </div>
       </div>
@@ -93,13 +93,16 @@ export default {
               this.resultsData &&      
               this.resultsData.hasOwnProperty("anomalies") ? this.resultsData.anomalies : []
       },
-      chartFilteredAnomalies() {
+      filteredAnomalies() {
         return this.anomalies.filter(elem => 
           (elem.score >= this.activeOptions.scoreThreshold 
           && (parseInt(elem.to) - parseInt(elem.from) >= this.activeOptions.minDurationTime)))         
       },
-      tableFilteredAnomalies() {
-        return this.chartFilteredAnomalies.filter(elem =>           
+      chartAnomalies() {
+        return this.activeOptions.showAnomalies ? this.filteredAnomalies : []
+      },
+      tableAnomalies() {
+        return this.filteredAnomalies.filter(elem =>           
           (!this.activeOptions.selectedRange.start || parseInt(elem.from) > this.activeOptions.selectedRange.start)
           && (!this.activeOptions.selectedRange.end || parseInt(elem.from) < this.activeOptions.selectedRange.end))
       },  
