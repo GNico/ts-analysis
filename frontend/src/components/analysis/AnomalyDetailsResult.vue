@@ -1,34 +1,32 @@
 <template>
-<div>
-  <div class="card tag-count-card">
-    <header class="card-header">
-      <p class="card-header-title has-text-grey-light has-text-weight-medium">
-       <b>Tags count from {{formatAnomalyRange()}}</b>       
-      </p>
-      <a href="#" class="card-header-icon" aria-label="more options">
-      <span class="icon">
-        <i class="fa fa-angle-down" aria-hidden="true"></i>
-      </span>
-      </a>
-    </header>
-    <div class="card-table">
-      <div class="content">
-        <table class="table is-fullwidth is-striped">
-          <tbody v-if="tagsCount">
-            <tr v-for="item in tagsCount.tags">
-              <td>
-                <div class="is-flex is-justify-content-space-between is-family-monospace is-size-7">
-                  <div class="tag-label"><i class="mdi mdi-tag-multiple"></i> {{ item.tag}}</div>
-                  <div class="tag-count has-text-right has-text-weight-bold"> 
-                    {{item.count}}
-                    <span class="has-text-weight-medium">({{(item.count * 100 / tagsCount.total).toFixed(1)}}%)</span>
-                  </div>
+<div class="card tag-count-card">
+  <header class="card-header">
+    <p class="card-header-title has-text-grey-light has-text-weight-medium">
+     <b>Tags count from {{formatAnomalyRange()}}</b>       
+    </p>
+    <a href="#" class="card-header-icon" aria-label="more options">
+    <span class="icon">
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </span>
+    </a>
+  </header>
+  <div class="card-table">
+    <div class="content">
+      <table class="table is-fullwidth is-striped">
+        <tbody v-if="tagsCount">
+          <tr v-for="item in tagsCount.tags">
+            <td>
+              <div class="is-flex is-justify-content-space-between is-family-monospace is-size-7">
+                <div class="tag-label"><i class="mdi mdi-tag-multiple"></i> {{ item.tag}}</div>
+                <div class="tag-count has-text-right has-text-weight-bold"> 
+                  {{item.count}}
+                  <span class="has-text-weight-medium">({{(item.count * 100 / tagsCount.total).toFixed(1)}}%)</span>
                 </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
@@ -57,6 +55,7 @@ export default {
   },
   methods: {
    getTagsCount(results) {
+      console.log(this.anomaly)
       api.getTagsCount({
         name: results.settings.client, 
         tags: results.settings.tags,

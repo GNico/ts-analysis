@@ -80,6 +80,7 @@ class MonitorListSerializer(serializers.ModelSerializer):
 
 class IncidentSerializer(serializers.ModelSerializer):
     series = serializers.SerializerMethodField()
+    analysis = AnalysisSettingsSerializer(read_only=True, source='periodic_analysis.analysis')
 
     def get_series(self, obj):
         search = series_search.SeriesSearch()
@@ -101,13 +102,13 @@ class IncidentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Incident
-        fields = ['id', 'state', 'client', 'score', 'start', 'end', 'desc', 'series', 'duration']
+        fields = ['id', 'state', 'client', 'score', 'start', 'end', 'desc', 'series', 'duration', 'analysis']
 
 
 class IncidentListSerializer(serializers.ModelSerializer):
     class AnalysisListingField(serializers.RelatedField):
-        def to_representation(self, value):
-            return value.analysis.name
+         def to_representation(self, value):
+             return value.analysis.name
 
     class MonitorListingField(serializers.RelatedField):
         def to_representation(self, value):
@@ -118,4 +119,4 @@ class IncidentListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Incident
-        fields = ['id', 'state', 'client', 'score', 'start', 'end', 'desc', 'analysis_name', 'monitor', 'duration']
+        fields = ['id', 'state', 'client', 'score', 'start', 'end', 'desc', 'monitor', 'duration', 'analysis_name']

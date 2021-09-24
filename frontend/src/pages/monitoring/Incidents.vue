@@ -29,8 +29,8 @@ export default {
       .then(response => {
         this.selectedIncident = { ...response.data }
         this.selectedIncident.monitor = incident.monitor
-        this.selectedIncident.analysis_name = incident.analysis_name
-        this.showIncident = true     
+        // this.selectedIncident.analysis = incident.analysis
+        this.showIncident = true    
       })
     }
   },

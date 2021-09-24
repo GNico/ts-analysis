@@ -77,7 +77,7 @@ export default {
         name: '',
         utc_offset: '',
       },
-      //the following is not implemented, just a placeholder for show
+      //this might not be needed, placeholder for now
       deleteOld: false,     
       periodNum: 2,
       periodUnit: "y", 

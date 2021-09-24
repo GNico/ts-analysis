@@ -155,13 +155,6 @@ export default {
 }
 
 
-/*.main-content {
-  overflow-y: overlay;
-  overflow-x: hidden;
-  height: calc(100vh - 14rem);
-
-} */
-
 .table-header {
   display: flex;
   justify-content: space-between;

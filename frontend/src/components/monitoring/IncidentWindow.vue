@@ -1,6 +1,6 @@
 <template>
 <div class="full-page-container">
-  <VueDraggableResizable :w="1000" :h="500" :z="999" 
+  <VueDraggableResizable :w="1100" :h="500" :z="999" 
     :handles="['br']"
     @dragging="onDrag" 
     @resizing="onResize" 
@@ -10,7 +10,7 @@
     <div class="card" :style="{height: '100%'}">
       <header class="card-header drag">
         <p class="card-header-title">
-          {{incident.monitor}} → {{incident.analysis_name}}
+          {{incident.monitor}} → {{incident.analysis.name}}
         </p>
         <button class="transparent-button"  @click="$emit('close')">
           <b-icon icon="close" type="is-primary"></b-icon>
@@ -18,7 +18,7 @@
       </header>
       <div class="card-content">
         <div class="columns is-paddingless">
-          <div class="column is-8">
+          <div class="column is-7">
             <BaseChart 
               :key="chartKey"
               :seriesData="chartData" 
@@ -27,7 +27,7 @@
               :extremes="extremes ? extremes : {min: undefined, max:undefined}"/>
           </div>
           <div class="column">
-            EXTRA DATA
+            <AnomalyDetailsResult :anomaly="anomaly"/>
           </div>
         </div>
       </div>
@@ -41,10 +41,10 @@
 import VueDraggableResizable from 'vue-draggable-resizable'
 import BaseChart from '@/components/BaseChart'
 import { multiseriesTooltipFormatter } from '@/utils/tooltipFormatter'
-
+import AnomalyDetailsResult from '@/components/analysis/AnomalyDetailsResult'
 
 export default {
-  components: { VueDraggableResizable, BaseChart },
+  components: { VueDraggableResizable, BaseChart, AnomalyDetailsResult },
   props: {
     incident: {
       type: Object,
@@ -54,7 +54,7 @@ export default {
   data() {
     return {
       chartKey: 0,
-      width: 1000,
+      width: 1100,
       height: 500,
       x: 0,
       y: 0,      
@@ -62,6 +62,10 @@ export default {
     }
   },
   computed: {
+    anomaly() {
+      console.log(this.incident)
+      return { from: this.incident.start, to: this.incident.end}
+    },
     chartData() {
       var cdata = []
       var seriesIds = Object.keys(this.incident.series)
@@ -95,7 +99,7 @@ export default {
       let w = this.width
       return {
         height: `${h}px`,
-        width: `calc((${w}px - 3.75rem)* 2/3)`,
+        width: `calc((${w}px - 3.75rem)* 0.58)`,
       }
     },
     extremes() {
