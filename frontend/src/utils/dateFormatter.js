@@ -29,7 +29,6 @@ export const formatDateVerbose = function(input, showWeekday=true, showTime=true
 
 export const formatDateRange = function(start, end) {
     var result = ''
-
     if (!start || !end) return result
     const from =  addUTCOffset(new Date(start))
     const to =  addUTCOffset(new Date(end))
@@ -39,7 +38,6 @@ export const formatDateRange = function(start, end) {
     } else {
         result = buildDateStringFromDate(from) + ' to ' + buildDateStringFromDate(to)
     }
-    console.log('end result', result)
     return result
 }
 

@@ -27,7 +27,7 @@
               :extremes="extremes ? extremes : {min: undefined, max:undefined}"/>
           </div>
           <div class="column">
-            <AnomalyDetailsResult :anomaly="anomaly"/>
+            <TagCountTable :settings="tableSettings"/>
           </div>
         </div>
       </div>
@@ -41,10 +41,10 @@
 import VueDraggableResizable from 'vue-draggable-resizable'
 import BaseChart from '@/components/BaseChart'
 import { multiseriesTooltipFormatter } from '@/utils/tooltipFormatter'
-import AnomalyDetailsResult from '@/components/analysis/AnomalyDetailsResult'
+import TagCountTable from '@/components/analysis/TagCountTable'
 
 export default {
-  components: { VueDraggableResizable, BaseChart, AnomalyDetailsResult },
+  components: { VueDraggableResizable, BaseChart, TagCountTable },
   props: {
     incident: {
       type: Object,
@@ -65,6 +65,14 @@ export default {
     anomaly() {
       console.log(this.incident)
       return { from: this.incident.start, to: this.incident.end}
+    },
+    tableSettings() {
+      return {
+        client: this.incident.client, 
+        data_options: this.incident.analysis.data_options,
+        anomalyStart: this.incident.start,
+        anomalyEnd: this.incident.end       
+      }
     },
     chartData() {
       var cdata = []
