@@ -23,6 +23,7 @@ const state = {
     activeResultsId: '',
     options: {},
     compareTagsTo: '',
+    compareSelection: null
 }
 
 const getters = {
@@ -79,6 +80,9 @@ const mutations = {
     },
     set_tags_compare_to(state, mode) {
         state.compareTagsTo = mode
+    },
+    set_compare_selection(state, selection) {
+        state.compareSelection = selection
     }
 }
 
@@ -138,6 +142,9 @@ const actions = {
     },
     updateCompareMode(store, mode) {
         store.commit('set_tags_compare_to', mode)
+    },
+    updateCompareSelection(store, selection) {
+        store.commit('set_compare_selection', selection)
     },
     deleteResults(store, id) {
         store.commit('remove_results', id)

@@ -30,7 +30,8 @@
           :showMinMax="activeOptions.showMinMax"
           :axisInterval="activeOptions.axisInterval"
           @changeActive="updateOptions({activeAnomalyId: $event})"
-          @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" />
+          @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" 
+          @areaSelectionChange="onAreaSelection" />
 
         <div class="columns mt-5">
           <div class="column is-5">
@@ -123,6 +124,9 @@ export default {
           clearInterval(this.polling)
         }
         this.polling = null
+      },
+      onAreaSelection(event) {
+        this.$store.dispatch('results/updateCompareSelection', event)
       }
     },  
     watch: {
@@ -137,6 +141,9 @@ export default {
         }
       }
     }, 
+    created() {
+      this.$store.dispatch('results/updateCompareSelection', null)
+    },
     beforeDestroy() {
       this.stopPollingResults()
     },  

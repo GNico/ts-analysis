@@ -352,7 +352,7 @@ export default {
         this.$emit('selection', {min: min, max: max})   
         return false
       }    
-    },
+    },    
     unselectByClick() {
       let chart = this.$refs.chart.chart
       if (!this.zoomEnabled) {
@@ -361,6 +361,7 @@ export default {
           chart.customTooltip = undefined
         }
         chart.xAxis[0].removePlotBand('selection')
+        this.$emit('selection', null)
       }
     },
     wheelZoom(event) {

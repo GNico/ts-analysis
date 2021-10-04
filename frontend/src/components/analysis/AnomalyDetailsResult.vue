@@ -1,6 +1,10 @@
 <template>
 <div>
-  <TagCountTable :settings="tableSettings" :compareTo="compareMode" @compareChange="updateCompareMode"/>
+  <TagCountTable 
+    :settings="tableSettings" 
+    :compareTo="compareMode" 
+    :selectionRange="compareSelectionRange"
+    @compareChange="updateCompareMode"/>
 </div>
 </template>
 
@@ -26,6 +30,9 @@ export default {
     },
     compareMode() {
       return this.$store.state.results.compareTagsTo
+    },
+    compareSelectionRange() {
+      return this.$store.state.results.compareSelection
     },
     tableSettings() {
       return {

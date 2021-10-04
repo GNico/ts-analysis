@@ -11,7 +11,7 @@
             <span><strong class="has-text-link">Compare to: {{compareModes[compareTo]}}</strong></span>
           </a>
         </template>
-        <b-dropdown-item v-for="mode in Object.keys(compareModes)" :value="mode" >{{compareModes[mode]}}</b-dropdown-item>
+        <b-dropdown-item v-for="mode in Object.keys(compareModes)" :value="mode" :key="mode">{{compareModes[mode]}}</b-dropdown-item>
     </b-dropdown>
   </div>
   <div v-for="tagsCount, index in tagCountListWithComparison">
@@ -63,13 +63,16 @@ export default {
     compareTo: {
       type: String,
       default: ''
+    },
+    selectionRange: {
+      type: Object,
+      default: null
     }
   },
   data() {
     return {
       tagsCountList: [],
       tagsCompareList: [],
-     // compareMode: 'all',  
       compareModes: {
         '': 'None',
         all: 'All time',
@@ -144,7 +147,13 @@ export default {
         case 'before': 
           return this.getTagsCount(null, this.settings.anomalyStart)         
         case 'selection': 
-          return []
+          if (this.selectionRange) {
+            let from = new Date(this.selectionRange.min).toISOString()
+            let to =  new Date(this.selectionRange.max).toISOString()
+            return this.getTagsCount(from, to)   
+          } else {
+            return []
+          }
         default:
           return []
       }
@@ -162,7 +171,12 @@ export default {
     },   
     compareTo() {
       this.fetchData()
-    } 
+    },
+    selectionRange() {
+      if (this.compareTo == 'selection') {
+        this.fetchData()
+      }
+    }
   },
 }
 </script>

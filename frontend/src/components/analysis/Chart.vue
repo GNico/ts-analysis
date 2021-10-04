@@ -5,6 +5,8 @@
   :bands="anomalies"
   :activeBand="activeAnomaly"
   :loading="loading"
+  :zoomEnabled="zoomEnabled"
+  @selection="onAreaSelection"
   @changeActiveBand="setActiveAnomaly"
   @changedExtremes="updateExtremes"
   :extremes="extremes" 
@@ -90,7 +92,8 @@ export default {
   },
   data() {
     return {
-      tooltipFormatter: analysisTooltipFormatter
+      tooltipFormatter: analysisTooltipFormatter,
+      zoomEnabled: false,
     }
   },
   computed: {
@@ -242,6 +245,9 @@ export default {
         rangedata.push([ point[0], point[1], point[1] ])
       })
       return rangedata
+    },
+    onAreaSelection(event) {
+      this.$emit("areaSelectionChange", event)
     }
   },
   created() {
