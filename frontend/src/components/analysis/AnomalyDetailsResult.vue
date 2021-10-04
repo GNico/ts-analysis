@@ -1,6 +1,6 @@
 <template>
 <div>
-  <TagCountTable :settings="tableSettings"/>
+  <TagCountTable :settings="tableSettings" :compareTo="compareMode" @compareChange="updateCompareMode"/>
 </div>
 </template>
 
@@ -24,6 +24,9 @@ export default {
     active() {
       return this.$store.getters['results/activeResults']
     },
+    compareMode() {
+      return this.$store.state.results.compareTagsTo
+    },
     tableSettings() {
       return {
         client: this.activeResults.settings.client, 
@@ -34,6 +37,9 @@ export default {
     }
   },
   methods: {
+    updateCompareMode(event) {
+      this.$store.dispatch('results/updateCompareMode', event)
+    }
   },
   watch: {    
   },

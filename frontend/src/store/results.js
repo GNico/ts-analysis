@@ -22,6 +22,7 @@ const state = {
     all: {},
     activeResultsId: '',
     options: {},
+    compareTagsTo: '',
 }
 
 const getters = {
@@ -76,6 +77,9 @@ const mutations = {
     set_active_anomaly(state, anomalyId) {
         state.activeAnomalyId = anomalyId
     },
+    set_tags_compare_to(state, mode) {
+        state.compareTagsTo = mode
+    }
 }
 
 
@@ -131,6 +135,9 @@ const actions = {
         const { id, ...options } = payload
         options['id'] = id
         store.commit('set_options',  {id, options})
+    },
+    updateCompareMode(store, mode) {
+        store.commit('set_tags_compare_to', mode)
     },
     deleteResults(store, id) {
         store.commit('remove_results', id)

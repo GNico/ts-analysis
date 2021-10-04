@@ -15,7 +15,39 @@
     @delete="deleteModel"
   />
 
-  <div class="column is-3 pb-0">
+  <div class="column is-9 pb-0 right-section">
+    <!--Model building -->
+    <div class="subtitle is-flex is-justify-content-space-between"> 
+      Detection model
+      <b-field grouped position="is-right">
+        <p class="control">
+          <b-button 
+            class="has-text-weight-semibold"
+            :class="loadTemplateModalActive ? 'is-primary' : 'is-outlined'" 
+            label="Import template" 
+            size="is-small" 
+            type="is-primary" 
+            @click="loadTemplateModalActive = !loadTemplateModalActive"/>      
+        </p>
+        <p class="control">
+          <b-button 
+            class="has-text-weight-semibold"
+            :class="saveTemplateModalActive ? 'is-primary' : 'is-outlined'" 
+            label="Save as template" 
+            size="is-small" 
+            type="is-primary" 
+            @click="saveTemplateModalActive = !saveTemplateModalActive"/>      
+        </p>
+      </b-field>
+    </div>
+    <ModelBuilder 
+      class="pt-1" 
+      :nodes="analysis.model"
+      @input="updateAnalysis({prop: 'model', value: $event, shared: true})"
+    />
+  </div>
+
+  <div class="column pb-0">
     <!--Data options -->
     <div class="subtitle"> Data source </div>  
     <div class="inputs-box p-3 has-background-grey-dark">
@@ -57,37 +89,7 @@
     </b-field> 
   </div>
 
-  <div class="column pb-0 right-section">
-    <!--Model building -->
-    <div class="subtitle is-flex is-justify-content-space-between"> 
-      Detection model
-      <b-field grouped position="is-right">
-        <p class="control">
-          <b-button 
-            class="has-text-weight-semibold"
-            :class="loadTemplateModalActive ? 'is-primary' : 'is-outlined'" 
-            label="Import template" 
-            size="is-small" 
-            type="is-primary" 
-            @click="loadTemplateModalActive = !loadTemplateModalActive"/>      
-        </p>
-        <p class="control">
-          <b-button 
-            class="has-text-weight-semibold"
-            :class="saveTemplateModalActive ? 'is-primary' : 'is-outlined'" 
-            label="Save as template" 
-            size="is-small" 
-            type="is-primary" 
-            @click="saveTemplateModalActive = !saveTemplateModalActive"/>      
-        </p>
-      </b-field>
-    </div>
-    <ModelBuilder 
-      class="pt-1" 
-      :nodes="analysis.model"
-      @input="updateAnalysis({prop: 'model', value: $event, shared: true})"
-    />
-  </div>
+
 </div>
 </template>
 
@@ -253,7 +255,7 @@ export default {
 }
 
 .right-section {
-  border-left: 2px solid #073642;
+  border-right: 2px solid #073642;
 } 
 
 .sticky-container {

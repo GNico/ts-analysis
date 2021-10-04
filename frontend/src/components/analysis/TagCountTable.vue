@@ -1,34 +1,48 @@
 <template>
 <div>
-  <div v-for="tagsCount, index in tagsCountList" class="card tag-count-card mb-3">
-    <header class="card-header">
-      <p class="card-header-title has-text-grey-light has-text-weight-medium">
-       <b v-if="tagsCountList.length > 1">{{index+1}} -&nbsp;</b> 
-       <b> Tags count from {{formattedAnomalyRange}}</b>       
-      </p>
-      <a href="#" class="card-header-icon" aria-label="more options">
-      <span class="icon">
-        <i class="fa fa-angle-down" aria-hidden="true"></i>
-      </span>
-      </a>
-    </header>
-    <div class="card-table">
-      <div class="content">
-        <table class="table is-fullwidth is-striped">
-          <tbody v-if="tagsCount">
-            <tr v-for="item in tagsCount.tags">
-              <td>
-                <div class="is-flex is-justify-content-space-between is-family-monospace is-size-7">
-                  <div class="tag-label"><i class="mdi mdi-tag-multiple"></i> {{ item.tag}}</div>
-                  <div class="tag-count has-text-right has-text-weight-bold"> 
-                    {{item.count}}
-                    <span class="has-text-weight-medium">({{(item.count * 100 / tagsCount.total).toFixed(1)}}%)</span>
+  <div class="mb-3">
+    <p class="has-text-grey-light has-text-weight-medium">
+       <b> Tag count from {{formattedAnomalyRange}} </b>       
+    </p>
+    <b-dropdown  class="header-item" aria-role="list" :value="compareTo" @input="onModeChange">
+        <template #trigger>
+          <a class="is-flex is-align-items-center has-text-grey">
+            <b-icon icon="menu-down" class="has-text-link"></b-icon>
+            <span><strong class="has-text-link">Compare to: {{compareModes[compareTo]}}</strong></span>
+          </a>
+        </template>
+        <b-dropdown-item v-for="mode in Object.keys(compareModes)" :value="mode" >{{compareModes[mode]}}</b-dropdown-item>
+    </b-dropdown>
+  </div>
+  <div v-for="tagsCount, index in tagCountListWithComparison">
+    <div class="card tag-count-card mb-3">
+      <header class="card-header"  v-if="tagCountListWithComparison.length > 1">
+        <p class="card-header-title has-text-grey-light has-text-weight-semibold">Input {{index+1}}</p>        
+      </header>
+      <div class="card-table">
+        <div class="content">
+          <table class="table is-fullwidth is-striped">
+            <tbody v-if="tagsCount">
+              <tr v-for="item in tagsCount.tags">
+                <td>
+                  <div class="is-flex is-justify-content-space-between is-family-monospace is-size-7">
+                    <div class="tag-label"><i class="mdi mdi-tag-multiple"></i> {{ item.tag}}</div>
+                    <div class="tag-count has-text-right has-text-weight-bold"> 
+                      {{item.count}}
+                      <span class="has-text-weight-medium">({{(item.count * 100 / tagsCount.total).toFixed(1)}}%)</span>
+                    </div>
                   </div>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                  <div v-if="compareTo" class="is-flex is-justify-content-flex-end is-family-monospace is-size-7 has-text-link">                   
+                    <span v-if="item.comparedCount"> 
+                      {{item.comparedCount}} ({{(item.comparedCount * 100 / tagsCount.comparedTotal).toFixed(1)}}%)
+                    </span>
+                    <span v-else>-</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -38,27 +52,70 @@
 <script>
 import api from "@/api/repository";
 import { formatDateRange } from '@/utils/dateFormatter';
+import cloneDeep from 'lodash/cloneDeep'
 
 export default {
   props: {    
     settings: {
       type: Object,
       default: {}
+    },
+    compareTo: {
+      type: String,
+      default: ''
     }
   },
   data() {
     return {
       tagsCountList: [],
+      tagsCompareList: [],
+     // compareMode: 'all',  
+      compareModes: {
+        '': 'None',
+        all: 'All time',
+        before: 'Before anomaly',
+        selection: 'Selection'
+      }
     }
   },
   computed: {
     formattedAnomalyRange() {
       return formatDateRange(this.settings.anomalyStart, this.settings.anomalyEnd)
-    }
+    },
+    tagCountListWithComparison() {
+      var formattedTagCountList = []
+      if (!this.tagsCompareList.length) return this.tagsCountList
+      for (let i = 0; i < this.tagsCountList.length; i++) {
+        var input = this.tagsCountList[i] 
+        var newInput = {
+          client: input.client,
+          total: input.total,
+          comparedTotal: this.tagsCompareList[i].total,
+          tags: cloneDeep(input.tags)
+        }
+        formattedTagCountList.push(newInput)
+        if (this.tagsCompareList[i].tags) {
+          newInput.tags.forEach(elem => {
+            var found = this.tagsCompareList[i].tags.find(comp => comp.tag == elem.tag)
+            if (found) {
+              elem.comparedCount = found.count
+            } else {
+              elem.comparedCount = 0
+            }
+          })    
+        } 
+      } 
+      return formattedTagCountList
+     
+    } 
   },
   methods: {
-   getTagsCount() {
-      this.tagsCountList = []
+    fetchData() {
+      this.tagsCountList = this.getTagsCount(this.settings.anomalyStart, this.settings.anomalyEnd)
+      this.tagsCompareList = this.getTagsCompared()
+    },
+    getTagsCount(start, end) {
+      var tagsCount = []
       this.settings.data_options.forEach(elem => {
         api.getTagsCount({
           name: this.settings.client,
@@ -66,26 +123,46 @@ export default {
           contexts: elem.contexts,
           filterTags: elem.filterTags,
           filterContexts: elem.filterContexts,
-          start: this.settings.anomalyStart,
-          end: this.settings.anomalyEnd
+          start: start,
+          end: end,
+          size: 30,
         })
         .then(response => {   
-          this.tagsCountList.push({            
+          tagsCount.push({            
             client: this.settings.client, 
             total: response.data.total, 
             tags: response.data.tags_count
           })
         })
-      })      
+      }) 
+      return tagsCount     
     }, 
+    getTagsCompared() {
+      switch (this.compareTo) {
+        case 'all':
+          return this.getTagsCount(null, null)
+        case 'before': 
+          return this.getTagsCount(null, this.settings.anomalyStart)         
+        case 'selection': 
+          return []
+        default:
+          return []
+      }
+    },
+    onModeChange(event) {
+      this.$emit('compareChange', event)
+    }
   },
   watch: {    
     settings: {
       immediate: true,
       handler() {
-       this.getTagsCount()
+        this.fetchData()
       }
-    }
+    },   
+    compareTo() {
+      this.fetchData()
+    } 
   },
 }
 </script>
