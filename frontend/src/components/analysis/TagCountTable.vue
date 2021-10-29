@@ -19,7 +19,7 @@
       <header class="card-header"  v-if="tagCountListWithComparison.length > 1">
         <p class="card-header-title has-text-grey-light has-text-weight-semibold">Input {{index+1}}</p>        
       </header>
-      <div class="card-table">
+      <div class="card-table" :style="tableHeight">
         <div class="content">
           <table class="table is-fullwidth is-striped">
             <tbody v-if="tagsCount">
@@ -49,6 +49,7 @@
 </div>
 </template>
 
+
 <script>
 import api from "@/api/repository";
 import { formatDateRange } from '@/utils/dateFormatter';
@@ -67,6 +68,10 @@ export default {
     selectionRange: {
       type: Object,
       default: null
+    },
+    maxHeight: {
+      type: Number,
+      default: 350,
     }
   },
   data() {
@@ -82,6 +87,12 @@ export default {
     }
   },
   computed: {
+    tableHeight() {
+      let h = this.maxHeight - 50
+      return {
+        'max-height': `${h}px`,
+      }
+    },
     formattedAnomalyRange() {
       return formatDateRange(this.settings.anomalyStart, this.settings.anomalyEnd)
     },
@@ -184,7 +195,6 @@ export default {
 
 <style>
 .tag-count-card .card-table {
-  max-height: 350px;
   overflow-y: auto;
   overflow-x: auto;
 }

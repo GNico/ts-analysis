@@ -27,7 +27,22 @@
               :extremes="extremes ? extremes : {min: undefined, max:undefined}"/>
           </div>
           <div class="column">
-            <TagCountTable :settings="tableSettings"/>
+            <div class="is-flex is-flex-direction-column is-justify-content-space-between" :style="{'height': contentHeight + 'px'}">
+              <TagCountTable 
+                :settings="tableSettings" 
+                :compareTo="compareMode"
+                @compareChange="compareMode = $event"
+                :maxHeight="tableHeight"/>
+
+              <div class="is-flex is-justify-content-space-between">
+                <div class="button is-small"> Open</div>
+                <div>
+                  <div class="button is-small is-primary"> << </div>
+                  <div class="button is-small is-primary"> Next >></div>
+                </div>
+              </div> 
+
+            </div>
           </div>
         </div>
       </div>
@@ -59,11 +74,11 @@ export default {
       x: 0,
       y: 0,      
       tooltipFormatter: multiseriesTooltipFormatter,
+      compareMode: '',
     }
   },
   computed: {
     anomaly() {
-      console.log(this.incident)
       return { from: this.incident.start, to: this.incident.end}
     },
     tableSettings() {
@@ -102,11 +117,16 @@ export default {
         to: Date.parse(this.incident.end),
       }]
     },
-    chartDimensions () {
-      let h = this.height - 100
+    contentHeight() {
+      return this.height - 100
+    },
+    tableHeight() {
+      return this.contentHeight - 50
+    },
+    chartDimensions() {
       let w = this.width
       return {
-        height: `${h}px`,
+        height: `${this.contentHeight}px`,
         width: `calc((${w}px - 3.75rem)* 0.58)`,
       }
     },

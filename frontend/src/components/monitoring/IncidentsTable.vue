@@ -46,25 +46,75 @@
     :custom-is-checked="(a,b)=> a.id === b.id"
     :checked-rows.sync="checked">
 
-    <b-table-column field="state" label="State"  width="5%" sortable v-slot="props"  cell-class="is-clickable is-unselectable">
-      <span class="tag is-small" :class="props.row.state=='Open' ? 'is-success' : 'is-info'">{{ props.row.state }}</span>     
+    <b-table-column 
+      field="state" 
+      label="State"  
+      width="5%" 
+      sortable 
+      v-slot="props"  
+      cell-class="is-unselectable"
+    >
+      <span class="tag is-small" :class="props.row.state=='Open' ? 'is-success' : 'is-info'">
+        {{ props.row.state }}
+      </span>     
     </b-table-column>  
-    <b-table-column field="client" label="Client" width="20%" sortable v-slot="props"  cell-class="is-clickable is-unselectable">
+    <b-table-column 
+      field="client" 
+      label="Client" 
+      width="20%" 
+      sortable 
+      v-slot="props"  
+      cell-class="is-clickable is-unselectable"
+    >
       {{ props.row.client }}       
     </b-table-column>  
-    <b-table-column field="monitor" label="Monitor name" width="20%" sortable v-slot="props"  cell-class="is-clickable is-unselectable">
+    <b-table-column 
+      field="monitor" 
+      label="Monitor name"
+      width="20%" 
+      sortable
+      v-slot="props"  
+      cell-class="is-clickable is-unselectable">
       {{ props.row.monitor }}       
     </b-table-column>
-    <b-table-column field="detector" label="Detector name" width="20%" sortable v-slot="props"  cell-class="is-clickable is-unselectable">
+    <b-table-column
+      field="detector" 
+      label="Detector name" 
+      width="20%" 
+      sortable 
+      v-slot="props"  
+      cell-class="is-clickable is-unselectable"
+    >
       {{ props.row.analysis_name }}       
     </b-table-column>
-    <b-table-column field="start" label="Start" sortable v-slot="props" centered cell-class="is-clickable is-unselectable">
+    <b-table-column 
+      field="start" 
+      label="Start" 
+      sortable 
+      v-slot="props" 
+      centered 
+      cell-class="is-clickable is-unselectable"
+    >
       {{ formatDateVerbose(props.row.start) }}
     </b-table-column>
-    <b-table-column :custom-sort="sortDuration" label="Duration" sortable v-slot="props" centered cell-class="is-clickable is-unselectable">
+    <b-table-column 
+      :custom-sort="sortDuration" 
+      label="Duration" 
+      sortable 
+      v-slot="props" 
+      centered 
+      cell-class="is-clickable is-unselectable"
+    >
       {{ getDurationStr(props.row.start, props.row.end) }}
     </b-table-column>
-    <b-table-column field="score" label="Score" width="5%" sortable v-slot="props"  cell-class="is-clickable is-unselectable">
+    <b-table-column 
+      field="score" 
+      label="Score" 
+      width="5%" 
+      sortable 
+      v-slot="props"  
+      cell-class="is-clickable is-unselectable"
+    >
       <span class="tag is-small" :style="getScoreTagStyle(props.row.score)">
         {{ parseFloat((props.row.score * 100).toFixed(1)) }}%
       </span>  
