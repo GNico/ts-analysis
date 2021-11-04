@@ -224,6 +224,9 @@ export default {
   getIncidentDetails(id) {
     return repository.get("/incidents/" + id + "/")
   },
+  updateIncident(id, options) {
+    return repository.put("/incidents/" + id + "/", options)
+  },
 
 
   //Misc

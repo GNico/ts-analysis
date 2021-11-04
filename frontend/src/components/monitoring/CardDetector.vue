@@ -7,7 +7,7 @@
         <span>&nbsp;{{detector.analysis_details.client}}: {{detector.analysis_details.name}}</span>
       </div>
       <div class="is-flex is-align-items-center">
-        <div class="header-item"> {{detector.last_run_at}} </div>
+        <div class="header-item"> Last run: {{formatDate(detector.last_run)}} </div>
         <div class="header-item clickable" @click="confirmDelete">                
           <span class="icon"> 
             <i class="mdi mdi-trash-can"></i>
@@ -122,6 +122,7 @@
 <script>
 import debounce from "lodash/debounce"
 import CardDetectorModelTab from '@/components/monitoring/CardDetectorModelTab'
+import { formatDateVerbose } from '@/utils/dateFormatter' 
 
 export default {
   components: { CardDetectorModelTab },
@@ -166,6 +167,9 @@ export default {
     editAnalysis() {
       this.$emit('editAnalysis', this.detector.analysis)
     },
+    formatDate(date) {
+      return formatDateVerbose(date)
+    }
   },
   watch: {
     detector: {

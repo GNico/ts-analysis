@@ -61,11 +61,22 @@
           </b-select>
         </b-field>
 
-        <b-field class="has-text-right sticky-container">
-            <a class="button is-primary has-text-weight-semibold" @click="apply">
+        <b-field horizontal label="Seen">
+          <b-select v-model="filters.seen" size="is-small" >
+            <option value="">All</option>
+            <option value="true">Seen</option>
+            <option value="false">Unseen</option>
+          </b-select>
+        </b-field>
+
+        <div class="is-flex is-justify-content-flex-end sticky-container">
+            <a class="button is-danger has-text-weight-semibold" @click="clear">
+              Clear
+            </a>
+            <a class="ml-2 button is-primary has-text-weight-semibold" @click="apply">
               Apply
             </a>
-        </b-field> 
+        </div> 
           
       </section>
     </div>
@@ -75,6 +86,14 @@
 
 
 <script>
+
+const defaultFilters = {
+  client: '',
+  monitor: '',
+  detector: '',
+  state: '',
+  seen: '',
+}
 
 export default {
   props: {
@@ -86,18 +105,16 @@ export default {
   data() {
     return {
       active: false,
-      filters: {
-        client: '',
-        monitor: '',
-        detector: '',
-        state: '',
-      }
+      filters: {...defaultFilters}
     }
   },
   methods: {
     apply() {
       this.$emit("apply", this.filters)
       this.$refs.dropdown.toggle()
+    },
+    clear() {
+      this.filters = {...defaultFilters}
     }
   }
 }

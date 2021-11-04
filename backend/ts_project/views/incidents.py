@@ -32,6 +32,11 @@ class IncidentsListView(APIView):
         monitor = params.get('monitor', '')
         detector = params.get('detector', '')
         state = params.get('state', '')
+        seen = params.get('seen', None)
+        if (seen == "false"):
+            seen = False 
+        if (seen == "true"):
+            seen = True
         if client:
             query.add(Q(client__icontains=client), Q.AND)
         if monitor: 
@@ -40,15 +45,20 @@ class IncidentsListView(APIView):
             query.add(Q(periodic_analysis__analysis__name__icontains=detector), Q.AND)
         if state: 
             query.add(Q(state=state), Q.AND)
+        if seen is not None: 
+            query.add(Q(seen=seen), Q.AND)
         return query
 
     def _bulk_update(self, request):
         update_ids = request.data.get('ids', [])
         objs = Incident.objects.filter(id__in=update_ids)
         state = request.data.get('state', None)
+        seen = request.data.get('seen', None)
         for item in objs:
             if (state is not None):
                 item.state = state
+            if (seen is not None):
+                item.seen = seen
             item.save()
         return Response(status=status.HTTP_201_CREATED)
 
@@ -69,7 +79,6 @@ class IncidentDetailView(APIView):
 
     def get(self, request, incident_id):
         incident = self.get_object(incident_id)
-        #data_options = incident.periodic_analysis.analysis.data_options
         serializer = IncidentSerializer(incident)
         return Response(serializer.data)
 

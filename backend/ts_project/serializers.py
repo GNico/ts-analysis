@@ -102,7 +102,8 @@ class IncidentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Incident
-        fields = ['id', 'state', 'client', 'score', 'start', 'end', 'desc', 'series', 'duration', 'analysis']
+        fields = ['id', 'state', 'seen', 'client', 'score',
+        'start', 'end', 'desc', 'series', 'duration', 'analysis']
 
 
 class IncidentListSerializer(serializers.ModelSerializer):
@@ -119,4 +120,4 @@ class IncidentListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Incident
-        fields = ['id', 'state', 'client', 'score', 'start', 'end', 'desc', 'monitor', 'duration', 'analysis_name']
+        fields = ['id', 'state', 'seen', 'client', 'score', 'start', 'end', 'desc', 'monitor', 'duration', 'analysis_name']

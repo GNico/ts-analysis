@@ -24,7 +24,7 @@
               :seriesData="chartData" 
               :bands="chartIncident"
               :style="chartDimensions"
-              :extremes="extremes ? extremes : {min: undefined, max:undefined}"/>
+              :extremes="extremes ? extremes : {min: undefined, max: undefined}"/>
           </div>
           <div class="column">
             <div class="is-flex is-flex-direction-column is-justify-content-space-between" :style="{'height': contentHeight + 'px'}">
@@ -35,13 +35,35 @@
                 :maxHeight="tableHeight"/>
 
               <div class="is-flex is-justify-content-space-between">
-                <div class="button is-small"> Open</div>
                 <div>
-                  <div class="button is-small is-primary"> << </div>
-                  <div class="button is-small is-primary"> Next >></div>
+                  <b-dropdown :value="incident.state" @input="changeState">
+                    <template #trigger>
+                      <b-button 
+                        :type="incident.state == 'Open' ? 'is-success' : 'is-danger'" 
+                        size="is-small" 
+                        icon-right="menu-down">     
+                        {{incident.state}}             
+                      </b-button>
+                    </template>
+                    <b-dropdown-item value="Open" aria-role="listitem">
+                      <span>Open</span>
+                    </b-dropdown-item>
+                    <b-dropdown-item value="Closed" aria-role="listitem">
+                      <span>Closed</span>
+                    </b-dropdown-item>                   
+                  </b-dropdown>
+
+                  <b-button class="transparent-button is-small ml-2" @click="changeSeen(!incident.seen)">
+                    <b-icon 
+                      :icon="incident.seen ? 'eye-check-outline' : 'eye-off-outline'" 
+                      :type="incident.seen ? 'is-success' : 'is-primary'"></b-icon>
+                  </b-button>
+                </div>
+                <div>
+                  <div class="button is-small is-primary" @click="$emit('previous')"> << </div>
+                  <div class="button is-small is-primary" @click="$emit('next')"> Next >></div>
                 </div>
               </div> 
-
             </div>
           </div>
         </div>
@@ -150,6 +172,13 @@ export default {
     forceRerender() {
       this.chartKey += 1;
     },
+    changeState(newState) {
+      this.$emit('stateChange', {id: this.incident.id, state: newState})
+    },
+    changeSeen(newSeen) {
+      this.$emit('seenChange', {id: this.incident.id, seen: newSeen})
+    }
+    
   },
   created() {
   }

@@ -139,6 +139,7 @@ class Incident(models.Model):
     periodic_analysis = models.ForeignKey(PeriodicAnalysis, on_delete=models.CASCADE, related_name="incidents")
     client = models.CharField(max_length=50, blank=True)
     state = models.CharField(max_length=10, choices=State.choices, default=State.OPEN)
+    seen = models.BooleanField(default=False)
     start = models.DateTimeField() 
     end = models.DateTimeField() 
     score = models.DecimalField(max_digits=3, decimal_places=2, default=1.0)

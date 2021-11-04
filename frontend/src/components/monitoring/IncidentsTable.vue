@@ -1,157 +1,157 @@
 <template>
-<div>
-  <div class="columns is-marginless mb-4">
-    <div class="column is-6-mobile is-5-widescreen is-4-fullhd  is-paddingless">
-      <b-field grouped>
-        <b-input v-model="searchValue" expanded placeholder="Search..." size="is-small"/>        
-        <IncidentsFilters @apply="filterData"/>
-      </b-field>
-    </div>
-    <div class="column is-paddingless">
-      <div class="is-flex is-align-items-center has-text-right is-justify-content-flex-end">
-        <span class="mr-2 is-unselectable">On selected:</span> 
-        <div class="field has-addons">
-          <p class="control">
-            <a class="button is-small is-primary" @click="performAction">{{currentAction}}</a>
-          </p>
-          <p class="control">
-            <b-dropdown scrollable :max-height="200" aria-role="list" position="is-bottom-left">
-              <template #trigger="{ active }">
-                <b-button class="button-right is-shadowless" icon-left="menu-down" size="is-small" type="is-primary"/>
-              </template>
-              <b-dropdown-item 
-                v-for="action in onSelectedActions" 
-                :key="action"
-                @click="currentAction = action"
-                aria-role="listitem">
-                {{action}}
-              </b-dropdown-item>
-            </b-dropdown>
-          </p>
-        </div>        
-      </div> 
-    </div>
-  </div>
+<b-table 
+  ref="table"
+  :data="filteredIncidents" 
+  sticky-header      
+  :selected="selected"
+  checkable
+  checkbox-position="right"
+  hoverable
+  @cellclick="openIncident"
+  :default-sort="['monitor', 'asc']"
+  :custom-is-checked="(a,b)=> a.id === b.id"
+  :checked-rows="checked"
+  @check="$emit('update:checked', $event)"
+  @select="autoselected = $event">
 
-  <b-table 
-    :data="filteredIncidents" 
-    sticky-header      
-    selectable
-    :selected.sync="selected"
-    checkable
-    checkbox-position="right"
-    hoverable
-    @cellclick="openIncident"
-    :default-sort="['monitor', 'asc']"
-    :custom-is-checked="(a,b)=> a.id === b.id"
-    :checked-rows.sync="checked">
+  <b-table-column 
+    field="" 
+    sortable 
+    label="Seen"  
+    cell-class="is-unselectable"
+  >
+    <template v-slot:header="{ column }">
+      <b-tooltip :label="column.label" append-to-body>
+        <b-icon icon="eye-outline"/>
+      </b-tooltip>
+    </template>
+    <template v-slot="props">
+      <button class="transparent-button eye-button" @click="$emit('seenChange', {id: props.row.id, seen: !props.row.seen})">
+        <b-icon 
+          :icon="props.row.seen ? 'eye-check-outline' : 'eye-off-outline'" 
+          :type="props.row.seen ? 'is-success' : 'is-primary'"></b-icon>
+      </button>
+    </template>      
+  </b-table-column>
 
-    <b-table-column 
-      field="state" 
-      label="State"  
-      width="5%" 
-      sortable 
-      v-slot="props"  
-      cell-class="is-unselectable"
-    >
-      <span class="tag is-small" :class="props.row.state=='Open' ? 'is-success' : 'is-info'">
-        {{ props.row.state }}
-      </span>     
-    </b-table-column>  
-    <b-table-column 
-      field="client" 
-      label="Client" 
-      width="20%" 
-      sortable 
-      v-slot="props"  
-      cell-class="is-clickable is-unselectable"
-    >
-      {{ props.row.client }}       
-    </b-table-column>  
-    <b-table-column 
-      field="monitor" 
-      label="Monitor name"
-      width="20%" 
-      sortable
-      v-slot="props"  
-      cell-class="is-clickable is-unselectable">
-      {{ props.row.monitor }}       
-    </b-table-column>
-    <b-table-column
-      field="detector" 
-      label="Detector name" 
-      width="20%" 
-      sortable 
-      v-slot="props"  
-      cell-class="is-clickable is-unselectable"
-    >
-      {{ props.row.analysis_name }}       
-    </b-table-column>
-    <b-table-column 
-      field="start" 
-      label="Start" 
-      sortable 
-      v-slot="props" 
-      centered 
-      cell-class="is-clickable is-unselectable"
-    >
-      {{ formatDateVerbose(props.row.start) }}
-    </b-table-column>
-    <b-table-column 
-      :custom-sort="sortDuration" 
-      label="Duration" 
-      sortable 
-      v-slot="props" 
-      centered 
-      cell-class="is-clickable is-unselectable"
-    >
-      {{ getDurationStr(props.row.start, props.row.end) }}
-    </b-table-column>
-    <b-table-column 
-      field="score" 
-      label="Score" 
-      width="5%" 
-      sortable 
-      v-slot="props"  
-      cell-class="is-clickable is-unselectable"
-    >
-      <span class="tag is-small" :style="getScoreTagStyle(props.row.score)">
-        {{ parseFloat((props.row.score * 100).toFixed(1)) }}%
-      </span>  
-    </b-table-column>       
-  </b-table>
-</div>
+  <b-table-column 
+    field="state" 
+    label="State"  
+    width="5%" 
+    sortable 
+    v-slot="props"  
+    cell-class="is-unselectable"
+    centered
+  >    
+    <b-dropdown :value="props.row.state" @input="$emit('stateChange', {id: props.row.id, state: $event})">
+      <template #trigger>
+        <span
+          class="tag is-small is-clickable"
+          :class="props.row.state == 'Open' ? 'is-success' : 'is-danger'" 
+          size="is-small">     
+          {{props.row.state}} &nbsp; <b-icon icon="menu-down" size="is-small"/>        
+        </span>
+      </template>
+      <b-dropdown-item value="Open" aria-role="listitem">
+        <span>Open</span>
+      </b-dropdown-item>
+      <b-dropdown-item value="Closed" aria-role="listitem">
+        <span>Closed</span>
+      </b-dropdown-item>                   
+    </b-dropdown>
+  </b-table-column>  
+  <b-table-column 
+    field="client" 
+    label="Client" 
+    width="20%" 
+    sortable 
+    v-slot="props"  
+    cell-class="is-clickable is-unselectable"
+  >
+    {{ props.row.client }}       
+  </b-table-column>  
+  <b-table-column 
+    field="monitor" 
+    label="Monitor name"
+    width="20%" 
+    sortable
+    v-slot="props"  
+    cell-class="is-clickable is-unselectable">
+    {{ props.row.monitor }}       
+  </b-table-column>
+  <b-table-column
+    field="detector" 
+    label="Detector name" 
+    width="20%" 
+    sortable 
+    v-slot="props"  
+    cell-class="is-clickable is-unselectable"
+  >
+    {{ props.row.analysis_name }}       
+  </b-table-column>
+  <b-table-column 
+    field="start" 
+    label="Start" 
+    sortable 
+    v-slot="props" 
+    centered 
+    cell-class="is-clickable is-unselectable"
+  >
+    {{ formatDateVerbose(props.row.start) }}
+  </b-table-column>
+  <b-table-column 
+    :custom-sort="sortDuration" 
+    label="Duration" 
+    sortable 
+    v-slot="props" 
+    centered 
+    cell-class="is-clickable is-unselectable"
+  >
+    {{ getDurationStr(props.row.start, props.row.end) }}
+  </b-table-column>
+  <b-table-column 
+    field="score" 
+    label="Score" 
+    width="5%" 
+    sortable 
+    v-slot="props"  
+    cell-class="is-clickable is-unselectable"
+  >
+    <span class="tag is-small" :style="getScoreTagStyle(props.row.score)">
+      {{ parseFloat((props.row.score * 100).toFixed(1)) }}%
+    </span>  
+  </b-table-column>       
+</b-table>
 </template>
 
 
 <script>
 import api from '@/api/repository'
 import { formatDateVerbose, timeRangeToString } from '@/utils/dateFormatter'
-import IncidentsFilters from '@/components/monitoring/IncidentsFilters'
 
 export default {
-  components: { IncidentsFilters },
-  data() {
-    return {
-      client: 'test',
-      allIncidents: [],
-      incidentsFilters: {},
-      checked: [],
-      selected: undefined,
-      error: '',
-      currentAction: 'Mark as closed',
-      onSelectedActions: [
-        'Mark as closed',
-        'Mark as open',
-        'Delete incident',       
-      ],
-      searchValue: '',
+  components: {  },
+  props: {
+    allIncidents: {
+      type: Array,
+      default: () => []
+    },
+    searchValue: {
+      type: String,
+      default: ''
+    },
+    checked: {
+      type: Array,
+      default: () => []
     }
   },
-  computed: {
-    checkedIds() {
-      return this.checked.map(elem => elem.id)
-    },
+  data() {
+    return {      
+      selected: undefined,
+      autoselected: undefined,
+    }
+  },
+  computed: {    
     filteredIncidents() {
       var term = this.searchValue.toLowerCase()
       return this.allIncidents.filter(elem => 
@@ -161,52 +161,14 @@ export default {
     }
   },
   methods: {
-    openIncident(incident) {
-      this.$emit('select', incident)
+    openIncident(incident, column, rowIndex, columnIndex) {
+      if (columnIndex > 1) {
+        this.selected = incident
+        this.$emit('select', incident)      
+      }
     },
     formatDateVerbose(date) {
       return formatDateVerbose(date)
-    },
-    fetchIncidents() {
-      return  api.getAllIncidents(this.incidentsFilters)
-              .then(response => {
-                this.error = ''
-                this.allIncidents = response.data
-              })
-              .catch(error => this.error = 'There was an error retrieving data')
-    },
-    performAction() {
-      if (!this.checked.length) return
-      switch (this.currentAction) {
-        case this.onSelectedActions[0]: //mark closed
-          api.updateIncidentsList(this.checkedIds, {state: 'Closed'})
-          .then(response => this.fetchIncidents())
-          break;      
-        case this.onSelectedActions[1]: //mark open
-          api.updateIncidentsList(this.checkedIds, {state: 'Open'})
-          .then(response => this.fetchIncidents())
-          break;
-        case this.onSelectedActions[2]: //delete
-          this.confirmDelete()
-          break;        
-      }
-    },
-    confirmDelete() {
-      this.$buefy.dialog.confirm({
-        title: 'Deleting Incident',
-        message: 'Are you sure you want to <b>delete</b> this items? This action cannot be undone.',
-        confirmText: 'Delete Incident',
-        type: 'is-danger',
-        scroll: 'keep',
-        hasIcon: true,
-        onConfirm: () => api.deleteIncidentsList(this.checkedIds).then(response => {
-          this.fetchIncidents()
-        })
-      })
-    },
-    filterData(filters) {
-      this.incidentsFilters = filters
-      this.fetchIncidents()
     },
     getDurationStr(start, end) {
       var e = new Date(end)
@@ -226,11 +188,22 @@ export default {
       } else {
         return { 'background-color': '#005aff', color: 'white', 'font-weight': 600}
       }
-    }
+    },
+    next() {
+      this.$refs.table.pressedArrow(1)
+      this.selected = this.autoselected
+      this.$emit('select', this.selected) 
+   
+    },
+    previous() {
+      this.$refs.table.pressedArrow(-1)
+      this.selected = this.autoselected
+      this.$emit('select', this.selected) 
+  
+    },   
+    
   },
-  created() {
-    this.fetchIncidents()
-  }  
+ 
 }
 </script>
 
@@ -242,5 +215,13 @@ export default {
 
 .button-right:focus {
   border-left: 1px solid rgba(255,255,255,0.5);
+}
+
+.b-table .table th .th-wrap .icon {
+  margin: 0;
+}
+
+.eye-button {
+  padding: 0;
 }
 </style>
