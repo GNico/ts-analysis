@@ -149,3 +149,12 @@ class Incident(models.Model):
     def duration(self):
         return int((self.end - self.start).total_seconds()) if (self.end and self.start) else None
     
+
+class TestSet(models.Model):
+    class Meta: 
+        db_table = 'test_sets'
+
+    name = models.CharField(max_length=50)
+    anomalies = models.JSONField(default=list)
+    created = models.DateTimeField(auto_now_add=True) 
+    modified = models.DateTimeField(auto_now=True)

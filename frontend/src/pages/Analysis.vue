@@ -77,6 +77,9 @@
       <b-tab-item label="Debug" icon="bug" value="Debug" :disabled="!hasResults">
         <DebugTab v-if="hasResults"/>
       </b-tab-item>
+      <b-tab-item label="Test" icon="playlist-check" value="Test">
+        <TestTab/>
+      </b-tab-item>
     </b-tabs>
   </div>
 </div>
@@ -88,12 +91,13 @@ import BarItemButton from '../components/inputs/BarItemButton';
 import SettingsTab from '../components/analysis/SettingsTab';
 import ResultsTab from "../components/analysis/ResultsTab";
 import DebugTab from "../components/analysis/DebugTab";
+import TestTab from "../components/analysis/TestTab";
 import ModalLoadAnalysis from "../components/analysis/ModalLoadAnalysis"
 import ModalSaveAnalysis from "../components/analysis/ModalSaveAnalysis"
 
 
 export default {
-  components: {  BarItemButton, SettingsTab, ResultsTab, DebugTab, ModalLoadAnalysis, ModalSaveAnalysis },
+  components: {  BarItemButton, SettingsTab, ResultsTab, DebugTab, TestTab, ModalLoadAnalysis, ModalSaveAnalysis },
   data () {
     return {        
       activeTab: "Settings",

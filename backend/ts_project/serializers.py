@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Pipeline, Analysis, PeriodicAnalysis, Monitor, NotificationChannel, Incident, Client
+from .models import Pipeline, Analysis, PeriodicAnalysis, Monitor, NotificationChannel, Incident, Client, TestSet
 from .elastic import series_search
 
 class ClientInputSerializer(serializers.Serializer):
@@ -121,3 +121,9 @@ class IncidentListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Incident
         fields = ['id', 'state', 'seen', 'client', 'score', 'start', 'end', 'desc', 'monitor', 'duration', 'analysis_name']
+
+
+class TestSetSerializer(serializers.ModelSerializer):
+    class Meta: 
+        model = TestSet
+        fields = ['id', 'name', 'anomalies', 'created', 'modified']

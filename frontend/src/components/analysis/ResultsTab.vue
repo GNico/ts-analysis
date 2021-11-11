@@ -25,13 +25,15 @@
           height="400px"
           :seriesData="seriesData"
           :anomalies="chartAnomalies"
+          :zoomEnabled="zoomEnabled"
           :loading="loading"
           :activeAnomaly="activeAnomaly"
           :showMinMax="activeOptions.showMinMax"
           :axisInterval="activeOptions.axisInterval"
           @changeActive="updateOptions({activeAnomalyId: $event})"
           @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" 
-          @areaSelectionChange="onAreaSelection" />
+          @areaSelectionChange="onAreaSelection" 
+        />
 
         <div class="columns mt-5">
           <div class="column is-5">
@@ -58,96 +60,101 @@ import AnomaliesHeatmap from "./AnomaliesHeatmap"
 import debounce from "lodash/debounce";
 
 export default {
-    components: { Chart, AnomaliesTable, AnomaliesFilters, AnomaliesChartOptions, AnomaliesHistogram, AnomaliesHeatmap },
-    data() {
-      return {
-        polling: null,
-      }       
+  components: { Chart, AnomaliesTable, AnomaliesFilters, AnomaliesChartOptions, AnomaliesHistogram, AnomaliesHeatmap },
+  data() {
+    return {
+      polling: null,
+    }       
+  },
+  computed: {
+    activeResults() {
+      return this.$store.getters['results/activeResults']
     },
-    computed: {
-      activeResults() {
-        return this.$store.getters['results/activeResults']
-      },
-      activeOptions() {
-        return this.$store.getters['results/activeOptions']
-      },
-      activeAnomaly() {
-        return this.activeOptions.activeAnomalyId
-      },
-      loading() {
-        return this.activeResults.loading
-      },
-      error() {
-        return this.activeResults.error
-      },
-      resultsData() {
-        return this.activeResults.results
-      },      
-      seriesData() {
-        return !this.loading && 
-              this.resultsData && 
-              this.resultsData.hasOwnProperty("series") && 
-              this.activeOptions.showSeries ? this.resultsData.series :  [] 
-      },      
-      anomalies() {
-        return !this.loading &&
-              this.resultsData &&      
-              this.resultsData.hasOwnProperty("anomalies") ? this.resultsData.anomalies : []
-      },
-      filteredAnomalies() {
-        return this.anomalies.filter(elem => 
-          (elem.score >= this.activeOptions.scoreThreshold 
-          && (parseInt(elem.to) - parseInt(elem.from) >= this.activeOptions.minDurationTime)))         
-      },
-      chartAnomalies() {
-        return this.activeOptions.showAnomalies ? this.filteredAnomalies : []
-      },
-      tableAnomalies() {
-        return this.filteredAnomalies.filter(elem =>           
-          (!this.activeOptions.selectedRange.start || parseInt(elem.from) > this.activeOptions.selectedRange.start)
-          && (!this.activeOptions.selectedRange.end || parseInt(elem.from) < this.activeOptions.selectedRange.end))
-      },  
+    activeOptions() {
+      return this.$store.getters['results/activeOptions']
     },
-    methods: {
-      updateOptions(options) {
-        this.$store.dispatch('results/updateOptions', {id: this.activeResults.id, ...options })
-      },      
-      startPollingResults() {
-        this.polling = setInterval(() => {
-          console.log('polling results')
-          this.$store.dispatch('results/fetchResults', this.activeResults.id)          
-        }, 2000)
-      },
-      stopPollingResults() {
-        if (this.polling) {
-          console.log('stop polling results')
-          clearInterval(this.polling)
-        }
-        this.polling = null
-      },
-      onAreaSelection(event) {
-        this.$store.dispatch('results/updateCompareSelection', event)
-      }
+    activeAnomaly() {
+      return this.activeOptions.activeAnomalyId
+    },
+    loading() {
+      return this.activeResults.loading
+    },
+    error() {
+      return this.activeResults.error
+    },
+    resultsData() {
+      return this.activeResults.results
+    },      
+    seriesData() {
+      return !this.loading && 
+            this.resultsData && 
+            this.resultsData.hasOwnProperty("series") && 
+            this.activeOptions.showSeries ? this.resultsData.series :  [] 
+    },      
+    anomalies() {
+      return !this.loading &&
+            this.resultsData &&      
+            this.resultsData.hasOwnProperty("anomalies") ? this.resultsData.anomalies : []
+    },
+    filteredAnomalies() {
+      return this.anomalies.filter(elem => 
+        (elem.score >= this.activeOptions.scoreThreshold 
+        && (parseInt(elem.to) - parseInt(elem.from) >= this.activeOptions.minDurationTime)))         
+    },
+    chartAnomalies() {
+      return this.activeOptions.showAnomalies ? this.filteredAnomalies : []
+    },
+    tableAnomalies() {
+      return this.filteredAnomalies.filter(elem =>           
+        (!this.activeOptions.selectedRange.start || parseInt(elem.from) > this.activeOptions.selectedRange.start)
+        && (!this.activeOptions.selectedRange.end || parseInt(elem.from) < this.activeOptions.selectedRange.end))
     },  
-    watch: {
-      loading: {
-        immediate: true,
-        handler(val) {
-          if (val) {
-            this.startPollingResults()
-          } else {
-            this.stopPollingResults()
-          }
+    compareMode() {
+      return this.$store.state.results.compareTagsTo
+    },
+    zoomEnabled() {
+      return this.compareMode != 'selection'
+    }
+  },
+  methods: {
+    updateOptions(options) {
+      this.$store.dispatch('results/updateOptions', {id: this.activeResults.id, ...options })
+    },      
+    startPollingResults() {
+      this.polling = setInterval(() => {
+        console.log('polling results')
+        this.$store.dispatch('results/fetchResults', this.activeResults.id)          
+      }, 2000)
+    },
+    stopPollingResults() {
+      if (this.polling) {
+        console.log('stop polling results')
+        clearInterval(this.polling)
+      }
+      this.polling = null
+    },
+    onAreaSelection(event) {
+      this.$store.dispatch('results/updateCompareSelection', event)
+    }
+  },  
+  watch: {
+    loading: {
+      immediate: true,
+      handler(val) {
+        if (val) {
+          this.startPollingResults()
+        } else {
+          this.stopPollingResults()
         }
       }
-    }, 
-    created() {
-      this.$store.dispatch('results/updateCompareSelection', null)
-    },
-    beforeDestroy() {
-      this.stopPollingResults()
-    },  
-
+    }
+  }, 
+  created() {
+    this.$store.dispatch('results/updateCompareSelection', null)
+  },
+  beforeDestroy() {
+    this.stopPollingResults()
+  },  
 }
 </script>
 

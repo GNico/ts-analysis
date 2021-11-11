@@ -44,6 +44,10 @@ export default {
       type: Array,
       default: () => []
     },
+    zoomEnabled: {
+      type: Boolean,
+      default: true,
+    },
     showMinMax: {
       type: Boolean,
       default: false,
@@ -93,7 +97,6 @@ export default {
   data() {
     return {
       tooltipFormatter: analysisTooltipFormatter,
-      zoomEnabled: false,
     }
   },
   computed: {

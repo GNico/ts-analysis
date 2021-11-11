@@ -23,7 +23,6 @@ urlpatterns = [
     path('nodes/', views.PipelineNodesListView.as_view(), name='nodes'),
     path('nodes/<slug:group>/<slug:type>/', views.PipelineNodesDetailView.as_view(), name='node_detail'),
 
-
     path('monitors/', views.MonitorListView.as_view(), name='monitors'),
     path('monitors/<slug:monitor_id>/', views.MonitorDetailView.as_view(), name='monitors_detail'),
     path('monitors/<slug:monitor_id>/detectors/', views.PeriodicAnalysisListView.as_view(), name='periodic_analysis'),
@@ -35,6 +34,10 @@ urlpatterns = [
     path('incidents/<slug:incident_id>/', views.IncidentDetailView.as_view(), name='incident_detail'),
 
     path('source-files/', views.DataSourceFilesList.as_view(), name='source-files'),
+
+    path('test-sets/', views.TestSetListView.as_view(), name='test_sets'),
+    path('test-sets/<slug:test_id>/', views.TestSetDetailView.as_view(), name='test_sets_detail'),
+
     path('testalgo/', views.AlgoTestView.as_view(), name='testalgo'),
 
 ]

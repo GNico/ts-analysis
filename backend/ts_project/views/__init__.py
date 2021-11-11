@@ -8,3 +8,4 @@ from .analysis_settings import *
 from .periodic_analysis import *
 from .monitoring import *
 from .incidents import *
+from .test_set import *

@@ -24,9 +24,10 @@ function sum(arr) {
 
 const defaultStyle = {
   backgroundColor: 'transparent',
-  anomalyColor: 'rgba(133,176,190,0.4)',
+ // anomalyColor: 'rgba(133,176,190,0.4)',
+  anomalyColor: 'rgba(173,216,230,0.65)',
   anomalyArrowColor: 'yellow',
-  highlightedColor: 'rgba(173,216,230,0.65)',
+  highlightedColor: 'rgba(173,216,230,0.8)',
   highlightedBorderColor: 'rgba(173,216,230,1)',
   selectBandColor: 'rgba(0,0,0,0.5)',
   lineWidth: 2,
@@ -118,7 +119,7 @@ export default {
           from: item.from,
           className: 'pointer-cursor',
           to: item.to,
-          color: (item.id == this.activeBand) ? this.normalizedSettings.highlightedColor : this.normalizedSettings.anomalyColor, 
+          color: item.color ? item.color : ((item.id == this.activeBand) ? this.normalizedSettings.highlightedColor : this.normalizedSettings.anomalyColor), 
           borderWidth: (item.id == this.activeBand) ? 2 : 0,
           borderColor:  (item.id == this.activeBand) ? this.normalizedSettings.highlightedBorderColor : '',
           zIndex: 0,

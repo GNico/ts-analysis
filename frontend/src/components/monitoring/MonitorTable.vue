@@ -20,7 +20,7 @@
               :focusable="false"
               custom
               paddingless>
-              <FormNewMonitor @submit="addMonitor" :loading="creatingMonitor"/>
+              <FormSimpleName @submit="addMonitor" :loading="creatingMonitor"/>
             </b-dropdown-item>
           </b-dropdown>        
         </div> 
@@ -59,10 +59,10 @@
 <script>
 import api from '@/api/repository'
 import { formatDateVerbose } from '@/utils/dateFormatter'
-import FormNewMonitor from '@/components/monitoring/FormNewMonitor'
+import FormSimpleName from '@/components/FormSimpleName'
 
 export default {
-  components: { FormNewMonitor },
+  components: { FormSimpleName },
   data() {
     return {
       allMonitors: [],

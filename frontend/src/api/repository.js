@@ -229,8 +229,18 @@ export default {
   },
 
 
-  //Misc
-  testAlgo(testSource) {
-    return repository.get("/testalgo?source=" + testSource)
-  }
+  //Test
+  getTestSetsList() {
+    return repository.get("/test-sets/")
+  },
+  getTestSet(id) {
+    return repository.get("/test-sets/" + id + "/")
+  },
+  saveTestSet(payload) {
+    return repository.post("/test-sets/", payload)
+  },
+  deleteTestSet(id) {
+    return repository.delete("/test-sets/" + id + "/")
+  },
+
 }
