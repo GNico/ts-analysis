@@ -21,7 +21,6 @@
         </b-dropdown>        
       </div>
 
-
       <div v-if="activeTestAnomalyId" class="card mt-3">
         <div class="card-header">
           <p class="card-header-title">
@@ -130,7 +129,6 @@
           </div>
         </div>
 
-
         <div v-if="importMode == 'select'" class="m-4">
           <a class="button is-info" @click="toggleAnomalyDefinition">
             <template v-if="defineAnomaly">
@@ -188,57 +186,101 @@
         </div>
       </div>
 
+      <div> 
+        <div class="my-2">Select the comparison method</div>
+        <b-field>
+          <b-radio-button v-model="mainCompareMode"
+              native-value="strict">
+              Strict
+          </b-radio-button>
+          <b-radio-button v-model="mainCompareMode"
+              native-value="lenient">
+              Lenient
+          </b-radio-button>          
+        </b-field>
+
+        <template v-if="mainCompareMode =='lenient'">
+          <b-field>
+            <b-radio 
+              size="is-small"
+              v-model="lenientCompareMode"
+              native-value="any">
+              Any overlap
+            </b-radio>
+          </b-field>
+
+          <b-field>
+            <b-radio 
+              size="is-small"
+              v-model="lenientCompareMode"
+              native-value="resultInside">
+              Result anomaly inside test anomaly
+            </b-radio> 
+          </b-field>
+
+          <b-field>
+            <b-radio
+              size="is-small"
+              v-model="lenientCompareMode"
+              native-value="testInside">
+              Test anomaly inside result anomaly
+            </b-radio>         
+          </b-field>
+        </template>
+      </div>
+
       <div class="button is-small is-info my-3" @click="evaluateResults">Compare</div>
+      <template v-if="metrics">
+        <b-field grouped group-multiline>
+          <div class="control">
+            <b-taglist attached>
+              <b-tag class="has-background-grey-dark has-text-white">TP</b-tag>
+              <b-tag type="is-info">{{ metrics.tp }}</b-tag>
+            </b-taglist>
+          </div>
 
-      <b-field grouped group-multiline>
-        <div class="control">
-          <b-taglist attached>
-            <b-tag class="has-background-grey-dark has-text-white">TP</b-tag>
-            <b-tag type="is-info">{{ metrics.tp }}</b-tag>
-          </b-taglist>
-        </div>
+          <div class="control">
+            <b-taglist attached>
+              <b-tag class="has-background-grey-dark has-text-white">FP</b-tag>
+              <b-tag type="is-link">{{ metrics.fp }}</b-tag>
+            </b-taglist>
+          </div>
 
-        <div class="control">
-          <b-taglist attached>
-            <b-tag class="has-background-grey-dark has-text-white">FP</b-tag>
-            <b-tag type="is-link">{{ metrics.fp }}</b-tag>
-          </b-taglist>
-        </div>
+          <div class="control">
+            <b-taglist attached>
+              <b-tag class="has-background-grey-dark has-text-white">FN</b-tag>
+              <b-tag type="is-danger">{{ metrics.fn }}</b-tag>
+            </b-taglist>
+          </div>
+        </b-field>
 
-        <div class="control">
-          <b-taglist attached>
-            <b-tag class="has-background-grey-dark has-text-white">FN</b-tag>
-            <b-tag type="is-danger">{{ metrics.fn }}</b-tag>
-          </b-taglist>
-        </div>
-      </b-field>
+        <b-field>
+          <div class="control">
+            <b-taglist attached>
+              <b-tag class="has-background-grey-dark has-text-white">Precision</b-tag>
+              <b-tag type="is-primary">{{ formatDecimal(metrics.precision) }}</b-tag>
+            </b-taglist>
+          </div>
+        </b-field>
 
-      <b-field>
-        <div class="control">
-          <b-taglist attached>
-            <b-tag class="has-background-grey-dark has-text-white">Precision</b-tag>
-            <b-tag type="is-primary">{{ formatDecimal(metrics.precision) }}</b-tag>
-          </b-taglist>
-        </div>
-      </b-field>
+        <b-field>
+          <div class="control">
+            <b-taglist attached>
+              <b-tag class="has-background-grey-dark has-text-white">Recall</b-tag>
+              <b-tag type="is-primary">{{ formatDecimal(metrics.recall) }}</b-tag>
+            </b-taglist>
+          </div>          
+        </b-field>
 
-      <b-field>
-        <div class="control">
-          <b-taglist attached>
-            <b-tag class="has-background-grey-dark has-text-white">Recall</b-tag>
-            <b-tag type="is-primary">{{ formatDecimal(metrics.recall) }}</b-tag>
-          </b-taglist>
-        </div>          
-      </b-field>
-
-      <b-field>
-        <div class="control">
-          <b-taglist attached>
-            <b-tag class="has-background-grey-dark has-text-white">F1 score</b-tag>
-            <b-tag type="is-primary">{{ formatDecimal(metrics.f1) }}</b-tag>
-          </b-taglist>
-        </div>          
-      </b-field>
+        <b-field>
+          <div class="control">
+            <b-taglist attached>
+              <b-tag class="has-background-grey-dark has-text-white">F1 score</b-tag>
+              <b-tag type="is-primary">{{ formatDecimal(metrics.f1) }}</b-tag>
+            </b-taglist>
+          </div>          
+        </b-field>
+      </template>
     </div>
 
     <div class="column is-9">
@@ -265,6 +307,22 @@ import api from "@/api/repository";
 import { nanoid } from 'nanoid'
 import cloneDeep from "lodash/cloneDeep";
 
+
+const AnomaliesComparison = {
+  strict: (test, result) => {
+    return (test.from == result.from && test.to == result.to)
+  },
+  any: (test, result) => {
+    return true
+  },
+  testInside: (test, result) => {
+    return (test.from >= result.from && test.to <= result.to)
+  },
+  resultInside: (test, result) => {
+    return (test.from <= result.from && test.to >= result.to)
+  },
+}
+ 
 export default {
   components: { Chart, FormSimpleName },
   data() {
@@ -278,8 +336,10 @@ export default {
       allTests: [],
       file: null,
       textInput: '',
-      metrics: {},
+      metrics: null,
       metricAnomalies: [],
+      mainCompareMode: 'lenient',
+      lenientCompareMode: 'any'
 
     }       
   },
@@ -314,12 +374,12 @@ export default {
     selectionMode() {
       return this.defineAnomaly && this.importMode == 'select'
     },
-
-    /*anomtest() {
-      const newarray = cloneDeep(this.anomalies)
-      newarray.forEach(elem => elem.color = 'red')
-      return newarray
-    }*/
+    compareMode() {
+      if (this.mainCompareMode == 'lenient') 
+        return this.lenientCompareMode
+     else 
+        return this.mainCompareMode
+    }
   },
   methods: {
     addTestAnomaly(selection) {
@@ -398,20 +458,22 @@ export default {
 
     evaluateResults() {
       var i = 0, j = 0     
-      var n = this.testedAnomalies.length
-      var m = this.anomalies.length
+      const n = this.testedAnomalies.length
+      const m = this.anomalies.length
       const overlapped = new Set()
       const overlappedTest = new Set()
+      this.testedAnomalies.sort((a, b) => {return a.from - b.from})
+      this.anomalies.sort((a, b) => {return a.from - b.from})
        
       while (i < n && j < m) {
         var l = Math.max(this.testedAnomalies[i].from, this.anomalies[j].from)
         var r = Math.min(this.testedAnomalies[i].to, this.anomalies[j].to)
-         
-        if (l <= r) {
+        if (l <= r) {  //pair overlapping
+          if (AnomaliesComparison[this.compareMode](this.testedAnomalies[i], this.anomalies[j])) {
             overlapped.add(this.anomalies[j].id)
             overlappedTest.add(this.testedAnomalies[i].id)
+          }          
         }
-
         if (this.testedAnomalies[i].to < this.anomalies[j].to)
             i++
         else
@@ -427,7 +489,7 @@ export default {
       this.metrics = {tp, fp, fn, precision, recall, f1}      
     },
     formatDecimal(val) {
-      return isNaN(val) ? '' : val.toFixed(3)
+      return isNaN(val) ? '' : val.toFixed(2)
     },
     fetchTestSets() {
       api.getTestSetsList()
