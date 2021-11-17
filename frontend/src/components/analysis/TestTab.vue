@@ -340,7 +340,6 @@ export default {
       metricAnomalies: [],
       mainCompareMode: 'lenient',
       lenientCompareMode: 'any'
-
     }       
   },
   computed: {

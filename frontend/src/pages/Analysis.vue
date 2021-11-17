@@ -77,7 +77,7 @@
       <b-tab-item label="Debug" icon="bug" value="Debug" :disabled="!hasResults">
         <DebugTab v-if="hasResults"/>
       </b-tab-item>
-      <b-tab-item label="Test" icon="playlist-check" value="Test">
+      <b-tab-item label="Test" icon="playlist-check" value="Test" :disabled="!hasResults">
         <TestTab/>
       </b-tab-item>
     </b-tabs>

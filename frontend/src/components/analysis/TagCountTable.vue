@@ -29,13 +29,21 @@
                     <div class="tag-label"><i class="mdi mdi-tag-multiple"></i> {{ item.tag}}</div>
                     <div class="tag-count has-text-right has-text-weight-bold"> 
                       {{item.count}}
-                      <span class="has-text-weight-medium">({{(item.count * 100 / tagsCount.total).toFixed(1)}}%)</span>
+                      <span class="has-text-weight-medium">({{ getItemCountPercent(item, tagsCount) }}%)</span>
                     </div>
                   </div>
-                  <div v-if="compareTo" class="is-flex is-justify-content-flex-end is-family-monospace is-size-7 has-text-link">                   
-                    <span v-if="item.comparedCount"> 
-                      {{item.comparedCount}} ({{(item.comparedCount * 100 / tagsCount.comparedTotal).toFixed(1)}}%)
-                    </span>
+                  <div v-if="compareTo" class="is-flex is-justify-content-space-between is-family-monospace is-size-7 has-text-link">      
+                    <template v-if="item.comparedCount">
+                      <div v-if="getItemCountDifference(item, tagsCount).val > 0" class="has-text-weight-bold has-text-success">
+                        <span class="tag-label"><i class="mdi mdi-arrow-up-thick"></i> {{ getItemCountDifference(item, tagsCount).text  }}</span>
+                      </div>
+                      <div v-else class="has-text-weight-bold has-text-warning">
+                        <span class="tag-label"><i class="mdi mdi-arrow-down-thick"></i> {{ getItemCountDifference(item, tagsCount).text  }}</span>
+                      </div>                  
+                      <div>
+                        {{item.comparedCount}} ({{ getItemComparedCountPercent(item, tagsCount) }}%)
+                      </div>
+                    </template>
                     <span v-else>-</span>
                   </div>
                 </td>
@@ -120,7 +128,6 @@ export default {
         } 
       } 
       return formattedTagCountList
-     
     } 
   },
   methods: {
@@ -168,6 +175,21 @@ export default {
         default:
           return []
       }
+    },
+    getItemCountPercent(item, tagsCount) {
+      return (item.count * 100 / tagsCount.total).toFixed(1)
+    },
+    getItemComparedCountPercent(item, tagsCount) {
+      return (item.comparedCount * 100 / tagsCount.comparedTotal).toFixed(1)
+    },
+    getItemCountDifference(item, tagsCount) {
+      var diff = (this.getItemCountPercent(item, tagsCount) - this.getItemComparedCountPercent(item, tagsCount)).toFixed(1)
+      var text = ''
+      if (diff > 0)      
+        text = diff + '%'
+      else if (diff < 0) 
+        text = Math.abs(diff) + '%'
+      return {val: diff, text: text}
     },
     onModeChange(event) {
       this.$emit('compareChange', event)

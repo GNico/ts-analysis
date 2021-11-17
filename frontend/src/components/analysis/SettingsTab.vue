@@ -180,8 +180,10 @@ export default {
       this.$store.dispatch('models/deleteModel', id)
     },
     runAnalysis() {
-      this.$emit('run')
-      this.$store.dispatch('analysis/runAnalysis', this.analysis.id)
+      if (!this.hasCriticalErrors) {
+        this.$emit('run')
+        this.$store.dispatch('analysis/runAnalysis', this.analysis.id)
+      }
     },
     updateAnalysis({prop, value, index, shared}) {
       let updatedSettings = undefined
