@@ -8,7 +8,7 @@
 
   <div class="is-flex is-justify-content-space-between mb-4">
     <span class="is-size-5 has-text-white"> {{ title }} </span>
-    <b-dropdown scrollable :max-height="200" aria-role="list" position="is-bottom-left">
+    <b-dropdown scrollable :max-height="300" aria-role="list" position="is-bottom-left">
       <template #trigger="{ active }">
         <b-button
           class="is-outlined"

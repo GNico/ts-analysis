@@ -156,7 +156,8 @@ export default {
   },
   methods: {
     updateAnalysis(prop, value, shared) {
-      if (!(prop == 'client' && value == this.client)) {
+      const isUpdatingToSameClient = (prop == 'client' && value == this.client)
+      if (!isUpdatingToSameClient) {
         this.$emit('update', { prop: prop, value: value, index: this.index, shared: shared })
       } 
     },

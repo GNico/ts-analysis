@@ -174,7 +174,7 @@ export default {
       })
     },
     loadModel(model) {
-      this.updateAnalysis('model', model.nodes)
+      this.updateAnalysis({prop: 'model', value: model.nodes, shared: true})
     },
     deleteModel(id) {
       this.$store.dispatch('models/deleteModel', id)
