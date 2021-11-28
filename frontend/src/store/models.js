@@ -2,8 +2,11 @@ import api from "../api/repository";
 
 const state = {
     all: [],
-    nodeTypes: [],
-
+    nodeTypes: {
+      transformer: [],
+      detector: [],
+      aggregator: [],
+    },
 }
 
 const mutations = {

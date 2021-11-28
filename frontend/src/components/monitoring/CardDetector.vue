@@ -111,9 +111,6 @@
         <CardDetectorModelTab :analysisDetails="detector.analysis_details"/>                
       </b-tab-item>
 
-      <!--RESULTS-->
-      <b-tab-item label="Results">                        
-      </b-tab-item>
     </b-tabs>    
   </div>
 </div> 
