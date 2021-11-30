@@ -3,7 +3,7 @@
   <BaseChart v-for="panel in chartSeriesData" 
     :key="panel.id"
     :seriesData="panel.data" 
-    :settings="settings"
+    :styleSettings="settings"
     :labelContent="transform(panel.id)"
     :zoomEnabled="zoomEnabled"
     :loading="isLoading"

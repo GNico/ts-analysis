@@ -61,7 +61,7 @@
       <template v-else>
         <div> 
           <div class="my-2">Choose a method to define a test set</div>
-          <b-field>
+          <b-field class="import-radio">
             <b-radio-button v-model="importMode" @click.native="fetchTestSets"
                 native-value="load">
                 Load
@@ -526,6 +526,10 @@ export default {
 
 
 <style>
+.import-radio {
+  overflow: auto;
+}
+
 .test-border-ext {
   margin-bottom: 0.75rem;
   border-bottom: 2px solid rgba(255,255,255,0.1);

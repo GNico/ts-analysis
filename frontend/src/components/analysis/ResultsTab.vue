@@ -4,7 +4,7 @@
 
   <template v-else>
     <div v-if="error" class="is-size-7 error-text"><b-icon type="is-danger" icon="alert" size="is-small"/> {{error}}</div>
-    <div v-else class="columns is-fullheight">
+    <div v-else-if="anomalies.length" class="columns is-fullheight">
       <div class="column is-4 side-menu is-hidden-mobile">        
         <div class="table-header has-text-white">
           <div> <strong class="has-text-white"> Anomalies ({{tableAnomalies.length}})</strong></div>
@@ -45,6 +45,25 @@
         </div>
       </div>
     </div>  
+
+    <div v-else> 
+      <div class="has-text-weight-semibold">  No anomalies detected </div>
+      <div class="has-text-link"><b-icon icon="alert" size="is-small"/> Detection model might be missing a detector node</div>
+      <Chart     
+        class="mt-4"  
+        height="400px"
+        :seriesData="seriesData"
+        :anomalies="chartAnomalies"
+        :zoomEnabled="zoomEnabled"
+        :loading="loading"
+        :activeAnomaly="activeAnomaly"
+        :showMinMax="activeOptions.showMinMax"
+        :axisInterval="activeOptions.axisInterval"
+        @changeActive="updateOptions({activeAnomalyId: $event})"
+        @updateRange="updateOptions({selectedRange: { start: $event.start, end: $event.end}})" 
+        @areaSelectionChange="onAreaSelection" 
+      />
+    </div>
   </template>
 </div>
 </template>
