@@ -13,7 +13,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.7.0",
     "@mdi/font": "^5.1.45",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "buefy": "^0.9.8",
     "bulma": "^0.9.3",
     "dagre-d3": "^0.6.4",
